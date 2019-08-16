@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+}
+
+group 'vjson'
+version loadVersion()
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.3'
+    testCompile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
+    testCompile group: 'com.alibaba', name: 'fastjson', version: '1.2.59'
+    testCompile group: 'org.openjdk.jmh', name: 'jmh-generator-annprocess', version: '1.21'
+}
+
+def loadVersion() {
+    def PREFIX = "public static final String VERSION = \""
+    def SUFFIX = "\"; // _THE_VERSION_"
+    def ver = file(sourceSets.main.java.srcDirs[0].path + "/vjson/util/VERSION.java")
+    def lines = ver.getText().split("\n")
+    for (def line : lines) {
+        line = line.trim()
+        if (line.startsWith(PREFIX) && line.endsWith(SUFFIX)) {
+            return line.substring(PREFIX.length(), line.length() - SUFFIX.length())
+        }
+    }
+    return "unknown"
+}
