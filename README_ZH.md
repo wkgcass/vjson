@@ -1,59 +1,59 @@
 # vjson
 
-[中文](https://github.com/wkgcass/vjson/blob/master/README_ZH.md) | English
+中文 | [English](https://github.com/wkgcass/vjson/blob/master/README.md)
 
-## intro
+## 简介
 
-vjson is a light weight json parser and serializer lib.
+vjson是一个轻量级的json解析和序列化库。
 
-The lib focuses on providing the original json representation in java object form, and letting you build any json string using only java method invocations.
+vjson致力于用java对象还原最原始的json结构，并支持你仅调用几个java方法就能构造任何json字符串。
 
-Note: it is only a parser lib but NOT a json deserializer lib! The only thing it does when parsing is to conver the input json stream into vjson built in objects, and you may also retrieve Map/List/String/primitive based values from those built in objects using `.toJavaObject()` method. However you may develop your own deserializing lib with ParserListener interface.
+注意：这只是一个json解析库，并_不是_一个json反序列化库！在做解析时，它仅会将输入的json流转换为vjson内置对象，在此之后，你可以通过调用`.toJavaObject()`方法来获取Map/List/String/基本类型的值。不过话说回来，你也可以通过ParserListener接口构造你自己的反序列化库。
 
-## performance
+## 性能
 
-Check `src/test/java/vjson/bench` for more info. You may run the jmh tests or a simple test directly with the main method.
+可以查看`src/test/java/vjson/bench`以获取更多信息。你可以执行jmh测试，或者直接通过一个主函数运行简易的测试。
 
-## reliability
+## 可靠性
 
-Now `vjson` has 100% line + branch coverage.
+现在`vjson`有100%的行覆盖率和分支覆盖率。
 
-Run `src/test/java/vjson/Suite.java` to test the lib.
+执行`src/test/java/vjson/Suite.java`可以跑测试用例。
 
-## use
+## 用法
 
-Copy and paste `src/main/java/vjson` to your source directory, and enjoy. `vjson` is designed to be small and with zero-dependency, and copy-and-paste is the recommended way to use.
+将`src/main/java/vjson`复制粘贴到你的源码目录即可。`vjson`设计原则就是小且零依赖，并且，复制粘贴就是本lib的推荐用法。
 
 ```java
-// basic
+// 基础用法
 JSON.Instance result = JSON.parse("{\"hello\":\"world\"}");
 String json = result.stringify();
 String prettyJson = result.pretty();
 
-// parse
+// 解析
 ObjectParser parser = new ObjectParser();
-parser.feed("{\"hel");    // return null here
-parser.feed("lo\":\"wo"); // return null here
-parser.feed("rld\"}");    // return JSON.Object here
-                          // you may use CharStream instead of String to feed the parser
-    // if it's the last piece to feed the parser:
+parser.feed("{\"hel");    // 这里返回null
+parser.feed("lo\":\"wo"); // 这里返回null
+parser.feed("rld\"}");    // 这里返回JSON.Object
+                          // 你也可以用CharStream对象调用feed而不是例子中的String
+    // 如果是最后一片要喂给解析器的数据:
     parser.last("rld\"}");
 
-// retrieve
+// 获取值
 String value = ((JSON.Object) result).getString("hello"); // world
 Map<String, Object> map = ((JSON.Object) result).toJavaObject();
 
-// serialize
+// 序列化
 new SimpleInteger(1).stringify(); // 1
 new SimpleString("hello\nworld").stringify(); // "hello\nworld"
 
-// construct complex objects
+// 构造复杂的对象
 new ObjectBuilder().put("id", 1).put("name", "pizza").build(); // JSON.Object
 new ArrayBuilder().add(3.14).addObject(o -> ...).addArray(a -> ...).build(); // JSON.Array
 
-// advanced
-new ObjectParser(new ParserOptions().setListener(...)); // hook points that the parsers will call
-result.stringify(stringBuilder, stringifier); // customize the output format
+// 高级用法
+new ObjectParser(new ParserOptions().setListener(...)); // 解析器会调用这些回调点
+result.stringify(stringBuilder, stringifier); // 自定义输出格式
 ```
 
 ## lib
