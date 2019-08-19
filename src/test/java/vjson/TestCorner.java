@@ -1,19 +1,12 @@
 package vjson;
 
 import org.junit.Test;
-import vjson.listener.AbstractUnsupportedParserListener;
 import vjson.listener.EmptyParserListener;
 import vjson.parser.ObjectParser;
 import vjson.parser.ParserOptions;
 import vjson.parser.ParserUtils;
-import vjson.simple.SimpleInteger;
-import vjson.simple.SimpleNull;
-import vjson.simple.SimpleObject;
-import vjson.simple.SimpleObjectEntry;
-import vjson.util.AppendableMap;
-import vjson.util.ArrayBuilder;
-import vjson.util.ObjectBuilder;
-import vjson.util.VERSION;
+import vjson.simple.*;
+import vjson.util.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -129,5 +122,27 @@ public class TestCorner {
         assertEquals(1, a.getInt(0));
         assertEquals(1L, a.getLong(0));
         assertEquals(1D, a.getDouble(0), 0);
+    }
+
+    @Test
+    public void threadlocal() throws Exception {
+        assertEquals(JSON.parse("\"a\""), JSON.parse("\"a\""));
+        assertEquals(JSON.parseToJavaObject("\"a\""), JSON.parseToJavaObject("\"a\""));
+    }
+
+    @Test
+    public void keyNoQuotes() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions().setKeyNoQuotes(true));
+        parser.feed("   {     ");
+        parser.feed("");
+        parser.feed("  ab");
+        parser.feed("");
+        parser.feed("c   ");
+        parser.feed("");
+        parser.feed(":  \"x\"");
+        parser.feed("");
+        JSON.Object o = parser.last("  }  ");
+        assertEquals(new SimpleObject(new AppendableMap<>()
+            .append("abc", new SimpleString("x"))), o);
     }
 }

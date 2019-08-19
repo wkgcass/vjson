@@ -3,20 +3,21 @@ package vjson;
 import org.junit.Test;
 import vjson.listener.AbstractParserListener;
 import vjson.parser.*;
-import vjson.simple.SimpleInteger;
-import vjson.simple.SimpleObject;
 import vjson.util.AbstractUnsupportedParserListener;
 import vjson.util.AppendableMap;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 @SuppressWarnings("RedundantThrows")
-public class TestListener {
+public class TestListenerJavaObject {
     private int step = 0;
 
     @Test
     public void nullV() throws Exception {
-        NullParser parser = new NullParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        NullParser parser = new NullParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onNullBegin(NullParser n) {
                 ++step;
@@ -30,18 +31,19 @@ public class TestListener {
             }
 
             @Override
-            public void onNull(JSON.Null n) {
+            public void onNull(Void n) {
                 ++step;
                 assertEquals(3, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from("null")));
+        assertNull(parser.buildJavaObject(CharStream.from("null"), true));
+        assertTrue(parser.completed());
         assertEquals(3, step);
     }
 
     @Test
     public void bool() throws Exception {
-        BoolParser parser = new BoolParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        BoolParser parser = new BoolParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onBoolBegin(BoolParser bool) {
                 ++step;
@@ -55,17 +57,17 @@ public class TestListener {
             }
 
             @Override
-            public void onBool(JSON.Bool bool) {
-                assertTrue(bool.booleanValue());
+            public void onBool(Boolean bool) {
+                assertTrue(bool);
                 ++step;
                 assertEquals(3, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from("true")));
+        assertNotNull(parser.buildJavaObject(CharStream.from("true"), true));
         assertEquals(3, step);
 
         step = 0;
-        parser = new BoolParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        parser = new BoolParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onBoolBegin(BoolParser bool) {
                 ++step;
@@ -79,20 +81,20 @@ public class TestListener {
             }
 
             @Override
-            public void onBool(JSON.Bool bool) {
-                assertFalse(bool.booleanValue());
+            public void onBool(Boolean bool) {
+                assertFalse(bool);
                 ++step;
                 assertEquals(3, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from("false")));
+        assertNotNull(parser.buildJavaObject(CharStream.from("false"), true));
         assertEquals(3, step);
     }
 
     @Test
     public void string() throws Exception {
         String toParse = "\"abcd\\r\\n\"";
-        StringParser parser = new StringParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        StringParser parser = new StringParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onStringBegin(StringParser string) {
                 ++step;
@@ -120,20 +122,20 @@ public class TestListener {
             }
 
             @Override
-            public void onString(JSON.String string) {
-                assertEquals("abcd\r\n", string.toJavaObject());
+            public void onString(String string) {
+                assertEquals("abcd\r\n", string);
                 ++step;
                 assertEquals(9, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from(toParse)));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(9, step);
     }
 
     @Test
     public void integer() throws Exception {
         String toParse = "3";
-        NumberParser parser = new NumberParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        NumberParser parser = new NumberParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onNumberBegin(NumberParser number) {
                 ++step;
@@ -151,20 +153,20 @@ public class TestListener {
             }
 
             @Override
-            public void onNumber(JSON.Number number) {
-                assertEquals(3, number.toJavaObject());
+            public void onNumber(Number number) {
+                assertEquals(3, number);
                 ++step;
                 assertEquals(3, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from(toParse)));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(3, step);
     }
 
     @Test
     public void doubleV() throws Exception {
         String toParse = "3.14";
-        NumberParser parser = new NumberParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        NumberParser parser = new NumberParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onNumberBegin(NumberParser number) {
                 ++step;
@@ -195,20 +197,20 @@ public class TestListener {
             }
 
             @Override
-            public void onNumber(JSON.Number number) {
-                assertEquals(3.14D, number.toJavaObject());
+            public void onNumber(Number number) {
+                assertEquals(3.14D, number);
                 ++step;
                 assertEquals(4, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from(toParse)));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(4, step);
     }
 
     @Test
     public void integerExponent() throws Exception {
         String toParse = "3e2";
-        NumberParser parser = new NumberParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        NumberParser parser = new NumberParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onNumberBegin(NumberParser number) {
                 ++step;
@@ -239,20 +241,20 @@ public class TestListener {
             }
 
             @Override
-            public void onNumber(JSON.Number number) {
-                assertEquals(300D, number.toJavaObject());
+            public void onNumber(Number number) {
+                assertEquals(300D, number);
                 ++step;
                 assertEquals(4, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from(toParse)));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(4, step);
     }
 
     @Test
     public void doubleExponent() throws Exception {
         String toParse = "3.14e2";
-        NumberParser parser = new NumberParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        NumberParser parser = new NumberParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onNumberBegin(NumberParser number) {
                 ++step;
@@ -298,20 +300,20 @@ public class TestListener {
             }
 
             @Override
-            public void onNumber(JSON.Number number) {
-                assertEquals(314D, number.toJavaObject());
+            public void onNumber(Number number) {
+                assertEquals(314D, number);
                 ++step;
                 assertEquals(5, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from(toParse)));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(5, step);
     }
 
     @Test
     public void array() throws Exception {
         String toParse = "[]";
-        ArrayParser parser = new ArrayParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        ArrayParser parser = new ArrayParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onArrayBegin(ArrayParser array) {
                 ++step;
@@ -320,24 +322,24 @@ public class TestListener {
 
             @Override
             public void onArrayEnd(ArrayParser array) {
-                assertTrue(array.getList().isEmpty());
+                assertTrue(array.getJavaList().isEmpty());
                 ++step;
                 assertEquals(2, step);
             }
 
             @Override
-            public void onArray(JSON.Array array) {
-                assertEquals(0, array.length());
+            public void onArray(List<Object> array) {
+                assertEquals(0, array.size());
                 ++step;
                 assertEquals(3, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from(toParse)));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(3, step);
 
         step = 0;
         toParse = "[1,2,3]";
-        parser = new ArrayParser(new ParserOptions().setListener(new AbstractParserListener() {
+        parser = new ArrayParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractParserListener() {
             @Override
             public void onArrayBegin(ArrayParser array) {
                 ++step;
@@ -345,10 +347,10 @@ public class TestListener {
             }
 
             @Override
-            public void onArrayValue(ArrayParser array, JSON.Instance value) {
-                assertEquals(step, array.getList().size());
-                assertTrue(value instanceof JSON.Integer);
-                assertEquals(step, value.toJavaObject());
+            public void onArrayValueJavaObject(ArrayParser array, Object value) {
+                assertEquals(step, array.getJavaList().size());
+                assertTrue(value instanceof Integer);
+                assertEquals(step, (int) value);
                 ++step;
             }
 
@@ -359,20 +361,20 @@ public class TestListener {
             }
 
             @Override
-            public void onArray(JSON.Array array) {
-                assertEquals(3, array.length());
+            public void onArray(List<Object> array) {
+                assertEquals(3, array.size());
                 ++step;
                 assertEquals(6, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from(toParse)));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(6, step);
     }
 
     @Test
     public void object() throws Exception {
         String toParse = "{}";
-        ObjectParser parser = new ObjectParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
+        ObjectParser parser = new ObjectParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
             public void onObjectBegin(ObjectParser object) {
                 ++step;
@@ -386,17 +388,17 @@ public class TestListener {
             }
 
             @Override
-            public void onObject(JSON.Object object) {
+            public void onObject(Map<String, Object> object) {
                 ++step;
                 assertEquals(3, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from(toParse)));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(3, step);
 
         step = 0;
         toParse = "{\"a\":1,\"b\":2,\"c\":3}";
-        parser = new ObjectParser(new ParserOptions().setListener(new AbstractParserListener() {
+        parser = new ObjectParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractParserListener() {
             @Override
             public void onObjectBegin(ObjectParser object) {
                 ++step;
@@ -407,13 +409,13 @@ public class TestListener {
             public void onObjectKey(ObjectParser object, String key) {
                 assertEquals(key, object.getCurrentKey());
                 if (step == 1) {
-                    assertEquals(0, object.getMap().size());
+                    assertEquals(0, object.getJavaMap().size());
                     assertEquals("a", key);
                 } else if (step == 3) {
-                    assertEquals(1, object.getMap().size());
+                    assertEquals(1, object.getJavaMap().size());
                     assertEquals("b", key);
                 } else if (step == 5) {
-                    assertEquals(2, object.getMap().size());
+                    assertEquals(2, object.getJavaMap().size());
                     assertEquals("c", key);
                 } else {
                     fail();
@@ -422,17 +424,17 @@ public class TestListener {
             }
 
             @Override
-            public void onObjectValue(ObjectParser object, String key, JSON.Instance value) {
+            public void onObjectValueJavaObject(ObjectParser object, String key, Object value) {
                 assertNull(object.getCurrentKey());
                 if (step == 2) {
-                    assertEquals(1, object.getMap().size());
-                    assertEquals(1, value.toJavaObject());
+                    assertEquals(1, object.getJavaMap().size());
+                    assertEquals(1, (int) value);
                 } else if (step == 4) {
-                    assertEquals(2, object.getMap().size());
-                    assertEquals(2, value.toJavaObject());
+                    assertEquals(2, object.getJavaMap().size());
+                    assertEquals(2, (int) value);
                 } else if (step == 6) {
-                    assertEquals(3, object.getMap().size());
-                    assertEquals(3, value.toJavaObject());
+                    assertEquals(3, object.getJavaMap().size());
+                    assertEquals(3, (int) value);
                 } else {
                     fail();
                 }
@@ -442,23 +444,24 @@ public class TestListener {
             @Override
             public void onObjectEnd(ObjectParser object) {
                 assertNull(object.getCurrentKey());
-                assertEquals(3, object.getMap().size());
+                assertEquals(3, object.getJavaMap().size());
                 ++step;
                 assertEquals(8, step);
             }
 
             @Override
-            public void onObject(JSON.Object object) {
-                assertEquals(new SimpleObject(new AppendableMap<>()
-                    .append("a", new SimpleInteger(1))
-                    .append("b", new SimpleInteger(2))
-                    .append("c", new SimpleInteger(3))
-                ), object);
+            public void onObject(Map<String, Object> object) {
+                //noinspection AssertEqualsBetweenInconvertibleTypes
+                assertEquals(new AppendableMap<>()
+                        .append("a", 1)
+                        .append("b", 2)
+                        .append("c", 3)
+                    , object);
                 ++step;
                 assertEquals(9, step);
             }
         }));
-        assertNotNull(parser.last(CharStream.from(toParse)));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(9, step);
     }
 }

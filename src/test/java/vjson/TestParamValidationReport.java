@@ -2,15 +2,15 @@ package vjson;
 
 import org.junit.Test;
 import vjson.cs.CharArrayCharStream;
-import vjson.listener.AbstractUnsupportedParserListener;
 import vjson.parser.*;
 import vjson.simple.*;
 import vjson.util.AppendableMap;
 import vjson.util.ObjectBuilder;
+import vjson.util.Transformer;
 
 import java.util.*;
-import java.util.function.Consumer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 @SuppressWarnings("RedundantThrows")
@@ -38,12 +38,22 @@ public class TestParamValidationReport {
         } catch (IndexOutOfBoundsException ignore) {
         }
         class T extends SimpleArray {
-            private T(List<JSON.Instance> list, TrustedFlag flag) {
+            private T(List<JSON.Instance> list, vjson.parser.TrustedFlag flag) {
                 super(list, flag);
             }
+
+            private T(List<JSON.Instance> list, vjson.util.TrustedFlag flag) {
+                super(list, flag);
+            }
+
         }
         try {
-            new T(Collections.emptyList(), null);
+            new T(Collections.emptyList(), (vjson.parser.TrustedFlag) null);
+            fail();
+        } catch (UnsupportedOperationException ignore) {
+        }
+        try {
+            new T(Collections.emptyList(), (vjson.util.TrustedFlag) null);
             fail();
         } catch (UnsupportedOperationException ignore) {
         }
@@ -109,12 +119,21 @@ public class TestParamValidationReport {
         } catch (NullPointerException ignore) {
         }
         class T extends SimpleObject {
-            private T(List<SimpleObjectEntry<JSON.Instance>> initMap, TrustedFlag flag) {
+            private T(List<SimpleObjectEntry<JSON.Instance>> initMap, vjson.parser.TrustedFlag flag) {
+                super(initMap, flag);
+            }
+
+            private T(List<SimpleObjectEntry<JSON.Instance>> initMap, vjson.util.TrustedFlag flag) {
                 super(initMap, flag);
             }
         }
         try {
-            new T(new LinkedList<>(), null);
+            new T(new LinkedList<>(), (vjson.parser.TrustedFlag) null);
+            fail();
+        } catch (UnsupportedOperationException ignore) {
+        }
+        try {
+            new T(new LinkedList<>(), (vjson.util.TrustedFlag) null);
             fail();
         } catch (UnsupportedOperationException ignore) {
         }
@@ -156,6 +175,11 @@ public class TestParamValidationReport {
             fail();
         } catch (NullPointerException ignore) {
         }
+        try {
+            new ArrayParser().buildJavaObject(null, false);
+            fail();
+        } catch (NullPointerException ignore) {
+        }
     }
 
     @Test
@@ -167,6 +191,11 @@ public class TestParamValidationReport {
         }
         try {
             new BoolParser().build(null, false);
+            fail();
+        } catch (NullPointerException ignore) {
+        }
+        try {
+            new BoolParser().buildJavaObject(null, false);
             fail();
         } catch (NullPointerException ignore) {
         }
@@ -184,6 +213,11 @@ public class TestParamValidationReport {
             fail();
         } catch (NullPointerException ignore) {
         }
+        try {
+            new NullParser().buildJavaObject(null, false);
+            fail();
+        } catch (NullPointerException ignore) {
+        }
     }
 
     @Test
@@ -195,6 +229,11 @@ public class TestParamValidationReport {
         }
         try {
             new NumberParser().build(null, false);
+            fail();
+        } catch (NullPointerException ignore) {
+        }
+        try {
+            new NumberParser().buildJavaObject(null, false);
             fail();
         } catch (NullPointerException ignore) {
         }
@@ -238,6 +277,11 @@ public class TestParamValidationReport {
         } catch (NullPointerException ignore) {
         }
         try {
+            new ObjectParser().buildJavaObject(null, false);
+            fail();
+        } catch (NullPointerException ignore) {
+        }
+        try {
             new ObjectParser().setCurrentKey(null);
             fail();
         } catch (NullPointerException ignore) {
@@ -256,51 +300,11 @@ public class TestParamValidationReport {
             fail();
         } catch (NullPointerException ignore) {
         }
-    }
-
-    @Test
-    public void unsupportedParserListener() throws Exception {
-        ParserListener l = new AbstractUnsupportedParserListener() {
-        };
-        Consumer<Runnable> test = r -> {
-            try {
-                r.run();
-                fail();
-            } catch (UnsupportedOperationException ignore) {
-            }
-        };
-
-        test.accept(() -> l.onArrayBegin(null));
-        test.accept(() -> l.onArrayEnd(null));
-        test.accept(() -> l.onArrayValue(null, null));
-        test.accept(() -> l.onArray(null));
-
-        test.accept(() -> l.onError(null));
-
-        test.accept(() -> l.onBoolBegin(null));
-        test.accept(() -> l.onBoolEnd(null));
-        test.accept(() -> l.onBool(null));
-
-        test.accept(() -> l.onNullBegin(null));
-        test.accept(() -> l.onNullEnd(null));
-        test.accept(() -> l.onNull(null));
-
-        test.accept(() -> l.onNumberBegin(null));
-        test.accept(() -> l.onNumberFractionBegin(null, 0));
-        test.accept(() -> l.onNumberExponentBegin(null, 0));
-        test.accept(() -> l.onNumberEnd(null));
-        test.accept(() -> l.onNumber(null));
-
-        test.accept(() -> l.onObjectBegin(null));
-        test.accept(() -> l.onObjectKey(null, null));
-        test.accept(() -> l.onObjectValue(null, null, null));
-        test.accept(() -> l.onObjectEnd(null));
-        test.accept(() -> l.onObject(null));
-
-        test.accept(() -> l.onStringBegin(null));
-        test.accept(() -> l.onStringChar(null, 'a'));
-        test.accept(() -> l.onStringEnd(null));
-        test.accept(() -> l.onString(null));
+        try {
+            new StringParser().buildJavaObject(null, false);
+            fail();
+        } catch (NullPointerException ignore) {
+        }
     }
 
     @Test
@@ -312,6 +316,16 @@ public class TestParamValidationReport {
         }
         try {
             ParserUtils.buildFrom(CharStream.from(""), null);
+            fail();
+        } catch (NullPointerException ignore) {
+        }
+        try {
+            ParserUtils.buildJavaObject(null, new ParserOptions());
+            fail();
+        } catch (NullPointerException ignore) {
+        }
+        try {
+            ParserUtils.buildJavaObject(CharStream.from(""), null);
             fail();
         } catch (NullPointerException ignore) {
         }
@@ -351,6 +365,23 @@ public class TestParamValidationReport {
             array.getDouble(0);
             fail();
         } catch (ClassCastException ignore) {
+        }
+    }
+
+    @Test
+    public void transformer() throws Exception {
+        Transformer tf = new Transformer();
+        tf.removeRule(Boolean.class);
+        try {
+            tf.transform(true);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("unknown input type: java.lang.Boolean", e.getMessage());
+        }
+        try {
+            tf.transform(new AppendableMap<>().append(1, 2));
+        } catch (IllegalArgumentException e) {
+            assertEquals("keys of map should be String", e.getMessage());
         }
     }
 }

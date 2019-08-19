@@ -1,14 +1,13 @@
 package vjson.bench;
 
+import com.alibaba.fastjson.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import vjson.CharStream;
-import vjson.parser.ArrayParser;
+import vjson.JSON;
 
-import java.io.BufferedReader;
-import java.io.CharArrayReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -24,21 +23,23 @@ public class SimpleBenchmark {
 
     private static ObjectMapper mapper;
     private static Gson gson;
+    private static Type listType = new TypeReference<List>() {
+    }.getType();
 
     private static void vjson(char[] chars) {
-        new ArrayParser().last(CharStream.from(chars));
+        JSON.parseToJavaObject(CharStream.from(chars));
     }
 
     private static void jackson(byte[] bytes) throws Exception {
-        mapper.readValue(bytes, List.class);
+        mapper.readValue(new ByteArrayInputStream(bytes), List.class);
     }
 
     private static void gson(char[] chars) {
         gson.fromJson(new CharArrayReader(chars), List.class);
     }
 
-    private static void fastjson(byte[] bytes) {
-        com.alibaba.fastjson.JSON.parse(bytes);
+    private static void fastjson(byte[] bytes) throws Exception {
+        com.alibaba.fastjson.JSON.parseObject(new ByteArrayInputStream(bytes), listType);
     }
 
     public static void main(String[] args) throws Exception {
@@ -95,11 +96,11 @@ public class SimpleBenchmark {
         // start
         long start;
         long end;
-        long[][] full = new long[tests.length][4];
         for (int idx = 0; idx < tests.length; ++idx) {
             final int round = REAL_ROUNDS[idx];
             final int per = round / 10;
             for (int l = 0; l < TEST_LOOP; ++l) {
+                long[][] full = new long[tests.length][4];
                 for (int i = 0; i < round; i += per) {
                     start = System.currentTimeMillis();
                     for (int j = 0; j < per; ++j) {

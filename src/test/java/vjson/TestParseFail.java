@@ -68,8 +68,10 @@ public class TestParseFail {
     @Test
     public void string() throws Exception {
         parseFail("invalid character for string: not starts with \": x", () -> new StringParser().last("xabc\""));
+        parseFail("invalid character for string: not starts with \": '", () -> new StringParser().last("'abc\""));
         parseFail("invalid character in string: code is: " + ((int) '\t'), () -> new StringParser().last("\"\tabc\""));
         parseFail("invalid escape character: x", () -> new StringParser().last("\"abc\\x\""));
+        parseFail("invalid escape character: '", () -> new StringParser().last("\"abc\\'\""));
         parseFail("invalid hex character in \\u[H]HHH: g", () -> new StringParser().last("\"abc\\ug012\""));
         parseFail("invalid hex character in \\u0[H]HH: +", () -> new StringParser().last("\"abc\\u0+12\""));
         parseFail("invalid hex character in \\u00[H]H: G", () -> new StringParser().last("\"abc\\u00G2\""));
@@ -106,6 +108,7 @@ public class TestParseFail {
         parseFail("expecting more characters to build array", () -> new ArrayParser().last("[1,2"));
         parseFail("invalid json array: failed when parsing element: (invalid digit in exponent: ,)", () -> new ArrayParser().last("[1e,2]"));
         parseFail("invalid json array: failed when parsing element: (not valid json string)", () -> new ArrayParser().last("[:]"));
+        parseFail("invalid json array: failed when parsing element: (not valid json string)", () -> new ArrayParser().last("['a']"));
         finish(() -> {
             ArrayParser p = new ArrayParser();
             p.feed("[]");
@@ -122,6 +125,9 @@ public class TestParseFail {
         parseFail("invalid character for json object, expecting `}` or `,`, but got +", () -> new ObjectParser().last("{\"a\":1+\"b\":2}"));
         parseFail("expecting more characters to build object", () -> new ObjectParser().last("{"));
         parseFail("invalid json object: failed when parsing value: (not valid json string)", () -> new ObjectParser().last("{\"a\":+}"));
+        parseFail("invalid json object: failed when parsing value: (not valid json string)", () -> new ObjectParser().last("{\"a\":'x'}"));
+        parseFail("invalid character for json object key: a", () -> new ObjectParser().last("{a:1}"));
+        parseFail("invalid character for json object key: b", () -> new ObjectParser().last("{\"a\":1,b:2}"));
         finish(() -> {
             ObjectParser p = new ObjectParser();
             p.feed("{}");
@@ -132,7 +138,13 @@ public class TestParseFail {
     @Test
     public void utils() throws Exception {
         parseFail("empty input string", () -> JSON.parse(""));
+        parseFail("empty input string", () -> ParserUtils.buildFrom(CharStream.from(""), new ParserOptions()));
+        parseFail("empty input string", () -> JSON.parseToJavaObject(""));
+        parseFail("empty input string", () -> ParserUtils.buildJavaObject(CharStream.from(""), new ParserOptions()));
         parseFail("not valid json string", () -> JSON.parse("e"));
         parseFail("not valid json string", () -> JSON.parse("+"));
+        parseFail("not valid json string: stringSingleQuotes not enabled", () -> ParserUtils.buildFrom(CharStream.from("''"), new ParserOptions()));
+        parseFail("not valid json string: stringSingleQuotes not enabled", () -> JSON.parse("''"));
+        parseFail("not valid json string: stringSingleQuotes not enabled", () -> JSON.parseToJavaObject("''"));
     }
 }

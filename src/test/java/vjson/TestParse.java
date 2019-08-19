@@ -15,20 +15,34 @@ import static org.junit.Assert.*;
 
 @SuppressWarnings("RedundantThrows")
 public class TestParse {
-    private <T extends JSON.Instance> T parse(Supplier<Parser<T>> parserSupplier, String... jsons) {
+    private <T extends JSON.Instance> T parse(Supplier<Parser<T>> parserSupplier,
+                                              Supplier<Parser<T>> javaObjectParserSupplier,
+                                              String... jsons) {
         //noinspection unchecked
         T inst = (T) JSON.parse(jsons[0]);
         for (String json : jsons) {
-            T x = parse(json, parserSupplier);
+            T x = parse(json, parserSupplier, javaObjectParserSupplier);
             assertEquals(inst, x);
         }
         return inst;
     }
 
-    private <T extends JSON.Instance> T parse(String json, Supplier<Parser<T>> parserSupplier) {
+    private <T extends JSON.Instance> T parse(String json,
+                                              Supplier<Parser<T>> parserSupplier,
+                                              Supplier<Parser<T>> javaObjectParserSupplier) {
         //noinspection unchecked
         T inst = (T) JSON.parse(json);
         assertNotNull(inst);
+        {
+            Object foo = ParserUtils.buildFrom(CharStream.from(json), new ParserOptions());
+            assertEquals(inst, foo);
+        }
+        {
+            assertEquals(inst.toJavaObject(), JSON.parseToJavaObject(json));
+        }
+        {
+            assertEquals(inst.toJavaObject(), ParserUtils.buildJavaObject(CharStream.from(json), new ParserOptions()));
+        }
         // test partial
         char[] chars = ("   " + json + "   ").toCharArray();
         for (int step = 1; step < chars.length; ++step) {
@@ -57,7 +71,9 @@ public class TestParse {
                     }
                     assertNull(tmpResult);
                 } else {
-                    if (tmpResult != null) {
+                    if (tmpResult == null) {
+                        assertFalse(parser.completed());
+                    } else {
                         finished = true;
                         result = tmpResult;
                     }
@@ -65,6 +81,39 @@ public class TestParse {
             }
             assertNotNull(result);
             assertEquals(inst, result);
+        }
+        for (int step = 1; step < chars.length; ++step) {
+            Parser parser = javaObjectParserSupplier.get();
+            Object tmpResult;
+            Object result = null;
+            boolean finished = false;
+            for (int i = 0; i < chars.length; i += step) {
+                for (int j = 0; j < 5; ++j) {
+                    tmpResult = parser.buildJavaObject(CharStream.from(""), false); // feed empty character
+                    assertNull(tmpResult);
+                }
+
+                char[] foo = new char[Math.min(step, chars.length - i)];
+                System.arraycopy(chars, i, foo, 0, foo.length);
+                CharStream cs = CharStream.from(foo);
+                boolean isComplete = i + step >= chars.length;
+
+                tmpResult = parser.buildJavaObject(cs, isComplete);
+
+                if (finished) {
+                    for (char c : foo) {
+                        assertEquals(' ', c);
+                    }
+                    assertNull(tmpResult);
+                } else {
+                    if (parser.completed()) {
+                        finished = true;
+                        result = tmpResult;
+                    }
+                }
+            }
+            assertTrue(parser.completed());
+            assertEquals(inst.toJavaObject(), result);
         }
         // test full expression but with an end
         // only for numbers
@@ -78,23 +127,23 @@ public class TestParse {
 
     @Test
     public void nullV() throws Exception {
-        JSON.Instance inst = parse("null", NullParser::new);
+        JSON.Instance inst = parse("null", NullParser::new, () -> new NullParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT)));
         //noinspection ConstantConditions
         assertTrue(inst instanceof JSON.Null);
     }
 
     @Test
     public void bool() throws Exception {
-        JSON.Bool inst = parse("true", BoolParser::new);
+        JSON.Bool inst = parse("true", BoolParser::new, () -> new BoolParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT)));
         assertTrue(inst.booleanValue());
 
-        inst = parse("false", BoolParser::new);
+        inst = parse("false", BoolParser::new, () -> new BoolParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT)));
         assertFalse(inst.booleanValue());
     }
 
     @Test
     public void string() throws Exception {
-        JSON.String inst = parse("\"a012\\\"\\\\\\/\\b\\f\\n\\r\\t\\u0020\\u1ABC\\u0abc\\u00aB\\u000C中文\"", StringParser::new);
+        JSON.String inst = parse("\"a012\\\"\\\\\\/\\b\\f\\n\\r\\t\\u0020\\u1ABC\\u0abc\\u00aB\\u000C中文\"", StringParser::new, () -> new StringParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT)));
         assertEquals("" +
             "a" +
             "0" +
@@ -120,6 +169,8 @@ public class TestParse {
 
     @Test
     public void number() throws Exception {
+        Supplier<Parser<JSON.Number>> sup = NumberParser::new;
+        Supplier<Parser<JSON.Number>> sup2 = () -> new NumberParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT));
         Map<String, Integer> intTests = new AppendableMap<>()
             .append("0", 0)
             .append("1", 1)
@@ -132,34 +183,34 @@ public class TestParse {
             .append("102", 102)
             .append("1002", 1002);
         for (Map.Entry<String, Integer> entry : intTests.entrySet()) {
-            JSON.Integer i = (JSON.Integer) parse(entry.getKey(), NumberParser::new);
+            JSON.Integer i = (JSON.Integer) parse(entry.getKey(), sup, sup2);
             assertEquals(entry.getValue().intValue(), i.intValue());
-            i = (JSON.Integer) parse("-" + entry.getKey(), NumberParser::new);
+            i = (JSON.Integer) parse("-" + entry.getKey(), sup, sup2);
             assertEquals(entry.getValue().intValue(), -i.intValue());
             for (int x = 0; x < 3; ++x) {
-                JSON.Exp e = (JSON.Exp) parse(entry.getKey() + "e" + x, NumberParser::new);
+                JSON.Exp e = (JSON.Exp) parse(entry.getKey() + "e" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, x), e.doubleValue(), 0);
-                e = (JSON.Exp) parse("-" + entry.getKey() + "e" + x, NumberParser::new);
+                e = (JSON.Exp) parse("-" + entry.getKey() + "e" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, x), -e.doubleValue(), 0);
 
                 // exponent symbol +
-                e = (JSON.Exp) parse(entry.getKey() + "e+" + x, NumberParser::new);
+                e = (JSON.Exp) parse(entry.getKey() + "e+" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, x), e.doubleValue(), 0);
-                e = (JSON.Exp) parse("-" + entry.getKey() + "e+" + x, NumberParser::new);
+                e = (JSON.Exp) parse("-" + entry.getKey() + "e+" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, x), -e.doubleValue(), 0);
                 // exponent symbol -
-                e = (JSON.Exp) parse(entry.getKey() + "e-" + x, NumberParser::new);
+                e = (JSON.Exp) parse(entry.getKey() + "e-" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, -x), e.doubleValue(), 0);
-                e = (JSON.Exp) parse("-" + entry.getKey() + "e-" + x, NumberParser::new);
+                e = (JSON.Exp) parse("-" + entry.getKey() + "e-" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, -x), -e.doubleValue(), 0);
             }
         }
         {
             int v = Integer.MAX_VALUE;
-            JSON.Integer i = (JSON.Integer) parse("" + v, NumberParser::new);
+            JSON.Integer i = (JSON.Integer) parse("" + v, sup, sup2);
             assertEquals(v, i.intValue());
             v = Integer.MIN_VALUE;
-            i = (JSON.Integer) parse("" + v, NumberParser::new);
+            i = (JSON.Integer) parse("" + v, sup, sup2);
             assertEquals(v, i.intValue());
         }
         Map<String, Long> longTests = new AppendableMap<>()
@@ -169,35 +220,35 @@ public class TestParse {
             .append("3000200010", 3000200010L)
             .append("3000200001", 3000200001L);
         for (Map.Entry<String, Long> entry : longTests.entrySet()) {
-            JSON.Long i = (JSON.Long) parse(entry.getKey(), NumberParser::new);
+            JSON.Long i = (JSON.Long) parse(entry.getKey(), sup, sup2);
             assertEquals(entry.getValue().longValue(), i.longValue());
-            i = (JSON.Long) parse("-" + entry.getKey(), NumberParser::new);
+            i = (JSON.Long) parse("-" + entry.getKey(), sup, sup2);
             assertEquals(entry.getValue().longValue(), -i.longValue());
 
             for (int x = 0; x < 3; ++x) {
-                JSON.Exp e = (JSON.Exp) parse(entry.getKey() + "e" + x, NumberParser::new);
+                JSON.Exp e = (JSON.Exp) parse(entry.getKey() + "e" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, x), e.doubleValue(), 0);
-                e = (JSON.Exp) parse("-" + entry.getKey() + "e" + x, NumberParser::new);
+                e = (JSON.Exp) parse("-" + entry.getKey() + "e" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, x), -e.doubleValue(), 0);
 
                 // exponent symbol +
-                e = (JSON.Exp) parse(entry.getKey() + "e+" + x, NumberParser::new);
+                e = (JSON.Exp) parse(entry.getKey() + "e+" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, x), e.doubleValue(), 0);
-                e = (JSON.Exp) parse("-" + entry.getKey() + "e+" + x, NumberParser::new);
+                e = (JSON.Exp) parse("-" + entry.getKey() + "e+" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, x), -e.doubleValue(), 0);
                 // exponent symbol -
-                e = (JSON.Exp) parse(entry.getKey() + "e-" + x, NumberParser::new);
+                e = (JSON.Exp) parse(entry.getKey() + "e-" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, -x), e.doubleValue(), 0);
-                e = (JSON.Exp) parse("-" + entry.getKey() + "e-" + x, NumberParser::new);
+                e = (JSON.Exp) parse("-" + entry.getKey() + "e-" + x, sup, sup2);
                 assertEquals(entry.getValue() * Math.pow(10, -x), -e.doubleValue(), 0);
             }
         }
         {
             long v = ((long) Integer.MAX_VALUE) + 1;
-            JSON.Long i = (JSON.Long) parse("" + v, NumberParser::new);
+            JSON.Long i = (JSON.Long) parse("" + v, sup, sup2);
             assertEquals(v, i.longValue());
             v = ((long) Integer.MIN_VALUE) - 1;
-            i = (JSON.Long) parse("" + v, NumberParser::new);
+            i = (JSON.Long) parse("" + v, sup, sup2);
             assertEquals(v, i.longValue());
         }
         Map<String, Double> floatTests = new AppendableMap<>()
@@ -226,29 +277,29 @@ public class TestParse {
                     //noinspection StringConcatenationInLoop
                     suffix += "0";
                 }
-                JSON.Double d = (JSON.Double) parse(entry.getKey() + suffix, NumberParser::new);
+                JSON.Double d = (JSON.Double) parse(entry.getKey() + suffix, sup, sup2);
                 assertEquals(entry.getValue(), d.doubleValue(), 0.000001);
-                d = (JSON.Double) parse("-" + entry.getKey() + suffix, NumberParser::new);
+                d = (JSON.Double) parse("-" + entry.getKey() + suffix, sup, sup2);
                 assertEquals(entry.getValue(), -d.doubleValue(), 0.000001);
 
                 for (int x = 0; x < 11; ++x) {
                     if (x > 3 && x < 10) {
                         continue; // skip unnecessary tests
                     }
-                    JSON.Exp e = (JSON.Exp) parse(entry.getKey() + suffix + "e" + x, NumberParser::new);
+                    JSON.Exp e = (JSON.Exp) parse(entry.getKey() + suffix + "e" + x, sup, sup2);
                     assertEquals(entry.getValue() * Math.pow(10, x), e.doubleValue(), 0.000001);
-                    e = (JSON.Exp) parse("-" + entry.getKey() + suffix + "e" + x, NumberParser::new);
+                    e = (JSON.Exp) parse("-" + entry.getKey() + suffix + "e" + x, sup, sup2);
                     assertEquals(entry.getValue() * Math.pow(10, x), -e.doubleValue(), 0.000001);
 
                     // exponent symbol +
-                    e = (JSON.Exp) parse(entry.getKey() + suffix + "e+" + x, NumberParser::new);
+                    e = (JSON.Exp) parse(entry.getKey() + suffix + "e+" + x, sup, sup2);
                     assertEquals(entry.getValue() * Math.pow(10, x), e.doubleValue(), 0.000001);
-                    e = (JSON.Exp) parse("-" + entry.getKey() + suffix + "e+" + x, NumberParser::new);
+                    e = (JSON.Exp) parse("-" + entry.getKey() + suffix + "e+" + x, sup, sup2);
                     assertEquals(entry.getValue() * Math.pow(10, x), -e.doubleValue(), 0.000001);
                     // exponent symbol -
-                    e = (JSON.Exp) parse(entry.getKey() + suffix + "e-" + x, NumberParser::new);
+                    e = (JSON.Exp) parse(entry.getKey() + suffix + "e-" + x, sup, sup2);
                     assertEquals(entry.getValue() * Math.pow(10, -x), e.doubleValue(), 0.000001);
-                    e = (JSON.Exp) parse("-" + entry.getKey() + suffix + "e-" + x, NumberParser::new);
+                    e = (JSON.Exp) parse("-" + entry.getKey() + suffix + "e-" + x, sup, sup2);
                     assertEquals(entry.getValue() * Math.pow(10, -x), -e.doubleValue(), 0.000001);
                 }
             }
@@ -257,50 +308,56 @@ public class TestParse {
 
     @Test
     public void array() throws Exception {
-        JSON.Array a = parse(ArrayParser::new, "[]", "[   ]");
+        Supplier<Parser<JSON.Array>> sup = ArrayParser::new;
+        Supplier<Parser<JSON.Array>> sup2 = () -> new ArrayParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT));
+
+        JSON.Array a = parse(sup, sup2, "[]", "[   ]");
         assertEquals(0, a.length());
 
-        a = parse(ArrayParser::new, "[1]", "[  1   ]");
+        a = parse(sup, sup2, "[1]", "[  1   ]");
         assertEquals(1, a.length());
         assertEquals(new SimpleInteger(1), a.get(0));
 
-        a = parse(ArrayParser::new, "[1,2]", "[   1   ,   2   ]");
+        a = parse(sup, sup2, "[1,2]", "[   1   ,   2   ]");
         assertEquals(2, a.length());
         assertEquals(new SimpleInteger(1), a.get(0));
         assertEquals(new SimpleInteger(2), a.get(1));
 
-        a = parse(ArrayParser::new, "[1,null,\"hello\"]", "[   1   ,   null   ,    \"hello\"   ]");
+        a = parse(sup, sup2, "[1,null,\"hello\"]", "[   1   ,   null   ,    \"hello\"   ]");
         assertEquals(3, a.length());
         assertEquals(new SimpleInteger(1), a.get(0));
         assertEquals(new SimpleNull(), a.get(1));
         assertEquals(new SimpleString("hello"), a.get(2));
 
-        a = parse(ArrayParser::new, "[[1]]", "[    [    1   ]    ]");
+        a = parse(sup, sup2, "[[1]]", "[    [    1   ]    ]");
         assertEquals(1, a.length());
         assertEquals(new SimpleArray(new SimpleInteger(1)), a.get(0));
     }
 
     @Test
     public void object() throws Exception {
-        JSON.Object o = parse(ObjectParser::new, "{}", "{   }");
+        Supplier<Parser<JSON.Object>> sup = ObjectParser::new;
+        Supplier<Parser<JSON.Object>> sup2 = () -> new ObjectParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT));
+
+        JSON.Object o = parse(sup, sup2, "{}", "{   }");
         assertEquals(0, o.size());
 
-        o = parse(ObjectParser::new, "{\"a\":1}", "{    \"a\"    :    1    }");
+        o = parse(sup, sup2, "{\"a\":1}", "{    \"a\"    :    1    }");
         assertEquals(1, o.size());
         assertEquals(new SimpleInteger(1), o.get("a"));
 
-        o = parse(ObjectParser::new, "{\"a\":1,\"b\":2}", "{    \"a\"    :    1   ,    \"b\"    :     2    }");
+        o = parse(sup, sup2, "{\"a\":1,\"b\":2}", "{    \"a\"    :    1   ,    \"b\"    :     2    }");
         assertEquals(2, o.size());
         assertEquals(new SimpleInteger(1), o.get("a"));
         assertEquals(new SimpleInteger(2), o.get("b"));
 
-        o = parse(ObjectParser::new, "{\"a\":1,\"b\":null,\"c\":\"hello\"}", "{   \"a\"   :    1    ,   \"b\"   :   null   ,   \"c\"   :    \"hello\"     }");
+        o = parse(sup, sup2, "{\"a\":1,\"b\":null,\"c\":\"hello\"}", "{   \"a\"   :    1    ,   \"b\"   :   null   ,   \"c\"   :    \"hello\"     }");
         assertEquals(3, o.size());
         assertEquals(new SimpleInteger(1), o.get("a"));
         assertEquals(new SimpleNull(), o.get("b"));
         assertEquals(new SimpleString("hello"), o.get("c"));
 
-        o = parse(ObjectParser::new, "{\"a\":{\"b\":1}}", "{   \"a\"   :    {   \"b\"   :   1   }   }");
+        o = parse(sup, sup2, "{\"a\":{\"b\":1}}", "{   \"a\"   :    {   \"b\"   :   1   }   }");
         assertEquals(1, o.size());
         {
             JSON.Object o2 = (JSON.Object) o.get("a");

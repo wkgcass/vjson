@@ -1,16 +1,15 @@
 package vjson.bench;
 
+import com.alibaba.fastjson.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import vjson.CharStream;
-import vjson.parser.ArrayParser;
+import vjson.JSON;
 
-import java.io.BufferedReader;
-import java.io.CharArrayReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
@@ -20,7 +19,7 @@ import java.util.zip.ZipInputStream;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @State(Scope.Benchmark)
-@Fork(value = 1, jvmArgs = {"-XX:+UseG1GC", "-Xms2G", "-Xmx2G", "-XX:NewSize=2G", "-XX:MaxNewSize=2G"})
+@Fork(value = 1, jvmArgs = {"-XX:+UseG1GC", "-Xms2G", "-Xmx2G", "-XX:NewSize=1500M", "-XX:MaxNewSize=1500M"})
 @Threads(1)
 @Warmup(iterations = 3, time = 5, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 10, time = 2, timeUnit = TimeUnit.SECONDS)
@@ -35,21 +34,23 @@ public class JMHBenchmark {
 
     private ObjectMapper mapper;
     private Gson gson;
+    private static Type listType = new TypeReference<List>() {
+    }.getType();
 
     private Object vjson(char[] chars) {
-        return new ArrayParser().last(CharStream.from(chars));
+        return JSON.parseToJavaObject(CharStream.from(chars));
     }
 
     private Object jackson(byte[] bytes) throws Exception {
-        return mapper.readValue(bytes, List.class);
+        return mapper.readValue(new ByteArrayInputStream(bytes), List.class);
     }
 
     private Object gson(char[] chars) {
         return gson.fromJson(new CharArrayReader(chars), List.class);
     }
 
-    private Object fastjson(byte[] bytes) {
-        return com.alibaba.fastjson.JSON.parse(bytes);
+    private Object fastjson(byte[] bytes) throws Exception {
+        return com.alibaba.fastjson.JSON.parseObject(new ByteArrayInputStream(bytes), listType);
     }
 
     @Setup
@@ -101,7 +102,7 @@ public class JMHBenchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void test1_fastjson(Blackhole h) {
+    public void test1_fastjson(Blackhole h) throws Exception {
         h.consume(fastjson(BYTES[0]));
     }
 
@@ -123,7 +124,7 @@ public class JMHBenchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void test2_fastjson(Blackhole h) {
+    public void test2_fastjson(Blackhole h) throws Exception {
         h.consume(fastjson(BYTES[1]));
     }
 
@@ -145,7 +146,7 @@ public class JMHBenchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void test3_fastjson(Blackhole h) {
+    public void test3_fastjson(Blackhole h) throws Exception {
         h.consume(fastjson(BYTES[2]));
     }
 
@@ -167,7 +168,7 @@ public class JMHBenchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void test4_fastjson(Blackhole h) {
+    public void test4_fastjson(Blackhole h) throws Exception {
         h.consume(fastjson(BYTES[3]));
     }
 
@@ -189,7 +190,7 @@ public class JMHBenchmark {
     }
 
     @org.openjdk.jmh.annotations.Benchmark
-    public void test5_fastjson(Blackhole h) {
+    public void test5_fastjson(Blackhole h) throws Exception {
         h.consume(fastjson(BYTES[4]));
     }
 }

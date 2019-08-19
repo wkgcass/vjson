@@ -1,7 +1,7 @@
 package vjson.bench;
 
 import vjson.CharStream;
-import vjson.parser.ArrayParser;
+import vjson.JSON;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -19,7 +19,7 @@ public class ProfileProgram {
     private static final int TEST_ROUND = 20;
 
     private static void vjson(char[] chars) {
-        new ArrayParser().last(CharStream.from(chars));
+        JSON.parseToJavaObject(CharStream.from(chars));
     }
 
     public static void main(String[] args) throws Exception {
@@ -71,11 +71,11 @@ public class ProfileProgram {
         // start
         long start;
         long end;
-        long[][] full = new long[tests.length][1];
         for (int idx = 0; idx < tests.length; ++idx) {
             final int round = REAL_ROUNDS[idx];
             final int per = round / 10;
             for (int l = 0; l < TEST_LOOP; ++l) {
+                long[][] full = new long[tests.length][1];
                 for (int i = 0; i < round; i += per) {
                     start = System.currentTimeMillis();
                     for (int j = 0; j < per; ++j) {
