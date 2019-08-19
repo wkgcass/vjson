@@ -33,6 +33,7 @@ public class StringParser implements Parser<JSON.String> {
     // 7->finish
     // 8->already_returned
     private final TextBuilder builder;
+    private char beginning;
     private int u1 = -1;
     private int u2 = -1;
     private int u3 = -1;
@@ -50,10 +51,11 @@ public class StringParser implements Parser<JSON.String> {
         this.builder = new TextBuilder(opts.getBufLen());
     }
 
-    void reset() {
+    @Override
+    public void reset() {
         state = 0;
         builder.clear();
-        // u1/2/3 can keep their value
+        // start/u1/2/3 can keep their values
     }
 
     public TextBuilder getBuilder() {
@@ -85,7 +87,11 @@ public class StringParser implements Parser<JSON.String> {
             if (cs.hasNext()) {
                 opts.getListener().onStringBegin(this);
                 c = cs.moveNextAndGet();
-                if (c != '\"') {
+                if (c == '\"') {
+                    beginning = '\"';
+                } else if (c == '\'' && opts.isStringSingleQuotes()) {
+                    beginning = '\'';
+                } else {
                     err = "invalid character for string: not starts with \": " + c;
                     throw ParserUtils.err(opts, err);
                 }
@@ -98,7 +104,7 @@ public class StringParser implements Parser<JSON.String> {
                 if (c == '\\') {
                     // escape
                     state = 2;
-                } else if (c == '\"') {
+                } else if (c == beginning) {
                     // end
                     state = 7;
                     break;
@@ -117,6 +123,16 @@ public class StringParser implements Parser<JSON.String> {
                     switch (c) {
                         case '\"':
                             append('\"');
+                            state = 1;
+                            break;
+                        case '\'':
+                            // not in json standard
+                            // so check if user enables stringSingleQuotes
+                            if (!opts.isStringSingleQuotes()) {
+                                err = "invalid escape character: " + c;
+                                throw ParserUtils.err(opts, err);
+                            }
+                            append('\'');
                             state = 1;
                             break;
                         case '\\':
@@ -240,5 +256,27 @@ public class StringParser implements Parser<JSON.String> {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String buildJavaObject(CharStream cs, boolean isComplete) throws NullPointerException, JsonParseException, ParserFinishedException {
+        if (cs == null) {
+            throw new NullPointerException();
+        }
+        if (tryParse(cs, isComplete)) {
+            opts.getListener().onStringEnd(this);
+            String s = builder.toString();
+            opts.getListener().onString(s);
+
+            ParserUtils.checkEnd(cs, opts, "string");
+            return s;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean completed() {
+        return state == 8;
     }
 }

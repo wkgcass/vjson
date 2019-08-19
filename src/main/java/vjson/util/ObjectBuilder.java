@@ -68,6 +68,7 @@ public class ObjectBuilder {
     }
 
     public JSON.Object build() {
-        return new SimpleObject(map);
+        return new SimpleObject(map, TrustedFlag.FLAG) {
+        };
     }
 }

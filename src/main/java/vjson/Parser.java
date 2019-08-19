@@ -19,6 +19,12 @@ import vjson.ex.ParserFinishedException;
 public interface Parser<T extends JSON.Instance> {
     T build(CharStream cs, boolean isComplete) throws NullPointerException, JsonParseException, ParserFinishedException;
 
+    Object buildJavaObject(CharStream cs, boolean isComplete) throws NullPointerException, JsonParseException, ParserFinishedException;
+
+    boolean completed();
+
+    void reset();
+
     default T feed(CharStream cs) throws NullPointerException, JsonParseException, ParserFinishedException {
         return build(cs, false);
     }

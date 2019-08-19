@@ -14,7 +14,6 @@ package vjson.simple;
 
 import vjson.JSON;
 import vjson.Stringifier;
-import vjson.parser.TrustedFlag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +39,14 @@ public class SimpleArray extends AbstractSimpleInstance<List<Object>> implements
         this.list = new ArrayList<>(list);
     }
 
-    protected SimpleArray(List<JSON.Instance> list, TrustedFlag flag) {
+    protected SimpleArray(List<JSON.Instance> list, vjson.parser.TrustedFlag flag) {
+        if (flag == null) {
+            throw new UnsupportedOperationException();
+        }
+        this.list = list;
+    }
+
+    protected SimpleArray(List<JSON.Instance> list, vjson.util.TrustedFlag flag) {
         if (flag == null) {
             throw new UnsupportedOperationException();
         }

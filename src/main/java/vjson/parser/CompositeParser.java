@@ -27,6 +27,8 @@ public class CompositeParser {
     private ObjectParser objectParser;
     private StringParser stringParser;
 
+    private StringParser keyParser;
+
     protected CompositeParser(ParserOptions opts) {
         this.opts = opts;
     }
@@ -94,6 +96,10 @@ public class CompositeParser {
                 return getObjectParser();
             case '[':
                 return getArrayParser();
+            case '\'':
+                if (!opts.isStringSingleQuotes()) {
+                    throw new JsonParseException("not valid json string");
+                }
             case '"':
                 return getStringParser();
             case 'n':
@@ -111,5 +117,20 @@ public class CompositeParser {
                 // invalid json
                 throw new JsonParseException("not valid json string");
         }
+    }
+
+    public StringParser getKeyParser() {
+        if (keyParser == null) {
+            ParserOptions opts;
+            if (ParserOptions.isDefaultOptions(this.opts)) {
+                opts = ParserOptions.DEFAULT_JAVA_OBJECT_NO_END;
+            } else {
+                opts = new ParserOptions(this.opts).setEnd(false).setMode(ParserMode.JAVA_OBJECT);
+            }
+            keyParser = new StringParser(opts);
+        } else {
+            keyParser.reset();
+        }
+        return keyParser;
     }
 }

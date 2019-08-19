@@ -16,6 +16,9 @@ import vjson.JSON;
 import vjson.ParserListener;
 import vjson.parser.*;
 
+import java.util.List;
+import java.util.Map;
+
 public abstract class AbstractUnsupportedParserListener extends AbstractParserListener implements ParserListener {
     @Override
     public void onObjectBegin(ObjectParser object) {
@@ -33,12 +36,22 @@ public abstract class AbstractUnsupportedParserListener extends AbstractParserLi
     }
 
     @Override
+    public void onObjectValueJavaObject(ObjectParser object, String key, Object value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void onObjectEnd(ObjectParser object) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void onObject(JSON.Object object) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onObject(Map<String, Object> object) {
         throw new UnsupportedOperationException();
     }
 
@@ -53,12 +66,22 @@ public abstract class AbstractUnsupportedParserListener extends AbstractParserLi
     }
 
     @Override
+    public void onArrayValueJavaObject(ArrayParser array, Object value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void onArrayEnd(ArrayParser array) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void onArray(JSON.Array array) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onArray(List<Object> array) {
         throw new UnsupportedOperationException();
     }
 
@@ -78,6 +101,11 @@ public abstract class AbstractUnsupportedParserListener extends AbstractParserLi
     }
 
     @Override
+    public void onBool(Boolean bool) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void onNullBegin(NullParser n) {
         throw new UnsupportedOperationException();
     }
@@ -89,6 +117,11 @@ public abstract class AbstractUnsupportedParserListener extends AbstractParserLi
 
     @Override
     public void onNull(JSON.Null n) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onNull(Void n) {
         throw new UnsupportedOperationException();
     }
 
@@ -118,6 +151,11 @@ public abstract class AbstractUnsupportedParserListener extends AbstractParserLi
     }
 
     @Override
+    public void onNumber(Number number) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void onStringBegin(StringParser string) {
         throw new UnsupportedOperationException();
     }
@@ -134,6 +172,11 @@ public abstract class AbstractUnsupportedParserListener extends AbstractParserLi
 
     @Override
     public void onString(JSON.String string) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onString(String string) {
         throw new UnsupportedOperationException();
     }
 

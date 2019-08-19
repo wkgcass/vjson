@@ -12,16 +12,29 @@
 
 package vjson;
 
-import vjson.cs.CharArrayCharStream;
 import vjson.parser.ParserUtils;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class JSON {
     public static Instance parse(java.lang.String json) throws NullPointerException {
-        CharArrayCharStream cs = new CharArrayCharStream(json.toCharArray());
+        return parse(CharStream.from(json));
+    }
+
+    public static Instance parse(CharStream cs) throws NullPointerException {
         return ParserUtils.buildFrom(cs);
+    }
+
+    public static java.lang.Object parseToJavaObject(java.lang.String json) throws NullPointerException {
+        return parseToJavaObject(CharStream.from(json));
+    }
+
+    public static java.lang.Object parseToJavaObject(CharStream cs) throws NullPointerException {
+        return ParserUtils.buildJavaObject(cs);
     }
 
     private JSON() {
@@ -266,7 +279,7 @@ public class JSON {
                             sb.append("\\t");
                             break;
                         default:
-                            java.lang.String foo = java.lang.Integer.toHexString((int) c);
+                            java.lang.String foo = java.lang.Integer.toHexString(c);
                             if (foo.length() < 2) {
                                 sb.append("\\u000").append(foo);
                             } else {
@@ -275,7 +288,7 @@ public class JSON {
                             break;
                     }
                 } else {
-                    java.lang.String foo = java.lang.Integer.toHexString((int) c);
+                    java.lang.String foo = java.lang.Integer.toHexString(c);
                     if (foo.length() < 3) {
                         sb.append("\\u00").append(foo);
                     } else if (foo.length() < 4) {

@@ -34,7 +34,8 @@ public class NullParser implements Parser<JSON.Null> {
         this.opts = ParserOptions.ensureNotModifiedByOutside(opts);
     }
 
-    void reset() {
+    @Override
+    public void reset() {
         state = 0;
     }
 
@@ -115,5 +116,26 @@ public class NullParser implements Parser<JSON.Null> {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Object buildJavaObject(CharStream cs, boolean isComplete) throws NullPointerException, JsonParseException, ParserFinishedException {
+        if (cs == null) {
+            throw new NullPointerException();
+        }
+        if (tryParse(cs, isComplete)) {
+            opts.getListener().onNullEnd(this);
+            opts.getListener().onNull((Void) null);
+
+            ParserUtils.checkEnd(cs, opts, "`null`");
+            return null;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean completed() {
+        return state == 5;
     }
 }

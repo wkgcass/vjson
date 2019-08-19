@@ -63,7 +63,8 @@ public class NumberParser implements Parser<JSON.Number> {
         reset();
     }
 
-    void reset() {
+    @Override
+    public void reset() {
         state = 0;
         wantPeek = false;
         negative = false;
@@ -421,5 +422,55 @@ public class NumberParser implements Parser<JSON.Number> {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Number buildJavaObject(CharStream cs, boolean isComplete) throws NullPointerException, JsonParseException, ParserFinishedException {
+        if (cs == null) {
+            throw new NullPointerException();
+        }
+        if (tryParse(cs, isComplete)) {
+            opts.getListener().onNumberEnd(this);
+            Number ret;
+            if (hasFraction) {
+                double num = integer + fraction;
+                num = negative ? -num : num;
+                if (hasExponent) {
+                    ret = num * Math.pow(10, exponentNegative ? -exponent : exponent);
+                } else {
+                    ret = num;
+                }
+            } else {
+                long num = negative ? -integer : integer;
+                if (hasExponent) {
+                    ret = num * Math.pow(10, exponentNegative ? -exponent : exponent);
+                } else {
+                    if (negative) {
+                        if (num < Integer.MIN_VALUE) {
+                            ret = num;
+                        } else {
+                            ret = (int) num;
+                        }
+                    } else {
+                        if (num > Integer.MAX_VALUE) {
+                            ret = num;
+                        } else {
+                            ret = (int) num;
+                        }
+                    }
+                }
+            }
+            opts.getListener().onNumber(ret);
+
+            ParserUtils.checkEnd(cs, opts, "number");
+            return ret;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean completed() {
+        return state == 9;
     }
 }

@@ -13,59 +13,38 @@
 package vjson.util;
 
 public class TextBuilder {
-    private final int BUF_LEN;
-    private final char[] buf; // use buf if not oob
+    private char[] buf; // use buf if not oob
     private int len = 0;
-    private StringBuilder sb; // use stringBuilder if buf not enough
 
     public TextBuilder(int bufLen) {
-        BUF_LEN = bufLen;
-        buf = new char[BUF_LEN];
+        buf = new char[bufLen];
+    }
+
+    public int getBufLen() {
+        return len;
+    }
+
+    public int getBufCap() {
+        return buf.length;
     }
 
     public void clear() {
-        len = 0;
-        if (sb != null) {
-            sb.setLength(0);
-        }
-    }
-
-    private void writeToBuilder() {
-        if (sb == null) {
-            sb = new StringBuilder(2 * BUF_LEN);
-        }
-        sb.append(buf, 0, len);
         len = 0;
     }
 
     public TextBuilder append(char c) {
         // choose to write to buffer or string builder
-        boolean writeToBuffer =
-            (sb == null) || (sb.capacity() - sb.length() < BUF_LEN);
-        // not need to care about when sb.capacity() < BUF_LEN
-        // the sb is initialized to 2*BUF_LEN
-
-        if (writeToBuffer) {
-            buf[len++] = c;
-            if (len == BUF_LEN) {
-                writeToBuilder();
-            }
-        } else {
-            sb.append(c);
+        buf[len++] = c;
+        if (len == buf.length) {
+            char[] newbuf = new char[len * 4];
+            System.arraycopy(buf, 0, newbuf, 0, len);
+            buf = newbuf;
         }
         return this;
     }
 
     public TextBuilder removeLast() {
-        if (len == 0) {
-            if (sb == null) {
-                return this;
-            }
-            if (sb.length() == 0) {
-                return this;
-            }
-            sb.delete(sb.length() - 1, sb.length());
-        } else {
+        if (len != 0) {
             --len;
         }
         return this;
@@ -73,17 +52,10 @@ public class TextBuilder {
 
     @Override
     public String toString() {
-        if (sb == null || sb.length() == 0) {
-            if (len == 0) {
-                return "";
-            } else {
-                return new String(buf, 0, len);
-            }
-        } else if (len == 0) {
-            return sb.toString();
+        if (len == 0) {
+            return "";
         } else {
-            writeToBuilder();
-            return sb.toString();
+            return new String(buf, 0, len);
         }
     }
 }

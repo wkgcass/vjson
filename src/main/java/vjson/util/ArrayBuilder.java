@@ -68,6 +68,7 @@ public class ArrayBuilder {
     }
 
     public JSON.Array build() {
-        return new SimpleArray(list);
+        return new SimpleArray(list, TrustedFlag.FLAG) {
+        };
     }
 }

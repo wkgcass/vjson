@@ -16,6 +16,9 @@ import vjson.JSON;
 import vjson.ParserListener;
 import vjson.parser.*;
 
+import java.util.List;
+import java.util.Map;
+
 public abstract class AbstractParserListener implements ParserListener {
     @Override
     public void onObjectBegin(ObjectParser object) {
@@ -33,12 +36,22 @@ public abstract class AbstractParserListener implements ParserListener {
     }
 
     @Override
+    public void onObjectValueJavaObject(ObjectParser object, String key, Object value) {
+
+    }
+
+    @Override
     public void onObjectEnd(ObjectParser object) {
 
     }
 
     @Override
     public void onObject(JSON.Object object) {
+
+    }
+
+    @Override
+    public void onObject(Map<String, Object> object) {
 
     }
 
@@ -53,12 +66,22 @@ public abstract class AbstractParserListener implements ParserListener {
     }
 
     @Override
+    public void onArrayValueJavaObject(ArrayParser array, Object value) {
+
+    }
+
+    @Override
     public void onArrayEnd(ArrayParser array) {
 
     }
 
     @Override
     public void onArray(JSON.Array array) {
+
+    }
+
+    @Override
+    public void onArray(List<Object> array) {
 
     }
 
@@ -78,6 +101,11 @@ public abstract class AbstractParserListener implements ParserListener {
     }
 
     @Override
+    public void onBool(Boolean bool) {
+
+    }
+
+    @Override
     public void onNullBegin(NullParser n) {
 
     }
@@ -89,6 +117,11 @@ public abstract class AbstractParserListener implements ParserListener {
 
     @Override
     public void onNull(JSON.Null n) {
+
+    }
+
+    @Override
+    public void onNull(Void n) {
 
     }
 
@@ -118,6 +151,11 @@ public abstract class AbstractParserListener implements ParserListener {
     }
 
     @Override
+    public void onNumber(Number number) {
+
+    }
+
+    @Override
     public void onStringBegin(StringParser string) {
 
     }
@@ -134,6 +172,11 @@ public abstract class AbstractParserListener implements ParserListener {
 
     @Override
     public void onString(JSON.String string) {
+
+    }
+
+    @Override
+    public void onString(String string) {
 
     }
 

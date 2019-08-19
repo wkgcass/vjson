@@ -17,6 +17,9 @@ import vjson.JSON;
 import vjson.Parser;
 import vjson.ex.JsonParseException;
 
+import java.util.List;
+import java.util.Map;
+
 public class ParserUtils {
     private ParserUtils() {
     }
@@ -48,11 +51,78 @@ public class ParserUtils {
         if (opts == ParserOptions.DEFAULT || opts == ParserOptions.DEFAULT_NO_END) {
             return ParserOptions.DEFAULT_NO_END;
         }
+        if (opts == ParserOptions.DEFAULT_JAVA_OBJECT || opts == ParserOptions.DEFAULT_JAVA_OBJECT_NO_END) {
+            return ParserOptions.DEFAULT_JAVA_OBJECT_NO_END;
+        }
+        if (!opts.isEnd()) {
+            return opts;
+        }
         return new ParserOptions(opts).setEnd(false);
     }
 
+    private static final ThreadLocal<ArrayParser> threadLocalArrayParser = new ThreadLocal<>();
+    private static final ThreadLocal<ObjectParser> threadLocalObjectParser = new ThreadLocal<>();
+    private static final ThreadLocal<StringParser> threadLocalStringParser = new ThreadLocal<>();
+
+    private static final ThreadLocal<ArrayParser> threadLocalArrayParserJavaObject = new ThreadLocal<>();
+    private static final ThreadLocal<ObjectParser> threadLocalObjectParserJavaObject = new ThreadLocal<>();
+    private static final ThreadLocal<StringParser> threadLocalStringParserJavaObject = new ThreadLocal<>();
+
     public static JSON.Instance buildFrom(CharStream cs) throws NullPointerException, JsonParseException {
-        return build(cs, new ParserOptions());
+        ParserOptions opts = ParserOptions.DEFAULT;
+        cs.skipBlank();
+        if (!cs.hasNext()) {
+            throw new JsonParseException("empty input string");
+        }
+        char first = cs.peekNext();
+        switch (first) {
+            case '{': {
+                ObjectParser p = threadLocalObjectParser.get();
+                if (p == null) {
+                    p = new ObjectParser(opts);
+                    threadLocalObjectParser.set(p);
+                }
+                JSON.Object ret;
+                try {
+                    ret = p.last(cs);
+                } finally {
+                    p.reset();
+                }
+                return ret;
+            }
+            case '[': {
+                ArrayParser p = threadLocalArrayParser.get();
+                if (p == null) {
+                    p = new ArrayParser(opts);
+                    threadLocalArrayParser.set(p);
+                }
+                JSON.Array ret;
+                try {
+                    ret = p.last(cs);
+                } finally {
+                    p.reset();
+                }
+                return ret;
+            }
+            case '\'':
+                throw new JsonParseException("not valid json string: stringSingleQuotes not enabled");
+            case '"': {
+                StringParser p = threadLocalStringParser.get();
+                if (p == null) {
+                    p = new StringParser(opts);
+                    threadLocalStringParser.set(p);
+                }
+                JSON.String ret;
+                try {
+                    ret = p.last(cs);
+                } finally {
+                    p.reset();
+                }
+                return ret;
+            }
+            default:
+                return build(cs, opts);
+        }
     }
 
     public static JSON.Instance buildFrom(CharStream cs, ParserOptions opts) throws NullPointerException, JsonParseException {
@@ -63,6 +133,73 @@ public class ParserUtils {
             throw new NullPointerException();
         }
         return build(cs, opts);
+    }
+
+    public static Object buildJavaObject(CharStream cs) throws NullPointerException, JsonParseException {
+        ParserOptions opts = ParserOptions.DEFAULT_JAVA_OBJECT;
+        cs.skipBlank();
+        if (!cs.hasNext()) {
+            throw new JsonParseException("empty input string");
+        }
+        char first = cs.peekNext();
+        switch (first) {
+            case '{': {
+                ObjectParser p = threadLocalObjectParserJavaObject.get();
+                if (p == null) {
+                    p = new ObjectParser(opts);
+                    threadLocalObjectParserJavaObject.set(p);
+                }
+                Map ret;
+                try {
+                    ret = p.buildJavaObject(cs, true);
+                } finally {
+                    p.reset();
+                }
+                return ret;
+            }
+            case '[': {
+                ArrayParser p = threadLocalArrayParserJavaObject.get();
+                if (p == null) {
+                    p = new ArrayParser(opts);
+                    threadLocalArrayParserJavaObject.set(p);
+                }
+                List ret;
+                try {
+                    ret = p.buildJavaObject(cs, true);
+                } finally {
+                    p.reset();
+                }
+                return ret;
+            }
+            case '\'':
+                throw new JsonParseException("not valid json string: stringSingleQuotes not enabled");
+            case '"': {
+                StringParser p = threadLocalStringParserJavaObject.get();
+                if (p == null) {
+                    p = new StringParser(opts);
+                    threadLocalStringParserJavaObject.set(p);
+                }
+                String ret;
+                try {
+                    ret = p.buildJavaObject(cs, true);
+                } finally {
+                    p.reset();
+                }
+                return ret;
+            }
+            default:
+                return buildJ(cs, opts);
+        }
+    }
+
+    public static Object buildJavaObject(CharStream cs, ParserOptions opts) throws NullPointerException, JsonParseException {
+        if (cs == null) {
+            throw new NullPointerException();
+        }
+        if (opts == null) {
+            throw new NullPointerException();
+        }
+        return buildJ(cs, opts);
     }
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
@@ -77,6 +214,10 @@ public class ParserUtils {
                 return new ObjectParser(opts);
             case '[':
                 return new ArrayParser(opts);
+            case '\'':
+                if (!opts.isStringSingleQuotes()) {
+                    throw new JsonParseException("not valid json string: stringSingleQuotes not enabled");
+                }
             case '"':
                 return new StringParser(opts);
             case 'n':
@@ -98,5 +239,10 @@ public class ParserUtils {
 
     private static JSON.Instance build(CharStream cs, ParserOptions opts) throws IllegalArgumentException, JsonParseException {
         return parser(cs, opts).build(cs, true);
+    }
+
+    private static Object buildJ(CharStream cs, ParserOptions opts) throws IllegalArgumentException, JsonParseException {
+        opts.setMode(ParserMode.JAVA_OBJECT);
+        return parser(cs, opts).buildJavaObject(cs, true);
     }
 }

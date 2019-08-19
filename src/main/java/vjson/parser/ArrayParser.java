@@ -26,6 +26,7 @@ public class ArrayParser extends CompositeParser implements Parser<JSON.Array> {
     private final ParserOptions opts;
     private int state; // 0->`[`,1->first-value_or_`]`,2->`,`_or_`]`,3->value,4->finish,5->already_returned
     private LinkedList<JSON.Instance> list;
+    private LinkedList<Object> javaList;
     private Parser subParser;
 
     public ArrayParser() {
@@ -41,14 +42,23 @@ public class ArrayParser extends CompositeParser implements Parser<JSON.Array> {
         reset();
     }
 
-    void reset() {
+    @Override
+    public void reset() {
         state = 0;
-        list = new LinkedList<>();
+        if (opts.getMode() == ParserMode.JAVA_OBJECT) {
+            javaList = new LinkedList<>();
+        } else {
+            list = new LinkedList<>();
+        }
         subParser = null;
     }
 
     public LinkedList<JSON.Instance> getList() {
         return list;
+    }
+
+    public LinkedList<Object> getJavaList() {
+        return javaList;
     }
 
     private void handleSubParser(boolean tryGetNewSubParser, CharStream cs, boolean isComplete) {
@@ -60,14 +70,25 @@ public class ArrayParser extends CompositeParser implements Parser<JSON.Array> {
                     return;
                 }
             }
-            JSON.Instance inst = subParser.build(cs, isComplete);
-            if (inst != null) {
-                state = 2;
-                list.add(inst);
-                subParser = null; // clear the parser
-                opts.getListener().onArrayValue(this, inst);
+            if (opts.getMode() == ParserMode.JAVA_OBJECT) {
+                Object o = subParser.buildJavaObject(cs, isComplete);
+                if (subParser.completed()) {
+                    state = 2;
+                    javaList.add(o);
+                    subParser = null; // clear the parser
+                    opts.getListener().onArrayValueJavaObject(this, o);
+                }
+                // otherwise exception would be thrown or cs.hasNext() would return false
+            } else {
+                JSON.Instance inst = subParser.build(cs, isComplete);
+                if (inst != null) {
+                    state = 2;
+                    list.add(inst);
+                    subParser = null; // clear the parser
+                    opts.getListener().onArrayValue(this, inst);
+                }
+                // otherwise exception would be thrown or cs.hasNext() would return false
             }
-            // otherwise exception would be thrown or cs.hasNext() would return false
         } catch (JsonParseException e) {
             throw new JsonParseException("invalid json array: failed when parsing element: (" + e.getMessage() + ")");
         }
@@ -154,7 +175,8 @@ public class ArrayParser extends CompositeParser implements Parser<JSON.Array> {
         }
         if (tryParse(cs, isComplete)) {
             opts.getListener().onArrayEnd(this);
-            SimpleArray ret = new TrustedSimpleArray(list, TrustedFlag.FLAG);
+            SimpleArray ret = new SimpleArray(list, TrustedFlag.FLAG) {
+            };
             opts.getListener().onArray(ret);
 
             ParserUtils.checkEnd(cs, opts, "array");
@@ -164,9 +186,24 @@ public class ArrayParser extends CompositeParser implements Parser<JSON.Array> {
         }
     }
 
-    private static class TrustedSimpleArray extends SimpleArray {
-        TrustedSimpleArray(List<JSON.Instance> list, TrustedFlag flag) {
-            super(list, flag);
+    @Override
+    public List<Object> buildJavaObject(CharStream cs, boolean isComplete) throws NullPointerException, JsonParseException, ParserFinishedException {
+        if (cs == null) {
+            throw new NullPointerException();
         }
+        if (tryParse(cs, isComplete)) {
+            opts.getListener().onArrayEnd(this);
+            opts.getListener().onArray(javaList);
+
+            ParserUtils.checkEnd(cs, opts, "array");
+            return javaList;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean completed() {
+        return state == 5;
     }
 }

@@ -18,26 +18,49 @@ import vjson.listener.EmptyParserListener;
 public class ParserOptions {
     static final ParserOptions DEFAULT = new ParserOptions();
     static final ParserOptions DEFAULT_NO_END = new ParserOptions().setEnd(false);
+    static final ParserOptions DEFAULT_JAVA_OBJECT = new ParserOptions().setMode(ParserMode.JAVA_OBJECT);
+    static final ParserOptions DEFAULT_JAVA_OBJECT_NO_END = new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setEnd(false);
+
+    static boolean isDefaultOptions(ParserOptions opts) {
+        return opts == DEFAULT || opts == DEFAULT_NO_END || opts == DEFAULT_JAVA_OBJECT || opts == DEFAULT_JAVA_OBJECT_NO_END;
+    }
 
     static ParserOptions ensureNotModifiedByOutside(ParserOptions opts) {
-        if (opts == DEFAULT || opts == DEFAULT_NO_END) return opts;
+        if (isDefaultOptions(opts))
+            return opts;
         return new ParserOptions(opts);
     }
 
     private int bufLen;
     private boolean end;
+    private ParserMode mode;
     private ParserListener listener;
 
+    // features
+    private boolean stringSingleQuotes;
+    private boolean keyNoQuotes;
+    private boolean strict;
+
     public ParserOptions() {
-        this.bufLen = 1024;
+        this.bufLen = 256;
         this.end = true;
+        this.mode = ParserMode.DEFAULT;
         this.listener = EmptyParserListener.INSTANCE;
+
+        // features
+        stringSingleQuotes = false;
+        keyNoQuotes = false;
     }
 
     public ParserOptions(ParserOptions opts) {
         this.bufLen = opts.bufLen;
         this.end = opts.end;
+        this.mode = opts.mode;
         this.listener = opts.listener;
+
+        // features
+        this.stringSingleQuotes = opts.stringSingleQuotes;
+        this.keyNoQuotes = opts.keyNoQuotes;
     }
 
     public int getBufLen() {
@@ -58,6 +81,15 @@ public class ParserOptions {
         return this;
     }
 
+    public ParserMode getMode() {
+        return mode;
+    }
+
+    public ParserOptions setMode(ParserMode mode) {
+        this.mode = mode;
+        return this;
+    }
+
     public ParserListener getListener() {
         return listener;
     }
@@ -67,6 +99,28 @@ public class ParserOptions {
             listener = EmptyParserListener.INSTANCE;
         }
         this.listener = listener;
+        return this;
+    }
+
+    // ============
+    // features
+    // ============
+
+    public boolean isStringSingleQuotes() {
+        return stringSingleQuotes;
+    }
+
+    public ParserOptions setStringSingleQuotes(boolean stringSingleQuotes) {
+        this.stringSingleQuotes = stringSingleQuotes;
+        return this;
+    }
+
+    public boolean isKeyNoQuotes() {
+        return keyNoQuotes;
+    }
+
+    public ParserOptions setKeyNoQuotes(boolean keyNoQuotes) {
+        this.keyNoQuotes = keyNoQuotes;
         return this;
     }
 }

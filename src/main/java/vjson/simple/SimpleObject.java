@@ -14,7 +14,6 @@ package vjson.simple;
 
 import vjson.JSON;
 import vjson.Stringifier;
-import vjson.parser.TrustedFlag;
 
 import java.util.*;
 
@@ -61,7 +60,14 @@ public class SimpleObject extends AbstractSimpleInstance<LinkedHashMap<String, O
         this.map = new ArrayList<>(initMap);
     }
 
-    protected SimpleObject(List<SimpleObjectEntry<JSON.Instance>> initMap, TrustedFlag flag) {
+    protected SimpleObject(List<SimpleObjectEntry<JSON.Instance>> initMap, vjson.parser.TrustedFlag flag) {
+        if (flag == null) {
+            throw new UnsupportedOperationException();
+        }
+        this.map = initMap;
+    }
+
+    protected SimpleObject(List<SimpleObjectEntry<JSON.Instance>> initMap, vjson.util.TrustedFlag flag) {
         if (flag == null) {
             throw new UnsupportedOperationException();
         }

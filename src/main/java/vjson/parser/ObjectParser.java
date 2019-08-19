@@ -19,15 +19,30 @@ import vjson.ex.JsonParseException;
 import vjson.ex.ParserFinishedException;
 import vjson.simple.SimpleObject;
 import vjson.simple.SimpleObjectEntry;
+import vjson.util.TextBuilder;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class ObjectParser extends CompositeParser implements Parser<JSON.Object> {
     private final ParserOptions opts;
-    private int state; // 0->`{`,1->first-key_or_`}`,2->`:`,3->value,4->`,`_or_`}`,5->key,6->finish,7->already_returned
+    private int state;
+    // 0->`{`
+    // 1->first-key_or_`}`
+    // 2->`:`
+    // 3->value
+    // 4->`,`_or_`}`
+    // 5->key
+    // 6->finish
+    // 7->already_returned
+    // 8->key unquoted
+    // 9->key unquoted end
     private LinkedList<SimpleObjectEntry<JSON.Instance>> map;
+    private LinkedHashMap<String, Object> javaMap;
     private StringParser keyParser;
+    private TextBuilder keyBuilder;
     private String currentKey;
     private Parser valueParser;
 
@@ -44,9 +59,22 @@ public class ObjectParser extends CompositeParser implements Parser<JSON.Object>
         reset();
     }
 
-    void reset() {
+    @Override
+    public void reset() {
         state = 0;
-        map = new LinkedList<>();
+        if (opts.getMode() == ParserMode.JAVA_OBJECT) {
+            if (javaMap == null) {
+                javaMap = new LinkedHashMap<>(16);
+            } else {
+                javaMap = new LinkedHashMap<>(Math.max(16, javaMap.size()));
+            }
+        } else {
+            map = new LinkedList<>();
+        }
+        if (keyBuilder == null) {
+            keyBuilder = new TextBuilder(32);
+        }
+        keyBuilder.clear();
         keyParser = null;
         currentKey = null;
         valueParser = null;
@@ -54,6 +82,10 @@ public class ObjectParser extends CompositeParser implements Parser<JSON.Object>
 
     public List<SimpleObjectEntry<JSON.Instance>> getMap() {
         return map;
+    }
+
+    public LinkedHashMap<String, Object> getJavaMap() {
+        return javaMap;
     }
 
     public String getCurrentKey() {
@@ -71,15 +103,15 @@ public class ObjectParser extends CompositeParser implements Parser<JSON.Object>
         try {
             if (keyParser == null) {
                 if (tryGetNewParser) {
-                    keyParser = getStringParser();
+                    keyParser = getKeyParser();
                 } else {
                     return;
                 }
             }
-            JSON.String ret = keyParser.build(cs, isComplete);
+            String ret = keyParser.buildJavaObject(cs, isComplete);
             if (ret != null) {
                 state = 2;
-                currentKey = ret.toJavaObject();
+                currentKey = ret;
                 keyParser = null;
                 opts.getListener().onObjectKey(this, currentKey);
             }
@@ -99,16 +131,29 @@ public class ObjectParser extends CompositeParser implements Parser<JSON.Object>
                     return;
                 }
             }
-            JSON.Instance inst = valueParser.build(cs, isComplete);
-            if (inst != null) {
-                state = 4;
-                String key = this.currentKey;
-                valueParser = null;
-                this.currentKey = null;
-                map.add(new SimpleObjectEntry<>(key, inst));
-                opts.getListener().onObjectValue(this, key, inst);
+            if (opts.getMode() == ParserMode.JAVA_OBJECT) {
+                Object o = valueParser.buildJavaObject(cs, isComplete);
+                if (valueParser.completed()) {
+                    state = 4;
+                    String key = this.currentKey;
+                    valueParser = null;
+                    this.currentKey = null;
+                    javaMap.put(key, o);
+                    opts.getListener().onObjectValueJavaObject(this, key, o);
+                }
+                // otherwise exception would be thrown or cs.hasNext() would return false
+            } else {
+                JSON.Instance inst = valueParser.build(cs, isComplete);
+                if (inst != null) {
+                    state = 4;
+                    String key = this.currentKey;
+                    valueParser = null;
+                    this.currentKey = null;
+                    map.add(new SimpleObjectEntry<>(key, inst));
+                    opts.getListener().onObjectValue(this, key, inst);
+                }
+                // otherwise exception would be thrown or cs.hasNext() would return false
             }
-            // otherwise exception would be thrown or cs.hasNext() would return false
         } catch (JsonParseException e) {
             throw new JsonParseException("invalid json object: failed when parsing value: (" + e.getMessage() + ")");
         }
@@ -141,8 +186,13 @@ public class ObjectParser extends CompositeParser implements Parser<JSON.Object>
                 if (peek == '}') {
                     cs.moveNextAndGet();
                     state = 6;
-                } else {
+                } else if (peek == '"' || peek == '\'') {
                     handleKeyParser(true, cs, isComplete);
+                } else if (opts.isKeyNoQuotes()) {
+                    state = 8;
+                } else {
+                    err = "invalid character for json object key: " + peek;
+                    throw ParserUtils.err(opts, err);
                 }
             }
         }
@@ -181,7 +231,53 @@ public class ObjectParser extends CompositeParser implements Parser<JSON.Object>
             if (state == 5) {
                 cs.skipBlank();
                 if (cs.hasNext()) {
-                    handleKeyParser(true, cs, isComplete);
+                    char peek = cs.peekNext();
+                    if (peek == '\"' || peek == '\'') {
+                        handleKeyParser(true, cs, isComplete);
+                    } else if (opts.isKeyNoQuotes()) {
+                        state = 8;
+                    } else {
+                        err = "invalid character for json object key: " + peek;
+                        throw ParserUtils.err(opts, err);
+                    }
+                }
+            }
+            if (state == 8) {
+                // if (cs.hasNext()) {
+                // no need to check cs.hasNext()
+                // the character will be checked before entering state8
+                // or would already be checked in the loop condition
+                char peek = cs.peekNext();
+                if (peek == ':' || ParserUtils.isWhiteSpace(peek)) {
+                    String key = keyBuilder.toString();
+                    if (key.isEmpty()) {
+                        err = "empty key is not allowed when parsing object key without quotes";
+                        throw ParserUtils.err(opts, err);
+                    }
+                    state = 9;
+                    currentKey = key;
+                    keyBuilder.clear();
+                    opts.getListener().onObjectKey(this, currentKey);
+                } else {
+                    c = cs.moveNextAndGet();
+                    if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '_' || c == '$') {
+                        keyBuilder.append(c);
+                    } else {
+                        err = "invalid character for json object key without quotes: " + c;
+                        throw ParserUtils.err(opts, err);
+                    }
+                }
+            }
+            if (state == 9) {
+                cs.skipBlank();
+                if (cs.hasNext()) {
+                    char peek = cs.peekNext();
+                    if (peek == ':') {
+                        state = 2;
+                    } else {
+                        err = "invalid character after json object key without quotes: " + peek;
+                        throw ParserUtils.err(opts, err);
+                    }
                 }
             }
             if (state == 6) {
@@ -215,7 +311,8 @@ public class ObjectParser extends CompositeParser implements Parser<JSON.Object>
         }
         if (tryParse(cs, isComplete)) {
             opts.getListener().onObjectEnd(this);
-            SimpleObject ret = new TrustedSimpleObject(map, TrustedFlag.FLAG);
+            SimpleObject ret = new SimpleObject(map, TrustedFlag.FLAG) {
+            };
             opts.getListener().onObject(ret);
 
             ParserUtils.checkEnd(cs, opts, "object");
@@ -225,9 +322,24 @@ public class ObjectParser extends CompositeParser implements Parser<JSON.Object>
         }
     }
 
-    private static class TrustedSimpleObject extends SimpleObject {
-        TrustedSimpleObject(List<SimpleObjectEntry<JSON.Instance>> map, TrustedFlag flag) {
-            super(map, flag);
+    @Override
+    public Map<String, Object> buildJavaObject(CharStream cs, boolean isComplete) throws NullPointerException, JsonParseException, ParserFinishedException {
+        if (cs == null) {
+            throw new NullPointerException();
         }
+        if (tryParse(cs, isComplete)) {
+            opts.getListener().onObjectEnd(this);
+            opts.getListener().onObject(javaMap);
+
+            ParserUtils.checkEnd(cs, opts, "object");
+            return javaMap;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean completed() {
+        return state == 7;
     }
 }

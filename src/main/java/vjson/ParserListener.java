@@ -14,6 +14,9 @@ package vjson;
 
 import vjson.parser.*;
 
+import java.util.List;
+import java.util.Map;
+
 public interface ParserListener {
     void onObjectBegin(ObjectParser object);
 
@@ -21,17 +24,25 @@ public interface ParserListener {
 
     void onObjectValue(ObjectParser object, String key, JSON.Instance value);
 
+    void onObjectValueJavaObject(ObjectParser object, String key, Object value);
+
     void onObjectEnd(ObjectParser object);
 
     void onObject(JSON.Object object);
+
+    void onObject(Map<String, Object> object);
 
     void onArrayBegin(ArrayParser array);
 
     void onArrayValue(ArrayParser array, JSON.Instance value);
 
+    void onArrayValueJavaObject(ArrayParser array, Object value);
+
     void onArrayEnd(ArrayParser array);
 
     void onArray(JSON.Array array);
+
+    void onArray(List<Object> array);
 
     void onBoolBegin(BoolParser bool);
 
@@ -39,11 +50,15 @@ public interface ParserListener {
 
     void onBool(JSON.Bool bool);
 
+    void onBool(Boolean bool);
+
     void onNullBegin(NullParser n);
 
     void onNullEnd(NullParser n);
 
     void onNull(JSON.Null n);
+
+    void onNull(Void n);
 
     void onNumberBegin(NumberParser number);
 
@@ -55,6 +70,8 @@ public interface ParserListener {
 
     void onNumber(JSON.Number number);
 
+    void onNumber(Number number);
+
     void onStringBegin(StringParser string);
 
     void onStringChar(StringParser string, char c);
@@ -62,6 +79,8 @@ public interface ParserListener {
     void onStringEnd(StringParser string);
 
     void onString(JSON.String string);
+
+    void onString(String string);
 
     void onError(String err);
 }

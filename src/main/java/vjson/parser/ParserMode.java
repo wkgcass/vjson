@@ -10,13 +10,9 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package vjson.stringifier;
+package vjson.parser;
 
-import vjson.Stringifier;
-
-public class EmptyStringifier extends AbstractStringifier implements Stringifier {
-    public static final EmptyStringifier INSTANCE = new EmptyStringifier();
-
-    private EmptyStringifier() {
-    }
+public enum ParserMode {
+    JAVA_OBJECT, // produce java object directly
+    DEFAULT, // produce JSON.Instance
 }

@@ -13,7 +13,7 @@
 package vjson.parser;
 
 public class TrustedFlag {
-    static TrustedFlag FLAG = new TrustedFlag();
+    static final TrustedFlag FLAG = new TrustedFlag();
 
     private TrustedFlag() {
     }

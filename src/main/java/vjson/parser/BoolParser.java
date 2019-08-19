@@ -35,7 +35,8 @@ public class BoolParser implements Parser<JSON.Bool> {
         this.opts = ParserOptions.ensureNotModifiedByOutside(opts);
     }
 
-    void reset() {
+    @Override
+    public void reset() {
         state = 0;
     }
 
@@ -161,5 +162,27 @@ public class BoolParser implements Parser<JSON.Bool> {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Boolean buildJavaObject(CharStream cs, boolean isComplete) throws NullPointerException, JsonParseException, ParserFinishedException {
+        if (cs == null) {
+            throw new NullPointerException();
+        }
+        if (tryParse(cs, isComplete)) {
+            opts.getListener().onBoolEnd(this);
+            Boolean ret = result;
+            opts.getListener().onBool(ret);
+
+            ParserUtils.checkEnd(cs, opts, "`true|false`");
+            return ret;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean completed() {
+        return state == 9;
     }
 }
