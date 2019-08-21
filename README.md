@@ -30,6 +30,11 @@ JSON.Instance result = JSON.parse("{\"hello\":\"world\"}");
 String json = result.stringify();
 String prettyJson = result.pretty();
 
+// retrieve
+javaObject = result.toJavaObject(); // List,Map,String or primitive boxing types
+javaObject = JSON.parseToJavaObject("{\"hello\":\"world\"}");
+String value = ((JSON.Object) result).getString("hello"); // world
+
 // parse
 ObjectParser parser = new ObjectParser();
 parser.feed("{\"hel");    // return null here
@@ -39,21 +44,24 @@ parser.feed("rld\"}");    // return JSON.Object here
     // if it's the last piece to feed the parser:
     parser.last("rld\"}");
 
-// retrieve
-String value = ((JSON.Object) result).getString("hello"); // world
-Map<String, Object> map = ((JSON.Object) result).toJavaObject();
-
-// serialize
-new SimpleInteger(1).stringify(); // 1
-new SimpleString("hello\nworld").stringify(); // "hello\nworld"
-
 // construct complex objects
 new ObjectBuilder().put("id", 1).put("name", "pizza").build(); // JSON.Object
 new ArrayBuilder().add(3.14).addObject(o -> ...).addArray(a -> ...).build(); // JSON.Array
 
+// serialize
+new SimpleInteger(1).stringify(); // 1
+new SimpleString("hello\nworld").stringify(); // "hello\nworld"
+Transformer tf = new Transformer();
+tf.transform(javaObject).stringify();
+
 // advanced
 new ObjectParser(new ParserOptions().setListener(...)); // hook points that the parsers will call
 result.stringify(stringBuilder, stringifier); // customize the output format
+tf.addRule(MyBean.class, bean -> ...); // customize transforming rules
+
+// additional features
+new ParserOptions().setStringSingleQuotes(true).setKeyNoQuotes(true);
+                        // allow to parse strings like: {key: 'value'}
 ```
 
 ## lib

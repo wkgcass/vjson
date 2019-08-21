@@ -8,7 +8,7 @@ vjson是一个轻量级的json解析和序列化库。
 
 vjson致力于用java对象还原最原始的json结构，并支持你仅调用几个java方法就能构造任何json字符串。
 
-注意：这只是一个json解析库，并_不是_一个json反序列化库！在做解析时，它仅会将输入的json流转换为vjson内置对象，在此之后，你可以通过调用`.toJavaObject()`方法来获取Map/List/String/基本类型的值。不过话说回来，你也可以通过ParserListener接口构造你自己的反序列化库。
+注意：这只是一个json解析库，并 _不是_ 一个json反序列化库！在做解析时，它仅会将输入的json流转换为vjson内置对象，在此之后，你可以通过调用`.toJavaObject()`方法来获取Map/List/String/基本类型的值。不过话说回来，你也可以通过ParserListener接口构造你自己的反序列化库。
 
 ## 性能
 
@@ -30,6 +30,11 @@ JSON.Instance result = JSON.parse("{\"hello\":\"world\"}");
 String json = result.stringify();
 String prettyJson = result.pretty();
 
+// 获取值
+javaObject = result.toJavaObject(); // List,Map,String 或者 基本类型的包装类型
+javaObject = JSON.parseToJavaObject("{\"hello\":\"world\"}");
+String value = ((JSON.Object) result).getString("hello"); // world
+
 // 解析
 ObjectParser parser = new ObjectParser();
 parser.feed("{\"hel");    // 这里返回null
@@ -39,21 +44,24 @@ parser.feed("rld\"}");    // 这里返回JSON.Object
     // 如果是最后一片要喂给解析器的数据:
     parser.last("rld\"}");
 
-// 获取值
-String value = ((JSON.Object) result).getString("hello"); // world
-Map<String, Object> map = ((JSON.Object) result).toJavaObject();
-
-// 序列化
-new SimpleInteger(1).stringify(); // 1
-new SimpleString("hello\nworld").stringify(); // "hello\nworld"
-
 // 构造复杂的对象
 new ObjectBuilder().put("id", 1).put("name", "pizza").build(); // JSON.Object
 new ArrayBuilder().add(3.14).addObject(o -> ...).addArray(a -> ...).build(); // JSON.Array
 
+// 序列化
+new SimpleInteger(1).stringify(); // 1
+new SimpleString("hello\nworld").stringify(); // "hello\nworld"
+Transformer tf = new Transformer();
+tf.transform(javaObject).stringify();
+
 // 高级用法
 new ObjectParser(new ParserOptions().setListener(...)); // 解析器会调用这些回调点
 result.stringify(stringBuilder, stringifier); // 自定义输出格式
+tf.addRule(MyBean.class, bean -> ...); // 自定义转换规则
+
+// 附加特性
+new ParserOptions().setStringSingleQuotes(true).setKeyNoQuotes(true);
+                        // 允许解析类似这样的字符串: {key: 'value'}
 ```
 
 ## lib
