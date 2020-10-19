@@ -1,12 +1,12 @@
 package vjson;
 
 import org.junit.Test;
+import vjson.cs.UTF8ByteArrayCharStream;
 import vjson.ex.JsonParseException;
 import vjson.ex.ParserFinishedException;
 import vjson.parser.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("RedundantThrows")
 public class TestParseFail {
@@ -146,5 +146,19 @@ public class TestParseFail {
         parseFail("not valid json string: stringSingleQuotes not enabled", () -> ParserUtils.buildFrom(CharStream.from("''"), new ParserOptions()));
         parseFail("not valid json string: stringSingleQuotes not enabled", () -> JSON.parse("''"));
         parseFail("not valid json string: stringSingleQuotes not enabled", () -> JSON.parseToJavaObject("''"));
+    }
+
+    @Test
+    public void invalidUtf16Character() throws Exception {
+        UTF8ByteArrayCharStream cs = new UTF8ByteArrayCharStream(
+            new byte[]{
+                (byte) 0b101_0_0000
+            }
+        );
+        try {
+            cs.hasNext(1);
+            fail();
+        } catch (IllegalArgumentException ignore) {
+        }
     }
 }

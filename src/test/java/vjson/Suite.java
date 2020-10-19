@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
     TestToString.class,
     TestTransformer.class,
     TestUpdateParser.class,
+    TestEncoding.class,
 })
 public class Suite {
 }
