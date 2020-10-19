@@ -79,6 +79,10 @@ public class TestParamValidationReport {
         } catch (IllegalArgumentException ignore) {
         }
         try {
+            new SimpleObject((Map<String, JSON.Integer>) null);
+        } catch (NullPointerException ignore) {
+        }
+        try {
             new SimpleObject((List<SimpleObjectEntry<JSON.Instance>>) null);
             fail();
         } catch (NullPointerException ignore) {
