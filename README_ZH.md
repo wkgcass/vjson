@@ -4,11 +4,9 @@
 
 ## 简介
 
-vjson是一个轻量级的json解析和序列化库。
+vjson是一个轻量级的json parser/deserializer/builder lib。
 
-vjson致力于用java对象还原最原始的json结构，并支持你仅调用几个java方法就能构造任何json字符串。
-
-注意：这只是一个json解析库，并 _不是_ 一个json反序列化库！在做解析时，它仅会将输入的json流转换为vjson内置对象，在此之后，你可以通过调用`.toJavaObject()`方法来获取Map/List/String/基本类型的值。不过话说回来，你也可以通过ParserListener接口构造你自己的反序列化库。
+vjson致力于用java对象还原最原始的json结构。你可以通过简单的java方法调用构建任意json字符串。你也可以不借助反射功能将json反序列化为java对象，在构建`native-image`时这个特性非常实用。
 
 ## 性能
 
@@ -16,7 +14,7 @@ vjson致力于用java对象还原最原始的json结构，并支持你仅调用�
 
 ## 可靠性
 
-现在`vjson`有100%的行覆盖率和分支覆盖率。
+`vjson`有100%的行覆盖率和分支覆盖率。
 
 执行`src/test/java/vjson/Suite.java`可以跑测试用例。
 
@@ -29,6 +27,19 @@ vjson致力于用java对象还原最原始的json结构，并支持你仅调用�
 JSON.Instance result = JSON.parse("{\"hello\":\"world\"}");
 String json = result.stringify();
 String prettyJson = result.pretty();
+
+// 反序列化
+Rule<Shop> shopRule = new ObjectRule<>(Shop::new)
+    .put("name", Shop::setName, new StringRule())
+    .put("goods", Shop::setGoods, new ArrayRule<>(
+        ArrayList::new,
+        ArrayList::add,
+        new ObjectRule<>(Good::new)
+            .put("id", Good::setId, new StringRule())
+            .put("name", Good::setName, new StringRule())
+            .put("price", Good::setPrice, new DoubleRule())
+    ));
+Shop shop = JSON.deserialize(jsonStr, shopRule);
 
 // 获取值
 javaObject = result.toJavaObject(); // List,Map,String 或者 基本类型的包装类型
@@ -99,6 +110,20 @@ ObjectParser     ArrayParser   StringParser     BoolParser      NumberParser    
                                          CharStream
                                              ^
                                              |
-                                             |
-                                    CharArrayCharStream
+                                +------------+--------------+
+                                |                           |
+                        CharArrayCharStream      UTF8ByteArrayCharStream
+
+
+                                     Rule ----------------------------> DeserializeParserListener
+                                       ^
+                                       |
+                                       |
+     +----------------+-------------+---------------+----------------+
+     |                |             |               |                |
+     |                |             |               |                |
+ ObjectRule       ArrayRule    +----+----+       BoolRule   +--------+--------+
+                               |         |                  |        |        |
+                               |         |                  |        |        |
+                         StringRule NullableStringRule   IntRule  LongRule DoubleRule
 ```

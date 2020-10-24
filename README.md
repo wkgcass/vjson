@@ -4,11 +4,9 @@
 
 ## intro
 
-vjson is a light weight json parser and serializer lib.
+vjson is a light weight json parser/deserializer/builder lib.
 
-The lib focuses on providing the original json representation in java object form, and letting you build any json string using only java method invocations.
-
-Note: it is only a parser lib but NOT a json deserializer lib! The only thing it does when parsing is to conver the input json stream into vjson built in objects, and you may also retrieve Map/List/String/primitive based values from those built in objects using `.toJavaObject()` method. However you may develop your own deserializing lib with ParserListener interface.
+The lib focuses on providing the original json representation in java object form, and letting you build any json string using only java method invocations, or deserialize into java objects without reflection, which is a great feature for building `native-image`s.
 
 ## performance
 
@@ -16,7 +14,7 @@ Check `src/test/java/vjson/bench` for more info. You may run the jmh tests or a 
 
 ## reliability
 
-Now `vjson` has 100% line + branch coverage.
+`vjson` has 100% line + branch coverage.
 
 Run `src/test/java/vjson/Suite.java` to test the lib.
 
@@ -29,6 +27,19 @@ Copy and paste `src/main/java/vjson` to your source directory, and enjoy. `vjson
 JSON.Instance result = JSON.parse("{\"hello\":\"world\"}");
 String json = result.stringify();
 String prettyJson = result.pretty();
+
+// deserialize
+Rule<Shop> shopRule = new ObjectRule<>(Shop::new)
+    .put("name", Shop::setName, new StringRule())
+    .put("goods", Shop::setGoods, new ArrayRule<>(
+        ArrayList::new,
+        ArrayList::add,
+        new ObjectRule<>(Good::new)
+            .put("id", Good::setId, new StringRule())
+            .put("name", Good::setName, new StringRule())
+            .put("price", Good::setPrice, new DoubleRule())
+    ));
+Shop shop = JSON.deserialize(jsonStr, shopRule);
 
 // retrieve
 javaObject = result.toJavaObject(); // List,Map,String or primitive boxing types
@@ -99,6 +110,20 @@ ObjectParser     ArrayParser   StringParser     BoolParser      NumberParser    
                                          CharStream
                                              ^
                                              |
-                                             |
-                                    CharArrayCharStream
+                                +------------+--------------+
+                                |                           |
+                        CharArrayCharStream      UTF8ByteArrayCharStream
+
+
+                                     Rule ----------------------------> DeserializeParserListener
+                                       ^
+                                       |
+                                       |
+     +----------------+-------------+---------------+----------------+
+     |                |             |               |                |
+     |                |             |               |                |
+ ObjectRule       ArrayRule    +----+----+       BoolRule   +--------+--------+
+                               |         |                  |        |        |
+                               |         |                  |        |        |
+                         StringRule NullableStringRule   IntRule  LongRule DoubleRule
 ```
