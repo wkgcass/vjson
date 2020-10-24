@@ -1,15 +1,20 @@
 package vjson;
 
 import org.junit.Test;
+import vjson.deserializer.DeserializeParserListener;
+import vjson.deserializer.rule.*;
 import vjson.listener.EmptyParserListener;
+import vjson.parser.ArrayParser;
 import vjson.parser.ObjectParser;
 import vjson.parser.ParserOptions;
 import vjson.parser.ParserUtils;
 import vjson.simple.*;
 import vjson.util.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -144,5 +149,91 @@ public class TestCorner {
         JSON.Object o = parser.last("  }  ");
         assertEquals(new SimpleObject(new AppendableMap<>()
             .append("abc", new SimpleString("x"))), o);
+    }
+
+    @Test
+    public void objectRulePutFail() throws Exception {
+        ObjectRule<Object> rule = new ObjectRule<>(Object::new);
+        rule.put("a", (o, v) -> {
+        }, rule);
+        try {
+            rule.put("a", (o, v) -> {
+            }, rule);
+            fail();
+        } catch (IllegalArgumentException ignore) {
+        }
+    }
+
+    @Test
+    public void ruleToString() throws Exception {
+        assertEquals("Int", new IntRule().toString());
+        assertEquals("Long", new LongRule().toString());
+        assertEquals("Double", new DoubleRule().toString());
+        assertEquals("Bool", new BoolRule().toString());
+        assertEquals("String?", new NullableStringRule().toString());
+        assertEquals("String", new StringRule().toString());
+        ObjectRule<Object> objRule = new ObjectRule<>(Object::new);
+        objRule
+            .put("int", (o, v) -> {
+            }, new IntRule())
+            .put("long", (o, v) -> {
+            }, new LongRule())
+            .put("double", (o, v) -> {
+            }, new DoubleRule())
+            .put("bool", (o, v) -> {
+            }, new BoolRule())
+            .put("nullableStr", (o, v) -> {
+            }, new NullableStringRule())
+            .put("string", (o, v) -> {
+            }, new StringRule());
+        objRule.put("self", (o, v) -> {
+        }, objRule);
+        assertEquals("Object{" +
+                "int=>Int," +
+                "long=>Long," +
+                "double=>Double," +
+                "bool=>Bool," +
+                "nullableStr=>String?," +
+                "string=>String," +
+                "self=>Object{...recursive...}" +
+                "}",
+            objRule.toString());
+
+        ArrayRule<List<Object>, Object> arrRule = new ArrayRule<>(ArrayList::new, List::add, objRule);
+        assertEquals("Array[" + objRule.toString() + "]", arrRule.toString());
+
+        objRule.put("arr", (o, v) -> {
+        }, arrRule);
+
+        assertEquals("Object{" +
+                "int=>Int," +
+                "long=>Long," +
+                "double=>Double," +
+                "bool=>Bool," +
+                "nullableStr=>String?," +
+                "string=>String," +
+                "self=>Object{...recursive...}," +
+                "arr=>Array[Object{...recursive...}]" +
+                "}",
+            objRule.toString());
+        assertEquals("Array[" + "Object{" +
+            "int=>Int," +
+            "long=>Long," +
+            "double=>Double," +
+            "bool=>Bool," +
+            "nullableStr=>String?," +
+            "string=>String," +
+            "self=>Object{...recursive...}," +
+            "arr=>Array[...recursive...]" +
+            "}" + "]", arrRule.toString());
+    }
+
+    @Test
+    public void deserializeParserListenerInitWithWrongRule() throws Exception {
+        try {
+            new DeserializeParserListener<>(new IntRule());
+            fail();
+        } catch (IllegalArgumentException ignore) {
+        }
     }
 }

@@ -1,8 +1,11 @@
 package vjson.example;
 
 import vjson.JSON;
+import vjson.deserializer.rule.*;
 import vjson.util.ArrayBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Example {
@@ -26,5 +29,66 @@ public class Example {
                 .put("price", 1.28)).build();
         System.out.println("build result == " + array);
         System.out.println("build result pretty() == " + array.pretty());
+
+        Rule<Shop> shopRule = new ObjectRule<>(Shop::new)
+            .put("name", Shop::setName, new StringRule())
+            .put("goods", Shop::setGoods, new ArrayRule<>(
+                ArrayList::new,
+                ArrayList::add,
+                new ObjectRule<>(Good::new)
+                    .put("id", Good::setId, new StringRule())
+                    .put("name", Good::setName, new StringRule())
+                    .put("price", Good::setPrice, new DoubleRule())
+            ));
+        Shop shop = JSON.deserialize("{\"name\":\"HuaLian\",\"goods\":" + array.stringify() + "}", shopRule);
+        System.out.println("deserialize result: " + shop);
+    }
+
+    public static class Shop {
+        private String name;
+        private List<Good> goods;
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setGoods(List<Good> goods) {
+            this.goods = goods;
+        }
+
+        @Override
+        public String toString() {
+            return "Shop{" +
+                "name='" + name + '\'' +
+                ", goods=" + goods +
+                '}';
+        }
+    }
+
+    public static class Good {
+        private String id;
+        private String name;
+        private double price;
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setPrice(double price) {
+            this.price = price;
+        }
+
+        @Override
+        public String toString() {
+            return "Good{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                '}';
+        }
     }
 }
