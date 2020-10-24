@@ -1,16 +1,21 @@
 package vjson.bench;
 
-import com.alibaba.fastjson.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import vjson.CharStream;
 import vjson.JSON;
+import vjson.cs.CharArrayCharStream;
+import vjson.deserializer.rule.ArrayRule;
+import vjson.util.ComposedObjectCase;
+
+import static vjson.util.TestCaseUtils.*;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
@@ -35,7 +40,14 @@ public class JMHBenchmark {
 
     private ObjectMapper mapper;
     private Gson gson;
-    private static Type listType = new TypeReference<List>() {
+    private static Type fastJsonListType = new com.alibaba.fastjson.TypeReference<List>() {
+    }.getType();
+    private static ArrayRule<List<ComposedObjectCase>, ComposedObjectCase> vjsonComposedObjectCaseArrayRule = new ArrayRule<>(LinkedList::new, List::add, ComposedObjectCase.composedObjectCaseRule);
+    private static com.fasterxml.jackson.core.type.TypeReference jacksonComposedObjectCaseListTypeReference = new com.fasterxml.jackson.core.type.TypeReference<List<ComposedObjectCase>>() {
+    };
+    private static Type gsonComposedObjectCaseListType = new com.google.gson.reflect.TypeToken<List<ComposedObjectCase>>() {
+    }.getType();
+    private static Type fastJsonComposedObjectCaseListType = new com.alibaba.fastjson.TypeReference<List<ComposedObjectCase>>() {
     }.getType();
 
     private Object vjson(char[] chars) {
@@ -51,15 +63,18 @@ public class JMHBenchmark {
     }
 
     private Object fastjson(byte[] bytes) throws Exception {
-        return com.alibaba.fastjson.JSON.parseObject(new ByteArrayInputStream(bytes), listType);
+        return com.alibaba.fastjson.JSON.parseObject(new ByteArrayInputStream(bytes), fastJsonListType);
     }
 
     @Setup
     public void setUp() throws Exception {
+        // setup global
         mapper = new ObjectMapper();
         gson = new Gson();
-        byte[][] bytes = BYTES = new byte[tests.length][];
-        char[][] chars = CHARS = new char[tests.length][];
+
+        // setup test 1-5
+        byte[][] bytes = BYTES = new byte[tests.length + 1][];
+        char[][] chars = CHARS = new char[tests.length + 1][];
         InputStream is = JMHBenchmark.class.getClassLoader().getResourceAsStream(file);
         assert is != null;
         ZipInputStream zis = new ZipInputStream(is);
@@ -83,6 +98,19 @@ public class JMHBenchmark {
             }
             assert found;
         }
+
+        // setup deserialize
+        StringBuilder test6 = new StringBuilder("[");
+        for (int i = 0; i < 100; ++i) {
+            if (i != 0) {
+                test6.append(",");
+            }
+            test6.append(getComposedObjectCaseJSON(randomComposedObjectCase(1)).stringify());
+        }
+        test6.append("]");
+        String test6Str = test6.toString();
+        BYTES[5] = test6Str.getBytes(StandardCharsets.UTF_8);
+        CHARS[5] = test6Str.toCharArray();
     }
 
     // test1
@@ -193,5 +221,26 @@ public class JMHBenchmark {
     @org.openjdk.jmh.annotations.Benchmark
     public void test5_fastjson(Blackhole h) throws Exception {
         h.consume(fastjson(BYTES[4]));
+    }
+
+    // test 6
+    @org.openjdk.jmh.annotations.Benchmark
+    public void test6_vjson(Blackhole h) {
+        h.consume(JSON.deserialize(new CharArrayCharStream(CHARS[5]), vjsonComposedObjectCaseArrayRule));
+    }
+
+    @org.openjdk.jmh.annotations.Benchmark
+    public void test6_jackson(Blackhole h) throws Exception {
+        h.consume(mapper.readValue(new ByteArrayInputStream(BYTES[5]), jacksonComposedObjectCaseListTypeReference));
+    }
+
+    @org.openjdk.jmh.annotations.Benchmark
+    public void test6_gson(Blackhole h) {
+        h.consume(gson.fromJson(new CharArrayReader(CHARS[5]), gsonComposedObjectCaseListType));
+    }
+
+    @org.openjdk.jmh.annotations.Benchmark
+    public void test6_fastjson(Blackhole h) throws Exception {
+        h.consume(com.alibaba.fastjson.JSON.parseObject(new ByteArrayInputStream(BYTES[5]), fastJsonComposedObjectCaseListType));
     }
 }
