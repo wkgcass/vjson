@@ -5,6 +5,8 @@ import vjson.cs.UTF8ByteArrayCharStream;
 import vjson.simple.SimpleString;
 import vjson.util.ObjectBuilder;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.Assert.*;
 
 public class TestEncoding {
@@ -16,7 +18,7 @@ public class TestEncoding {
             "こんにちは" +
             "♥" +
             "¡¢£" +
-            "").getBytes());
+            "").getBytes(StandardCharsets.UTF_8));
         for (int i = 1; i <= 18; ++i) {
             assertTrue("cs.hasNext(" + i + ")", cs.hasNext(i));
         }
@@ -107,7 +109,7 @@ public class TestEncoding {
             "  \"\uD808\uDC16\":\"\uD808\uDC17\"," +
             "  \"key3\":\"值3\"" +
             "}" +
-            "").getBytes()));
+            "").getBytes(StandardCharsets.UTF_8)));
         assertEquals(new ObjectBuilder()
             .put("键", "值")
             .put("键2", 123)
@@ -115,7 +117,7 @@ public class TestEncoding {
             .put("key3", "值3")
             .build(), inst);
 
-        inst = JSON.parse(new UTF8ByteArrayCharStream("\"\uD808\uDC16\uD808\uDC17\"".getBytes()));
+        inst = JSON.parse(new UTF8ByteArrayCharStream("\"\uD808\uDC16\uD808\uDC17\"".getBytes(StandardCharsets.UTF_8)));
         assertEquals(new SimpleString("\uD808\uDC16\uD808\uDC17"), inst);
     }
 }

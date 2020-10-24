@@ -6,6 +6,7 @@ import vjson.JSON;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -42,7 +43,7 @@ public class ProfileProgram {
                         sb.append(s).append("\n");
                     }
                     s = sb.toString();
-                    bytes[i] = s.getBytes();
+                    bytes[i] = s.getBytes(StandardCharsets.UTF_8);
                     chars[i] = s.toCharArray();
                     found = true;
                     break;

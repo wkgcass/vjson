@@ -8,6 +8,7 @@ import vjson.JSON;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -64,7 +65,7 @@ public class SimpleBenchmark {
                         sb.append(s).append("\n");
                     }
                     s = sb.toString();
-                    bytes[i] = s.getBytes();
+                    bytes[i] = s.getBytes(StandardCharsets.UTF_8);
                     chars[i] = s.toCharArray();
                     found = true;
                     break;
