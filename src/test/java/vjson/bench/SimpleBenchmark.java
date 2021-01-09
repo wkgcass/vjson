@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import vjson.CharStream;
 import vjson.JSON;
+import vjson.parser.ParserUtils;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -24,7 +25,7 @@ public class SimpleBenchmark {
 
     private static ObjectMapper mapper;
     private static Gson gson;
-    private static Type listType = new TypeReference<List>() {
+    private static final Type listType = new TypeReference<List>() {
     }.getType();
 
     private static void vjson(char[] chars) {
@@ -43,7 +44,18 @@ public class SimpleBenchmark {
         com.alibaba.fastjson.JSON.parseObject(new ByteArrayInputStream(bytes), listType);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        ParserUtils.setParserCacheHolder(new VJsonThread.P());
+        new VJsonThread(() -> {
+            try {
+                thread();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public static void thread() throws Exception {
         // init
         mapper = new ObjectMapper();
         gson = new Gson();

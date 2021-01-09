@@ -4,6 +4,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(org.junit.runners.Suite.class)
 @org.junit.runners.Suite.SuiteClasses({
+    TestParserCacheHolder.class, // must be the first
+
     TestCharArrayCharStream.class,
     TestConvenience.class,
     TestCorner.class,
@@ -24,6 +26,7 @@ import org.junit.runner.RunWith;
     TestUpdateParser.class,
     TestEncoding.class,
     TestDeserialize.class,
+    TestUtil.class,
 })
 public class Suite {
 }
