@@ -41,6 +41,19 @@ Rule<Shop> shopRule = new ObjectRule<>(Shop::new)
     ));
 Shop shop = JSON.deserialize(jsonStr, shopRule);
 
+// 自动类型
+ObjectRule<Good> goodRule = new ObjectRule<>(Good::new)
+    .put("id", Good::setId, new StringRule())
+    .put("name", Good::setName, new StringRule())
+    .put("price", Good::setPrice, new DoubleRule());
+ObjectRule<SpecialPriceGood> specialPriceGoodRule = new ObjectRule<>(SpecialPriceGood::new, goodRule)
+    .put("originalPrice", SpecialPriceGood::setOriginalPrice, new DoubleRule());
+TypeRule<Good> typeGoodRule = new TypeRule<>(Good.class, goodRule)
+    .type("special", specialPriceGoodRule);
+    // 或者 .type(SpecialPriceGood.class, specialPriceGoodRule);
+// TypeRule<> 也可以不传参构造
+// 可用于反序列化这样的json： {"@type": "...", ...}
+
 // 获取值
 javaObject = result.toJavaObject(); // List,Map,String 或者 基本类型的包装类型
 javaObject = JSON.parseToJavaObject("{\"hello\":\"world\"}");

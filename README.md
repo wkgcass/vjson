@@ -41,6 +41,19 @@ Rule<Shop> shopRule = new ObjectRule<>(Shop::new)
     ));
 Shop shop = JSON.deserialize(jsonStr, shopRule);
 
+// autotype
+ObjectRule<Good> goodRule = new ObjectRule<>(Good::new)
+    .put("id", Good::setId, new StringRule())
+    .put("name", Good::setName, new StringRule())
+    .put("price", Good::setPrice, new DoubleRule());
+ObjectRule<SpecialPriceGood> specialPriceGoodRule = new ObjectRule<>(SpecialPriceGood::new, goodRule)
+    .put("originalPrice", SpecialPriceGood::setOriginalPrice, new DoubleRule());
+TypeRule<Good> typeGoodRule = new TypeRule<>(Good.class, goodRule)
+    .type("special", specialPriceGoodRule);
+    // or .type(SpecialPriceGood.class, specialPriceGoodRule);
+// the TypeRule<> can also be constructed without arguments
+// deserializes json like: {"@type": "...", ...}
+
 // retrieve
 javaObject = result.toJavaObject(); // List,Map,String or primitive boxing types
 javaObject = JSON.parseToJavaObject("{\"hello\":\"world\"}");

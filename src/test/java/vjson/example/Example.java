@@ -42,6 +42,31 @@ public class Example {
             ));
         Shop shop = JSON.deserialize("{\"name\":\"HuaLian\",\"goods\":" + array.stringify() + "}", shopRule);
         System.out.println("deserialize result: " + shop);
+
+        ObjectRule<Good> goodRule = new ObjectRule<>(Good::new)
+            .put("id", Good::setId, new StringRule())
+            .put("name", Good::setName, new StringRule())
+            .put("price", Good::setPrice, new DoubleRule());
+        ObjectRule<SpecialPriceGood> specialPriceGoodRule = new ObjectRule<>(SpecialPriceGood::new, goodRule)
+            .put("originalPrice", SpecialPriceGood::setOriginalPrice, new DoubleRule());
+        TypeRule<Good> typeGoodRule = new TypeRule<>(Good.class, goodRule)
+            .type("special", specialPriceGoodRule);
+        ArrayRule<List<Good>, Good> goodsRule = new ArrayRule<>(ArrayList::new, List::add, typeGoodRule);
+        List<Good> goods = JSON.deserialize("[" +
+            /**/ "{" +
+            /*----*/ "\"id\":\"" + UUID.randomUUID().toString() + "\"," +
+            /*----*/ "\"name\":\"pizza\"," +
+            /*----*/ "\"price\":5.12" +
+            /**/ "}," +
+            /**/ "{" +
+            /*----*/ "\"@type\":\"special\"," +
+            /*----*/ "\"id\":\"" + UUID.randomUUID().toString() + "\"," +
+            /*----*/ "\"name\":\"milk\"," +
+            /*----*/ "\"price\":1.28," +
+            /*----*/ "\"originalPrice\":2.56" +
+            /**/ "}" +
+            "]", goodsRule);
+        System.out.println("deserialize result: " + goods);
     }
 
     public static class Shop {
@@ -66,9 +91,9 @@ public class Example {
     }
 
     public static class Good {
-        private String id;
-        private String name;
-        private double price;
+        String id;
+        String name;
+        double price;
 
         public void setId(String id) {
             this.id = id;
@@ -88,6 +113,24 @@ public class Example {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
+                '}';
+        }
+    }
+
+    public static class SpecialPriceGood extends Good {
+        double originalPrice;
+
+        public void setOriginalPrice(double originalPrice) {
+            this.originalPrice = originalPrice;
+        }
+
+        @Override
+        public String toString() {
+            return "SpecialPriceGood{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", originalPrice=" + originalPrice +
                 '}';
         }
     }
