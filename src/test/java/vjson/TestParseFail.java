@@ -6,6 +6,7 @@ import vjson.deserializer.rule.*;
 import vjson.ex.JsonParseException;
 import vjson.ex.ParserFinishedException;
 import vjson.parser.*;
+import vjson.util.typerule.TypeRuleBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -186,31 +187,37 @@ public class TestParseFail {
 
         try {
             JSON.deserialize("[null]", new ArrayRule<>(ArrayList::new, List::add, new StringRule()));
+            fail();
         } catch (JsonParseException e) {
             assertTrue(e.getMessage().contains("invalid type: expecting: String, value=null(nil)"));
         }
         try {
             JSON.deserialize("[true]", new ArrayRule<>(ArrayList::new, List::add, new StringRule()));
+            fail();
         } catch (JsonParseException e) {
             assertTrue(e.getMessage().contains("invalid type: expecting: String, value=true(class java.lang.Boolean)"));
         }
         try {
             JSON.deserialize("[true]", new ArrayRule<>(ArrayList::new, List::add, new StringRule()));
+            fail();
         } catch (JsonParseException e) {
             assertTrue(e.getMessage().contains("invalid type: expecting: String, value=true(class java.lang.Boolean)"));
         }
         try {
             JSON.deserialize("[\"a\"]", new ArrayRule<>(ArrayList::new, List::add, new DoubleRule()));
+            fail();
         } catch (JsonParseException e) {
             assertTrue(e.getMessage().contains("invalid type: expecting: Double, value=a(class java.lang.String)"));
         }
         try {
             JSON.deserialize("[1.0]", new ArrayRule<>(ArrayList::new, List::add, new LongRule()));
+            fail();
         } catch (JsonParseException e) {
             assertTrue(e.getMessage().contains("invalid type: expecting: Long, value=1.0(class java.lang.Double)"));
         }
         try {
             JSON.deserialize("[\"a\"]", new ArrayRule<>(ArrayList::new, List::add, new LongRule()));
+            fail();
         } catch (JsonParseException e) {
             assertTrue(e.getMessage().contains("invalid type: expecting: Long, value=a(class java.lang.String)"));
         }
@@ -219,13 +226,41 @@ public class TestParseFail {
 
         try {
             JSON.deserialize("[1.0]", new ArrayRule<>(ArrayList::new, List::add, new IntRule()));
+            fail();
         } catch (JsonParseException e) {
             assertTrue(e.getMessage().contains("invalid type: expecting: Int, value=1.0(class java.lang.Double)"));
         }
         try {
             JSON.deserialize("[\"a\"]", new ArrayRule<>(ArrayList::new, List::add, new IntRule()));
+            fail();
         } catch (JsonParseException e) {
             assertTrue(e.getMessage().contains("invalid type: expecting: Int, value=a(class java.lang.String)"));
+        }
+
+        try {
+            JSON.deserialize("{\"@type\":1}", TypeRuleBase.getTypeRule());
+            fail();
+        } catch (JsonParseException e) {
+            assertTrue(e.getMessage().contains("invalid type: expecting type name for " + TypeRuleBase.getTypeRule().toString() + " but got " + 1));
+        }
+        try {
+            JSON.deserialize("{}", TypeRuleBase.getTypeRule());
+            fail();
+        } catch (JsonParseException e) {
+            assertTrue(e.getMessage().contains("type for " + TypeRuleBase.getTypeRule() + " is still not determined when reaching the object end"));
+        }
+        try {
+            JSON.deserialize("{\"@type\":\"xyz\"}", TypeRuleBase.getTypeRule());
+            fail();
+        } catch (JsonParseException e) {
+            assertTrue(e.getMessage().contains("cannot find type xyz in " + TypeRuleBase.getTypeRule()));
+        }
+        JSON.deserialize("{\"x\":1,\"y\":\"2\"}", TypeRuleBase.baseRule);
+        try {
+            JSON.deserialize("{\"x\":1,\"y\":\"2\"}", TypeRuleBase.getTypeRule());
+            fail();
+        } catch (JsonParseException e) {
+            assertTrue(e.getMessage().contains("cannot determine type for " + TypeRuleBase.getTypeRule()));
         }
     }
 }

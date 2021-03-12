@@ -1,0 +1,78 @@
+package vjson.util.typerule;
+
+import vjson.deserializer.rule.IntRule;
+import vjson.deserializer.rule.ObjectRule;
+import vjson.deserializer.rule.StringRule;
+import vjson.deserializer.rule.TypeRule;
+
+import java.util.Objects;
+
+public class TypeRuleBase {
+    public static final ObjectRule<TypeRuleBase> baseRule = new ObjectRule<>(TypeRuleBase::new)
+        .put("x", TypeRuleBase::setX, new IntRule())
+        .put("y", TypeRuleBase::setY, new StringRule());
+    private static TypeRule<TypeRuleBase> typeBaseRule;
+
+    public int x;
+    public String y;
+
+    public TypeRuleBase() {
+    }
+
+    public TypeRuleBase(int x, String y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public TypeRuleBase(TypeRuleBase base) {
+        this(base.x, base.y);
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(String y) {
+        this.y = y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TypeRuleBase that = (TypeRuleBase) o;
+        return x == that.x && Objects.equals(y, that.y);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+
+    public static TypeRule<TypeRuleBase> getTypeRule() {
+        if (typeBaseRule != null) {
+            return typeBaseRule;
+        }
+        synchronized (TypeRuleBase.class) {
+            if (typeBaseRule != null) {
+                return typeBaseRule;
+            }
+            TypeRule<TypeRuleBase> rule = new TypeRule<>();
+            typeBaseRule = rule;
+            rule.type(TypeRuleBase.class, baseRule)
+                .type(TypeRuleA.class, TypeRuleA.aRule)
+                .type(TypeRuleB.class, TypeRuleB.bRule)
+                .type(TypeRuleC.class, TypeRuleC.cRule)
+                .type(TypeRuleD.class, TypeRuleD.dRule());
+            return rule;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "TypeRuleBase{" +
+            "x=" + x +
+            ", y='" + y + '\'' +
+            '}';
+    }
+}

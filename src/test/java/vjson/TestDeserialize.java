@@ -4,7 +4,9 @@ import org.junit.Test;
 import vjson.deserializer.DeserializeParserListener;
 import vjson.deserializer.rule.*;
 import vjson.parser.*;
+import vjson.simple.SimpleObject;
 import vjson.util.*;
+import vjson.util.typerule.*;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -115,6 +117,50 @@ public class TestDeserialize {
             ComposedObjectCase o = randomComposedObjectCase(1);
             test(ComposedObjectCase.composedObjectCaseRule, o, getComposedObjectCaseJSON(o).stringify());
         }
+    }
+
+    @Test
+    public void typeObject() {
+        for (int i = 0; i < 10; ++i) {
+            TypeRuleBase base = randomTypeRuleBase();
+            TypeRuleA a = randomTypeRuleA();
+            TypeRuleB b = randomTypeRuleB();
+            TypeRuleC c = randomTypeRuleC();
+            TypeRuleD d = randomTypeRuleD();
+
+            test(TypeRuleBase.getTypeRule(), base, getTypeRuleBaseJSON(base).stringify());
+            test(TypeRuleBase.getTypeRule(), a, getTypeRuleBaseJSON(a).stringify());
+            test(TypeRuleBase.getTypeRule(), b, getTypeRuleBaseJSON(b).stringify());
+            test(TypeRuleBase.getTypeRule(), c, getTypeRuleBaseJSON(c).stringify());
+            test(TypeRuleBase.getTypeRule(), d, getTypeRuleBaseJSON(d).stringify());
+
+            Box bbase = new Box(base);
+            Box ba = new Box(a);
+            Box bb = new Box(b);
+            Box bc = new Box(c);
+            Box bd = new Box(d);
+
+            test(Box.boxRule, bbase, getBoxJSON(bbase).stringify());
+            test(Box.boxRule, ba, getBoxJSON(ba).stringify());
+            test(Box.boxRule, bb, getBoxJSON(bb).stringify());
+            test(Box.boxRule, bc, getBoxJSON(bc).stringify());
+            test(Box.boxRule, bd, getBoxJSON(bd).stringify());
+        }
+    }
+
+    @Test
+    public void typeObjectDefaultRule() {
+        Rule<TypeRuleBase> rule = new TypeRule<>(TypeRuleBase.class, TypeRuleBase.baseRule);
+        TypeRuleBase base = randomTypeRuleBase();
+        JSON.Object o = new ObjectBuilder()
+            .put("x", base.x)
+            .put("y", base.y)
+            .build();
+        test(rule, base, o.stringify());
+
+        base = new TypeRuleBase();
+        o = new SimpleObject(Collections.emptyMap());
+        test(rule, base, o.stringify());
     }
 
     @Test

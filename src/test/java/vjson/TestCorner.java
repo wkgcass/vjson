@@ -4,12 +4,13 @@ import org.junit.Test;
 import vjson.deserializer.DeserializeParserListener;
 import vjson.deserializer.rule.*;
 import vjson.listener.EmptyParserListener;
-import vjson.parser.ArrayParser;
 import vjson.parser.ObjectParser;
 import vjson.parser.ParserOptions;
 import vjson.parser.ParserUtils;
 import vjson.simple.*;
 import vjson.util.*;
+import vjson.util.typerule.TypeRuleA;
+import vjson.util.typerule.TypeRuleBase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -172,6 +173,29 @@ public class TestCorner {
         assertEquals("Bool", new BoolRule().toString());
         assertEquals("String?", new NullableStringRule().toString());
         assertEquals("String", new StringRule().toString());
+
+        TypeRule<Object> typeRule = new TypeRule<>()
+            .type("base", TypeRuleBase.baseRule)
+            .type(TypeRuleA.class, TypeRuleA.aRule);
+        assertEquals("TypeRule{" +
+            "@type[base]=>Object{x=>Int,y=>String}," +
+            "@type[" + TypeRuleA.class.getName() + "]=>Object{x=>Int,y=>String,a=>Double}" +
+            "}", typeRule.toString());
+        TypeRule<Object> typeRuleConstructor = new TypeRule<Object>("base", TypeRuleBase.baseRule)
+            .type(TypeRuleA.class, TypeRuleA.aRule);
+        assertEquals("TypeRule{" +
+            "@type[base*]=>Object{x=>Int,y=>String}," +
+            "@type[" + TypeRuleA.class.getName() + "]=>Object{x=>Int,y=>String,a=>Double}" +
+            "}", typeRuleConstructor.toString());
+
+        TypeRule<Object> typeRuleRec = new TypeRule<>();
+        typeRuleRec.type("a", new ObjectRule<>(Object::new)
+            .put("rec", (o, v) -> {
+            }, typeRuleRec));
+        assertEquals("TypeRule{" +
+            "@type[a]=>Object{rec=>TypeRule{...recursive...}}" +
+            "}", typeRuleRec.toString());
+
         ObjectRule<Object> objRule = new ObjectRule<>(Object::new);
         objRule
             .put("int", (o, v) -> {
@@ -185,7 +209,9 @@ public class TestCorner {
             .put("nullableStr", (o, v) -> {
             }, new NullableStringRule())
             .put("string", (o, v) -> {
-            }, new StringRule());
+            }, new StringRule())
+            .put("typed", (o, v) -> {
+            }, typeRuleRec);
         objRule.put("self", (o, v) -> {
         }, objRule);
         assertEquals("Object{" +
@@ -195,6 +221,7 @@ public class TestCorner {
                 "bool=>Bool," +
                 "nullableStr=>String?," +
                 "string=>String," +
+                "typed=>TypeRule{@type[a]=>Object{rec=>TypeRule{...recursive...}}}," +
                 "self=>Object{...recursive...}" +
                 "}",
             objRule.toString());
@@ -212,6 +239,7 @@ public class TestCorner {
                 "bool=>Bool," +
                 "nullableStr=>String?," +
                 "string=>String," +
+                "typed=>TypeRule{@type[a]=>Object{rec=>TypeRule{...recursive...}}}," +
                 "self=>Object{...recursive...}," +
                 "arr=>Array[Object{...recursive...}]" +
                 "}",
@@ -223,6 +251,7 @@ public class TestCorner {
             "bool=>Bool," +
             "nullableStr=>String?," +
             "string=>String," +
+            "typed=>TypeRule{@type[a]=>Object{rec=>TypeRule{...recursive...}}}," +
             "self=>Object{...recursive...}," +
             "arr=>Array[...recursive...]" +
             "}" + "]", arrRule.toString());

@@ -2,6 +2,7 @@ package vjson.util;
 
 import vjson.JSON;
 import vjson.simple.SimpleNull;
+import vjson.util.typerule.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,6 +100,84 @@ public class TestCaseUtils {
             .putInst("nullableMoreObject", getComposedObjectCaseJSON(o.nullableMoreObject))
             .putInst("nullableMoreList", getComposedObjectCaseListJSON(o.nullableMoreList))
             .build();
+    }
+
+    public static TypeRuleBase randomTypeRuleBase() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        return new TypeRuleBase(random.nextInt(), randomString());
+    }
+
+    public static TypeRuleA randomTypeRuleA() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        return new TypeRuleA(randomTypeRuleBase(), random.nextDouble());
+    }
+
+    public static TypeRuleB randomTypeRuleB() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        return new TypeRuleB(randomTypeRuleBase(), random.nextLong());
+    }
+
+    public static TypeRuleC randomTypeRuleC() {
+        return new TypeRuleC(randomTypeRuleBase(), randomSimpleObjectCase());
+    }
+
+    public static TypeRuleD randomTypeRuleD() {
+        return randomTypeRuleDRecurse(0);
+    }
+
+    private static TypeRuleD randomTypeRuleDRecurse(int n) {
+        if (n == 0) {
+            return new TypeRuleD(randomTypeRuleBase(), randomTypeRuleDRecurse(n + 1));
+        } else if (n == 1) {
+            return new TypeRuleD(randomTypeRuleBase(), randomTypeRuleDRecurse(n + 1));
+        } else {
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+            return new TypeRuleD(randomTypeRuleBase(), buildTypeRule(random.nextInt(4)));
+        }
+    }
+
+    public static TypeRuleBase buildTypeRule(int n) {
+        if (n == 0) {
+            return randomTypeRuleBase();
+        } else if (n == 1) {
+            return randomTypeRuleA();
+        } else if (n == 2) {
+            return randomTypeRuleB();
+        } else if (n == 3) {
+            return randomTypeRuleC();
+        } else if (n == 4) {
+            return randomTypeRuleD();
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public static JSON.Instance getTypeRuleBaseJSON(TypeRuleBase o) {
+        ObjectBuilder ob = new ObjectBuilder();
+        if (o instanceof TypeRuleA) {
+            ob.type(TypeRuleA.class);
+            ob.put("a", ((TypeRuleA) o).a);
+        } else if (o instanceof TypeRuleB) {
+            ob.type(TypeRuleB.class);
+            ob.put("b", ((TypeRuleB) o).b);
+        } else if (o instanceof TypeRuleC) {
+            ob.type(TypeRuleC.class);
+            ob.putInst("c", getSimpleObjectCaseJSON(((TypeRuleC) o).c));
+        } else if (o instanceof TypeRuleD) {
+            ob.type(TypeRuleD.class);
+            ob.putInst("d", getTypeRuleBaseJSON(((TypeRuleD) o).d));
+        } else {
+            ob.type(TypeRuleBase.class);
+        }
+        ob.put("x", o.x);
+        ob.put("y", o.y);
+        return ob.build();
+    }
+
+    public static JSON.Instance getBoxJSON(Box b) {
+        ObjectBuilder ob = new ObjectBuilder();
+        ob.putInst("typed", getTypeRuleBaseJSON(b.typed));
+        return ob.build();
     }
 
     public static List<ComposedObjectCase> randomComposedObjectCaseList(int recurse) {
