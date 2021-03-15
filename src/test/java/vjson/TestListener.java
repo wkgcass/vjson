@@ -188,8 +188,8 @@ public class TestListener {
                 assertFalse(number.hasExponent());
                 assertEquals(3L, number.getInteger());
                 assertFalse(number.isNegative());
-                assertEquals(0.14, number.getFraction(), 0.0000001);
-                assertEquals(1000, number.getFractionNextMulti(), 0);
+                assertEquals(14, number.getFraction());
+                assertEquals(2, number.getFractionDivisorZeros());
                 ++step;
                 assertEquals(3, step);
             }
@@ -277,8 +277,8 @@ public class TestListener {
                 assertEquals(3.14D, base, 0.000000001);
                 assertEquals(3L, number.getInteger());
                 assertFalse(number.isNegative());
-                assertEquals(0.14, number.getFraction(), 0.000000001);
-                assertEquals(1000, number.getFractionNextMulti(), 0);
+                assertEquals(14, number.getFraction());
+                assertEquals(2, number.getFractionDivisorZeros());
                 ++step;
                 assertEquals(3, step);
             }
@@ -289,8 +289,8 @@ public class TestListener {
                 assertTrue(number.hasExponent());
                 assertEquals(3L, number.getInteger());
                 assertFalse(number.isNegative());
-                assertEquals(0.14, number.getFraction(), 0.000000001);
-                assertEquals(1000, number.getFractionNextMulti(), 0);
+                assertEquals(14, number.getFraction());
+                assertEquals(2, number.getFractionDivisorZeros());
                 assertEquals(2, number.getExponent());
                 assertFalse(number.isExponentNegative());
                 ++step;

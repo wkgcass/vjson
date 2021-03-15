@@ -265,4 +265,26 @@ public class TestCorner {
         } catch (IllegalArgumentException ignore) {
         }
     }
+
+    @Test
+    public void veryLongFraction() throws Exception {
+        double res = ((JSON.Double) JSON.parse("0" +
+            ".123456789" +
+            "0123456789" +
+            "0123456789" +
+            "0123456789" +
+            "0123456789" +
+            "0123456789" +
+            "0123456789" +
+            "0123456789")).doubleValue();
+        assertEquals(
+            0.12345678901234567, res,
+            0.0000000000000001);
+    }
+
+    @Test
+    public void shortFraction() throws Exception {
+        double res = ((JSON.Double) JSON.parse("1.23")).doubleValue();
+        assertEquals(1.23, res, 0.000000001);
+    }
 }

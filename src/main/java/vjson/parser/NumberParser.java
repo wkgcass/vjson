@@ -44,8 +44,10 @@ public class NumberParser implements Parser<JSON.Number> {
     private long integer;
 
     private boolean hasFraction;
-    private double fraction;
-    private double fractionNextMulti;
+    private long fraction;
+    private int fractionDivisorZeros;
+    private static final int MAX_DIVISOR_ZEROS = 9;
+    private static final long MAX_DIVISOR = 1000000000;
 
     private boolean hasExponent;
     private boolean exponentNegative;
@@ -70,8 +72,8 @@ public class NumberParser implements Parser<JSON.Number> {
         negative = false;
         integer = 0;
         hasFraction = false;
-        fraction = 0.0;
-        fractionNextMulti = 10;
+        fraction = 0;
+        fractionDivisorZeros = 0;
         hasExponent = false;
         exponentNegative = false;
         exponent = 0;
@@ -101,27 +103,24 @@ public class NumberParser implements Parser<JSON.Number> {
 
     public void clearFraction() {
         this.hasFraction = false;
-        this.fraction = 0.0;
-        this.fractionNextMulti = 10;
+        this.fraction = 0;
+        this.fractionDivisorZeros = 0;
     }
 
-    public double getFraction() {
+    public long getFraction() {
         return fraction;
     }
 
-    public double getFractionNextMulti() {
-        return fractionNextMulti;
+    public int getFractionDivisorZeros() {
+        return fractionDivisorZeros;
     }
 
-    public void setFraction(double fraction, int multi) {
-        if (fraction > 1 || fraction < 0 || multi < 1)
+    public void setFraction(long fraction, int divisorZeros) {
+        if (fraction < 0 || divisorZeros < 1)
             throw new IllegalArgumentException();
         this.hasFraction = true;
         this.fraction = fraction;
-        this.fractionNextMulti = 10;
-        for (int i = 0; i < multi; ++i) {
-            this.fractionNextMulti *= 10;
-        }
+        this.fractionDivisorZeros = divisorZeros;
     }
 
     public boolean hasExponent() {
@@ -170,7 +169,30 @@ public class NumberParser implements Parser<JSON.Number> {
     private void exponentBegin() {
         hasExponent = true;
         state = 5;
-        opts.getListener().onNumberExponentBegin(this, integer + (hasFraction ? fraction : 0));
+        opts.getListener().onNumberExponentBegin(this, integer + (hasFraction ? calcFraction() : 0));
+    }
+
+    private double calcFraction() {
+        if (fractionDivisorZeros < MAX_DIVISOR_ZEROS) {
+            long divisor = 1;
+            for (int i = 0; i < fractionDivisorZeros; ++i) {
+                divisor *= 10;
+            }
+            return fraction / (double) divisor;
+        }
+        double fraction = this.fraction / (double) MAX_DIVISOR;
+        int fractionDivisorZeros = this.fractionDivisorZeros - MAX_DIVISOR_ZEROS;
+        while (true) {
+            if (fractionDivisorZeros < MAX_DIVISOR_ZEROS) {
+                long divisor = 1;
+                for (int i = 0; i < fractionDivisorZeros; ++i) {
+                    divisor *= 10;
+                }
+                return fraction / divisor;
+            }
+            fraction /= MAX_DIVISOR;
+            fractionDivisorZeros -= MAX_DIVISOR_ZEROS;
+        }
     }
 
     private void gotoFractionExponentEnd(CharStream cs, boolean isComplete) {
@@ -276,8 +298,9 @@ public class NumberParser implements Parser<JSON.Number> {
                         err = "invalid digit in fraction: " + c;
                         throw ParserUtils.err(opts, err);
                     }
-                    fraction += d / fractionNextMulti;
-                    fractionNextMulti *= 10;
+                    // assert fraction = 0
+                    fraction = d;
+                    ++fractionDivisorZeros;
                     state = 4;
                 }
             }
@@ -293,8 +316,12 @@ public class NumberParser implements Parser<JSON.Number> {
                             state = 8;
                         } else {
                             cs.moveNextAndGet();
-                            fraction += d / fractionNextMulti;
-                            fractionNextMulti *= 10;
+                            long nextFraction = fraction * 10;
+                            if (nextFraction >= 0) {
+                                fraction = nextFraction;
+                                fraction += d;
+                                ++fractionDivisorZeros;
+                            }
                             state = 4;
                             continue;
                         }
@@ -388,7 +415,7 @@ public class NumberParser implements Parser<JSON.Number> {
             opts.getListener().onNumberEnd(this);
             JSON.Number ret;
             if (hasFraction) {
-                double num = integer + fraction;
+                double num = integer + calcFraction();
                 num = negative ? -num : num;
                 if (hasExponent) {
                     ret = new SimpleExp(num, exponentNegative ? -exponent : exponent);
@@ -433,7 +460,7 @@ public class NumberParser implements Parser<JSON.Number> {
             opts.getListener().onNumberEnd(this);
             Number ret;
             if (hasFraction) {
-                double num = integer + fraction;
+                double num = integer + calcFraction();
                 num = negative ? -num : num;
                 if (hasExponent) {
                     ret = num * Math.pow(10, exponentNegative ? -exponent : exponent);

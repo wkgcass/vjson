@@ -32,7 +32,7 @@ public class TestUpdateParser {
     public void number() throws Exception {
         NumberParser parser = new NumberParser();
         parser.feed(CharStream.from("3"));
-        parser.setFraction(0.14, 2);
+        parser.setFraction(14, 2);
         parser.setExponent(2);
         JSON.Number num = parser.end();
         assertEquals(new SimpleExp(3.14, 2), num);

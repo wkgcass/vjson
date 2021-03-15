@@ -247,17 +247,12 @@ public class TestParamValidationReport {
         } catch (IllegalArgumentException ignore) {
         }
         try {
-            new NumberParser().setFraction(-0.1, 1);
+            new NumberParser().setFraction(-1, 1);
             fail();
         } catch (IllegalArgumentException ignore) {
         }
         try {
-            new NumberParser().setFraction(0.1, -1);
-            fail();
-        } catch (IllegalArgumentException ignore) {
-        }
-        try {
-            new NumberParser().setFraction(1.1, 1);
+            new NumberParser().setFraction(1, -1);
             fail();
         } catch (IllegalArgumentException ignore) {
         }
