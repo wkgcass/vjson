@@ -12,5 +12,5 @@
 package vjson.util
 
 object VERSION {
-  const val VERSION = "1.2.3" // _THE_VERSION_
+  const val VERSION = "1.3.0-dev" // _THE_VERSION_
 }
