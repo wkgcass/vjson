@@ -16,6 +16,7 @@ import vjson.Stringifier
 
 @Suppress("MemberVisibilityCanBePrivate")
 open class PrettyStringifier : Stringifier {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmField/*}}*/
   protected var indent = 0
 
   protected fun indentIncr(): Int {

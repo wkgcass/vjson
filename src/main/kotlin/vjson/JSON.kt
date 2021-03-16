@@ -18,6 +18,7 @@ import vjson.parser.ParserMode
 import vjson.parser.ParserOptions
 import vjson.parser.ParserUtils.buildFrom
 import vjson.parser.ParserUtils.buildJavaObject
+import vjson.util.CoverageUtils.cast
 
 @Suppress("DuplicatedCode")
 object JSON {
@@ -91,7 +92,7 @@ object JSON {
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
     fun getBool(key: kotlin.String): Boolean {
-      return (get(key) as Bool).booleanValue()
+      return cast<Bool>(get(key)).booleanValue()
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
@@ -144,7 +145,7 @@ object JSON {
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
     fun getString(key: kotlin.String): kotlin.String {
-      return (get(key) as String).toJavaObject()
+      return cast<String>(get(key)).toJavaObject()
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
@@ -153,13 +154,13 @@ object JSON {
       if (inst is Null) {
         return null
       } else {
-        return (inst as String).toJavaObject()
+        return cast<String>(inst).toJavaObject()
       }
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
     fun getObject(key: kotlin.String): Object {
-      return get(key) as Object
+      return cast(get(key))
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
@@ -168,13 +169,13 @@ object JSON {
       if (inst is Null) {
         return null
       } else {
-        return inst as Object
+        return cast<Object>(inst)
       }
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
     fun getArray(key: kotlin.String): Array {
-      return get(key) as Array
+      return cast(get(key))
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
@@ -183,7 +184,7 @@ object JSON {
       if (inst is Null) {
         return null
       } else {
-        return inst as Array
+        return cast<Array>(inst)
       }
     }
   }
@@ -197,7 +198,7 @@ object JSON {
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
     fun getBool(idx: Int): Boolean {
-      return (get(idx) as Bool).booleanValue()
+      return cast<Bool>(get(idx)).booleanValue()
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
@@ -250,7 +251,7 @@ object JSON {
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
     fun getString(idx: Int): kotlin.String {
-      return (get(idx) as String).toJavaObject()
+      return cast<String>(get(idx)).toJavaObject()
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
@@ -259,13 +260,13 @@ object JSON {
       if (inst is Null) {
         return null
       } else {
-        return (inst as String).toJavaObject()
+        return cast<String>(inst).toJavaObject()
       }
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
     fun getObject(idx: Int): Object {
-      return get(idx) as Object
+      return cast(get(idx))
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
@@ -274,13 +275,13 @@ object JSON {
       if (inst is Null) {
         return null
       } else {
-        return inst as Object
+        return cast<Object>(inst)
       }
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
     fun getArray(idx: Int): Array {
-      return get(idx) as Array
+      return cast(get(idx))
     }
 
     /*#ifndef KOTLIN_NATIVE {{ */@JvmDefault/*}}*/
@@ -289,7 +290,7 @@ object JSON {
       if (inst is Null) {
         return null
       } else {
-        return inst as Array
+        return cast<Array>(inst)
       }
     }
   }

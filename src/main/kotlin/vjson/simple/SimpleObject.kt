@@ -50,7 +50,8 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
   constructor(initMap: List<SimpleObjectEntry<JSON.Instance<*>>>) {
     for (entry in initMap) {
       requireNotNull(entry) { "entry should not be null" }
-      requireNotNull(entry.key) { "key should not be null" }
+      // requireNotNull(entry.key) { "key should not be null" }
+      // null of the key is tested in the constructor of SimpleObjectEntry
       requireNotNull(entry.value) { "value should not be null" }
     }
     map = ArrayList(initMap)

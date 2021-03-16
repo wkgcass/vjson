@@ -17,6 +17,7 @@ import vjson.Parser
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleArray
+import vjson.util.CoverageUtils.cast
 
 class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   opts: ParserOptions = ParserOptions.DEFAULT
@@ -161,7 +162,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
     if (tryParse(cs, isComplete)) {
       opts.listener.onArrayEnd(this)
       val list: List<JSON.Instance<*>> =
-        if (this.list == null) emptyList() else this.list as List<JSON.Instance<*>>
+        if (this.list == null) emptyList() else cast(this.list)
       val ret: SimpleArray = object : SimpleArray(list, TrustedFlag.FLAG) {}
       opts.listener.onArray(ret)
 

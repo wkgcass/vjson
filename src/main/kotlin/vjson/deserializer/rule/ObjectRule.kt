@@ -11,6 +11,7 @@
  */
 package vjson.deserializer.rule
 
+import vjson.util.CoverageUtils.cast
 import vjson.util.functional.`BiConsumer$`
 
 class ObjectRule<O : Any>(val construct: () -> O) : Rule<O>() {
@@ -19,7 +20,7 @@ class ObjectRule<O : Any>(val construct: () -> O) : Rule<O>() {
   constructor(construct: () -> O, superRule: ObjectRule<in O>) : this(construct) {
     for ((key, value) in superRule.rules) {
       @Suppress("UNCHECKED_CAST")
-      rules[key] = value as ObjectField<O, *>
+      rules[key] = cast(value)
     }
   }
 

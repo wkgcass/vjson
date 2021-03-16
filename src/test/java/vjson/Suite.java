@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
     TestEncoding.class,
     TestDeserialize.class,
     TestUtil.class,
+    TestKNParserCacheHolder.class,
 })
 public class Suite {
 }

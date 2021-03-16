@@ -15,6 +15,7 @@ import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
 import vjson.ex.JsonParseException
+import vjson.util.CoverageUtils.cast
 
 object ParserUtils {
   /* #ifdef KOTLIN_NATIVE {{
@@ -25,7 +26,7 @@ object ParserUtils {
   @Throws(IllegalStateException::class)
   @JvmStatic
   fun setParserCacheHolder(parserCacheHolder: ParserCacheHolder) {
-    check(!(holder !is DefaultParserCacheHolder || (holder as DefaultParserCacheHolder).isStarted)) {
+    check((holder is DefaultParserCacheHolder && !(cast<DefaultParserCacheHolder>(holder).isStarted))) {
       "parser cache holder already set"
     }
     holder = parserCacheHolder

@@ -18,6 +18,7 @@ import vjson.listener.AbstractParserListener
 import vjson.parser.ArrayParser
 import vjson.parser.ObjectParser
 import vjson.simple.SimpleNull
+import vjson.util.CoverageUtils.cast
 import vjson.util.collection.Stack
 
 class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
@@ -60,14 +61,14 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
         return  // will use @type to deserialize the rest k/v
       }
       // nothing found, try to use default rule
-      val orule = (ctx.rule as TypeRule<*>).defaultRule
+      val orule = cast<TypeRule<*>>(ctx.rule).defaultRule
         ?: throw JsonParseException("cannot determine type for " + ctx.rule)
       // use the default rule
       ctx = applyObjectRuleForTypeRule(orule)
       // fall through
     }
 
-    val rule = ctx.rule as ObjectRule<*>
+    val rule = cast<ObjectRule<*>>(ctx.rule)
     val field = rule.getRule(key)
       ?: return  // ignore if the field is not registered
     nextRuleStack.push(field.rule)
@@ -120,7 +121,7 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
       if (lastObject !is String) {
         throw JsonParseException("invalid type: expecting type name for " + ctx.rule + " but got " + lastObject)
       }
-      val type = lastObject as String
+      val type = cast<String>(lastObject)
       val orule = ctx.rule.getRule(type)
         ?: // rule not found
         throw JsonParseException("cannot find type " + type + " in " + ctx.rule)
@@ -128,11 +129,11 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
       return
     }
 
-    val rule = ctx.rule as ObjectRule<*>
+    val rule = cast<ObjectRule<*>>(ctx.rule)
     val field = rule.getRule(key)
       ?: return  // ignore if the field is not registered
     @Suppress("UNCHECKED_CAST")
-    set(field.rule, ctx.`object`!!, field.set as (Any, Any?) -> Unit, lastObject)
+    set(field.rule, ctx.`object`!!, cast(field.set), lastObject)
     nextRuleStack.pop()
   }
 
@@ -164,7 +165,7 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
 
   override fun onArrayValue(array: ArrayParser, value: JSON.Instance<*>) {
     val ctx = parseStack.peek()
-    @Suppress("UNCHECKED_CAST") val rule = ctx.rule as ArrayRule<Any, Any?>
+    val rule = cast<ArrayRule<Any, Any?>>(ctx.rule)
     set(rule.elementRule, ctx.`object`!!, rule.add, lastObject)
   }
 

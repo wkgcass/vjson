@@ -11,6 +11,7 @@
  */
 package vjson.util
 
+// #ifdef COVERAGE {{@lombok.Generated}}
 object VERSION {
   const val VERSION = "1.3.0-dev" // _THE_VERSION_
 }

@@ -72,6 +72,8 @@ public class TestCorner {
 
         assertNotEquals(entry1, new Object());
         assertNotEquals(entry1, null);
+
+        assertEquals(3007, new SimpleObjectEntry<>("a", null).hashCode());
     }
 
     @Test

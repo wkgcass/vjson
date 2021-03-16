@@ -155,6 +155,8 @@ class UTF8ByteArrayCharStream(private val array: ByteArray) : CharStream {
     return charArrayOf(a, b)
   }
 
+  private inline infix
   @Suppress("NOTHING_TO_INLINE")
-  private inline infix fun Byte.and(other: Int): Int = this.toInt() and other
+  // #ifdef COVERAGE {{@lombok.Generated}}
+  fun Byte.and(other: Int): Int = this.toInt() and other
 }
