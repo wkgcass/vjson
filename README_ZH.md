@@ -4,7 +4,7 @@
 
 ## 简介
 
-vjson是一个轻量级的json parser/deserializer/builder lib。
+vjson是一个轻量级的json parser/deserializer/builder 库，可以运行于java/kotlin以及kotlin native上。
 
 vjson致力于用java对象还原最原始的json结构。你可以通过简单的java方法调用构建任意json字符串。你也可以不借助反射功能将json反序列化为java对象，在构建`native-image`时这个特性非常实用。
 
@@ -20,7 +20,28 @@ vjson致力于用java对象还原最原始的json结构。你可以通过简单�
 
 ## 用法
 
-将`src/main/java/vjson`复制粘贴到你的源码目录即可。`vjson`设计原则就是小且零依赖，并且，复制粘贴就是本lib的推荐用法。
+将`src/main/java/vjson`复制粘贴到你的源码目录即可。
+
+如果你没有使用kotlin，你还需要将如下代码加入你的`build.gradle`配置。
+
+```groovy
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs = ['-Xjvm-default=enable']
+    }
+}
+```
+
+>如果你不想带kotlin使用vjson，你可以`checkout`到这个提交(`00577677156cd9394ea2a32028f684cbce178065`)，这是最后一个用java实现的版本。
+
+## 示例
 
 ```java
 // 基础用法

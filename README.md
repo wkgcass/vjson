@@ -4,7 +4,7 @@
 
 ## intro
 
-vjson is a light weight json parser/deserializer/builder lib.
+vjson is a light weight json parser/deserializer/builder lib built for java/kotlin and kotlin native.
 
 The lib focuses on providing the original json representation in java object form, and letting you build any json string using only java method invocations, or deserialize into java objects without reflection, which is a great feature for building `native-image`s.
 
@@ -20,7 +20,28 @@ Run `src/test/java/vjson/Suite.java` to test the lib.
 
 ## use
 
-Copy and paste `src/main/java/vjson` to your source directory, and enjoy. `vjson` is designed to be small and with zero-dependency, and copy-and-paste is the recommended way to use.
+Copy and paste `src/main/java/kotlin` to your source directory, and enjoy.
+
+If you are not using kotlin, you need to add the following code snippet to your `build.gradle` configuration.
+
+```groovy
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs = ['-Xjvm-default=enable']
+    }
+}
+```
+
+>If you want to use vjson without kotlin runtime, you may checkout to commit `00577677156cd9394ea2a32028f684cbce178065`, which is the last java version.
+
+## example
 
 ```java
 // basic
