@@ -195,31 +195,31 @@ public class TestParseFail {
             JSON.deserialize("[true]", new ArrayRule<>(ArrayList::new, List::add, new StringRule()));
             fail();
         } catch (JsonParseException e) {
-            assertTrue(e.getMessage().contains("invalid type: expecting: String, value=true(class java.lang.Boolean)"));
+            assertTrue(e.getMessage().contains("invalid type: expecting: String, value=true(kotlin.Boolean)"));
         }
         try {
             JSON.deserialize("[true]", new ArrayRule<>(ArrayList::new, List::add, new StringRule()));
             fail();
         } catch (JsonParseException e) {
-            assertTrue(e.getMessage().contains("invalid type: expecting: String, value=true(class java.lang.Boolean)"));
+            assertTrue(e.getMessage().contains("invalid type: expecting: String, value=true(kotlin.Boolean)"));
         }
         try {
             JSON.deserialize("[\"a\"]", new ArrayRule<>(ArrayList::new, List::add, new DoubleRule()));
             fail();
         } catch (JsonParseException e) {
-            assertTrue(e.getMessage().contains("invalid type: expecting: Double, value=a(class java.lang.String)"));
+            assertTrue(e.getMessage().contains("invalid type: expecting: Double, value=a(kotlin.String)"));
         }
         try {
             JSON.deserialize("[1.0]", new ArrayRule<>(ArrayList::new, List::add, new LongRule()));
             fail();
         } catch (JsonParseException e) {
-            assertTrue(e.getMessage().contains("invalid type: expecting: Long, value=1.0(class java.lang.Double)"));
+            assertTrue(e.getMessage().contains("invalid type: expecting: Long, value=1.0(kotlin.Double)"));
         }
         try {
             JSON.deserialize("[\"a\"]", new ArrayRule<>(ArrayList::new, List::add, new LongRule()));
             fail();
         } catch (JsonParseException e) {
-            assertTrue(e.getMessage().contains("invalid type: expecting: Long, value=a(class java.lang.String)"));
+            assertTrue(e.getMessage().contains("invalid type: expecting: Long, value=a(kotlin.String)"));
         }
 
         JSON.deserialize("[1]", new ArrayRule<>(ArrayList::new, List::add, new LongRule()));
@@ -228,13 +228,13 @@ public class TestParseFail {
             JSON.deserialize("[1.0]", new ArrayRule<>(ArrayList::new, List::add, new IntRule()));
             fail();
         } catch (JsonParseException e) {
-            assertTrue(e.getMessage().contains("invalid type: expecting: Int, value=1.0(class java.lang.Double)"));
+            assertTrue(e.getMessage().contains("invalid type: expecting: Int, value=1.0(kotlin.Double)"));
         }
         try {
             JSON.deserialize("[\"a\"]", new ArrayRule<>(ArrayList::new, List::add, new IntRule()));
             fail();
         } catch (JsonParseException e) {
-            assertTrue(e.getMessage().contains("invalid type: expecting: Int, value=a(class java.lang.String)"));
+            assertTrue(e.getMessage().contains("invalid type: expecting: Int, value=a(kotlin.String)"));
         }
 
         try {

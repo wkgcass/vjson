@@ -1,5 +1,6 @@
 package vjson;
 
+import kotlin.jvm.internal.Reflection;
 import org.junit.Test;
 import vjson.deserializer.DeserializeParserListener;
 import vjson.deserializer.rule.*;
@@ -150,7 +151,7 @@ public class TestDeserialize {
 
     @Test
     public void typeObjectDefaultRule() {
-        Rule<TypeRuleBase> rule = new TypeRule<>(TypeRuleBase.class, TypeRuleBase.baseRule);
+        Rule<TypeRuleBase> rule = new TypeRule<>(Reflection.getOrCreateKotlinClass(TypeRuleBase.class), TypeRuleBase.baseRule);
         TypeRuleBase base = randomTypeRuleBase();
         JSON.Object o = new ObjectBuilder()
             .put("x", base.x)

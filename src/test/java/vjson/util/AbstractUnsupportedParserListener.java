@@ -1,17 +1,6 @@
-/*
- * The MIT License
- *
- * Copyright 2019 wkgcass (https://github.com/wkgcass)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package vjson.util;
 
+import kotlin.Unit;
 import vjson.JSON;
 import vjson.ParserListener;
 import vjson.parser.*;
@@ -21,37 +10,37 @@ import java.util.Map;
 
 public abstract class AbstractUnsupportedParserListener implements ParserListener {
     @Override
-    public void onObjectBegin(ObjectParser object) {
+    public void onObjectBegin(ObjectParser obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onObjectKey(ObjectParser object, String key) {
+    public void onObjectKey(ObjectParser obj, String key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onObjectValue(ObjectParser object, String key, JSON.Instance value) {
+    public void onObjectValue(ObjectParser obj, String key, JSON.Instance value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onObjectValueJavaObject(ObjectParser object, String key, Object value) {
+    public void onObjectValueJavaObject(ObjectParser obj, String key, Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onObjectEnd(ObjectParser object) {
+    public void onObjectEnd(ObjectParser obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onObject(JSON.Object object) {
+    public void onObject(JSON.Object obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onObject(Map<String, Object> object) {
+    public void onObject(Map<String, ?> obj) {
         throw new UnsupportedOperationException();
     }
 
@@ -81,7 +70,7 @@ public abstract class AbstractUnsupportedParserListener implements ParserListene
     }
 
     @Override
-    public void onArray(List<Object> array) {
+    public void onArray(List<?> array) {
         throw new UnsupportedOperationException();
     }
 
@@ -101,7 +90,7 @@ public abstract class AbstractUnsupportedParserListener implements ParserListene
     }
 
     @Override
-    public void onBool(Boolean bool) {
+    public void onBool(boolean bool) {
         throw new UnsupportedOperationException();
     }
 
@@ -121,7 +110,7 @@ public abstract class AbstractUnsupportedParserListener implements ParserListene
     }
 
     @Override
-    public void onNull(Void n) {
+    public void onNull(Unit n) {
         throw new UnsupportedOperationException();
     }
 

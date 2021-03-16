@@ -374,19 +374,19 @@ public class TestListener {
         String toParse = "{}";
         ObjectParser parser = new ObjectParser(new ParserOptions().setListener(new AbstractUnsupportedParserListener() {
             @Override
-            public void onObjectBegin(ObjectParser object) {
+            public void onObjectBegin(ObjectParser obj) {
                 ++step;
                 assertEquals(1, step);
             }
 
             @Override
-            public void onObjectEnd(ObjectParser object) {
+            public void onObjectEnd(ObjectParser obj) {
                 ++step;
                 assertEquals(2, step);
             }
 
             @Override
-            public void onObject(JSON.Object object) {
+            public void onObject(JSON.Object obj) {
                 ++step;
                 assertEquals(3, step);
             }
@@ -398,22 +398,22 @@ public class TestListener {
         toParse = "{\"a\":1,\"b\":2,\"c\":3}";
         parser = new ObjectParser(new ParserOptions().setListener(new AbstractParserListener() {
             @Override
-            public void onObjectBegin(ObjectParser object) {
+            public void onObjectBegin(ObjectParser obj) {
                 ++step;
                 assertEquals(1, step);
             }
 
             @Override
-            public void onObjectKey(ObjectParser object, String key) {
-                assertEquals(key, object.getCurrentKey());
+            public void onObjectKey(ObjectParser obj, String key) {
+                assertEquals(key, obj.getCurrentKey());
                 if (step == 1) {
-                    assertEquals(0, object.getMap().size());
+                    assertEquals(0, obj.getMap().size());
                     assertEquals("a", key);
                 } else if (step == 3) {
-                    assertEquals(1, object.getMap().size());
+                    assertEquals(1, obj.getMap().size());
                     assertEquals("b", key);
                 } else if (step == 5) {
-                    assertEquals(2, object.getMap().size());
+                    assertEquals(2, obj.getMap().size());
                     assertEquals("c", key);
                 } else {
                     fail();
@@ -422,16 +422,16 @@ public class TestListener {
             }
 
             @Override
-            public void onObjectValue(ObjectParser object, String key, JSON.Instance value) {
-                assertNull(object.getCurrentKey());
+            public void onObjectValue(ObjectParser obj, String key, JSON.Instance value) {
+                assertNull(obj.getCurrentKey());
                 if (step == 2) {
-                    assertEquals(1, object.getMap().size());
+                    assertEquals(1, obj.getMap().size());
                     assertEquals(1, value.toJavaObject());
                 } else if (step == 4) {
-                    assertEquals(2, object.getMap().size());
+                    assertEquals(2, obj.getMap().size());
                     assertEquals(2, value.toJavaObject());
                 } else if (step == 6) {
-                    assertEquals(3, object.getMap().size());
+                    assertEquals(3, obj.getMap().size());
                     assertEquals(3, value.toJavaObject());
                 } else {
                     fail();
@@ -440,20 +440,20 @@ public class TestListener {
             }
 
             @Override
-            public void onObjectEnd(ObjectParser object) {
-                assertNull(object.getCurrentKey());
-                assertEquals(3, object.getMap().size());
+            public void onObjectEnd(ObjectParser obj) {
+                assertNull(obj.getCurrentKey());
+                assertEquals(3, obj.getMap().size());
                 ++step;
                 assertEquals(8, step);
             }
 
             @Override
-            public void onObject(JSON.Object object) {
+            public void onObject(JSON.Object obj) {
                 assertEquals(new SimpleObject(new AppendableMap<>()
                     .append("a", new SimpleInteger(1))
                     .append("b", new SimpleInteger(2))
                     .append("c", new SimpleInteger(3))
-                ), object);
+                ), obj);
                 ++step;
                 assertEquals(9, step);
             }

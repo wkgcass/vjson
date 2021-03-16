@@ -107,21 +107,21 @@ public class TestStringifier {
         StringBuilder sb = new StringBuilder();
         o.stringify(sb, new AbstractUnsupportedStringifier() {
             @Override
-            public void beforeObjectBegin(StringBuilder sb, JSON.Object object) {
+            public void beforeObjectBegin(StringBuilder sb, JSON.Object obj) {
                 assertEquals("", sb.toString());
                 ++step;
                 assertEquals(1, step);
             }
 
             @Override
-            public void afterObjectBegin(StringBuilder sb, JSON.Object object) {
+            public void afterObjectBegin(StringBuilder sb, JSON.Object obj) {
                 assertEquals("{", sb.toString());
                 ++step;
                 assertEquals(2, step);
             }
 
             @Override
-            public void beforeObjectKey(StringBuilder sb, JSON.Object object, String key) {
+            public void beforeObjectKey(StringBuilder sb, JSON.Object obj, String key) {
                 if (step == 2) {
                     assertEquals("{", sb.toString());
                 } else if (step == 10) {
@@ -135,7 +135,7 @@ public class TestStringifier {
             }
 
             @Override
-            public void afterObjectKey(StringBuilder sb, JSON.Object object, String key) {
+            public void afterObjectKey(StringBuilder sb, JSON.Object obj, String key) {
                 if (step == 3) {
                     assertEquals("{\"a\"", sb.toString());
                 } else if (step == 11) {
@@ -149,7 +149,7 @@ public class TestStringifier {
             }
 
             @Override
-            public void beforeObjectColon(StringBuilder sb, JSON.Object object) {
+            public void beforeObjectColon(StringBuilder sb, JSON.Object obj) {
                 if (step == 4) {
                     assertEquals("{\"a\"", sb.toString());
                 } else if (step == 12) {
@@ -163,7 +163,7 @@ public class TestStringifier {
             }
 
             @Override
-            public void afterObjectColon(StringBuilder sb, JSON.Object object) {
+            public void afterObjectColon(StringBuilder sb, JSON.Object obj) {
                 if (step == 5) {
                     assertEquals("{\"a\":", sb.toString());
                 } else if (step == 13) {
@@ -177,7 +177,7 @@ public class TestStringifier {
             }
 
             @Override
-            public void beforeObjectValue(StringBuilder sb, JSON.Object object, String key, JSON.Instance value) {
+            public void beforeObjectValue(StringBuilder sb, JSON.Object obj, String key, JSON.Instance value) {
                 if (step == 6) {
                     assertEquals("{\"a\":", sb.toString());
                 } else if (step == 14) {
@@ -191,7 +191,7 @@ public class TestStringifier {
             }
 
             @Override
-            public void afterObjectValue(StringBuilder sb, JSON.Object object, String key, JSON.Instance value) {
+            public void afterObjectValue(StringBuilder sb, JSON.Object obj, String key, JSON.Instance value) {
                 if (step == 7) {
                     assertEquals("{\"a\":1", sb.toString());
                 } else if (step == 15) {
@@ -205,7 +205,7 @@ public class TestStringifier {
             }
 
             @Override
-            public void beforeObjectComma(StringBuilder sb, JSON.Object object) {
+            public void beforeObjectComma(StringBuilder sb, JSON.Object obj) {
                 if (step == 8) {
                     assertEquals("{\"a\":1", sb.toString());
                 } else if (step == 16) {
@@ -217,7 +217,7 @@ public class TestStringifier {
             }
 
             @Override
-            public void afterObjectComma(StringBuilder sb, JSON.Object object) {
+            public void afterObjectComma(StringBuilder sb, JSON.Object obj) {
                 if (step == 9) {
                     assertEquals("{\"a\":1,", sb.toString());
                 } else if (step == 17) {
@@ -229,14 +229,14 @@ public class TestStringifier {
             }
 
             @Override
-            public void beforeObjectEnd(StringBuilder sb, JSON.Object object) {
+            public void beforeObjectEnd(StringBuilder sb, JSON.Object obj) {
                 assertEquals("{\"a\":1,\"b\":2,\"c\":3", sb.toString());
                 ++step;
                 assertEquals(25, step);
             }
 
             @Override
-            public void afterObjectEnd(StringBuilder sb, JSON.Object object) {
+            public void afterObjectEnd(StringBuilder sb, JSON.Object obj) {
                 assertEquals("{\"a\":1,\"b\":2,\"c\":3}", sb.toString());
                 ++step;
                 assertEquals(26, step);

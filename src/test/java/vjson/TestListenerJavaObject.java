@@ -1,5 +1,6 @@
 package vjson;
 
+import kotlin.Unit;
 import org.junit.Test;
 import vjson.listener.AbstractParserListener;
 import vjson.parser.*;
@@ -31,7 +32,7 @@ public class TestListenerJavaObject {
             }
 
             @Override
-            public void onNull(Void n) {
+            public void onNull(Unit n) {
                 ++step;
                 assertEquals(3, step);
             }
@@ -57,7 +58,7 @@ public class TestListenerJavaObject {
             }
 
             @Override
-            public void onBool(Boolean bool) {
+            public void onBool(boolean bool) {
                 assertTrue(bool);
                 ++step;
                 assertEquals(3, step);
@@ -81,7 +82,7 @@ public class TestListenerJavaObject {
             }
 
             @Override
-            public void onBool(Boolean bool) {
+            public void onBool(boolean bool) {
                 assertFalse(bool);
                 ++step;
                 assertEquals(3, step);
@@ -328,7 +329,7 @@ public class TestListenerJavaObject {
             }
 
             @Override
-            public void onArray(List<Object> array) {
+            public void onArray(List<?> array) {
                 assertEquals(0, array.size());
                 ++step;
                 assertEquals(3, step);
@@ -361,7 +362,7 @@ public class TestListenerJavaObject {
             }
 
             @Override
-            public void onArray(List<Object> array) {
+            public void onArray(List<?> array) {
                 assertEquals(3, array.size());
                 ++step;
                 assertEquals(6, step);
@@ -376,19 +377,19 @@ public class TestListenerJavaObject {
         String toParse = "{}";
         ObjectParser parser = new ObjectParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractUnsupportedParserListener() {
             @Override
-            public void onObjectBegin(ObjectParser object) {
+            public void onObjectBegin(ObjectParser obj) {
                 ++step;
                 assertEquals(1, step);
             }
 
             @Override
-            public void onObjectEnd(ObjectParser object) {
+            public void onObjectEnd(ObjectParser obj) {
                 ++step;
                 assertEquals(2, step);
             }
 
             @Override
-            public void onObject(Map<String, Object> object) {
+            public void onObject(Map<String, ?> obj) {
                 ++step;
                 assertEquals(3, step);
             }
@@ -400,22 +401,22 @@ public class TestListenerJavaObject {
         toParse = "{\"a\":1,\"b\":2,\"c\":3}";
         parser = new ObjectParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractParserListener() {
             @Override
-            public void onObjectBegin(ObjectParser object) {
+            public void onObjectBegin(ObjectParser obj) {
                 ++step;
                 assertEquals(1, step);
             }
 
             @Override
-            public void onObjectKey(ObjectParser object, String key) {
-                assertEquals(key, object.getCurrentKey());
+            public void onObjectKey(ObjectParser obj, String key) {
+                assertEquals(key, obj.getCurrentKey());
                 if (step == 1) {
-                    assertEquals(0, object.getJavaMap().size());
+                    assertEquals(0, obj.getJavaMap().size());
                     assertEquals("a", key);
                 } else if (step == 3) {
-                    assertEquals(1, object.getJavaMap().size());
+                    assertEquals(1, obj.getJavaMap().size());
                     assertEquals("b", key);
                 } else if (step == 5) {
-                    assertEquals(2, object.getJavaMap().size());
+                    assertEquals(2, obj.getJavaMap().size());
                     assertEquals("c", key);
                 } else {
                     fail();
@@ -424,16 +425,16 @@ public class TestListenerJavaObject {
             }
 
             @Override
-            public void onObjectValueJavaObject(ObjectParser object, String key, Object value) {
-                assertNull(object.getCurrentKey());
+            public void onObjectValueJavaObject(ObjectParser obj, String key, Object value) {
+                assertNull(obj.getCurrentKey());
                 if (step == 2) {
-                    assertEquals(1, object.getJavaMap().size());
+                    assertEquals(1, obj.getJavaMap().size());
                     assertEquals(1, (int) value);
                 } else if (step == 4) {
-                    assertEquals(2, object.getJavaMap().size());
+                    assertEquals(2, obj.getJavaMap().size());
                     assertEquals(2, (int) value);
                 } else if (step == 6) {
-                    assertEquals(3, object.getJavaMap().size());
+                    assertEquals(3, obj.getJavaMap().size());
                     assertEquals(3, (int) value);
                 } else {
                     fail();
@@ -442,21 +443,21 @@ public class TestListenerJavaObject {
             }
 
             @Override
-            public void onObjectEnd(ObjectParser object) {
-                assertNull(object.getCurrentKey());
-                assertEquals(3, object.getJavaMap().size());
+            public void onObjectEnd(ObjectParser obj) {
+                assertNull(obj.getCurrentKey());
+                assertEquals(3, obj.getJavaMap().size());
                 ++step;
                 assertEquals(8, step);
             }
 
             @Override
-            public void onObject(Map<String, Object> object) {
+            public void onObject(Map<String, ?> obj) {
                 //noinspection AssertEqualsBetweenInconvertibleTypes
                 assertEquals(new AppendableMap<>()
                         .append("a", 1)
                         .append("b", 2)
                         .append("c", 3)
-                    , object);
+                    , obj);
                 ++step;
                 assertEquals(9, step);
             }

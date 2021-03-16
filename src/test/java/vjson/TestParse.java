@@ -15,9 +15,9 @@ import static org.junit.Assert.*;
 
 @SuppressWarnings("RedundantThrows")
 public class TestParse {
-    private <T extends JSON.Instance> T parse(Supplier<Parser<T>> parserSupplier,
-                                              Supplier<Parser<T>> javaObjectParserSupplier,
-                                              String... jsons) {
+    private <T extends JSON.Instance<?>> T parse(Supplier<Parser<T>> parserSupplier,
+                                                 Supplier<Parser<T>> javaObjectParserSupplier,
+                                                 String... jsons) {
         //noinspection unchecked
         T inst = (T) JSON.parse(jsons[0]);
         for (String json : jsons) {
@@ -27,9 +27,9 @@ public class TestParse {
         return inst;
     }
 
-    private <T extends JSON.Instance> T parse(String json,
-                                              Supplier<Parser<T>> parserSupplier,
-                                              Supplier<Parser<T>> javaObjectParserSupplier) {
+    private <T extends JSON.Instance<?>> T parse(String json,
+                                                 Supplier<Parser<T>> parserSupplier,
+                                                 Supplier<Parser<T>> javaObjectParserSupplier) {
         //noinspection unchecked
         T inst = (T) JSON.parse(json);
         assertNotNull(inst);
@@ -167,10 +167,11 @@ public class TestParse {
             "", inst.toJavaObject());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void number() throws Exception {
-        Supplier<Parser<JSON.Number>> sup = NumberParser::new;
-        Supplier<Parser<JSON.Number>> sup2 = () -> new NumberParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT));
+        Supplier/*<Parser<? extends JSON.Number>>*/ sup = NumberParser::new;
+        Supplier/*<Parser<? extends JSON.Number>>*/ sup2 = () -> new NumberParser(new ParserOptions().setMode(ParserMode.JAVA_OBJECT));
         Map<String, Integer> intTests = new AppendableMap<>()
             .append("0", 0)
             .append("1", 1)

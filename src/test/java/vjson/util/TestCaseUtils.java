@@ -1,5 +1,6 @@
 package vjson.util;
 
+import kotlin.jvm.internal.Reflection;
 import vjson.JSON;
 import vjson.simple.SimpleNull;
 import vjson.util.typerule.*;
@@ -155,19 +156,19 @@ public class TestCaseUtils {
     public static JSON.Instance getTypeRuleBaseJSON(TypeRuleBase o) {
         ObjectBuilder ob = new ObjectBuilder();
         if (o instanceof TypeRuleA) {
-            ob.type(TypeRuleA.class);
+            ob.type(Reflection.createKotlinClass(TypeRuleA.class));
             ob.put("a", ((TypeRuleA) o).a);
         } else if (o instanceof TypeRuleB) {
-            ob.type(TypeRuleB.class);
+            ob.type(Reflection.createKotlinClass(TypeRuleB.class));
             ob.put("b", ((TypeRuleB) o).b);
         } else if (o instanceof TypeRuleC) {
-            ob.type(TypeRuleC.class);
+            ob.type(Reflection.createKotlinClass(TypeRuleC.class));
             ob.putInst("c", getSimpleObjectCaseJSON(((TypeRuleC) o).c));
         } else if (o instanceof TypeRuleD) {
-            ob.type(TypeRuleD.class);
+            ob.type(Reflection.createKotlinClass(TypeRuleD.class));
             ob.putInst("d", getTypeRuleBaseJSON(((TypeRuleD) o).d));
         } else {
-            ob.type(TypeRuleBase.class);
+            ob.type(Reflection.createKotlinClass(TypeRuleBase.class));
         }
         ob.put("x", o.x);
         ob.put("y", o.y);

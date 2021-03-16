@@ -1,5 +1,6 @@
 package vjson;
 
+import kotlin.jvm.internal.Reflection;
 import org.junit.Test;
 import vjson.cs.CharArrayCharStream;
 import vjson.parser.*;
@@ -18,7 +19,7 @@ public class TestParamValidationReport {
     @Test
     public void array() throws Exception {
         try {
-            new SimpleArray((List<JSON.Instance>) null);
+            new SimpleArray((List<JSON.Instance<?>>) null);
             fail();
         } catch (NullPointerException ignore) {
         }
@@ -38,11 +39,11 @@ public class TestParamValidationReport {
         } catch (IndexOutOfBoundsException ignore) {
         }
         class T extends SimpleArray {
-            private T(List<JSON.Instance> list, vjson.parser.TrustedFlag flag) {
+            private T(List<JSON.Instance<?>> list, vjson.parser.TrustedFlag flag) {
                 super(list, flag);
             }
 
-            private T(List<JSON.Instance> list, vjson.util.TrustedFlag flag) {
+            private T(List<JSON.Instance<?>> list, vjson.util.TrustedFlag flag) {
                 super(list, flag);
             }
 
@@ -62,7 +63,7 @@ public class TestParamValidationReport {
     @Test
     public void object() throws Exception {
         try {
-            new SimpleObject((Map<String, JSON.Instance>) null);
+            new SimpleObject((Map<String, JSON.Instance<?>>) null);
             fail();
         } catch (NullPointerException ignore) {
         }
@@ -83,7 +84,7 @@ public class TestParamValidationReport {
         } catch (NullPointerException ignore) {
         }
         try {
-            new SimpleObject((List<SimpleObjectEntry<JSON.Instance>>) null);
+            new SimpleObject((List<SimpleObjectEntry<JSON.Instance<?>>>) null);
             fail();
         } catch (NullPointerException ignore) {
         }
@@ -95,7 +96,7 @@ public class TestParamValidationReport {
         try {
             new SimpleObject(Collections.singletonList(new SimpleObjectEntry<>(null, new SimpleNull())));
             fail();
-        } catch (IllegalArgumentException ignore) {
+        } catch (NullPointerException ignore) {
         }
         try {
             new SimpleObject(Collections.singletonList(new SimpleObjectEntry<>("a", null)));
@@ -123,11 +124,11 @@ public class TestParamValidationReport {
         } catch (NullPointerException ignore) {
         }
         class T extends SimpleObject {
-            private T(List<SimpleObjectEntry<JSON.Instance>> initMap, vjson.parser.TrustedFlag flag) {
+            private T(List<SimpleObjectEntry<JSON.Instance<?>>> initMap, vjson.parser.TrustedFlag flag) {
                 super(initMap, flag);
             }
 
-            private T(List<SimpleObjectEntry<JSON.Instance>> initMap, vjson.util.TrustedFlag flag) {
+            private T(List<SimpleObjectEntry<JSON.Instance<?>>> initMap, vjson.util.TrustedFlag flag) {
                 super(initMap, flag);
             }
         }
@@ -370,12 +371,12 @@ public class TestParamValidationReport {
     @Test
     public void transformer() throws Exception {
         Transformer tf = new Transformer();
-        tf.removeRule(Boolean.class);
+        tf.removeRule(Reflection.getOrCreateKotlinClass(Boolean.class));
         try {
             tf.transform(true);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("unknown input type: java.lang.Boolean", e.getMessage());
+            assertEquals("unknown input type: kotlin.Boolean", e.getMessage());
         }
         try {
             tf.transform(new AppendableMap<>().append(1, 2));

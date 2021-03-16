@@ -1,5 +1,6 @@
 package vjson;
 
+import kotlin.jvm.internal.Reflection;
 import org.junit.Test;
 import vjson.deserializer.DeserializeParserListener;
 import vjson.deserializer.rule.*;
@@ -50,7 +51,6 @@ public class TestCorner {
     @Test
     public void version() throws Exception {
         System.out.println("Current version is: " + VERSION.VERSION);
-        new VERSION();
     }
 
     @Test
@@ -176,13 +176,13 @@ public class TestCorner {
 
         TypeRule<Object> typeRule = new TypeRule<>()
             .type("base", TypeRuleBase.baseRule)
-            .type(TypeRuleA.class, TypeRuleA.aRule);
+            .type(Reflection.getOrCreateKotlinClass(TypeRuleA.class), TypeRuleA.aRule);
         assertEquals("TypeRule{" +
             "@type[base]=>Object{x=>Int,y=>String}," +
             "@type[" + TypeRuleA.class.getName() + "]=>Object{x=>Int,y=>String,a=>Double}" +
             "}", typeRule.toString());
         TypeRule<Object> typeRuleConstructor = new TypeRule<Object>("base", TypeRuleBase.baseRule)
-            .type(TypeRuleA.class, TypeRuleA.aRule);
+            .type(Reflection.getOrCreateKotlinClass(TypeRuleA.class), TypeRuleA.aRule);
         assertEquals("TypeRule{" +
             "@type[base*]=>Object{x=>Int,y=>String}," +
             "@type[" + TypeRuleA.class.getName() + "]=>Object{x=>Int,y=>String,a=>Double}" +

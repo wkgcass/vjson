@@ -1,5 +1,6 @@
 package vjson.util.typerule;
 
+import kotlin.jvm.internal.Reflection;
 import vjson.deserializer.rule.IntRule;
 import vjson.deserializer.rule.ObjectRule;
 import vjson.deserializer.rule.StringRule;
@@ -49,6 +50,7 @@ public class TypeRuleBase {
         return Objects.hash(x, y);
     }
 
+    @SuppressWarnings("unchecked")
     public static TypeRule<TypeRuleBase> getTypeRule() {
         if (typeBaseRule != null) {
             return typeBaseRule;
@@ -59,11 +61,11 @@ public class TypeRuleBase {
             }
             TypeRule<TypeRuleBase> rule = new TypeRule<>();
             typeBaseRule = rule;
-            rule.type(TypeRuleBase.class, baseRule)
-                .type(TypeRuleA.class, TypeRuleA.aRule)
-                .type(TypeRuleB.class, TypeRuleB.bRule)
-                .type(TypeRuleC.class, TypeRuleC.cRule)
-                .type(TypeRuleD.class, TypeRuleD.dRule());
+            rule.type(Reflection.getOrCreateKotlinClass(TypeRuleBase.class), baseRule)
+                .type(Reflection.getOrCreateKotlinClass(TypeRuleA.class), TypeRuleA.aRule)
+                .type(Reflection.getOrCreateKotlinClass(TypeRuleB.class), TypeRuleB.bRule)
+                .type(Reflection.getOrCreateKotlinClass(TypeRuleC.class), TypeRuleC.cRule)
+                .type(Reflection.getOrCreateKotlinClass(TypeRuleD.class), TypeRuleD.dRule());
             return rule;
         }
     }

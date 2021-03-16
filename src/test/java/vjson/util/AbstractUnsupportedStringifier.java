@@ -5,62 +5,62 @@ import vjson.Stringifier;
 
 public abstract class AbstractUnsupportedStringifier implements Stringifier {
     @Override
-    public void beforeObjectBegin(StringBuilder sb, JSON.Object object) {
+    public void beforeObjectBegin(StringBuilder sb, JSON.Object obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void afterObjectBegin(StringBuilder sb, JSON.Object object) {
+    public void afterObjectBegin(StringBuilder sb, JSON.Object obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void beforeObjectKey(StringBuilder sb, JSON.Object object, String key) {
+    public void beforeObjectKey(StringBuilder sb, JSON.Object obj, String key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void afterObjectKey(StringBuilder sb, JSON.Object object, String key) {
+    public void afterObjectKey(StringBuilder sb, JSON.Object obj, String key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void beforeObjectColon(StringBuilder sb, JSON.Object object) {
+    public void beforeObjectColon(StringBuilder sb, JSON.Object obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void afterObjectColon(StringBuilder sb, JSON.Object object) {
+    public void afterObjectColon(StringBuilder sb, JSON.Object obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void beforeObjectValue(StringBuilder sb, JSON.Object object, String key, JSON.Instance value) {
+    public void beforeObjectValue(StringBuilder sb, JSON.Object obj, String key, JSON.Instance value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void afterObjectValue(StringBuilder sb, JSON.Object object, String key, JSON.Instance value) {
+    public void afterObjectValue(StringBuilder sb, JSON.Object obj, String key, JSON.Instance value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void beforeObjectComma(StringBuilder sb, JSON.Object object) {
+    public void beforeObjectComma(StringBuilder sb, JSON.Object obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void afterObjectComma(StringBuilder sb, JSON.Object object) {
+    public void afterObjectComma(StringBuilder sb, JSON.Object obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void beforeObjectEnd(StringBuilder sb, JSON.Object object) {
+    public void beforeObjectEnd(StringBuilder sb, JSON.Object obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void afterObjectEnd(StringBuilder sb, JSON.Object object) {
+    public void afterObjectEnd(StringBuilder sb, JSON.Object obj) {
         throw new UnsupportedOperationException();
     }
 

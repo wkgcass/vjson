@@ -7,7 +7,7 @@ import vjson.simple.*;
 import vjson.util.AppendableMap;
 import vjson.util.TextBuilder;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -72,9 +72,9 @@ public class TestUpdateParser {
     public void array() throws Exception {
         ArrayParser parser = new ArrayParser();
         parser.feed("[1,2,");
-        LinkedList<JSON.Instance> list = parser.getList();
+        List<JSON.Instance<?>> list = parser.getList();
         assertEquals(2, list.size());
-        list.removeLast();
+        list.remove(list.size() - 1);
         list.add(new SimpleInteger(4));
         JSON.Array array = parser.last("3]");
         assertEquals(new SimpleArray(

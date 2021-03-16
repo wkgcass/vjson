@@ -1,5 +1,6 @@
 package vjson.example;
 
+import kotlin.jvm.internal.Reflection;
 import vjson.JSON;
 import vjson.deserializer.rule.*;
 import vjson.util.ArrayBuilder;
@@ -49,7 +50,7 @@ public class Example {
             .put("price", Good::setPrice, new DoubleRule());
         ObjectRule<SpecialPriceGood> specialPriceGoodRule = new ObjectRule<>(SpecialPriceGood::new, goodRule)
             .put("originalPrice", SpecialPriceGood::setOriginalPrice, new DoubleRule());
-        TypeRule<Good> typeGoodRule = new TypeRule<>(Good.class, goodRule)
+        TypeRule<Good> typeGoodRule = new TypeRule<>(Reflection.getOrCreateKotlinClass(Good.class), goodRule)
             .type("special", specialPriceGoodRule);
         ArrayRule<List<Good>, Good> goodsRule = new ArrayRule<>(ArrayList::new, List::add, typeGoodRule);
         List<Good> goods = JSON.deserialize("[" +
