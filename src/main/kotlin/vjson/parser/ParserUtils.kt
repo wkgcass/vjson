@@ -15,12 +15,12 @@ import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
 import vjson.ex.JsonParseException
-import vjson.util.CoverageUtils.cast
+import vjson.util.CastUtils.cast
 
 object ParserUtils {
   /* #ifdef KOTLIN_NATIVE {{
   private val holder: ParserCacheHolder = KotlinNativeParserCacheHolder()
-  }} #else {{*/
+  }} else {{*/
   private var holder: ParserCacheHolder = DefaultParserCacheHolder()
 
   @Throws(IllegalStateException::class)
@@ -36,6 +36,16 @@ object ParserUtils {
   /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
   fun isWhiteSpace(c: Char): Boolean {
     return c == '\n' || c == '\r' || c == ' ' || c == '\t'
+  }
+
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun isInitialVarName(c: Char): Boolean {
+    return c in 'a'..'z' || c in 'A'..'Z' || c == '_' || c == '$'
+  }
+
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun isVarName(c: Char): Boolean {
+    return isInitialVarName(c) || c in '0'..'9'
   }
 
   internal
