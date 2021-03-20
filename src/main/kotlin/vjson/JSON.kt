@@ -18,7 +18,7 @@ import vjson.parser.ParserMode
 import vjson.parser.ParserOptions
 import vjson.parser.ParserUtils.buildFrom
 import vjson.parser.ParserUtils.buildJavaObject
-import vjson.util.CoverageUtils.cast
+import vjson.util.CastUtils.cast
 
 @Suppress("DuplicatedCode")
 object JSON {

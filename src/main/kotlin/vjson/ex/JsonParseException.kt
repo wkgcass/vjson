@@ -11,7 +11,7 @@
  */
 package vjson.ex
 
-class JsonParseException : RuntimeException {
+class JsonParseException : ParserException {
   constructor(msg: String) : super(msg)
   constructor(msg: String, cause: Throwable) : super(msg, cause)
 }

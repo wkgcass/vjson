@@ -17,7 +17,7 @@ import vjson.Parser
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleArray
-import vjson.util.CoverageUtils.cast
+import vjson.util.CastUtils.cast
 
 class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   opts: ParserOptions = ParserOptions.DEFAULT

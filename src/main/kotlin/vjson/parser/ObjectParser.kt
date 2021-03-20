@@ -241,7 +241,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           opts.listener.onObjectKey(this, currentKey!!)
         } else {
           c = cs.moveNextAndGet()
-          if (c in 'a'..'z' || c in 'A'..'Z' || c in '0'..'9' || c == '_' || c == '$') {
+          if (ParserUtils.isVarName(c)) {
             keyBuilder!!.append(c)
           } else {
             err = "invalid character for json object key without quotes: $c"

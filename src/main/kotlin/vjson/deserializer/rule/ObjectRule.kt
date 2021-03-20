@@ -11,7 +11,7 @@
  */
 package vjson.deserializer.rule
 
-import vjson.util.CoverageUtils.cast
+import vjson.util.CastUtils.cast
 import vjson.util.functional.`BiConsumer$`
 
 class ObjectRule<O : Any>(val construct: () -> O) : Rule<O>() {

@@ -18,7 +18,7 @@ import vjson.listener.AbstractParserListener
 import vjson.parser.ArrayParser
 import vjson.parser.ObjectParser
 import vjson.simple.SimpleNull
-import vjson.util.CoverageUtils.cast
+import vjson.util.CastUtils.cast
 import vjson.util.collection.Stack
 
 class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
