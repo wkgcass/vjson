@@ -1,6 +1,7 @@
 package vjson;
 
 import org.junit.runner.RunWith;
+import vpreprocessor.*;
 
 @RunWith(org.junit.runners.Suite.class)
 @org.junit.runners.Suite.SuiteClasses({
@@ -28,6 +29,13 @@ import org.junit.runner.RunWith;
     TestDeserialize.class,
     TestUtil.class,
     TestKNParserCacheHolder.class,
+    TestPreprocessorTokenizer.class,
+    TestPreprocessorParser.class,
+    TestPreprocessorContext.class,
+    TestPreprocessor.class,
+    TestPreprocessorToken.class,
+    TestPreprocessorAST.class,
+    TestVList.class,
 })
 public class Suite {
 }

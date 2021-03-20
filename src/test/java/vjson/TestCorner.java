@@ -49,6 +49,24 @@ public class TestCorner {
     }
 
     @Test
+    public void varName() throws Exception {
+        assertTrue(ParserUtils.isInitialVarName('a'));
+        assertTrue(ParserUtils.isInitialVarName('z'));
+        assertTrue(ParserUtils.isInitialVarName('A'));
+        assertTrue(ParserUtils.isInitialVarName('Z'));
+        assertTrue(ParserUtils.isInitialVarName('_'));
+        assertTrue(ParserUtils.isInitialVarName('$'));
+        assertTrue(ParserUtils.isVarName('a'));
+        assertTrue(ParserUtils.isVarName('z'));
+        assertTrue(ParserUtils.isVarName('A'));
+        assertTrue(ParserUtils.isVarName('Z'));
+        assertTrue(ParserUtils.isVarName('_'));
+        assertTrue(ParserUtils.isVarName('$'));
+        assertTrue(ParserUtils.isVarName('0'));
+        assertTrue(ParserUtils.isVarName('9'));
+    }
+
+    @Test
     public void version() throws Exception {
         System.out.println("Current version is: " + VERSION.VERSION);
     }

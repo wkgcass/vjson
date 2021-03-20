@@ -1,7 +1,7 @@
 package vjson.util.collection
 
 class Stack<E> {
-  private val list: MutableList<E> = ArrayList()
+  private val list = VList<E>()
 
   fun push(e: E) {
     list.add(e)
@@ -12,7 +12,7 @@ class Stack<E> {
   }
 
   fun peek(): E {
-    return list[list.size - 1]
+    return list.last()
   }
 
   fun isEmpty(): Boolean {
