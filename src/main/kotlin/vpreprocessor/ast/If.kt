@@ -4,7 +4,7 @@ import vjson.ex.ParserException
 import vjson.util.CastUtils
 import vpreprocessor.PreprocessorContext
 
-class If @JvmOverloads constructor(
+class If /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   override val context: PreprocessorContext,
   val condition: Exp, val code: StatementSeq, val elseCode: StatementSeq? = null
 ) : AbstractAST(), Statement {

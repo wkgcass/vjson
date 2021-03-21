@@ -431,7 +431,7 @@ class Tokenizer(private val opts: PreprocessorOptions) {
     }
   }
 
-  private fun StringBuilder.merge(builder: java.lang.StringBuilder): StringBuilder {
+  private fun StringBuilder.merge(builder: StringBuilder): StringBuilder {
     append(builder)
     builder.clear()
     return this

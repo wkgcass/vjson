@@ -8,12 +8,12 @@ data class PreprocessorOptions(
   )
 
   companion object {
-    @JvmField
+    /*#ifndef KOTLIN_NATIVE {{*/@JvmField/*}}*/
     val KT = PreprocessorOptions(
       nestedComment = true,
     )
 
-    @JvmField
+    /*#ifndef KOTLIN_NATIVE {{*/@JvmField/*}}*/
     val JAVA = PreprocessorOptions(
       nestedComment = false,
     )

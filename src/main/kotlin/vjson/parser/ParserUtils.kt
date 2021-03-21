@@ -20,6 +20,7 @@ import vjson.util.CastUtils.cast
 object ParserUtils {
   /* #ifdef KOTLIN_NATIVE {{
   private val holder: ParserCacheHolder = KotlinNativeParserCacheHolder()
+  fun setParserCacheHolder(parserCacheHolder: ParserCacheHolder) {} // do nothing
   }} else {{*/
   private var holder: ParserCacheHolder = DefaultParserCacheHolder()
 

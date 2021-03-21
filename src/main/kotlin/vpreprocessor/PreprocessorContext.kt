@@ -7,7 +7,7 @@ class PreprocessorContext {
   val opts: PreprocessorOptions
   private val map = HashMap<String, Definition<*>>()
 
-  @JvmOverloads
+  /*#ifndef KOTLIN_NATIVE {{*/@JvmOverloads/*}}*/
   constructor(opts: PreprocessorOptions = PreprocessorOptions.KT) {
     this.parent = null
     this.opts = PreprocessorOptions(opts)
@@ -18,7 +18,7 @@ class PreprocessorContext {
     this.opts = parent.opts
   }
 
-  @JvmOverloads
+  /*#ifndef KOTLIN_NATIVE {{*/@JvmOverloads/*}}*/
   fun define(key: String, value: String? = null) {
     map[key] = Definition(key, value, String::class)
   }

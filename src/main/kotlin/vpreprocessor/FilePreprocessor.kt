@@ -1,3 +1,4 @@
+// #ifndef KOTLIN_NATIVE {{
 package vpreprocessor
 
 import vjson.CharStream.Companion.from
@@ -7,7 +8,10 @@ import java.io.FileOutputStream
 import java.io.FileReader
 import java.io.IOException
 import java.util.*
+// }}
 
+// #ifdef COVERAGE {{@lombok.Generated}}
+// #ifndef KOTLIN_NATIVE {{
 object FilePreprocessor {
   private val extensionMap: MutableMap<String, PreprocessorOptions> = HashMap()
 
@@ -16,8 +20,8 @@ object FilePreprocessor {
     extensionMap["java"] = PreprocessorOptions.JAVA
   }
 
-  @JvmStatic
   @Throws(IOException::class, ParserException::class)
+  @JvmStatic
   fun process(rootDir: String, params: ProcessParams) {
     val rootDirFile = File(rootDir)
     if (!rootDirFile.isDirectory) {
@@ -84,9 +88,13 @@ object FilePreprocessor {
     }
   }
 
-  class ProcessParams @JvmOverloads constructor(
+  // }}
+  // #ifdef COVERAGE {{@lombok.Generated}}
+  // #ifndef KOTLIN_NATIVE {{
+  class ProcessParams constructor(
     val contextInitializer: (PreprocessorContext) -> Unit,
     val pathFilter: (String) -> Boolean,
-    val currentFile: (String) -> Unit = {}
+    val currentFile: (String) -> Unit
   )
 }
+// }}
