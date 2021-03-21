@@ -167,7 +167,12 @@ class Tokenizer(private val opts: PreprocessorOptions) {
                 cs.moveNextAndGet()
                 texts.append("\\").append(ending)
                 return null
-              }/*2*/ // else: other escape, won't affect us
+              }/*2*/ else {
+                // other escape
+                texts.append(c).append(nx)
+                cs.moveNextAndGet()
+                return null
+              }
             }/*1*/ // else: eof, probably invalid source code, but we don't care
             texts.append(c)
             return null

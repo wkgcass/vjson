@@ -205,6 +205,9 @@ public class TestPreprocessorTokenizer {
 
         testPlain("\"\"\"abc\ndef/* #ghi  \n \"\"\"");
         testPlain("\"\"\"abc\"\"def\"\"\"");
+
+        testPlain("'\\\\'");
+        testPlain("\"\\\\\\\\\"");
     }
 
     @Test
