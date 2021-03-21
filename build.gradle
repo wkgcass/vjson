@@ -1,3 +1,20 @@
+import kotlin.Unit
+import kotlin.jvm.functions.Function1
+import vpreprocessor.FilePreprocessor
+import vpreprocessor.PreprocessorContext
+
+buildscript {
+    repositories {
+        flatDir dirs: projectDir.toString() + "/bootstrap"
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.31"
+        classpath ":vjson-bootstrap"
+    }
+}
+
 plugins {
     id 'java'
     id 'jacoco'
@@ -12,11 +29,17 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 repositories {
+    flatDir dirs: projectDir.toString() + "/bootstrap" // see :vjson-bootstrap dep for more info
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.31"
+
+    // a fix for IDEA not properly handling the dependencies in buildscript
+    // it is not actually required, using 'testCompileOnly' to minimize the influence
+    testCompileOnly ":vjson-bootstrap"
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.3'
@@ -37,6 +60,7 @@ test {
 jacocoTestReport {
     dependsOn test
 }
+
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
@@ -47,6 +71,51 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+}
+
+task checkGit(type: Exec) {
+    def output = new ByteArrayOutputStream()
+    commandLine './scripts/check-git.sh'
+    standardOutput = output
+    errorOutput = output
+    ignoreExitValue = true
+    doLast {
+        println output
+        if (execResult.getExitValue() != 0) {
+            throw new Exception("check failed: exit code " + execResult.getExitValue())
+        }
+    }
+}
+
+task bootstrap(type: Exec) {
+    def output = new ByteArrayOutputStream()
+    commandLine './scripts/bootstrap.sh', loadVersion()
+    standardOutput = output
+    errorOutput = output
+    ignoreExitValue = true
+    doLast {
+        println output
+        if (execResult.getExitValue() != 0) {
+            throw new Exception("bootstrap failed: exit code " + execResult.getExitValue())
+        }
+    }
+}
+
+task coverage {
+    dependsOn(checkGit)
+    doLast {
+        System.setProperty("COVERAGE", "1")
+        processSource()
+    }
+    finalizedBy(jacocoTestReport)
+}
+
+task kotlinNative {
+    dependsOn(checkGit)
+    doLast {
+        System.setProperty("KOTLIN_NATIVE", "1")
+        processSource()
     }
 }
 
@@ -62,4 +131,31 @@ def loadVersion() {
         }
     }
     return "unknown"
+}
+
+def processSource() {
+    FilePreprocessor.process(projectDir.toString() + "/src", new FilePreprocessor.ProcessParams(
+            new Function1<PreprocessorContext, Unit>() {
+                @Override
+                Unit invoke(PreprocessorContext ctx) {
+                    for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
+                        ctx.define((String) entry.getKey())
+                    }
+                    return null
+                }
+            },
+            new Function1<String, Boolean>() {
+                @Override
+                Boolean invoke(String path) {
+                    return true
+                }
+            },
+            new Function1<String, Unit>() {
+                @Override
+                Unit invoke(String filename) {
+                    logger.info(filename)
+                    return null
+                }
+            }
+    ))
 }
