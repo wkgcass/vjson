@@ -18,6 +18,8 @@ vjson致力于用java对象还原最原始的json结构。你可以通过简单�
 
 执行`src/test/java/vjson/Suite.java`可以跑测试用例。
 
+执行`./gradlew clean coverage`来获取覆盖率报告。
+
 ## 用法
 
 将`src/main/java/vjson`复制粘贴到你的源码目录即可。
@@ -40,6 +42,24 @@ compileKotlin {
 ```
 
 >如果你不想带kotlin使用vjson，你可以`checkout`到这个提交(`00577677156cd9394ea2a32028f684cbce178065`)，这是最后一个用java实现的版本。
+
+## kotlin native
+
+`vjson`完全由kotlin编写，并且仅使用kotlin标准库，所以`vjson`可以用于kotlin native。
+
+执行`./gradlew clean kotlinNative`，将源代码编译到kotlin native的版本。
+
+## vpreprocessor
+
+在jvm和kotlin native上，`vjson`使用相同的源代码。为了实现更好的java互操作性，`vjson`中使用了一些jvm特有的注解和jdk类库。但是在kotlin native中并没有提供这些类。为了解决这个问题，我开发了一个代码预处理器，可以将“宏”通过注释插入java/kotlin代码中。
+
+查看[vpreprocessor/README.md](https://github.com/wkgcass/vjson/blob/master/src/main/kotlin/vpreprocessor/README.md)获取更多信息。
+
+在`build.gradle`中执行预处理器，所以gradle依赖一个`vjson-bootstrap.jar`来引导其生命周期。引导相关的文件存放于`bootstrap/`目录。
+
+使用`./gradlew clean bootstrap`来编译并将新的引导jar包放置到`bootstrap/`目录中去。
+
+注意，预处理会直接覆盖源代码，所以在执行预处理前，你需要保证当前git目录是clean的。在执行`coverage`和`kotlinNative`前，会自动先执行`checkGit`任务。
 
 ## 示例
 
