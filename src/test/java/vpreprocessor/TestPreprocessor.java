@@ -69,4 +69,17 @@ public class TestPreprocessor {
         test("/* #ifndef X {{*/ abc /*}} else {{ def }} */", " def ",
             "X");
     }
+
+    @Test
+    public void block() {
+        test("/* #ifdef X { */ abc /* # } */", " abc ",
+            "X");
+        test("/* #ifdef X {{ */ abc /* }} */", "  abc  ",
+            "X");
+        test("/* #ifdef X {{ */ abc /* # }} */", "  abc  # ",
+            "X");
+
+        test("/* #ifdef X { */ abc /* xyz */ def /* # } */", " abc /* xyz */ def ",
+            "X");
+    }
 }
