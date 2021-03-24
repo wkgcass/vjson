@@ -3,6 +3,8 @@
 set -e
 
 output=`git status --short`
+# make sure 'grep' command exists
+git status | grep '.*' > /dev/null
 
 set +e
 
