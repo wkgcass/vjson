@@ -31,25 +31,31 @@ public class Example {
         System.out.println("build result == " + array);
         System.out.println("build result pretty() == " + array.pretty());
 
-        Rule<Shop> shopRule = new ObjectRule<>(Shop::new)
-            .put("name", Shop::setName, new StringRule())
-            .put("goods", Shop::setGoods, new ArrayRule<>(
+        Rule<Shop> shopRule = ObjectRule.builder(ShopB::new, ShopB::build, obud -> obud
+            .put("name", ShopB::setName, StringRule.get())
+            .put("goods", ShopB::setGoods, new ArrayRule<>(
                 ArrayList::new,
                 ArrayList::add,
-                new ObjectRule<>(Good::new)
-                    .put("id", Good::setId, new StringRule())
-                    .put("name", Good::setName, new StringRule())
-                    .put("price", Good::setPrice, new DoubleRule())
-            ));
+                ObjectRule.builder(GoodB::new, GoodB::build, obd2 -> obd2
+                    .put("id", GoodB::setId, StringRule.get())
+                    .put("name", GoodB::setName, StringRule.get())
+                    .put("price", GoodB::setPrice, DoubleRule.get()))
+            ))
+        );
         Shop shop = JSON.deserialize("{\"name\":\"HuaLian\",\"goods\":" + array.stringify() + "}", shopRule);
         System.out.println("deserialize result: " + shop);
 
-        ObjectRule<Good> goodRule = new ObjectRule<>(Good::new)
-            .put("id", Good::setId, new StringRule())
-            .put("name", Good::setName, new StringRule())
-            .put("price", Good::setPrice, new DoubleRule());
-        ObjectRule<SpecialPriceGood> specialPriceGoodRule = new ObjectRule<>(SpecialPriceGood::new, goodRule)
-            .put("originalPrice", SpecialPriceGood::setOriginalPrice, new DoubleRule());
+        ObjectRule.BuilderRule<Good> goodRule = ObjectRule.builder(GoodB::new, GoodB::build, obud -> obud
+            .put("id", GoodB::setId, StringRule.get())
+            .put("name", GoodB::setName, StringRule.get())
+            .put("price", GoodB::setPrice, DoubleRule.get())
+        );
+        ObjectRule<SpecialPriceGood> specialPriceGoodRule = ObjectRule.builder(
+            SpecialPriceGoodB::new,
+            goodRule,
+            SpecialPriceGoodB::build,
+            obud -> obud.put("originalPrice", SpecialPriceGoodB::setOriginalPrice, DoubleRule.get())
+        );
         TypeRule<Good> typeGoodRule = new TypeRule<>(Reflection.getOrCreateKotlinClass(Good.class), goodRule)
             .type("special", specialPriceGoodRule);
         ArrayRule<List<Good>, Good> goodsRule = new ArrayRule<>(ArrayList::new, List::add, typeGoodRule);
@@ -71,14 +77,11 @@ public class Example {
     }
 
     public static class Shop {
-        private String name;
-        private List<Good> goods;
+        final String name;
+        final List<Good> goods;
 
-        public void setName(String name) {
+        public Shop(String name, List<Good> goods) {
             this.name = name;
-        }
-
-        public void setGoods(List<Good> goods) {
             this.goods = goods;
         }
 
@@ -91,7 +94,45 @@ public class Example {
         }
     }
 
+    public static class ShopB {
+        private String name;
+        private List<Good> goods;
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setGoods(List<Good> goods) {
+            this.goods = goods;
+        }
+
+        public Shop build() {
+            return new Shop(name, goods);
+        }
+    }
+
     public static class Good {
+        final String id;
+        final String name;
+        final double price;
+
+        public Good(String id, String name, double price) {
+            this.id = id;
+            this.name = name;
+            this.price = price;
+        }
+
+        @Override
+        public String toString() {
+            return "Good{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                '}';
+        }
+    }
+
+    public static class GoodB {
         String id;
         String name;
         double price;
@@ -108,20 +149,16 @@ public class Example {
             this.price = price;
         }
 
-        @Override
-        public String toString() {
-            return "Good{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                '}';
+        public Good build() {
+            return new Good(id, name, price);
         }
     }
 
     public static class SpecialPriceGood extends Good {
-        double originalPrice;
+        final double originalPrice;
 
-        public void setOriginalPrice(double originalPrice) {
+        public SpecialPriceGood(String id, String name, double price, double originalPrice) {
+            super(id, name, price);
             this.originalPrice = originalPrice;
         }
 
@@ -133,6 +170,18 @@ public class Example {
                 ", price=" + price +
                 ", originalPrice=" + originalPrice +
                 '}';
+        }
+    }
+
+    public static class SpecialPriceGoodB extends GoodB {
+        double originalPrice;
+
+        public void setOriginalPrice(double originalPrice) {
+            this.originalPrice = originalPrice;
+        }
+
+        public SpecialPriceGood build() {
+            return new SpecialPriceGood(id, name, price, originalPrice);
         }
     }
 }

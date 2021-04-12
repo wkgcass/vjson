@@ -34,9 +34,15 @@ class TypeRule<T : Any> : Rule<T> {
     return this
   }
 
+  // for kotlin
+  fun type(typeName: String, ruleFunc: () -> ObjectRule<out T>): TypeRule<T> = type(typeName, ruleFunc())
+
   fun type(kClass: KClass<out T>, rule: ObjectRule<out T>): TypeRule<T> {
     return type(kClass.qualifiedName!!, rule)
   }
+
+  // for kotlin
+  fun type(kClass: KClass<out T>, ruleFunc: () -> ObjectRule<out T>): TypeRule<T> = type(kClass, ruleFunc())
 
   fun getRule(typeName: String): ObjectRule<out T>? {
     return rules[typeName]

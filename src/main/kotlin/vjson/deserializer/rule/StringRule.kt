@@ -11,7 +11,12 @@
  */
 package vjson.deserializer.rule
 
-class StringRule : Rule<String>() {
+object StringRule : Rule<String>() {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun get(): StringRule {
+    return this
+  }
+
   override fun toString(): String {
     return "String"
   }

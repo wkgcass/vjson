@@ -11,7 +11,12 @@
  */
 package vjson.deserializer.rule
 
-class BoolRule : Rule<Boolean>() {
+object BoolRule : Rule<Boolean>() {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun get(): BoolRule {
+    return this
+  }
+
   override fun toString(): String {
     return "Bool"
   }

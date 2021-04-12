@@ -14,25 +14,104 @@ package vjson.deserializer.rule
 import vjson.util.CastUtils.cast
 import vjson.util.functional.`BiConsumer$`
 
-class ObjectRule<O : Any>(val construct: () -> O) : Rule<O>() {
-  private val rules: MutableMap<String, ObjectField<O, *>> = LinkedHashMap()
+open class ObjectRule<O : Any> : Rule<O> {
+  val construct: () -> Any
+  val build: (Any) -> Any
+  protected val rules: MutableMap<String, ObjectField<Any, *>> = LinkedHashMap()
 
-  constructor(construct: () -> O, superRule: ObjectRule<in O>) : this(construct) {
+  // for both java and kotlin
+  constructor(construct: () -> O) {
+    this.construct = construct
+    this.build = { it }
+  }
+
+  // for both java and kotlin with super rule
+  constructor(construct: () -> O, superRule: ObjectRule<in O>) : this(construct, superRule, {})
+
+  // with rules constructed
+  constructor(construct: () -> O, f: ObjectRule<O>.() -> Unit) : this(construct) {
+    f(this)
+  }
+
+  // with super rule and rules constructed
+  constructor(construct: () -> O, superRule: ObjectRule<in O>, f: ObjectRule<O>.() -> Unit) : this(construct) {
     for ((key, value) in superRule.rules) {
       @Suppress("UNCHECKED_CAST")
       rules[key] = cast(value)
     }
+    f(this)
   }
 
-  fun <V> put(key: String, set: (O, V) -> Unit, type: Rule<V>): ObjectRule<O> {
-    require(!rules.containsKey(key)) { "duplicated key: $key" }
-    rules[key] = ObjectField(set, type)
-    return this
+  // for builder
+  private constructor(
+    construct: () -> Any,
+    superRule: ObjectRule<Any>?,
+    build: (Any) -> Any,
+    @Suppress("UNUSED_PARAMETER") foo: Int
+  ) {
+    this.construct = construct
+    this.build = build
+    if (superRule != null) {
+      for ((key, value) in superRule.rules) {
+        rules[key] = cast(value)
+      }
+    }
   }
 
+  companion object {
+    // for both java and kotlin
+    /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+    fun <T_OUTPUT : Any, T_BUILDER : Any> builder(
+      construct: () -> T_BUILDER,
+      build: T_BUILDER.() -> T_OUTPUT,
+      f: ObjectRule<T_BUILDER>.() -> ObjectRule<T_BUILDER>
+    ): BuilderRule<T_OUTPUT> = builder(construct, null, build, f)
+
+    // for both java and kotlin
+    /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+    fun <T_OUTPUT : Any, T_BUILDER : Any> builder(
+      construct: () -> T_BUILDER,
+      superRule: BuilderRule<in T_OUTPUT>?,
+      build: T_BUILDER.() -> T_OUTPUT,
+      f: ObjectRule<T_BUILDER>.() -> ObjectRule<T_BUILDER>
+    ): BuilderRule<T_OUTPUT> {
+      val tmp = ObjectRule(construct)
+      f(tmp)
+      val ret = BuilderRule<T_OUTPUT>(
+        construct,
+        if (superRule == null) null else cast<ObjectRule<Any>>(superRule),
+        cast(build)
+      )
+      for ((key, value) in tmp.rules) {
+        ret.rules[key] = value
+      }
+      return ret
+    }
+  }
+
+  class BuilderRule<O : Any>(
+    construct: () -> Any,
+    superRule: ObjectRule<Any>?,
+    build: (Any) -> Any
+  ) : ObjectRule<O>(construct, superRule, build, 0)
+
+  // for java
   fun <V> put(key: String, set: `BiConsumer$`<O, V>, type: Rule<V>): ObjectRule<O> {
     return put(key, set as (O, V) -> Unit, type)
   }
+
+  // translate java version to kotlin version
+  fun <V> put(key: String, set: (O, V) -> Unit, type: Rule<V>): ObjectRule<O> {
+    require(!rules.containsKey(key)) { "duplicated key: $key" }
+    rules[key] = cast(ObjectField(set, type))
+    return this
+  }
+
+  // for simple setter and complex rule
+  fun <V> put(key: String, set: O.(V) -> Unit, typeFunc: () -> Rule<V>): ObjectRule<O> = put(key, set, typeFunc())
+
+  // for simple rule and complex setter
+  fun <V> put(key: String, type: Rule<V>, set: O.(V) -> Unit): ObjectRule<O> = put(key, set, type)
 
   fun getRule(key: String): ObjectField<*, *>? {
     return rules[key]

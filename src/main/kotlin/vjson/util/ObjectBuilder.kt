@@ -19,6 +19,11 @@ import kotlin.reflect.KClass
 class ObjectBuilder {
   private val map: MutableList<SimpleObjectEntry<JSON.Instance<*>>> = ArrayList()
 
+  constructor()
+  constructor(f: ObjectBuilder.() -> Unit) {
+    f(this)
+  }
+
   fun putInst(key: String, inst: JSON.Instance<*>): ObjectBuilder {
     if (key == "@type") { // always add @type to the most front
       map.add(0, SimpleObjectEntry(key, inst))
@@ -55,7 +60,7 @@ class ObjectBuilder {
     }
   }
 
-  fun putObject(key: String, func: (ObjectBuilder) -> Unit): ObjectBuilder {
+  fun putObject(key: String, func: ObjectBuilder.() -> Unit): ObjectBuilder {
     val builder = ObjectBuilder()
     func(builder)
     return putInst(key, builder.build())
@@ -65,7 +70,7 @@ class ObjectBuilder {
     return putObject(key, func as (ObjectBuilder) -> Unit)
   }
 
-  fun putArray(key: String, func: (ArrayBuilder) -> Unit): ObjectBuilder {
+  fun putArray(key: String, func: ArrayBuilder.() -> Unit): ObjectBuilder {
     val builder = ArrayBuilder()
     func(builder)
     return putInst(key, builder.build())

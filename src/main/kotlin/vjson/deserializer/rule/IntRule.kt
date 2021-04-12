@@ -11,7 +11,12 @@
  */
 package vjson.deserializer.rule
 
-class IntRule : Rule<Int>() {
+object IntRule : Rule<Int>() {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun get(): IntRule {
+    return this
+  }
+
   override fun toString(): String {
     return "Int"
   }

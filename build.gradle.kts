@@ -77,7 +77,7 @@ tasks.jacocoTestReport {
   dependsOn(tasks.test)
 }
 
-tasks.create("checkGit", Exec::class) {
+val checkGit = tasks.create("checkGit", Exec::class) {
   val output = ByteArrayOutputStream()
   commandLine = listOf("./scripts/check-git.sh", loadVersion())
   standardOutput = output
@@ -92,7 +92,7 @@ tasks.create("checkGit", Exec::class) {
   }
 }
 
-tasks.create("bootstrap", Exec::class) {
+val bootstrap = tasks.create("bootstrap", Exec::class) {
   val output = ByteArrayOutputStream()
   commandLine = listOf("./scripts/bootstrap.sh", loadVersion())
   standardOutput = output
@@ -107,8 +107,8 @@ tasks.create("bootstrap", Exec::class) {
   }
 }
 
-tasks.create("coverage") {
-  dependsOn(tasks.getByName("checkGit"))
+val coverage = tasks.create("coverage") {
+  dependsOn(checkGit)
   doLast {
     System.setProperty("COVERAGE", "1")
     processSource()
@@ -116,8 +116,8 @@ tasks.create("coverage") {
   finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.create("kotlinNative") {
-  dependsOn("checkGit")
+val kotlinNative = tasks.create("kotlinNative") {
+  dependsOn(checkGit)
   doLast {
     System.setProperty("KOTLIN_NATIVE", "1")
     processSource()

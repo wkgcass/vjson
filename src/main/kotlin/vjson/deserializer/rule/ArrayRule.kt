@@ -11,15 +11,66 @@
  */
 package vjson.deserializer.rule
 
+import vjson.util.CastUtils.cast
 import vjson.util.functional.`BiConsumer$`
 
-class ArrayRule<L : Any, E : Any?>(
-  val construct: () -> L,
-  val add: (L, E) -> Unit,
+class ArrayRule<L : Any, E : Any?> : Rule<L> {
+  val construct: () -> Any
+  val build: (Any) -> Any
+  val add: (Any, E) -> Unit
   val elementRule: Rule<E>
-) : Rule<L>() {
+
+  // for java
   constructor(construct: () -> L, add: `BiConsumer$`<L, E>, elementRule: Rule<E>)
     : this(construct, add as (L, E) -> Unit, elementRule)
+
+  // translate java version to kotlin version
+  constructor(construct: () -> L, add: L.(E) -> Unit, elementRule: Rule<E>) {
+    this.construct = construct
+    this.build = { it }
+    this.add = cast(add)
+    this.elementRule = cast(elementRule)
+  }
+
+  // for simple rule but complex adder
+  constructor(construct: () -> L, elementRule: Rule<E>, add: L.(E) -> Unit) : this(construct, add, elementRule)
+
+  // for simple adder but complex rule
+  constructor(construct: () -> L, add: L.(E) -> Unit, elementRuleFunc: () -> Rule<E>)
+    : this(construct, add, elementRuleFunc())
+
+  // for builder
+  private constructor(
+    construct: () -> Any,
+    build: (Any) -> Any,
+    add: (Any, Any?) -> Unit,
+    elementRule: Rule<E>
+  ) {
+    this.construct = construct
+    this.build = build
+    this.add = add
+    this.elementRule = elementRule
+  }
+
+  companion object {
+    // for java
+    /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+    fun <T_LIST : Any, T_BUILDER : Any, T_ELEM : Any?> builder(
+      construct: () -> T_BUILDER,
+      build: (T_BUILDER) -> T_LIST,
+      add: `BiConsumer$`<T_BUILDER, T_ELEM>,
+      elementRule: Rule<T_ELEM>
+    ): ArrayRule<T_LIST, T_ELEM> = ArrayRule(construct, cast(build), cast(add), elementRule)
+
+    // for kotlin
+    /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+    fun <T_LIST : Any, T_BUILDER : Any, T_ELEM : Any?> builder(
+      construct: () -> T_BUILDER,
+      build: T_BUILDER.() -> T_LIST,
+      add: T_BUILDER.(T_ELEM) -> Unit,
+      elementRuleFunc: () -> Rule<T_ELEM>
+    ): ArrayRule<T_LIST, T_ELEM> = ArrayRule(construct, cast(build), cast(add), elementRuleFunc())
+  }
 
   override fun toString(sb: StringBuilder, processedListsOrObjects: MutableSet<Rule<*>>) {
     if (!processedListsOrObjects.add(this)) {

@@ -11,7 +11,12 @@
  */
 package vjson.deserializer.rule
 
-class DoubleRule : Rule<Double>() {
+object DoubleRule : Rule<Double>() {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun get(): DoubleRule {
+    return this
+  }
+
   override fun toString(): String {
     return "Double"
   }

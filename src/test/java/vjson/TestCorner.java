@@ -187,12 +187,12 @@ public class TestCorner {
 
     @Test
     public void ruleToString() throws Exception {
-        assertEquals("Int", new IntRule().toString());
-        assertEquals("Long", new LongRule().toString());
-        assertEquals("Double", new DoubleRule().toString());
-        assertEquals("Bool", new BoolRule().toString());
-        assertEquals("String?", new NullableStringRule().toString());
-        assertEquals("String", new StringRule().toString());
+        assertEquals("Int", IntRule.get().toString());
+        assertEquals("Long", LongRule.get().toString());
+        assertEquals("Double", DoubleRule.get().toString());
+        assertEquals("Bool", BoolRule.get().toString());
+        assertEquals("String?", NullableStringRule.get().toString());
+        assertEquals("String", StringRule.get().toString());
 
         TypeRule<Object> typeRule = new TypeRule<>()
             .type("base", TypeRuleBase.baseRule)
@@ -219,17 +219,17 @@ public class TestCorner {
         ObjectRule<Object> objRule = new ObjectRule<>(Object::new);
         objRule
             .put("int", (o, v) -> {
-            }, new IntRule())
+            }, IntRule.get())
             .put("long", (o, v) -> {
-            }, new LongRule())
+            }, LongRule.get())
             .put("double", (o, v) -> {
-            }, new DoubleRule())
+            }, DoubleRule.get())
             .put("bool", (o, v) -> {
-            }, new BoolRule())
+            }, BoolRule.get())
             .put("nullableStr", (o, v) -> {
-            }, new NullableStringRule())
+            }, NullableStringRule.get())
             .put("string", (o, v) -> {
-            }, new StringRule())
+            }, StringRule.get())
             .put("typed", (o, v) -> {
             }, typeRuleRec);
         objRule.put("self", (o, v) -> {
@@ -280,7 +280,7 @@ public class TestCorner {
     @Test
     public void deserializeParserListenerInitWithWrongRule() throws Exception {
         try {
-            new DeserializeParserListener<>(new IntRule());
+            new DeserializeParserListener<>(IntRule.get());
             fail();
         } catch (IllegalArgumentException ignore) {
         }

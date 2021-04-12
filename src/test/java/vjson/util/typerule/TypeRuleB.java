@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class TypeRuleB extends TypeRuleBase {
     public static final ObjectRule<TypeRuleB> bRule = new ObjectRule<>(TypeRuleB::new, TypeRuleBase.baseRule)
-        .put("b", TypeRuleB::setB, new LongRule());
+        .put("b", TypeRuleB::setB, LongRule.get());
 
     public long b;
 

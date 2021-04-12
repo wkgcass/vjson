@@ -10,8 +10,8 @@ import java.util.Objects;
 
 public class TypeRuleBase {
     public static final ObjectRule<TypeRuleBase> baseRule = new ObjectRule<>(TypeRuleBase::new)
-        .put("x", TypeRuleBase::setX, new IntRule())
-        .put("y", TypeRuleBase::setY, new StringRule());
+        .put("x", TypeRuleBase::setX, IntRule.get())
+        .put("y", TypeRuleBase::setY, StringRule.get());
     private static TypeRule<TypeRuleBase> typeBaseRule;
 
     public int x;

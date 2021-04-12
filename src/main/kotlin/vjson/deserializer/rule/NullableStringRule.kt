@@ -11,7 +11,12 @@
  */
 package vjson.deserializer.rule
 
-class NullableStringRule : Rule<String?>() {
+object NullableStringRule : Rule<String?>() {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun get(): NullableStringRule {
+    return this
+  }
+
   override fun toString(): String {
     return "String?"
   }

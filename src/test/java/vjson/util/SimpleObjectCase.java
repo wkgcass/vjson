@@ -6,12 +6,12 @@ import java.util.Objects;
 
 public class SimpleObjectCase {
     public static final ObjectRule<SimpleObjectCase> simpleObjectCaseRule = new ObjectRule<>(SimpleObjectCase::new)
-        .put("intValue", (o, v) -> o.intValue = v, new IntRule())
-        .put("longValue", (o, v) -> o.longValue = v, new LongRule())
-        .put("doubleValue", (o, v) -> o.doubleValue = v, new DoubleRule())
-        .put("boolValue", (o, v) -> o.boolValue = v, new BoolRule())
-        .put("stringValue", (o, v) -> o.stringValue = v, new StringRule())
-        .put("nullValue", (o, v) -> o.nullValue = v, new NullableStringRule());
+        .put("intValue", (o, v) -> o.intValue = v, IntRule.get())
+        .put("longValue", (o, v) -> o.longValue = v, LongRule.get())
+        .put("doubleValue", (o, v) -> o.doubleValue = v, DoubleRule.get())
+        .put("boolValue", (o, v) -> o.boolValue = v, BoolRule.get())
+        .put("stringValue", (o, v) -> o.stringValue = v, StringRule.get())
+        .put("nullValue", (o, v) -> o.nullValue = v, NullableStringRule.get());
 
     public int intValue;
     public long longValue;

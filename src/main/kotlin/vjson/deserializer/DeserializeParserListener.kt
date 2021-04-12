@@ -147,9 +147,11 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
       val orule = ctx.rule.defaultRule
         ?: throw JsonParseException("type for " + ctx.rule + " is still not determined when reaching the object end")
       // use the default rule to construct an empty object
-      lastObject = orule.construct()
+      val constructed = orule.construct()
+      this.lastObject = orule.build(constructed)
     } else {
-      lastObject = ctx.`object`
+      val lastObject = ctx.`object`
+      this.lastObject = cast<ObjectRule<*>>(ctx.rule).build(cast(lastObject))
     }
   }
 
@@ -176,7 +178,8 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
   override fun onArrayEnd(array: ArrayParser) {
     val ctx = parseStack.pop()
     nextRuleStack.pop()
-    lastObject = ctx.`object`
+    val lastObject = ctx.`object`
+    this.lastObject = cast<ArrayRule<*, *>>(ctx.rule).build(cast(lastObject))
   }
 
   override fun onBool(bool: JSON.Bool) {

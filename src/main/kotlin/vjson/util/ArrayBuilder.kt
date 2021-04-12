@@ -51,7 +51,7 @@ class ArrayBuilder {
     }
   }
 
-  fun addObject(func: (ObjectBuilder) -> Unit): ArrayBuilder {
+  fun addObject(func: ObjectBuilder.() -> Unit): ArrayBuilder {
     val builder = ObjectBuilder()
     func(builder)
     return addInst(builder.build())
@@ -61,7 +61,7 @@ class ArrayBuilder {
     return addObject(func as (ObjectBuilder) -> Unit)
   }
 
-  fun addArray(func: (ArrayBuilder) -> Unit): ArrayBuilder {
+  fun addArray(func: ArrayBuilder.() -> Unit): ArrayBuilder {
     val builder = ArrayBuilder()
     func(builder)
     return addInst(builder.build())

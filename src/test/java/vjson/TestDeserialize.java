@@ -81,32 +81,32 @@ public class TestDeserialize {
         for (int i = 0; i < 10; ++i) {
             {
                 List<Integer> ls = Arrays.asList(random.nextInt(), random.nextInt(), random.nextInt(), random.nextInt());
-                test(new ArrayRule<>(ArrayList::new, ArrayList::add, new IntRule()), ls,
+                test(new ArrayRule<>(ArrayList::new, ArrayList::add, IntRule.get()), ls,
                     new ArrayBuilder().add(ls.get(0)).add(ls.get(1)).add(ls.get(2)).add(ls.get(3)).build().stringify());
             }
             {
                 List<Long> ls = Arrays.asList(random.nextLong(), random.nextLong(), random.nextLong(), random.nextLong());
-                test(new ArrayRule<>(ArrayList::new, ArrayList::add, new LongRule()), ls,
+                test(new ArrayRule<>(ArrayList::new, ArrayList::add, LongRule.get()), ls,
                     new ArrayBuilder().add(ls.get(0)).add(ls.get(1)).add(ls.get(2)).add(ls.get(3)).build().stringify());
             }
             {
                 List<Double> ls = Arrays.asList(random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble());
-                test(new ArrayRule<>(ArrayList::new, ArrayList::add, new DoubleRule()), ls,
+                test(new ArrayRule<>(ArrayList::new, ArrayList::add, DoubleRule.get()), ls,
                     new ArrayBuilder().add(ls.get(0)).add(ls.get(1)).add(ls.get(2)).add(ls.get(3)).build().stringify());
             }
             {
                 List<Boolean> ls = Arrays.asList(random.nextBoolean(), random.nextBoolean(), random.nextBoolean(), random.nextBoolean());
-                test(new ArrayRule<>(ArrayList::new, ArrayList::add, new BoolRule()), ls,
+                test(new ArrayRule<>(ArrayList::new, ArrayList::add, BoolRule.get()), ls,
                     new ArrayBuilder().add(ls.get(0)).add(ls.get(1)).add(ls.get(2)).add(ls.get(3)).build().stringify());
             }
             {
                 List<String> ls = Arrays.asList(randomString(), randomString(), randomString(), randomString());
-                test(new ArrayRule<>(ArrayList::new, ArrayList::add, new StringRule()), ls,
+                test(new ArrayRule<>(ArrayList::new, ArrayList::add, StringRule.get()), ls,
                     new ArrayBuilder().add(ls.get(0)).add(ls.get(1)).add(ls.get(2)).add(ls.get(3)).build().stringify());
             }
             {
                 List<String> ls = Arrays.asList(randomString(), null, null, randomString());
-                test(new ArrayRule<>(ArrayList::new, ArrayList::add, new NullableStringRule()), ls,
+                test(new ArrayRule<>(ArrayList::new, ArrayList::add, NullableStringRule.get()), ls,
                     new ArrayBuilder().add(ls.get(0)).add(ls.get(1)).add(ls.get(2)).add(ls.get(3)).build().stringify());
             }
         }
@@ -175,7 +175,7 @@ public class TestDeserialize {
 
     @Test
     public void deserializeParserListenerTakeMultiCharStreamToComplete() {
-        DeserializeParserListener<List<Integer>> lsn = new DeserializeParserListener<>(new ArrayRule<>(ArrayList::new, List::add, new IntRule()));
+        DeserializeParserListener<List<Integer>> lsn = new DeserializeParserListener<>(new ArrayRule<>(ArrayList::new, List::add, IntRule.get()));
         assertFalse(lsn.completed());
 
         ArrayParser ap = new ArrayParser(new ParserOptions().setListener(lsn));

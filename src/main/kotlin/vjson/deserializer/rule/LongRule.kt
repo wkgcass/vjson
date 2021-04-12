@@ -11,7 +11,12 @@
  */
 package vjson.deserializer.rule
 
-class LongRule : Rule<Long>() {
+object LongRule : Rule<Long>() {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun get(): LongRule {
+    return this
+  }
+
   override fun toString(): String {
     return "Long"
   }
