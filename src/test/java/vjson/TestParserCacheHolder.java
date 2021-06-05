@@ -2,6 +2,7 @@ package vjson;
 
 import org.junit.Test;
 import vjson.parser.*;
+import vjson.util.StringDictionary;
 
 import java.lang.reflect.Field;
 
@@ -103,6 +104,16 @@ class H2 implements ParserCacheHolder {
 
     @Override
     public void threadLocalStringParserJavaObject(StringParser parser) {
+
+    }
+
+    @Override
+    public StringDictionary threadLocalKeyDictionary() {
+        return null;
+    }
+
+    @Override
+    public void threadLocalKeyDictionary(StringDictionary dic) {
 
     }
 }

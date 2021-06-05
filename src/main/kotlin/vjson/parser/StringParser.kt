@@ -17,11 +17,10 @@ import vjson.Parser
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleString
+import vjson.util.StringDictionary
 import vjson.util.TextBuilder
 
-class StringParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
-  opts: ParserOptions = ParserOptions.DEFAULT
-) : Parser<JSON.String> {
+class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary?) : Parser<JSON.String> {
   private val opts: ParserOptions = ParserOptions.ensureNotModifiedByOutside(opts)
   private var state = 0
   // 0->start`"`,
@@ -35,15 +34,20 @@ class StringParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
   // 8->already_returned
 
   val builder: TextBuilder = TextBuilder(opts.bufLen)
+  private val traveler: StringDictionary.Traveler? = dictionary?.traveler()
   private var beginning = 0.toChar()
   private var u1 = -1
   private var u2 = -1
   private var u3 = -1
   // u4 can be local variable
 
+  /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
+  constructor(opts: ParserOptions = ParserOptions.DEFAULT) : this(opts, null)
+
   override fun reset() {
     state = 0
     builder.clear()
+    traveler?.done()
     // start/u1/2/3 can keep their values
   }
 
@@ -60,7 +64,7 @@ class StringParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
   }
 
   private fun append(c: Char) {
-    builder.append(c)
+    traveler?.next(c) ?: builder.append(c)
     opts.listener.onStringChar(this, c)
   }
 
@@ -225,11 +229,17 @@ class StringParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     }
   }
 
+  // #ifdef COVERAGE {{@lombok.Generated}}
+  private fun buildResultString(): String {
+    return traveler?.done() ?: builder.toString()
+  }
+
   @Throws(JsonParseException::class, ParserFinishedException::class)
   override fun build(cs: CharStream, isComplete: Boolean): JSON.String? {
     if (tryParse(cs, isComplete)) {
       opts.listener.onStringEnd(this)
-      val ret = SimpleString(builder.toString())
+      val s = buildResultString()
+      val ret = SimpleString(s)
       opts.listener.onString(ret)
 
       ParserUtils.checkEnd(cs, opts, "string")
@@ -243,7 +253,7 @@ class StringParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
   override fun buildJavaObject(cs: CharStream, isComplete: Boolean): String? {
     if (tryParse(cs, isComplete)) {
       opts.listener.onStringEnd(this)
-      val s = builder.toString()
+      val s = buildResultString()
       opts.listener.onString(s)
 
       ParserUtils.checkEnd(cs, opts, "string")

@@ -18,7 +18,7 @@ import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleObject
 import vjson.simple.SimpleObjectEntry
-import vjson.util.TextBuilder
+import vjson.util.StringDictionary
 
 class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   opts: ParserOptions = ParserOptions.DEFAULT
@@ -41,7 +41,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
   var javaMap: LinkedHashMap<String, Any?>? = null
     private set
   private var _keyParser: StringParser? = null
-  private var keyBuilder: TextBuilder? = null
+  private var keyBuilder: StringDictionary.Traveler? = null
   var currentKey: String? = null
     private set
   private var valueParser: Parser<*>? = null
@@ -66,9 +66,9 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
       map = ArrayList()
     }
     if (keyBuilder == null) {
-      keyBuilder = TextBuilder(32)
+      keyBuilder = ParserUtils.getThreadLocalKeyDictionary().traveler()
     }
-    keyBuilder!!.clear()
+    keyBuilder!!.done()
     _keyParser = null
     currentKey = null
     valueParser = null
@@ -237,12 +237,12 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           }
           state = 9
           currentKey = key
-          keyBuilder!!.clear()
+          keyBuilder!!.done()
           opts.listener.onObjectKey(this, currentKey!!)
         } else {
           c = cs.moveNextAndGet()
           if (ParserUtils.isVarName(c)) {
-            keyBuilder!!.append(c)
+            keyBuilder!!.next(c)
           } else {
             err = "invalid character for json object key without quotes: $c"
             throw ParserUtils.err(opts, err)

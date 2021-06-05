@@ -35,4 +35,8 @@ object CastUtils {
   inline fun <T : Any> typeIsNotExpectedOr(t: Any?, type: KClass<T>, check: (T) -> Boolean): Boolean {
     return t == null || !type.isInstance(t) || check(t as T)
   }
+
+  inline fun newAnyArray(): Array<Any?> {
+    return Array(0) { null }
+  }
 }

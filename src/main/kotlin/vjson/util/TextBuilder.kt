@@ -26,7 +26,6 @@ class TextBuilder(bufLen: Int) {
   }
 
   fun append(c: Char): TextBuilder {
-    // choose to write to buffer or string builder
     buf[bufLen++] = c
     if (bufLen == buf.size) {
       val newbuf = CharArray(bufLen * 4)

@@ -12,6 +12,8 @@
 // #ifndef KOTLIN_NATIVE {{
 package vjson.parser
 
+import vjson.util.StringDictionary
+
 open class DefaultParserCacheHolder : ParserCacheHolder {
   var isStarted = false
     private set
@@ -23,6 +25,7 @@ open class DefaultParserCacheHolder : ParserCacheHolder {
     private val threadLocalArrayParserJavaObject = ThreadLocal<ArrayParser>()
     private val threadLocalObjectParserJavaObject = ThreadLocal<ObjectParser>()
     private val threadLocalStringParserJavaObject = ThreadLocal<StringParser>()
+    private val threadLocalKeyDictionary = ThreadLocal<StringDictionary>()
   }
 
   override fun threadLocalArrayParser(): ArrayParser? {
@@ -77,6 +80,15 @@ open class DefaultParserCacheHolder : ParserCacheHolder {
   override fun threadLocalStringParserJavaObject(parser: StringParser) {
     isStarted = true
     threadLocalStringParserJavaObject.set(parser)
+  }
+
+  override fun threadLocalKeyDictionary(): StringDictionary? {
+    return threadLocalKeyDictionary.get()
+  }
+
+  override fun threadLocalKeyDictionary(dic: StringDictionary) {
+    isStarted = true
+    threadLocalKeyDictionary.set(dic)
   }
 }
 // }}

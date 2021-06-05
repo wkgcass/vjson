@@ -11,6 +11,8 @@
  */
 package vjson.parser
 
+import vjson.util.StringDictionary
+
 class KotlinNativeParserCacheHolder : ParserCacheHolder {
   /* #ifdef KOTLIN_NATIVE {{@ThreadLocal}}*/
   companion object {
@@ -20,6 +22,7 @@ class KotlinNativeParserCacheHolder : ParserCacheHolder {
     private var arrayParser4j: ArrayParser? = null
     private var objectParser4j: ObjectParser? = null
     private var stringParser4j: StringParser? = null
+    private var keyDictionary: StringDictionary? = null
   }
 
   override fun threadLocalArrayParser(): ArrayParser? {
@@ -68,5 +71,13 @@ class KotlinNativeParserCacheHolder : ParserCacheHolder {
 
   override fun threadLocalStringParserJavaObject(parser: StringParser) {
     stringParser4j = parser
+  }
+
+  override fun threadLocalKeyDictionary(): StringDictionary? {
+    return keyDictionary
+  }
+
+  override fun threadLocalKeyDictionary(dic: StringDictionary) {
+    keyDictionary = dic
   }
 }

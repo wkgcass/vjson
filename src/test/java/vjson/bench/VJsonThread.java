@@ -4,6 +4,7 @@ import vjson.parser.ArrayParser;
 import vjson.parser.ObjectParser;
 import vjson.parser.ParserCacheHolder;
 import vjson.parser.StringParser;
+import vjson.util.StringDictionary;
 
 public class VJsonThread extends Thread {
     private ArrayParser threadLocalArrayParser;
@@ -13,6 +14,8 @@ public class VJsonThread extends Thread {
     private ArrayParser threadLocalArrayParserJavaObject;
     private ObjectParser threadLocalObjectParserJavaObject;
     private StringParser threadLocalStringParserJavaObject;
+
+    private StringDictionary threadLocalKeyDictionary;
 
     public VJsonThread(Runnable r) {
         super(r);
@@ -77,6 +80,16 @@ public class VJsonThread extends Thread {
         @Override
         public void threadLocalStringParserJavaObject(StringParser parser) {
             ((VJsonThread) Thread.currentThread()).threadLocalStringParserJavaObject = parser;
+        }
+
+        @Override
+        public StringDictionary threadLocalKeyDictionary() {
+            return ((VJsonThread) Thread.currentThread()).threadLocalKeyDictionary;
+        }
+
+        @Override
+        public void threadLocalKeyDictionary(StringDictionary dic) {
+            ((VJsonThread) Thread.currentThread()).threadLocalKeyDictionary = dic;
         }
     }
 }

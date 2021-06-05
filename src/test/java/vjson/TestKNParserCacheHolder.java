@@ -5,6 +5,7 @@ import vjson.parser.ArrayParser;
 import vjson.parser.KotlinNativeParserCacheHolder;
 import vjson.parser.ObjectParser;
 import vjson.parser.StringParser;
+import vjson.util.StringDictionary;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -58,5 +59,13 @@ public class TestKNParserCacheHolder {
         assertNull(holder.threadLocalStringParserJavaObject());
         holder.threadLocalStringParserJavaObject(stringParser);
         assertSame(stringParser, holder.threadLocalStringParserJavaObject());
+    }
+
+    @Test
+    public void keyDictionary() {
+        StringDictionary dictionary = new StringDictionary(16);
+        assertNull(holder.threadLocalKeyDictionary());
+        holder.threadLocalKeyDictionary(dictionary);
+        assertSame(dictionary, holder.threadLocalKeyDictionary());
     }
 }

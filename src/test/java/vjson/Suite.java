@@ -38,6 +38,7 @@ import vpreprocessor.*;
     TestVList.class,
     TestKotlinDSL.class,
     TestJavaDSL.class,
+    TestStringCache.class,
 })
 public class Suite {
 }

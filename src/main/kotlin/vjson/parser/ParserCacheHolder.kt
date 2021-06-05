@@ -11,6 +11,8 @@
  */
 package vjson.parser
 
+import vjson.util.StringDictionary
+
 interface ParserCacheHolder {
   fun threadLocalArrayParser(): ArrayParser?
   fun threadLocalArrayParser(parser: ArrayParser)
@@ -24,4 +26,6 @@ interface ParserCacheHolder {
   fun threadLocalObjectParserJavaObject(parser: ObjectParser)
   fun threadLocalStringParserJavaObject(): StringParser?
   fun threadLocalStringParserJavaObject(parser: StringParser)
+  fun threadLocalKeyDictionary(): StringDictionary?
+  fun threadLocalKeyDictionary(dic: StringDictionary)
 }

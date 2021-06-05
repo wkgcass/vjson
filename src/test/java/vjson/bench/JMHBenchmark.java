@@ -1,16 +1,11 @@
 package vjson.bench;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
-import vjson.CharStream;
 import vjson.JSON;
 import vjson.cs.CharArrayCharStream;
 import vjson.deserializer.rule.ArrayRule;
 import vjson.util.ComposedObjectCase;
-
-import static vjson.util.TestCaseUtils.*;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -20,6 +15,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static vjson.bench.BenchHelper.*;
+import static vjson.util.TestCaseUtils.getComposedObjectCaseJSON;
+import static vjson.util.TestCaseUtils.randomComposedObjectCase;
 
 @SuppressWarnings("DefaultAnnotationParam")
 @BenchmarkMode(Mode.AverageTime)
@@ -38,40 +37,16 @@ public class JMHBenchmark {
     private byte[][] BYTES;
     private char[][] CHARS;
 
-    private ObjectMapper mapper;
-    private Gson gson;
-    private static Type fastJsonListType = new com.alibaba.fastjson.TypeReference<List>() {
-    }.getType();
-    private static ArrayRule<List<ComposedObjectCase>, ComposedObjectCase> vjsonComposedObjectCaseArrayRule = new ArrayRule<>(LinkedList::new, List::add, ComposedObjectCase.composedObjectCaseRule);
-    private static com.fasterxml.jackson.core.type.TypeReference jacksonComposedObjectCaseListTypeReference = new com.fasterxml.jackson.core.type.TypeReference<List<ComposedObjectCase>>() {
+    private static final ArrayRule<List<ComposedObjectCase>, ComposedObjectCase> vjsonComposedObjectCaseArrayRule = new ArrayRule<>(LinkedList::new, List::add, ComposedObjectCase.composedObjectCaseRule);
+    private static final com.fasterxml.jackson.core.type.TypeReference jacksonComposedObjectCaseListTypeReference = new com.fasterxml.jackson.core.type.TypeReference<List<ComposedObjectCase>>() {
     };
-    private static Type gsonComposedObjectCaseListType = new com.google.gson.reflect.TypeToken<List<ComposedObjectCase>>() {
+    private static final Type gsonComposedObjectCaseListType = new com.google.gson.reflect.TypeToken<List<ComposedObjectCase>>() {
     }.getType();
-    private static Type fastJsonComposedObjectCaseListType = new com.alibaba.fastjson.TypeReference<List<ComposedObjectCase>>() {
+    private static final Type fastJsonComposedObjectCaseListType = new com.alibaba.fastjson.TypeReference<List<ComposedObjectCase>>() {
     }.getType();
-
-    private Object vjson(char[] chars) {
-        return JSON.parseToJavaObject(CharStream.from(chars));
-    }
-
-    private Object jackson(byte[] bytes) throws Exception {
-        return mapper.readValue(new ByteArrayInputStream(bytes), List.class);
-    }
-
-    private Object gson(char[] chars) {
-        return gson.fromJson(new CharArrayReader(chars), List.class);
-    }
-
-    private Object fastjson(byte[] bytes) throws Exception {
-        return com.alibaba.fastjson.JSON.parseObject(new ByteArrayInputStream(bytes), fastJsonListType);
-    }
 
     @Setup
     public void setUp() throws Exception {
-        // setup global
-        mapper = new ObjectMapper();
-        gson = new Gson();
-
         // setup test 1-5
         byte[][] bytes = BYTES = new byte[tests.length + 1][];
         char[][] chars = CHARS = new char[tests.length + 1][];

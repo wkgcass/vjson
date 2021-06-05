@@ -16,6 +16,7 @@ import vjson.JSON
 import vjson.Parser
 import vjson.ex.JsonParseException
 import vjson.util.CastUtils.cast
+import vjson.util.StringDictionary
 
 object ParserUtils {
   /* #ifdef KOTLIN_NATIVE {{
@@ -33,6 +34,16 @@ object ParserUtils {
     holder = parserCacheHolder
   }
   // }}
+
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun getThreadLocalKeyDictionary(): StringDictionary {
+    var dic = holder.threadLocalKeyDictionary()
+    if (dic == null) {
+      dic = StringDictionary(16)
+      holder.threadLocalKeyDictionary(dic)
+    }
+    return dic
+  }
 
   /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
   fun isWhiteSpace(c: Char): Boolean {
