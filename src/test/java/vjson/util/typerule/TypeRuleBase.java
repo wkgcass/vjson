@@ -65,7 +65,8 @@ public class TypeRuleBase {
                 .type(Reflection.getOrCreateKotlinClass(TypeRuleA.class), TypeRuleA.aRule)
                 .type(Reflection.getOrCreateKotlinClass(TypeRuleB.class), TypeRuleB.bRule)
                 .type(Reflection.getOrCreateKotlinClass(TypeRuleC.class), TypeRuleC.cRule)
-                .type(Reflection.getOrCreateKotlinClass(TypeRuleD.class), TypeRuleD.dRule());
+                .type(Reflection.getOrCreateKotlinClass(TypeRuleD.class), TypeRuleD.dRule())
+                .type(Reflection.getOrCreateKotlinClass(TypeRuleMap.class), TypeRuleMap.mapRule);
             return rule;
         }
     }

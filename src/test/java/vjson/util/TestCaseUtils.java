@@ -5,10 +5,7 @@ import vjson.JSON;
 import vjson.simple.SimpleNull;
 import vjson.util.typerule.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TestCaseUtils {
@@ -133,8 +130,15 @@ public class TestCaseUtils {
             return new TypeRuleD(randomTypeRuleBase(), randomTypeRuleDRecurse(n + 1));
         } else {
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            return new TypeRuleD(randomTypeRuleBase(), buildTypeRule(random.nextInt(4)));
+            return new TypeRuleD(randomTypeRuleBase(), buildTypeRule(random.nextInt(6)));
         }
+    }
+
+    public static TypeRuleMap randomTypeRuleMap() {
+        return new TypeRuleMap()
+            .put(randomString(), randomString())
+            .put(randomString(), randomString())
+            .put(randomString(), randomString());
     }
 
     public static TypeRuleBase buildTypeRule(int n) {
@@ -148,6 +152,8 @@ public class TestCaseUtils {
             return randomTypeRuleC();
         } else if (n == 4) {
             return randomTypeRuleD();
+        } else if (n == 5) {
+            return randomTypeRuleMap();
         } else {
             throw new IllegalArgumentException();
         }
@@ -167,6 +173,14 @@ public class TestCaseUtils {
         } else if (o instanceof TypeRuleD) {
             ob.type(Reflection.createKotlinClass(TypeRuleD.class));
             ob.putInst("d", getTypeRuleBaseJSON(((TypeRuleD) o).d));
+        } else if (o instanceof TypeRuleMap) {
+            ob.type(Reflection.createKotlinClass(TypeRuleMap.class));
+            ob.putObject("map", oo -> {
+                Map<String, String> map = ((TypeRuleMap) o).map;
+                for (Map.Entry<String, String> entry : map.entrySet()) {
+                    oo.put(entry.getKey(), entry.getValue());
+                }
+            });
         } else {
             ob.type(Reflection.createKotlinClass(TypeRuleBase.class));
         }

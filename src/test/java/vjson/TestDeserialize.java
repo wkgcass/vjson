@@ -4,12 +4,21 @@ import kotlin.jvm.internal.Reflection;
 import org.junit.Test;
 import vjson.deserializer.DeserializeParserListener;
 import vjson.deserializer.rule.*;
-import vjson.parser.*;
+import vjson.parser.ArrayParser;
+import vjson.parser.ParserMode;
+import vjson.parser.ParserOptions;
+import vjson.parser.ParserUtils;
 import vjson.simple.SimpleObject;
-import vjson.util.*;
+import vjson.util.ArrayBuilder;
+import vjson.util.ComposedObjectCase;
+import vjson.util.ObjectBuilder;
+import vjson.util.SimpleObjectCase;
 import vjson.util.typerule.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.*;
@@ -128,24 +137,28 @@ public class TestDeserialize {
             TypeRuleB b = randomTypeRuleB();
             TypeRuleC c = randomTypeRuleC();
             TypeRuleD d = randomTypeRuleD();
+            TypeRuleMap map = randomTypeRuleMap();
 
             test(TypeRuleBase.getTypeRule(), base, getTypeRuleBaseJSON(base).stringify());
             test(TypeRuleBase.getTypeRule(), a, getTypeRuleBaseJSON(a).stringify());
             test(TypeRuleBase.getTypeRule(), b, getTypeRuleBaseJSON(b).stringify());
             test(TypeRuleBase.getTypeRule(), c, getTypeRuleBaseJSON(c).stringify());
             test(TypeRuleBase.getTypeRule(), d, getTypeRuleBaseJSON(d).stringify());
+            test(TypeRuleBase.getTypeRule(), map, getTypeRuleBaseJSON(map).stringify());
 
             Box bbase = new Box(base);
             Box ba = new Box(a);
             Box bb = new Box(b);
             Box bc = new Box(c);
             Box bd = new Box(d);
+            Box bmap = new Box(map);
 
             test(Box.boxRule, bbase, getBoxJSON(bbase).stringify());
             test(Box.boxRule, ba, getBoxJSON(ba).stringify());
             test(Box.boxRule, bb, getBoxJSON(bb).stringify());
             test(Box.boxRule, bc, getBoxJSON(bc).stringify());
             test(Box.boxRule, bd, getBoxJSON(bd).stringify());
+            test(Box.boxRule, bmap, getBoxJSON(bmap).stringify());
         }
     }
 
