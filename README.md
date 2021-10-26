@@ -79,6 +79,8 @@ Also note that the preprocessing directly rewrites source codes, so the building
 
 ## example
 
+**java**
+
 ```java
 // basic
 JSON.Instance result = JSON.parse("{\"hello\":\"world\"}");
@@ -87,24 +89,24 @@ String prettyJson = result.pretty();
 
 // deserialize
 Rule<Shop> shopRule = new ObjectRule<>(Shop::new)
-    .put("name", Shop::setName, new StringRule())
+    .put("name", Shop::setName, StringRule.get())
     .put("goods", Shop::setGoods, new ArrayRule<>(
         ArrayList::new,
         ArrayList::add,
         new ObjectRule<>(Good::new)
-            .put("id", Good::setId, new StringRule())
-            .put("name", Good::setName, new StringRule())
-            .put("price", Good::setPrice, new DoubleRule())
+            .put("id", Good::setId, StringRule.get())
+            .put("name", Good::setName, StringRule.get())
+            .put("price", Good::setPrice, DoubleRule.get())
     ));
 Shop shop = JSON.deserialize(jsonStr, shopRule);
 
 // autotype
 ObjectRule<Good> goodRule = new ObjectRule<>(Good::new)
-    .put("id", Good::setId, new StringRule())
-    .put("name", Good::setName, new StringRule())
-    .put("price", Good::setPrice, new DoubleRule());
+    .put("id", Good::setId, StringRule.get())
+    .put("name", Good::setName, StringRule.get())
+    .put("price", Good::setPrice, DoubleRule.get());
 ObjectRule<SpecialPriceGood> specialPriceGoodRule = new ObjectRule<>(SpecialPriceGood::new, goodRule)
-    .put("originalPrice", SpecialPriceGood::setOriginalPrice, new DoubleRule());
+    .put("originalPrice", SpecialPriceGood::setOriginalPrice, DoubleRule.get());
 TypeRule<Good> typeGoodRule = new TypeRule<>(Good.class, goodRule)
     .type("special", specialPriceGoodRule);
     // or .type(SpecialPriceGood.class, specialPriceGoodRule);
@@ -143,6 +145,24 @@ tf.addRule(MyBean.class, bean -> ...); // customize transforming rules
 // additional features
 new ParserOptions().setStringSingleQuotes(true).setKeyNoQuotes(true);
                         // allow to parse strings like: {key: 'value'}
+```
+
+**kotlin**
+
+```kotlin
+// builder example with kotlin syntax
+val shopRule = ObjectRule.builder(::ShopBuilder, { build() }) {
+  put("name", StringRule) { name = it }
+  put("goods", { goods = it }) {
+    ArrayRule.builder({ ArrayList<Good>() }, { Collections.unmodifiableList(this) }, { add(it) }) {
+      ObjectRule.builder(::GoodBuilder, { build() }) {
+        put("id", StringRule) { id = it }
+        put("name", StringRule) { name = it }
+        put("price", DoubleRule) { price = it }
+      }
+    }
+  }
+}
 ```
 
 ## lib

@@ -79,6 +79,8 @@ compileKotlin {
 
 ## 示例
 
+**java**
+
 ```java
 // 基础用法
 JSON.Instance result = JSON.parse("{\"hello\":\"world\"}");
@@ -87,24 +89,24 @@ String prettyJson = result.pretty();
 
 // 反序列化
 Rule<Shop> shopRule = new ObjectRule<>(Shop::new)
-    .put("name", Shop::setName, new StringRule())
+    .put("name", Shop::setName, StringRule.get())
     .put("goods", Shop::setGoods, new ArrayRule<>(
         ArrayList::new,
         ArrayList::add,
         new ObjectRule<>(Good::new)
-            .put("id", Good::setId, new StringRule())
-            .put("name", Good::setName, new StringRule())
-            .put("price", Good::setPrice, new DoubleRule())
+            .put("id", Good::setId, StringRule.get())
+            .put("name", Good::setName, StringRule.get())
+            .put("price", Good::setPrice, DoubleRule.get())
     ));
 Shop shop = JSON.deserialize(jsonStr, shopRule);
 
 // 自动类型
 ObjectRule<Good> goodRule = new ObjectRule<>(Good::new)
-    .put("id", Good::setId, new StringRule())
-    .put("name", Good::setName, new StringRule())
-    .put("price", Good::setPrice, new DoubleRule());
+    .put("id", Good::setId, StringRule.get())
+    .put("name", Good::setName, StringRule.get())
+    .put("price", Good::setPrice, DoubleRule.get());
 ObjectRule<SpecialPriceGood> specialPriceGoodRule = new ObjectRule<>(SpecialPriceGood::new, goodRule)
-    .put("originalPrice", SpecialPriceGood::setOriginalPrice, new DoubleRule());
+    .put("originalPrice", SpecialPriceGood::setOriginalPrice, DoubleRule.get());
 TypeRule<Good> typeGoodRule = new TypeRule<>(Good.class, goodRule)
     .type("special", specialPriceGoodRule);
     // 或者 .type(SpecialPriceGood.class, specialPriceGoodRule);
@@ -143,6 +145,24 @@ tf.addRule(MyBean.class, bean -> ...); // 自定义转换规则
 // 附加特性
 new ParserOptions().setStringSingleQuotes(true).setKeyNoQuotes(true);
                         // 允许解析类似这样的字符串: {key: 'value'}
+```
+
+**kotlin**
+
+```kotlin
+// 使用kotlin语法的builder例子
+val shopRule = ObjectRule.builder(::ShopBuilder, { build() }) {
+  put("name", StringRule) { name = it }
+  put("goods", { goods = it }) {
+    ArrayRule.builder({ ArrayList<Good>() }, { Collections.unmodifiableList(this) }, { add(it) }) {
+      ObjectRule.builder(::GoodBuilder, { build() }) {
+        put("id", StringRule) { id = it }
+        put("name", StringRule) { name = it }
+        put("price", DoubleRule) { price = it }
+      }
+    }
+  }
+}
 ```
 
 ## lib
