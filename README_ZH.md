@@ -22,13 +22,33 @@ vjson致力于用java对象还原最原始的json结构。你可以通过简单�
 
 ## 用法
 
-将`src/main/java/vjson`复制粘贴到你的源码目录即可。
+### 通过Maven/Gradle引用
+
+**gradle**
+
+```groovy
+api 'io.vproxy:vjson:1.3.3'
+```
+
+**maven**
+
+```xml
+<dependency>
+  <groupId>io.vproxy</groupId>
+  <artifactId>vjson</artifactId>
+  <version>1.3.3</version>
+</dependency>
+```
+
+### 直接使用源码
+
+将`src/main/kotlin/vjson`复制粘贴到你的源码目录即可。
 
 如果你没有使用kotlin，你还需要将如下代码加入你的`build.gradle`配置。
 
 ```groovy
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
@@ -54,10 +74,6 @@ compileKotlin {
 在jvm和kotlin native上，`vjson`使用相同的源代码。为了实现更好的java互操作性，`vjson`中使用了一些jvm特有的注解和jdk类库。但是在kotlin native中并没有提供这些类。为了解决这个问题，我开发了一个代码预处理器，可以将“宏”通过注释插入java/kotlin代码中。
 
 查看[vpreprocessor/README.md](https://github.com/wkgcass/vjson/blob/master/src/main/kotlin/vpreprocessor/README.md)获取更多信息。
-
-在`build.gradle`中执行预处理器，所以gradle依赖一个`vjson-bootstrap.jar`来引导其生命周期。引导相关的文件存放于`bootstrap/`目录。
-
-使用`./gradlew clean bootstrap`来编译并将新的引导jar包放置到`bootstrap/`目录中去。
 
 注意，预处理会直接覆盖源代码，所以在执行预处理前，你需要保证当前git目录是clean的。在执行`coverage`和`kotlinNative`前，会自动先执行`checkGit`任务。
 

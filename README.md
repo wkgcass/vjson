@@ -22,13 +22,33 @@ Run `./gradlew clean coverage` to get the coverage report.
 
 ## use
 
-Copy and paste `src/main/java/kotlin` to your source directory, and enjoy.
+### use with Maven/Gradle
+
+**gradle**
+
+```groovy
+api 'io.vproxy:vjson:1.3.3'
+```
+
+**maven**
+
+```xml
+<dependency>
+  <groupId>io.vproxy</groupId>
+  <artifactId>vjson</artifactId>
+  <version>1.3.3</version>
+</dependency>
+```
+
+### directly use the source codes
+
+Copy and paste `src/main/kotlin/vjson` to your source directory, and enjoy.
 
 If you are not using kotlin, you need to add the following code snippet to your `build.gradle` configuration.
 
 ```groovy
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
@@ -54,10 +74,6 @@ Run `./gradlew clean kotlinNative` to compile the source code to kotlin native v
 The same source code would be used on both jvm and kotlin native. Some jvm specific annotations and jdk classes are used to get better java interoperability. However they cannot be used when building kotlin native applications. To solve this problem, I developed a code preprocessor program which allow you to integrate `macro` into java/kotlin code using comments.
 
 See [vpreprocessor/README.md](https://github.com/wkgcass/vjson/blob/master/src/main/kotlin/vpreprocessor/README.md) for more info.
-
-The preprocessor is invoked inside `build.gradle`, so it requires a `vjson-bootstrap.jar` to bootstrap the gradle lifecycle. Bootstrap related files are under `bootstrap/` directory.
-
-Use `./gradlew clean bootstrap` to compile and place the new bootstrap jars into `bootstrap/` directory.
 
 Also note that the preprocessing directly rewrites source codes, so the building process requires you to keep git directory clean before doing preprocessing. A task `checkGit` is automatically invoked before `coverage` and `kotlinNative`.
 

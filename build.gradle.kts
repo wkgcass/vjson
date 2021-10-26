@@ -3,15 +3,12 @@ import java.io.ByteArrayOutputStream
 
 buildscript {
   repositories {
-    flatDir {
-      dirs("$projectDir/bootstrap")
-    }
     mavenLocal()
     mavenCentral()
   }
   dependencies {
     classpath("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    classpath(":vjson-bootstrap")
+    classpath("io.vproxy:vjson:1.3.3")
   }
 }
 
@@ -19,14 +16,19 @@ plugins {
   java
   jacoco
   kotlin("jvm") version ("1.5.31")
+  id("org.jetbrains.dokka") version "1.5.30"
+  `maven-publish`
+  signing
 }
 
-group = "vjson"
+group = "io.vproxy"
 version = loadVersion()
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
+
+  withSourcesJar()
 }
 
 tasks {
@@ -67,6 +69,73 @@ dependencies {
   // see https://github.com/jacoco/jacoco/issues/921#issuecomment-800514452
   // also see the text preprocessor for building this project
   compileOnly(group = "org.projectlombok", name = "lombok", version = "1.18.18")
+}
+
+val buildJavaDoc = tasks.create("buildJavaDoc", org.jetbrains.dokka.gradle.DokkaTask::class) {
+  outputDirectory.set(tasks.named<Javadoc>("javadoc").get().destinationDir)
+  dokkaSourceSets {
+    named("main") {
+      sourceRoot(file("src/main/kotlin"))
+    }
+  }
+}
+
+val javadocJar = tasks.create("javadocJar", Jar::class) {
+  classifier = "javadoc"
+  from("$buildDir/docs/javadoc")
+
+  dependsOn(buildJavaDoc)
+}
+
+publishing {
+  publications {
+    create<MavenPublication>("maven") {
+      artifactId = "vjson"
+
+      artifact(javadocJar)
+
+      from(components["java"])
+
+      pom {
+        name.set("vjson")
+        description.set("json library")
+        url.set("https://github.com/wkgcass/vjson")
+        licenses {
+          license {
+            name.set("MIT License")
+            url.set("https://github.com/wkgcass/vjson/blob/master/LICENSE")
+          }
+        }
+        developers {
+          developer {
+            id.set("wkgcass")
+            name.set("wkgcass")
+            email.set("wkgcass@hotmail.com")
+          }
+        }
+        scm {
+          connection.set("scm:git:git://github.com/wkgcass/vjson")
+          developerConnection.set("scm:git:ssh://github.com/wkgcass/vjson.git")
+          url.set("https://github.com/wkgcass/vjson/")
+        }
+      }
+    }
+  }
+  repositories {
+    maven {
+      credentials {
+        username = "wkgcass"
+        password = System.getProperty("MavenPublishPassword")
+      }
+      val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+      val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+      url = uri(if (loadVersion().contains("-DEV")) { snapshotsRepoUrl } else { releasesRepoUrl })
+    }
+  }
+}
+
+signing {
+  sign(publishing.publications["maven"])
 }
 
 tasks.test {
