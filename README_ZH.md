@@ -27,7 +27,7 @@ vjson致力于用java对象还原最原始的json结构。你可以通过简单�
 **gradle**
 
 ```groovy
-api 'io.vproxy:vjson:1.3.3'
+implementation 'io.vproxy:vjson:1.3.3'
 ```
 
 **maven**

@@ -27,7 +27,7 @@ Run `./gradlew clean coverage` to get the coverage report.
 **gradle**
 
 ```groovy
-api 'io.vproxy:vjson:1.3.3'
+implementation 'io.vproxy:vjson:1.3.3'
 ```
 
 **maven**
