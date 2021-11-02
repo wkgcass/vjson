@@ -198,10 +198,14 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
       if (state == 4) {
         cs.skipBlank()
         if (cs.hasNext()) {
-          c = cs.moveNextAndGet()
+          c = cs.peekNext()
           if (c == '}') {
+            cs.moveNextAndGet()
             state = 6
           } else if (c == ',') {
+            cs.moveNextAndGet()
+            state = 5
+          } else if (opts.isAllowSkippingCommas) {
             state = 5
           } else {
             err = "invalid character for json object, expecting `}` or `,`, but got $c"

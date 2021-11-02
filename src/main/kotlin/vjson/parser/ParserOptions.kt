@@ -55,6 +55,8 @@ class ParserOptions {
     private set
   var isNullArraysAndObjects: Boolean
     private set
+  var isAllowSkippingCommas: Boolean
+    private set
 
   constructor() {
     bufLen = 256
@@ -66,6 +68,7 @@ class ParserOptions {
     isStringSingleQuotes = false
     isKeyNoQuotes = false
     isNullArraysAndObjects = false
+    isAllowSkippingCommas = false
   }
 
   constructor(opts: ParserOptions) {
@@ -78,6 +81,7 @@ class ParserOptions {
     isStringSingleQuotes = opts.isStringSingleQuotes
     isKeyNoQuotes = opts.isKeyNoQuotes
     isNullArraysAndObjects = opts.isNullArraysAndObjects
+    isAllowSkippingCommas = opts.isAllowSkippingCommas
   }
 
   fun setBufLen(bufLen: Int): ParserOptions {
@@ -120,6 +124,11 @@ class ParserOptions {
 
   fun setNullArraysAndObjects(nullArraysAndObjects: Boolean): ParserOptions {
     isNullArraysAndObjects = nullArraysAndObjects
+    return this
+  }
+
+  fun setAllowSkippingCommas(allowSkippingCommas: Boolean): ParserOptions {
+    isAllowSkippingCommas = allowSkippingCommas
     return this
   }
 }

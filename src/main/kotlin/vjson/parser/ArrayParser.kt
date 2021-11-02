@@ -116,10 +116,14 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
       if (state == 2) {
         cs.skipBlank()
         if (cs.hasNext()) {
-          c = cs.moveNextAndGet()
+          c = cs.peekNext()
           if (c == ']') {
+            cs.moveNextAndGet()
             state = 4
           } else if (c == ',') {
+            cs.moveNextAndGet()
+            state = 3
+          } else if (opts.isAllowSkippingCommas) {
             state = 3
           } else {
             err = "invalid character for json array, expecting `]` or `,`, but got $c"

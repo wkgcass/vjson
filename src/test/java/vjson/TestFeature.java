@@ -7,6 +7,8 @@ import vjson.simple.SimpleObject;
 import vjson.simple.SimpleString;
 import vjson.util.AppendableMap;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("RedundantThrows")
@@ -76,6 +78,24 @@ public class TestFeature {
                     .append("b", new SimpleString("bb"))
                     .append("c", new SimpleString("cc"))),
                 ParserUtils.buildFrom(CharStream.from("{a:\"aa\",b:\"bb\",c:\"cc\"}"), new ParserOptions().setKeyNoQuotes(true)));
+        }
+    }
+
+    @Test
+    public void allowSkippingComma() throws Exception {
+        {
+            ObjectParser parser = new ObjectParser(new ParserOptions().setAllowSkippingCommas(true));
+            assertEquals(new SimpleObject(new AppendableMap<>()
+                    .append("a", new SimpleString("b"))
+                    .append("c", new SimpleString("d"))),
+                parser.last("{" +
+                    "\"a\":\"b\" \"c\":\"d\"" +
+                    "}"));
+        }
+        {
+            ArrayParser parser = new ArrayParser(new ParserOptions().setAllowSkippingCommas(true));
+            assertEquals(new SimpleArray(Arrays.asList(new SimpleString("a"), new SimpleString("b"), new SimpleString("c"))),
+                parser.last("[\"a\" \"b\" \"c\"]"));
         }
     }
 }
