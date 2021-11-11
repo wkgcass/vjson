@@ -31,6 +31,8 @@ public class TestFeatureFail {
             () -> new ObjectParser(new ParserOptions().setKeyNoQuotes(true)).last("{^:\"a\"}"));
         parseFail("invalid character for json object key without quotes: {",
             () -> new ObjectParser(new ParserOptions().setKeyNoQuotes(true)).last("{{:\"a\"}"));
+        parseFail("invalid character for json object key without quotes: }",
+            () -> new ObjectParser(new ParserOptions().setKeyNoQuotes(true)).last("{a}"));
         parseFail("invalid character after json object key without quotes: +",
             () -> new ObjectParser(new ParserOptions().setKeyNoQuotes(true)).last("{a +:\"a\"}"));
     }

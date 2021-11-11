@@ -20,6 +20,7 @@ import vjson.simple.SimpleDouble
 import vjson.simple.SimpleExp
 import vjson.simple.SimpleInteger
 import vjson.simple.SimpleLong
+import vjson.util.CastUtils.forIndex
 import kotlin.math.pow
 
 class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
@@ -136,7 +137,7 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
   private fun calcFraction(): Double {
     if (fractionDivisorZeros < MAX_DIVISOR_ZEROS) {
       var divisor: Long = 1
-      for (i in 0 until fractionDivisorZeros) {
+      forIndex(0, fractionDivisorZeros) {
         divisor *= 10
       }
       return fraction / divisor.toDouble()

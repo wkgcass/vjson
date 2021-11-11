@@ -28,6 +28,10 @@ public class TestCharArrayCharStream {
         assertEquals('e', cs.moveNextAndGet());
         assertEquals("CharStream(abcd[e])", cs.toString());
         assertFalse(cs.hasNext());
+
+        s = "";
+        cs = (CharArrayCharStream) CharStream.from(s);
+        assertEquals("CharStream([])", cs.toString());
     }
 
     @Test

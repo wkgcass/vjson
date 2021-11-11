@@ -85,6 +85,21 @@ public class TestDeserialize {
     }
 
     @Test
+    public void objectEntryWithoutValue() {
+        String jsonStr = "{" +
+            "\"nullValue\"" +
+            "}";
+        SimpleObjectCase o = new SimpleObjectCase();
+        o.nullValue = null;
+        DeserializeParserListener<SimpleObjectCase> lsn = new DeserializeParserListener<>(SimpleObjectCase.simpleObjectCaseRule);
+        ParserUtils.buildFrom(CharStream.from(jsonStr), new ParserOptions()
+            .setAllowObjectEntryWithoutValue(true)
+            .setMode(ParserMode.JAVA_OBJECT).setNullArraysAndObjects(true).setListener(lsn));
+        assertTrue(lsn.completed());
+        assertEquals(o, lsn.get());
+    }
+
+    @Test
     public void simpleArrays() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int i = 0; i < 10; ++i) {

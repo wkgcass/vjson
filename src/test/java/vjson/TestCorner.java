@@ -107,6 +107,15 @@ public class TestCorner {
 
         assertEquals(Arrays.asList("a", "b"), o.keyList());
         assertEquals(Arrays.asList("a", "b"), o.keyList());
+
+        assertEquals(Arrays.asList(
+                new JSON.ObjectEntry("a", new SimpleInteger(1)),
+                new JSON.ObjectEntry("b", new SimpleInteger(2))),
+            o.entryList());
+        assertEquals(Arrays.asList(
+                new JSON.ObjectEntry("a", new SimpleInteger(1)),
+                new JSON.ObjectEntry("b", new SimpleInteger(2))),
+            o.entryList());
     }
 
     @Test
@@ -312,5 +321,36 @@ public class TestCorner {
     public void objectEntryToString() throws Exception {
         JSON.ObjectEntry entry = new JSON.ObjectEntry("a", new SimpleInteger(1));
         assertEquals("(a: Integer(1))", entry.toString());
+    }
+
+    @Test
+    public void parserOptionsSetKeyNoQuotesWithDot() throws Exception {
+        ParserOptions opts = new ParserOptions();
+        assertFalse(opts.isKeyNoQuotes());
+        assertFalse(opts.isKeyNoQuotesWithDot());
+        opts.setKeyNoQuotesWithDot(true);
+        assertTrue(opts.isKeyNoQuotes());
+        assertTrue(opts.isKeyNoQuotesWithDot());
+
+        opts.setKeyNoQuotesWithDot(false);
+        assertTrue(opts.isKeyNoQuotes());
+        assertFalse(opts.isKeyNoQuotesWithDot());
+
+        opts.setKeyNoQuotesWithDot(true);
+        assertTrue(opts.isKeyNoQuotes());
+        assertTrue(opts.isKeyNoQuotesWithDot());
+        opts.setKeyNoQuotes(false);
+        assertFalse(opts.isKeyNoQuotes());
+        assertFalse(opts.isKeyNoQuotesWithDot());
+
+        opts.setKeyNoQuotes(true);
+        assertTrue(opts.isKeyNoQuotes());
+        assertFalse(opts.isKeyNoQuotesWithDot());
+    }
+
+    @Test
+    public void emptyStringDictionary() throws Exception {
+        StringDictionary strDic = new StringDictionary(0);
+        assertEquals("", strDic.toString());
     }
 }

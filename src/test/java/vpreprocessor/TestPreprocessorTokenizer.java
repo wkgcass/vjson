@@ -255,12 +255,12 @@ public class TestPreprocessorTokenizer {
             new Plain("\ndef"));
         test("" +
                 "// #abc {{\n" +
-                "// }}\n",
+                "// }}\r",
             new Macro("abc"),
             new Macro("{{"),
             new Plain("\n "),
             new Macro("}}"),
-            new Plain("\n"));
+            new Plain("\r"));
         test("/* #abc {{ } }} */",
             new Macro("abc"),
             new Macro("{{"),

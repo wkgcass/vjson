@@ -465,4 +465,77 @@ public class TestListenerJavaObject {
         assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
         assertEquals(9, step);
     }
+
+    @Test
+    public void objectWithoutValue() throws Exception {
+        step = 0;
+        String toParse = "{\"a\",\"b\":2,\"c\"}";
+        ObjectParser parser = new ObjectParser(new ParserOptions()
+            .setAllowObjectEntryWithoutValue(true)
+            .setMode(ParserMode.JAVA_OBJECT).setListener(new AbstractParserListener() {
+            @Override
+            public void onObjectBegin(ObjectParser obj) {
+                ++step;
+                assertEquals(1, step);
+            }
+
+            @Override
+            public void onObjectKey(ObjectParser obj, String key) {
+                assertEquals(key, obj.getCurrentKey());
+                if (step == 1) {
+                    assertEquals(0, obj.getJavaMap().size());
+                    assertEquals("a", key);
+                } else if (step == 3) {
+                    assertEquals(1, obj.getJavaMap().size());
+                    assertEquals("b", key);
+                } else if (step == 5) {
+                    assertEquals(2, obj.getJavaMap().size());
+                    assertEquals("c", key);
+                } else {
+                    fail();
+                }
+                ++step;
+            }
+
+            @Override
+            public void onObjectValueJavaObject(ObjectParser obj, String key, Object value) {
+                assertNull(obj.getCurrentKey());
+                if (step == 2) {
+                    assertEquals(1, obj.getJavaMap().size());
+                    assertNull(value);
+                } else if (step == 4) {
+                    assertEquals(2, obj.getJavaMap().size());
+                    assertEquals(2, (int) value);
+                } else if (step == 6) {
+                    assertEquals(3, obj.getJavaMap().size());
+                    assertNull(value);
+                } else {
+                    fail();
+                }
+                ++step;
+            }
+
+            @Override
+            public void onObjectEnd(ObjectParser obj) {
+                assertNull(obj.getCurrentKey());
+                assertEquals(3, obj.getJavaMap().size());
+                ++step;
+                assertEquals(8, step);
+            }
+
+            @Override
+            public void onObject(Map<String, ?> obj) {
+                //noinspection AssertEqualsBetweenInconvertibleTypes
+                assertEquals(new AppendableMap<>()
+                        .append("a", null)
+                        .append("b", 2)
+                        .append("c", null)
+                    , obj);
+                ++step;
+                assertEquals(9, step);
+            }
+        }));
+        assertNotNull(parser.buildJavaObject(CharStream.from(toParse), true));
+        assertEquals(9, step);
+    }
 }

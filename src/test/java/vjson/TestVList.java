@@ -149,9 +149,12 @@ public class TestVList {
         assertEquals("[a, b]", ls.toString());
         ls.add("c");
         assertEquals("[a, b, c]", ls.toString());
+        ls.removeFirst(0);
+        assertEquals("[a, b, c]", ls.toString());
         ls.removeFirst(2);
         assertEquals("[c]", ls.toString());
         testIndexOutOfBounds(() -> ls.removeFirst(2));
+        testIndexOutOfBounds(() -> ls.removeFirst(-1));
     }
 
     @Test

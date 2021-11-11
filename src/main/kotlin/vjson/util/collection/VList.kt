@@ -11,6 +11,8 @@
  */
 package vjson.util.collection
 
+import vjson.util.CastUtils.forIndex
+
 class VList<E> {
   private var head: Node<E>? = null
   private var tail: Node<E>? = null
@@ -39,7 +41,7 @@ class VList<E> {
     }
 
     var n = head!!
-    for (i in 0 until (index - 1)) {
+    forIndex(0, index - 1) {
       n = n.next!!
     }
     Node(n, e)

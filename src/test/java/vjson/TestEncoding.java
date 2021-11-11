@@ -120,4 +120,11 @@ public class TestEncoding {
         inst = JSON.parse(new UTF8ByteArrayCharStream("\"\uD808\uDC16\uD808\uDC17\"".getBytes(StandardCharsets.UTF_8)));
         assertEquals(new SimpleString("\uD808\uDC16\uD808\uDC17"), inst);
     }
+
+    @Test
+    public void emptyUTF8() {
+        CharStream cs = new UTF8ByteArrayCharStream("".getBytes(StandardCharsets.UTF_8));
+        assertFalse(cs.hasNext());
+        assertTrue(cs.hasNext(0));
+    }
 }
