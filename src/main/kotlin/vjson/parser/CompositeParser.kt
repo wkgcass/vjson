@@ -110,7 +110,7 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
       if (ParserOptions.isDefaultOptions(this.opts)) {
         opts = ParserOptions.DEFAULT_JAVA_OBJECT_NO_END
       } else {
-        opts = ParserOptions(this.opts).setEnd(false).setMode(ParserMode.JAVA_OBJECT)
+        opts = ParserOptions(this.opts).setEnd(false).setMode(ParserMode.JAVA_OBJECT).setListener(null)
       }
       keyParser = StringParser(opts, ParserUtils.getThreadLocalKeyDictionary())
     } else {
