@@ -31,6 +31,10 @@ java {
   withSourcesJar()
 }
 
+jacoco {
+  toolVersion = "0.8.7"
+}
+
 tasks {
   compileJava {
     options.encoding = "UTF-8"
