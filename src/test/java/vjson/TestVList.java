@@ -1,6 +1,7 @@
 package vjson;
 
 import org.junit.Test;
+import vjson.util.collection.Stack;
 import vjson.util.collection.VList;
 
 import java.util.NoSuchElementException;
@@ -137,5 +138,45 @@ public class TestVList {
         VList<String> ls = new VList<>();
         ls.addFirst("a");
         assertEquals("a", ls.get(0));
+    }
+
+    @Test
+    public void removeFirstN() {
+        VList<String> ls = new VList<>();
+        ls.add("a");
+        assertEquals("[a]", ls.toString());
+        ls.add("b");
+        assertEquals("[a, b]", ls.toString());
+        ls.add("c");
+        assertEquals("[a, b, c]", ls.toString());
+        ls.removeFirst(2);
+        assertEquals("[c]", ls.toString());
+        testIndexOutOfBounds(() -> ls.removeFirst(2));
+    }
+
+    @Test
+    public void simpleStack() {
+        Stack<String> stack = new Stack<>();
+        stack.push("a");
+        assertEquals(1, stack.size());
+        stack.push("b");
+        assertEquals(2, stack.size());
+        stack.push("c");
+        assertEquals(3, stack.size());
+        assertEquals("[a, b, c]", stack.toString());
+        assertEquals("c", stack.pop());
+        assertEquals(2, stack.size());
+        assertEquals("b", stack.pop());
+        assertEquals(1, stack.size());
+        assertEquals("[a]", stack.toString());
+
+        stack.push("b");
+        stack.push("c");
+        assertEquals("[a, b, c]", stack.toString());
+
+        Stack<String> reverse = stack.clearAndReverse();
+        assertEquals("[c, b, a]", reverse.toString());
+        assertEquals("[]", stack.toString());
+        assertEquals(0, stack.size());
     }
 }

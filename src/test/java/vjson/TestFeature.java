@@ -1,11 +1,14 @@
 package vjson;
 
 import org.junit.Test;
+import vjson.ex.ParserException;
 import vjson.parser.*;
 import vjson.simple.SimpleArray;
+import vjson.simple.SimpleNull;
 import vjson.simple.SimpleObject;
 import vjson.simple.SimpleString;
 import vjson.util.AppendableMap;
+import vjson.util.ObjectBuilder;
 
 import java.util.Arrays;
 
@@ -82,6 +85,23 @@ public class TestFeature {
     }
 
     @Test
+    public void keyNoQuotesWithDot() throws Exception {
+        try {
+            ParserUtils.buildFrom(CharStream.from("{a.b:\"ab\"}"), new ParserOptions().setKeyNoQuotes(true));
+        } catch (ParserException e) {
+            assertEquals("invalid character for json object key without quotes: .", e.getMessage());
+        }
+        {
+            assertEquals(new SimpleObject(new AppendableMap<>()
+                    .append("a.b", new SimpleString("ab"))
+                    .append("c.d", new SimpleString("cd"))),
+                ParserUtils.buildFrom(CharStream.from("{a.b:\"ab\",c.d:\"cd\"}"), new ParserOptions()
+                    .setKeyNoQuotes(true)
+                    .setKeyNoQuotesWithDot(true)));
+        }
+    }
+
+    @Test
     public void allowSkippingComma() throws Exception {
         {
             ObjectParser parser = new ObjectParser(new ParserOptions().setAllowSkippingCommas(true));
@@ -97,5 +117,84 @@ public class TestFeature {
             assertEquals(new SimpleArray(Arrays.asList(new SimpleString("a"), new SimpleString("b"), new SimpleString("c"))),
                 parser.last("[\"a\" \"b\" \"c\"]"));
         }
+    }
+
+    @Test
+    public void allowObjectEntryWithoutValue() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions().setAllowObjectEntryWithoutValue(true));
+        assertEquals(new SimpleObject(new AppendableMap<>()
+                .append("a", new SimpleString("b"))
+                .append("c", new SimpleNull())
+                .append("e", new SimpleString("f"))),
+            parser.last("{" +
+                "\"a\":\"b\"," +
+                "\"c\"," +
+                "\"e\":\"f\"" +
+                "}"));
+    }
+
+    @Test
+    public void all() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions()
+            .setStringSingleQuotes(true)
+            .setKeyNoQuotes(true)
+            .setKeyNoQuotesWithDot(true)
+            .setAllowSkippingCommas(true)
+            .setAllowObjectEntryWithoutValue(true));
+        assertEquals(new ObjectBuilder()
+                .put("function", null)
+                .putObject("a", o -> o
+                    .put("x", "int")
+                    .put("y", "string"))
+                .putObject("void", o -> o
+                    .put("while", "b.c > 1")
+                    .putObject("do", oo -> oo
+                        .put("break", null)
+                    )
+                )
+                .build(),
+            parser.last("{\n" +
+                "  function a: {x: \"int\", y: \"string\"} void: {\n" +
+                "    while: \"b.c > 1\" do: {\n" +
+                "      break\n" +
+                "    }\n" +
+                "  }\n" +
+                "}"));
+    }
+
+    @Test
+    public void pass() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions()
+            .setStringSingleQuotes(true)
+            .setKeyNoQuotes(true)
+            .setKeyNoQuotesWithDot(true)
+            .setAllowSkippingCommas(true)
+            .setAllowObjectEntryWithoutValue(true));
+        JSON.Object obj = parser.last("{\n" +
+            "function printPrimes: { searchRange: \"int\" } void: {\n" +
+            "  var notPrime: { new \"bool[searchRange + 1]\" }\n" +
+            "  for: [ { var i: 2 }, \"i <= searchRange\", \"i += 1\"] do: {\n" +
+            "    if: \"!notPrime[i]\" then: {\n" +
+            "      var j: 2\n" +
+            "      while: true do: {\n" +
+            "        var n: \"i * j\"\n" +
+            "        if: \"n > searchRange\" then: {\n" +
+            "          break\n" +
+            "        }\n" +
+            "        \"notPrime[n]\": true\n" +
+            "        j: \"j + 1\"\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
+            "  console.log: [ \"'primes:'\" ]\n" +
+            "  for: [ { var i: 2 }, \"i < notPrime.length\", \"i += 1\"] do: {\n" +
+            "    if: \"!notPrime[i]\" then: {\n" +
+            "      console.log: [ \"i\" ]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}\n" +
+            "printPrimes: [ 10 ]\n" +
+            "}");
+        System.out.println(obj);
     }
 }

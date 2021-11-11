@@ -307,4 +307,10 @@ public class TestCorner {
         double res = ((JSON.Double) JSON.parse("1.23")).doubleValue();
         assertEquals(1.23, res, 0.000000001);
     }
+
+    @Test
+    public void objectEntryToString() throws Exception {
+        JSON.ObjectEntry entry = new JSON.ObjectEntry("a", new SimpleInteger(1));
+        assertEquals("(a: Integer(1))", entry.toString());
+    }
 }

@@ -39,6 +39,10 @@ import vpreprocessor.*;
     TestKotlinDSL.class,
     TestJavaDSL.class,
     TestStringCache.class,
+
+    TestExprTokenizer.class,
+    TestExprParser.class,
+    TestASTGen.class,
 })
 public class Suite {
 }
