@@ -77,9 +77,19 @@ object JSON {
     fun stringify(builder: StringBuilder, sfr: Stringifier)
   }
 
+  data class ObjectEntry(
+    val key: kotlin.String,
+    val value: Instance<*>
+  ) {
+    override fun toString(): kotlin.String {
+      return "($key: $value)"
+    }
+  }
+
   interface Object : Instance<LinkedHashMap<kotlin.String, Any?>> {
     fun keySet(): LinkedHashSet<kotlin.String>
     fun keyList(): List<kotlin.String>
+    fun entryList(): List<ObjectEntry>
     fun size(): Int
     fun containsKey(key: kotlin.String): Boolean
     override fun toJavaObject(): LinkedHashMap<kotlin.String, Any?>

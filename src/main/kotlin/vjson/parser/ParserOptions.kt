@@ -53,9 +53,13 @@ class ParserOptions {
     private set
   var isKeyNoQuotes: Boolean
     private set
+  var isKeyNoQuotesWithDot: Boolean
+    private set
   var isNullArraysAndObjects: Boolean
     private set
   var isAllowSkippingCommas: Boolean
+    private set
+  var isAllowObjectEntryWithoutValue: Boolean
     private set
 
   constructor() {
@@ -67,8 +71,10 @@ class ParserOptions {
     // features
     isStringSingleQuotes = false
     isKeyNoQuotes = false
+    isKeyNoQuotesWithDot = false
     isNullArraysAndObjects = false
     isAllowSkippingCommas = false
+    isAllowObjectEntryWithoutValue = false
   }
 
   constructor(opts: ParserOptions) {
@@ -80,8 +86,10 @@ class ParserOptions {
     // features
     isStringSingleQuotes = opts.isStringSingleQuotes
     isKeyNoQuotes = opts.isKeyNoQuotes
+    isKeyNoQuotesWithDot = opts.isKeyNoQuotesWithDot
     isNullArraysAndObjects = opts.isNullArraysAndObjects
     isAllowSkippingCommas = opts.isAllowSkippingCommas
+    isAllowObjectEntryWithoutValue = opts.isAllowObjectEntryWithoutValue
   }
 
   fun setBufLen(bufLen: Int): ParserOptions {
@@ -118,7 +126,18 @@ class ParserOptions {
   }
 
   fun setKeyNoQuotes(keyNoQuotes: Boolean): ParserOptions {
+    if (!keyNoQuotes) {
+      isKeyNoQuotesWithDot = false
+    }
     isKeyNoQuotes = keyNoQuotes
+    return this
+  }
+
+  fun setKeyNoQuotesWithDot(keyNoQuotesWithDot: Boolean): ParserOptions {
+    if (keyNoQuotesWithDot) {
+      isKeyNoQuotes = true
+    }
+    isKeyNoQuotesWithDot = keyNoQuotesWithDot
     return this
   }
 
@@ -129,6 +148,11 @@ class ParserOptions {
 
   fun setAllowSkippingCommas(allowSkippingCommas: Boolean): ParserOptions {
     isAllowSkippingCommas = allowSkippingCommas
+    return this
+  }
+
+  fun setAllowObjectEntryWithoutValue(allowObjectEntryWithoutValue: Boolean): ParserOptions {
+    isAllowObjectEntryWithoutValue = allowObjectEntryWithoutValue
     return this
   }
 }

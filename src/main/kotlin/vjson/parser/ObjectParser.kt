@@ -16,6 +16,7 @@ import vjson.JSON
 import vjson.Parser
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
+import vjson.simple.SimpleNull
 import vjson.simple.SimpleObject
 import vjson.simple.SimpleObjectEntry
 import vjson.util.StringDictionary
@@ -74,6 +75,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     valueParser = null
   }
 
+  // only used for test cases
   fun setCurrentKey(key: String) {
     currentKey = key
   }
@@ -181,12 +183,17 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
       if (state == 2) {
         cs.skipBlank()
         if (cs.hasNext()) {
-          c = cs.moveNextAndGet()
-          if (c != ':') {
+          c = cs.peekNext()
+          if (c != ':' && opts.isAllowObjectEntryWithoutValue) {
+            fillEntryWithoutValue()
+            state = 4
+          } else if (c != ':') {
             err = "invalid key-value separator for json object, expecting `:`, but got $c"
             throw ParserUtils.err(opts, err)
+          } else {
+            cs.moveNextAndGet()
+            state = 3
           }
-          state = 3
         }
       }
       if (state == 3) {
@@ -233,7 +240,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         // the character will be checked before entering state8
         // or would already be checked in the loop condition
         val peek = cs.peekNext()
-        if (peek == ':' || ParserUtils.isWhiteSpace(peek)) {
+        if ((peek == ':' || ParserUtils.isWhiteSpace(peek)) || (peek == '}' && opts.isAllowObjectEntryWithoutValue)) {
           val key = keyBuilder.toString()
           if (key.isEmpty()) {
             err = "empty key is not allowed when parsing object key without quotes"
@@ -247,6 +254,8 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           c = cs.moveNextAndGet()
           if (ParserUtils.isVarName(c)) {
             keyBuilder!!.next(c)
+          } else if (c == '.' && opts.isKeyNoQuotesWithDot) {
+            keyBuilder!!.next(c)
           } else {
             err = "invalid character for json object key without quotes: $c"
             throw ParserUtils.err(opts, err)
@@ -257,7 +266,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         cs.skipBlank()
         if (cs.hasNext()) {
           val peek = cs.peekNext()
-          if (peek == ':') {
+          if (peek == ':' || opts.isAllowObjectEntryWithoutValue) {
             state = 2
           } else {
             err = "invalid character after json object key without quotes: $peek"
@@ -286,6 +295,23 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
       throw ParserUtils.err(opts, err)
     } else {
       return false
+    }
+  }
+
+  private fun fillEntryWithoutValue() {
+    if (opts.mode == ParserMode.JAVA_OBJECT) {
+      val key: String = currentKey!!
+      currentKey = null
+      if (!opts.isNullArraysAndObjects) {
+        javaMap!![key] = null
+      }
+      opts.listener.onObjectValueJavaObject(this, key, null)
+    } else {
+      val key = currentKey!!
+      currentKey = null
+      val value = SimpleNull()
+      map!!.add(SimpleObjectEntry(key, value))
+      opts.listener.onObjectValue(this, key, value)
     }
   }
 

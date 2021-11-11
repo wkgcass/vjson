@@ -119,6 +119,39 @@ class VList<E> {
     return removed.element
   }
 
+  fun removeFirst(n: Int) {
+    if (n > size) {
+      throw IndexOutOfBoundsException("remove = $n > size = $size")
+    }
+    if (n < 0) {
+      throw IndexOutOfBoundsException("remove = $n")
+    }
+    for (i in 0 until n) {
+      removeFirst()
+    }
+  }
+
+  fun clear() {
+    head = null
+    tail = null
+    size = 0
+  }
+
+  override fun toString(): String {
+    val sb = StringBuilder("[")
+    var node = head
+    if (node != null) {
+      sb.append(node.element)
+      node = node.next
+      while (node != null) {
+        sb.append(", ").append(node.element)
+        node = node.next
+      }
+    }
+    sb.append("]")
+    return sb.toString()
+  }
+
   private class Node<E>(prev: Node<E>?, val element: E) {
     @Suppress("CanBePrimaryConstructorProperty")
     var prev: Node<E>? = prev

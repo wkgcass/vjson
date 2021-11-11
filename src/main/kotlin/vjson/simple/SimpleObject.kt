@@ -20,6 +20,7 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
   private val map: MutableList<SimpleObjectEntry<JSON.Instance<*>>>
   private var keySet: LinkedHashSet<String>? = null
   private var keyList: List<String>? = null
+  private var entryList: List<JSON.ObjectEntry>? = null
   private var fastSingleMap: MutableMap<String, JSON.Instance<*>>? = null
   private fun getFastSingleMap(): MutableMap<String, JSON.Instance<*>> {
     if (fastSingleMap == null) {
@@ -148,6 +149,17 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
       keyList = list
     }
     return ArrayList(keyList!!)
+  }
+
+  override fun entryList(): List<JSON.ObjectEntry> {
+    if (entryList == null) {
+      val list: MutableList<JSON.ObjectEntry> = ArrayList(map.size)
+      for (entry in map) {
+        list.add(JSON.ObjectEntry(entry.key, entry.value))
+      }
+      entryList = list
+    }
+    return ArrayList(entryList!!)
   }
 
   override fun size(): Int {
