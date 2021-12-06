@@ -155,6 +155,12 @@ public class TestExprParser {
     }
 
     @Test
+    public void string() throws Exception {
+        Expr expr = new StringLiteral("abc");
+        assertEquals(expr, parse("'abc'"));
+    }
+
+    @Test
     public void opAssign() {
         assertEquals(
             new OpAssignment(BinOpType.PLUS,

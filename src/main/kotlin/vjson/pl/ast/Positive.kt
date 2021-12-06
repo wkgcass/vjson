@@ -12,7 +12,30 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.Instruction
+import vjson.pl.type.NumericTypeInstance
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
+
 data class Positive(val expr: Expr) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    val exprType = expr.check(ctx)
+    if (exprType !is NumericTypeInstance) {
+      throw ParserException("$this: $expr ($exprType) is not numeric")
+    }
+    return exprType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return expr.typeInstance()
+  }
+
+  override fun generateInstruction(): Instruction {
+    return expr.generateInstruction()
+  }
+
   override fun toString(): String {
     return "+$expr"
   }

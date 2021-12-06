@@ -12,10 +12,42 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.Instruction
+import vjson.pl.type.NullType
+import vjson.pl.type.PrimitiveTypeInstance
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
+
 data class Assignment(
   val variable: AssignableExpr,
   val value: Expr,
 ) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    val variableType = variable.check(ctx)
+    val valueType = value.check(ctx)
+    if (variableType != valueType) {
+      if (valueType is NullType && variableType !is PrimitiveTypeInstance) {
+        return variableType
+      }
+      throw ParserException("$this: cannot assign $valueType to $variableType, type mismatch")
+    }
+    if (!variable.isModifiable()) {
+      throw ParserException("$this: cannot assign value to $variable, the variable/field is unmodifiable")
+    }
+    return valueType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return value.typeInstance()
+  }
+
+  override fun generateInstruction(): Instruction {
+    val valueInst = value.generateInstruction()
+    return variable.generateSetInstruction(valueInst)
+  }
+
   override fun toString(): String {
     return "($variable = $value)"
   }

@@ -61,6 +61,8 @@ class ParserOptions {
     private set
   var isAllowObjectEntryWithoutValue: Boolean
     private set
+  var isEqualAsColon: Boolean
+    private set
 
   constructor() {
     bufLen = 256
@@ -75,6 +77,7 @@ class ParserOptions {
     isNullArraysAndObjects = false
     isAllowSkippingCommas = false
     isAllowObjectEntryWithoutValue = false
+    isEqualAsColon = false
   }
 
   constructor(opts: ParserOptions) {
@@ -90,6 +93,7 @@ class ParserOptions {
     isNullArraysAndObjects = opts.isNullArraysAndObjects
     isAllowSkippingCommas = opts.isAllowSkippingCommas
     isAllowObjectEntryWithoutValue = opts.isAllowObjectEntryWithoutValue
+    isEqualAsColon = opts.isEqualAsColon
   }
 
   fun setBufLen(bufLen: Int): ParserOptions {
@@ -153,6 +157,11 @@ class ParserOptions {
 
   fun setAllowObjectEntryWithoutValue(allowObjectEntryWithoutValue: Boolean): ParserOptions {
     isAllowObjectEntryWithoutValue = allowObjectEntryWithoutValue
+    return this
+  }
+
+  fun setEqualAsColon(equalAsColon: Boolean): ParserOptions {
+    isEqualAsColon = equalAsColon
     return this
   }
 }

@@ -184,10 +184,10 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         cs.skipBlank()
         if (cs.hasNext()) {
           c = cs.peekNext()
-          if (c != ':' && opts.isAllowObjectEntryWithoutValue) {
+          if (!isColon(c) && opts.isAllowObjectEntryWithoutValue) {
             fillEntryWithoutValue()
             state = 4
-          } else if (c != ':') {
+          } else if (!isColon(c)) {
             err = "invalid key-value separator for json object, expecting `:`, but got $c"
             throw ParserUtils.err(opts, err)
           } else {
@@ -240,7 +240,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         // the character will be checked before entering state8
         // or would already be checked in the loop condition
         val peek = cs.peekNext()
-        if ((peek == ':' || ParserUtils.isWhiteSpace(peek)) || (peek == '}' && opts.isAllowObjectEntryWithoutValue)) {
+        if ((isColon(peek) || ParserUtils.isWhiteSpace(peek)) || (peek == '}' && opts.isAllowObjectEntryWithoutValue)) {
           val key = keyBuilder.toString()
           if (key.isEmpty()) {
             err = "empty key is not allowed when parsing object key without quotes"
@@ -266,7 +266,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         cs.skipBlank()
         if (cs.hasNext()) {
           val peek = cs.peekNext()
-          if (peek == ':' || opts.isAllowObjectEntryWithoutValue) {
+          if (isColon(peek) || opts.isAllowObjectEntryWithoutValue) {
             state = 2
           } else {
             err = "invalid character after json object key without quotes: $peek"
@@ -296,6 +296,10 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     } else {
       return false
     }
+  }
+
+  private fun isColon(c: Char): Boolean {
+    return c == ':' || (opts.isEqualAsColon && c == '=')
   }
 
   private fun fillEntryWithoutValue() {

@@ -12,16 +12,56 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.NoOp
+import vjson.pl.type.*
+
 data class ClassDefinition(
   val name: String,
   val params: List<Param>,
   val code: List<Statement>
-) : Statement() {
+) : Statement(), MemoryAllocatorProvider {
+  private var memDepth: Int = -1
+  private val memoryAllocator = MemoryAllocator()
+
+  override fun checkAST(ctx: TypeContext) {
+    memDepth = ctx.getMemoryDepth()
+    if (ctx.hasTypeInThisContext(Type(name))) {
+      throw ParserException("type `$name` is already defined")
+    }
+    val thisType = ClassTypeInstance(this)
+    ctx.addType(Type(name), thisType)
+    val codeCtx = TypeContext(ctx, thisType, this)
+    for (param in params) {
+      val paramType = param.check(ctx)
+      param.memIndex = memoryAllocator.nextIndexFor(paramType)
+      codeCtx.addVariable(Variable(param.name, paramType, true, MemPos(codeCtx.getMemoryDepth(), param.memIndex)))
+    }
+    codeCtx.checkStatements(code)
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    return false
+  }
+
+  override fun memoryAllocator(): MemoryAllocator {
+    return memoryAllocator
+  }
+
+  override fun generateInstruction(): Instruction {
+    return NoOp()
+  }
+
+  fun getMemDepth(): Int {
+    return memDepth
+  }
+
   override fun toString(): String {
     val sb = StringBuilder()
     sb.append("class ").append(name).append(": { ")
     sb.append(params.joinToString(prefix = " { ", postfix = " } "))
-    sb.append("typeof: { ")
+    sb.append("do: { ")
     sb.append(code.joinToString())
     sb.append(" }")
     return sb.toString()

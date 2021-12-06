@@ -12,7 +12,38 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.BreakInstruction
+import vjson.pl.inst.Instruction
+import vjson.pl.type.TypeContext
+
 data class BreakStatement(val flag: String? = null) : Statement() {
+  override fun checkAST(ctx: TypeContext) {
+    val ctxAST = ctx.getContextAST {
+      it is ClassDefinition || it is FunctionDefinition ||
+        (it is LoopStatement && (flag == null || it.flag == flag))
+    }
+    if (ctxAST == null || ctxAST !is LoopStatement) {
+      if (flag == null) {
+        throw ParserException("`break` is not in a loop, current context is $ctxAST")
+      } else {
+        throw ParserException("unable to find loop $flag for `break`")
+      }
+    }
+    ctxAST.isInfiniteLoop = false
+  }
+
+  override fun generateInstruction(): Instruction {
+    if (flag != null) {
+      throw UnsupportedOperationException("break with flag is not supported yet")
+    }
+    return BreakInstruction(1)
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    return false
+  }
+
   override fun toString(): String {
     return if (flag == null) {
       "break"

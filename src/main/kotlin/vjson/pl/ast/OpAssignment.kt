@@ -12,11 +12,75 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.*
+import vjson.pl.type.*
+
 data class OpAssignment(
   val op: BinOpType,
   val variable: AssignableExpr,
   val value: Expr,
 ) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    if (op != BinOpType.PLUS && op != BinOpType.MINUS && op != BinOpType.MULTIPLY && op != BinOpType.DIVIDE) {
+      throw ParserException("invalid operator for assigning: $op")
+    }
+    val variableType = variable.check(ctx)
+    val valueType = value.check(ctx)
+    if (variableType != valueType) {
+      throw ParserException("$this: cannot calculate and assign $valueType to $variableType, type mismatch")
+    }
+    if (valueType !is NumericTypeInstance) {
+      throw ParserException("$this: cannot execute $op on type $valueType, not numeric")
+    }
+
+    if (!variable.isModifiable()) {
+      throw ParserException("$this: cannot assign values to $variable, the variable/field is unmodifiable")
+    }
+
+    return valueType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return value.typeInstance()
+  }
+
+  override fun generateInstruction(): Instruction {
+    val calculateInst = when (op) {
+      BinOpType.PLUS -> when (variable.typeInstance()) {
+        is IntType -> PlusInt(variable.generateInstruction(), value.generateInstruction())
+        is LongType -> PlusLong(variable.generateInstruction(), value.generateInstruction())
+        is FloatType -> PlusFloat(variable.generateInstruction(), value.generateInstruction())
+        is DoubleType -> PlusDouble(variable.generateInstruction(), value.generateInstruction())
+        else -> throw IllegalStateException()
+      }
+      BinOpType.MINUS -> when (variable.typeInstance()) {
+        is IntType -> MinusInt(variable.generateInstruction(), value.generateInstruction())
+        is LongType -> MinusLong(variable.generateInstruction(), value.generateInstruction())
+        is FloatType -> MinusFloat(variable.generateInstruction(), value.generateInstruction())
+        is DoubleType -> MinusDouble(variable.generateInstruction(), value.generateInstruction())
+        else -> throw IllegalStateException()
+      }
+      BinOpType.MULTIPLY -> when (variable.typeInstance()) {
+        is IntType -> MultiplyInt(variable.generateInstruction(), value.generateInstruction())
+        is LongType -> MultiplyLong(variable.generateInstruction(), value.generateInstruction())
+        is FloatType -> MultiplyFloat(variable.generateInstruction(), value.generateInstruction())
+        is DoubleType -> MultiplyDouble(variable.generateInstruction(), value.generateInstruction())
+        else -> throw IllegalStateException()
+      }
+      BinOpType.DIVIDE -> when (variable.typeInstance()) {
+        is IntType -> DivideInt(variable.generateInstruction(), value.generateInstruction())
+        is LongType -> DivideLong(variable.generateInstruction(), value.generateInstruction())
+        is FloatType -> DivideFloat(variable.generateInstruction(), value.generateInstruction())
+        is DoubleType -> DivideDouble(variable.generateInstruction(), value.generateInstruction())
+        else -> throw IllegalStateException()
+      }
+      else -> throw IllegalStateException()
+    }
+    return variable.generateSetInstruction(calculateInst)
+  }
+
   override fun toString(): String {
     return "($variable $op= $value)"
   }

@@ -12,9 +12,27 @@
 
 package vjson.pl.ast
 
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.LiteralRef
+import vjson.pl.type.StringType
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
 import vjson.simple.SimpleString
 
 data class StringLiteral(val str: String) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    return StringType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return StringType
+  }
+
+  override fun generateInstruction(): Instruction {
+    return LiteralRef(str)
+  }
+
   override fun toString(): String {
     var s = SimpleString(str).stringify()
     s = s.substring(1, s.length - 1)

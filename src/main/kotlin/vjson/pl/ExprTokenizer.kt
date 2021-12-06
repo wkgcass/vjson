@@ -16,6 +16,7 @@ import vjson.CharStream
 import vjson.ex.ParserException
 import vjson.pl.token.*
 import vjson.simple.SimpleBool
+import vjson.simple.SimpleString
 import vjson.util.collection.VList
 
 class ExprTokenizer(private val cs: CharStream) {
@@ -92,6 +93,11 @@ class ExprTokenizer(private val cs: CharStream) {
       return null
     }
 
+    val preCheck = cs.peekNext()
+    if (preCheck == '\'') {
+      return readStringToken()
+    }
+
     for (h in handlers) {
       h.reset()
     }
@@ -132,6 +138,44 @@ class ExprTokenizer(private val cs: CharStream) {
       traveled.append(c)
       last = current
     }
+  }
+
+  private fun readStringToken(): Token {
+    val raw = StringBuilder()
+    val sb = StringBuilder()
+    raw.append(cs.moveNextAndGet()) // '
+    var finishes = false
+    var state = 0
+    while (cs.hasNext()) {
+      val c = cs.moveNextAndGet()
+      raw.append(c)
+      if (state == 0) {
+        if (c == '\\') {
+          state = 1
+        } else if (c == '\'') {
+          finishes = true
+          break
+        } else {
+          sb.append(c)
+        }
+      } else {
+        if (c == '\'' || c == '\\') {
+          sb.append(c)
+          state = 0
+        } else {
+          sb.append("\\")
+          sb.append(c)
+          state = 0
+        }
+      }
+    }
+
+    if (!finishes) {
+      throw ParserException("unable to parse the token: incomplete string literal: $raw")
+    }
+
+    val str = sb.toString()
+    return Token(TokenType.STRING, raw.toString(), SimpleString(str))
   }
 
   private fun finish(last: ArrayList<TokenHandler>, traveled: StringBuilder, c: Char?): Token {

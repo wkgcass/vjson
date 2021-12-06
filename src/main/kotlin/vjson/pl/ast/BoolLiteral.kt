@@ -12,7 +12,26 @@
 
 package vjson.pl.ast
 
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.LiteralBool
+import vjson.pl.type.BoolType
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
+
 data class BoolLiteral(val b: Boolean) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    return BoolType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return BoolType
+  }
+
+  override fun generateInstruction(): Instruction {
+    return LiteralBool(b)
+  }
+
   override fun toString(): String {
     return "" + b
   }

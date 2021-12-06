@@ -10,15 +10,14 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package vjson.pl.ast
+package vjson.pl.type
 
-enum class Visibility(val str: String) {
-  PUBLIC("public"),
-  PRIVATE("private"),
-  NONE("none"),
-  ;
+class FunctionDescriptorTypeInstance(private val desc: FunctionDescriptor) : TypeInstance {
+  override fun functionDescriptor(ctx: TypeContext): FunctionDescriptor {
+    return desc
+  }
 
   override fun toString(): String {
-    return str
+    return "($desc)"
   }
 }

@@ -134,13 +134,27 @@ public class TestFeature {
     }
 
     @Test
+    public void equalAsColon() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions().setEqualAsColon(true));
+        assertEquals(new SimpleObject(new AppendableMap<>()
+                .append("a", new SimpleString("b"))
+                .append("c", new SimpleNull())
+                .append("e", new SimpleString("f"))),
+            parser.last("{" +
+                "\"a\"=\"b\"," +
+                "\"c\"=null," +
+                "\"e\":\"f\"}"));
+    }
+
+    @Test
     public void all() throws Exception {
         ObjectParser parser = new ObjectParser(new ParserOptions()
             .setStringSingleQuotes(true)
             .setKeyNoQuotes(true)
             .setKeyNoQuotesWithDot(true)
             .setAllowSkippingCommas(true)
-            .setAllowObjectEntryWithoutValue(true));
+            .setAllowObjectEntryWithoutValue(true)
+            .setEqualAsColon(true));
         assertEquals(new ObjectBuilder()
                 .put("function", null)
                 .putObject("a", o -> o
@@ -162,6 +176,32 @@ public class TestFeature {
                 "}"));
     }
 
+    public static final String TEST_PROG = "{\n" +
+        "function printPrimes: { searchRange: \"int\" } void: {\n" +
+        "  var notPrime = { new \"bool[searchRange + 1]\" }\n" +
+        "  for: [ { var i = 2 }, \"i <= searchRange\", \"i += 1\"] do: {\n" +
+        "    if: \"!notPrime[i]\" then: {\n" +
+        "      var j = 2\n" +
+        "      while: true do: {\n" +
+        "        var n = \"i * j\"\n" +
+        "        if: \"n > searchRange\" then: {\n" +
+        "          break\n" +
+        "        }\n" +
+        "        \"notPrime[n]\" = true\n" +
+        "        j = \"j + 1\"\n" +
+        "      }\n" +
+        "    }\n" +
+        "  }\n" +
+        "  std.console.log: [ \"'primes:'\" ]\n" +
+        "  for: [ { var i = 2 }, \"i < notPrime.length\", \"i += 1\"] do: {\n" +
+        "    if: \"!notPrime[i]\" then: {\n" +
+        "      std.console.log: [ \"''+i\" ]\n" +
+        "    }\n" +
+        "  }\n" +
+        "}\n" +
+        "printPrimes: [ 10 ]\n" +
+        "}";
+
     @Test
     public void pass() throws Exception {
         ObjectParser parser = new ObjectParser(new ParserOptions()
@@ -169,32 +209,9 @@ public class TestFeature {
             .setKeyNoQuotes(true)
             .setKeyNoQuotesWithDot(true)
             .setAllowSkippingCommas(true)
-            .setAllowObjectEntryWithoutValue(true));
-        JSON.Object obj = parser.last("{\n" +
-            "function printPrimes: { searchRange: \"int\" } void: {\n" +
-            "  var notPrime: { new \"bool[searchRange + 1]\" }\n" +
-            "  for: [ { var i: 2 }, \"i <= searchRange\", \"i += 1\"] do: {\n" +
-            "    if: \"!notPrime[i]\" then: {\n" +
-            "      var j: 2\n" +
-            "      while: true do: {\n" +
-            "        var n: \"i * j\"\n" +
-            "        if: \"n > searchRange\" then: {\n" +
-            "          break\n" +
-            "        }\n" +
-            "        \"notPrime[n]\": true\n" +
-            "        j: \"j + 1\"\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
-            "  console.log: [ \"'primes:'\" ]\n" +
-            "  for: [ { var i: 2 }, \"i < notPrime.length\", \"i += 1\"] do: {\n" +
-            "    if: \"!notPrime[i]\" then: {\n" +
-            "      console.log: [ \"i\" ]\n" +
-            "    }\n" +
-            "  }\n" +
-            "}\n" +
-            "printPrimes: [ 10 ]\n" +
-            "}");
+            .setAllowObjectEntryWithoutValue(true)
+            .setEqualAsColon(true));
+        JSON.Object obj = parser.last(TEST_PROG);
         System.out.println(obj);
     }
 }

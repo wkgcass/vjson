@@ -12,10 +12,38 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.WhileLoopInstruction
+import vjson.pl.type.BoolType
+import vjson.pl.type.TypeContext
+
 data class WhileLoop(
   val condition: Expr,
   val code: List<Statement>
-) : Statement() {
+) : LoopStatement() {
+  override fun checkAST(ctx: TypeContext) {
+    val conditionType = condition.typeInstance()
+    if (conditionType !is BoolType) {
+      throw ParserException("$condition ($conditionType) is not a boolean value, cannot be used as `while` loop condition")
+    }
+    val loopCtx = TypeContext(ctx, ast = this)
+    loopCtx.checkStatements(code)
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    if (condition !is BoolLiteral || condition.b.not()) {
+      return false
+    }
+    return this.isInfiniteLoop ?: return true
+  }
+
+  override fun generateInstruction(): Instruction {
+    val conditionInst = condition.generateInstruction()
+    val codeInst = code.map { it.generateInstruction() }
+    return WhileLoopInstruction(conditionInst, codeInst)
+  }
+
   override fun toString(): String {
     return "while: $condition do: $code"
   }

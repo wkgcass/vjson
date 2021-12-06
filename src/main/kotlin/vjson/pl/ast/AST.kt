@@ -12,5 +12,13 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.Instruction
+import vjson.pl.type.TypeContext
+
 interface AST {
+  @Throws(ParserException::class)
+  fun checkAST(ctx: TypeContext)
+
+  fun generateInstruction(): Instruction
 }

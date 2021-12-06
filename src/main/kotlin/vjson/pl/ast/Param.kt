@@ -12,13 +12,38 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.Instruction
+import vjson.pl.type.MemoryAllocator
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
 import vjson.simple.SimpleString
 
 data class Param(
   val name: String,
   val type: Type
-) : AST {
+) : TypedAST {
+  private var ctx: TypeContext = TypeContext(MemoryAllocator())
+
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    if (!ctx.hasType(type)) {
+      throw ParserException("type of parameter $name (${type}) is not defined")
+    }
+    return ctx.getType(type)
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return type.typeInstance()
+  }
+
+  override fun generateInstruction(): Instruction {
+    throw UnsupportedOperationException()
+  }
+
+  internal var memIndex: Int = -1
+
   override fun toString(): String {
-    return name + ": " + SimpleString(type.name).stringify()
+    return name + ": " + SimpleString(type.toString()).stringify()
   }
 }

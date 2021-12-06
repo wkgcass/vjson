@@ -12,11 +12,46 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.*
+import vjson.pl.type.*
+
 data class NewArray(
   val type: Type,
   val len: Expr,
 ) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    val arrayType = type.check(ctx)
+    if (arrayType !is ArrayTypeInstance) {
+      throw ParserException("$this: $arrayType is not array type")
+    }
+    val lenType = len.check(ctx)
+    if (lenType !is IntType) {
+      throw ParserException("$this: typeof $len ($lenType) is not int")
+    }
+    return arrayType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return type.typeInstance()
+  }
+
+  override fun generateInstruction(): Instruction {
+    return when (type.typeInstance().elementType(ctx)) {
+      is IntType -> NewArrayInt(len.generateInstruction())
+      is LongType -> NewArrayLong(len.generateInstruction())
+      is FloatType -> NewArrayFloat(len.generateInstruction())
+      is DoubleType -> NewArrayDouble(len.generateInstruction())
+      is BoolType -> NewArrayBool(len.generateInstruction())
+      else -> NewArrayRef(len.generateInstruction())
+    }
+  }
+
   override fun toString(): String {
-    return "new: ${type.name}[$len]"
+    val typeStr = type.toString()
+    val bracketLeft = typeStr.indexOf("[")
+    val bracketRight = typeStr.indexOf("]", bracketLeft + 1)
+    return "new: ${typeStr.substring(0, bracketLeft + 1)}$len${typeStr.substring(bracketRight)}"
   }
 }

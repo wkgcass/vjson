@@ -16,6 +16,7 @@ import vjson.JSON
 import vjson.ex.ParserException
 import vjson.pl.ast.*
 import vjson.util.CastUtils.cast
+import java.util.*
 
 class ASTGen(_prog: JSON.Object) {
   private val prog = _prog.entryList().listIterator()
@@ -25,8 +26,9 @@ class ASTGen(_prog: JSON.Object) {
       val entry = prog.next()
       val stmt = when (entry.key) {
         "class" -> aClass(entry)
-        "public" -> visiblity(entry, Visibility.PUBLIC)
-        "private" -> visiblity(entry, Visibility.PRIVATE)
+        "public" -> modifier(entry, ModifierEnum.PUBLIC)
+        "private" -> modifier(entry, ModifierEnum.PRIVATE)
+        "const" -> modifier(entry, ModifierEnum.CONST)
         "function" -> function(entry)
         "var" -> aVar(entry)
         "new" -> aNew(entry)
@@ -45,7 +47,7 @@ class ASTGen(_prog: JSON.Object) {
 
   /**
    * ```
-   * class ClassName: { param: "type" } typeof: {
+   * class ClassName: { param: "type" } do: {
    *   statements
    * }
    * ```
@@ -78,35 +80,46 @@ class ASTGen(_prog: JSON.Object) {
     if (!prog.hasNext()) {
       throw ParserException("unexpected eof, expecting class content")
     }
-    val typeofAndCode = prog.next()
-    if (typeofAndCode.key != "typeof") {
-      throw ParserException("unexpected token $typeofAndCode, expecting `typeof` and class content")
+    val doAndCode = prog.next()
+    if (doAndCode.key != "do") {
+      throw ParserException("unexpected token $doAndCode, expecting `do` and class content")
     }
 
-    if (typeofAndCode.value !is JSON.Object) {
-      throw ParserException("class content must be encapsulated into a json object, but got ${typeofAndCode.value} for class `$className`")
+    if (doAndCode.value !is JSON.Object) {
+      throw ParserException("class content must be encapsulated into a json object, but got ${doAndCode.value} for class `$className`")
     }
-    val astCode = ASTGen(typeofAndCode.value).parse()
+    val astCode = ASTGen(doAndCode.value).parse()
 
     return ClassDefinition(className, astParams, astCode)
   }
 
-  private fun visiblity(entry: JSON.ObjectEntry, visibility: Visibility): Statement {
+  private fun modifier(entry: JSON.ObjectEntry, modifier: ModifierEnum): Statement {
     if (entry.value !is JSON.Null) {
       throw ParserException("unexpected token ${entry.value}, expecting null as value for key `public`")
     }
-    if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting variable or function definition")
+    val modifiers = Modifiers(modifier.num)
+    var nextEntry: JSON.ObjectEntry
+    while (true) {
+      if (!prog.hasNext()) {
+        throw ParserException("unexpected eof, expecting variable or function definition")
+      }
+      nextEntry = prog.next()
+      if (!ModifierEnum.isModifier(nextEntry.key)) {
+        break
+      }
+      modifiers.modifiers = modifiers.modifiers.or(ModifierEnum.valueOf(nextEntry.key.uppercase(Locale.getDefault())).num)
     }
-    val nextEntry = prog.next()
+    if (modifiers.isPublic() && modifiers.isPrivate()) {
+      throw ParserException("invalid modifiers: $modifiers, cannot set public and private at the same time")
+    }
     return when (nextEntry.key) {
       "var" -> {
         val res = aVar(nextEntry)
-        VariableDefinition(res.name, res.value, visibility)
+        VariableDefinition(res.name, res.value, modifiers)
       }
       "function" -> {
         val res = function(nextEntry)
-        FunctionDefinition(res.name, res.params, res.returnType, res.code, visibility)
+        FunctionDefinition(res.name, res.params, res.returnType, res.code, modifiers)
       }
       else -> {
         throw ParserException("unexpected token $nextEntry, expecting variable or function definition")
@@ -198,13 +211,15 @@ class ASTGen(_prog: JSON.Object) {
       if (!typeStr.endsWith("]")) {
         throw ParserException("unexpected type for creating array: found `[` in type string but it does not end with `]`: $typeStr")
       }
-      val type = typeStr.substring(0, typeStr.indexOf("["))
-      val lenStr = typeStr.substring(typeStr.indexOf("[") + 1, typeStr.length - 1)
+      val elementType = typeStr.substring(0, typeStr.indexOf("["))
+      val lenEndIndex = typeStr.indexOf("]", typeStr.indexOf("[") + 1)
+      val lenStr = typeStr.substring(typeStr.indexOf("[") + 1, lenEndIndex)
       val lenExpr = exprString(lenStr)
+
       if (nextEntry.value !is JSON.Null) {
         throw ParserException("unexpected token ${nextEntry.value} for new array statement, expecting null value after key `$typeStr`")
       }
-      NewArray(Type(type), lenExpr)
+      NewArray(Type(elementType + "[]" + typeStr.substring(lenEndIndex + 1)), lenExpr)
     } else {
       when (nextEntry.value) {
         is JSON.Null -> NewInstance(Type(typeStr), listOf())
@@ -347,6 +362,11 @@ class ASTGen(_prog: JSON.Object) {
     }
     return if (entry.value is JSON.Array) {
       callFunction(expr, entry.value)
+    } else if (expr is NullLiteral) {
+      if (entry.value !is JSON.String) {
+        throw ParserException("unexpected token ${entry.value}, expecting type for the `null` literal")
+      }
+      NullLiteral(Type(entry.value.toJavaObject()))
     } else {
       if (expr !is AssignableExpr) {
         throw ParserException("unable to assign value to $expr")
@@ -396,10 +416,6 @@ class ASTGen(_prog: JSON.Object) {
   }
 
   private fun exprString(input: String): Expr {
-    if (input.startsWith("'") && input.endsWith("'")) {
-      return StringLiteral(input.substring(1, input.length - 1))
-    }
-
     val tokenizer = ExprTokenizer(input)
     val parser = ExprParser(tokenizer)
     val expr = parser.parse()

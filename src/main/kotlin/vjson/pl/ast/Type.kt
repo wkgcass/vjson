@@ -12,5 +12,59 @@
 
 package vjson.pl.ast
 
-data class Type(val name: String) : AST {
+import vjson.ex.ParserException
+import vjson.pl.inst.Instruction
+import vjson.pl.type.ArrayTypeInstance
+import vjson.pl.type.MemoryAllocator
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
+
+data class Type(private val name: String) : TypedAST {
+  private var ctx: TypeContext = TypeContext(MemoryAllocator())
+  private val isArray: Boolean
+  private val elementType: Type
+
+  init {
+    if (name.contains("[")) {
+      isArray = true
+      val leftBracketIndex = name.lastIndexOf("[")
+      val rightBracketIndex = name.lastIndexOf("]")
+      if (leftBracketIndex != name.length - 2) {
+        throw ParserException("$name is not a valid array type")
+      }
+      if (rightBracketIndex != name.length - 1) {
+        throw ParserException("$name is not a valid array type")
+      }
+      elementType = Type(name.substring(0, name.length - 2))
+    } else {
+      isArray = false
+      elementType = this
+    }
+  }
+
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    if (ctx.hasType(this)) {
+      return ctx.getType(this)
+    }
+    if (isArray) {
+      val arrayType = ArrayTypeInstance(elementType.check(ctx))
+      ctx.addType(this, arrayType)
+      return arrayType
+    } else {
+      throw IllegalStateException("$this is not array type and is not recorded in type context")
+    }
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return ctx.getType(this)
+  }
+
+  override fun generateInstruction(): Instruction {
+    throw UnsupportedOperationException()
+  }
+
+  override fun toString(): String {
+    return name
+  }
 }

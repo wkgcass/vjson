@@ -12,5 +12,6 @@
 
 package vjson.pl.ast
 
-open class Statement : AST {
+abstract class Statement : AST {
+  abstract fun functionTerminationCheck(): Boolean
 }

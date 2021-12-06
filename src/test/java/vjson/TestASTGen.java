@@ -25,6 +25,7 @@ public class TestASTGen {
             .setNullArraysAndObjects(true)
             .setAllowSkippingCommas(true)
             .setAllowObjectEntryWithoutValue(true)
+            .setEqualAsColon(true)
         ).last(input));
         return gen.parse();
     }
@@ -36,12 +37,12 @@ public class TestASTGen {
                 new Param("a", new Type("int")),
                 new Param("b", new Type("int"))),
                 Arrays.asList(
-                    new VariableDefinition("a", new IntegerLiteral(new SimpleInteger(1)), Visibility.PRIVATE),
-                    new FunctionDefinition("b", Collections.emptyList(), new Type("void"), Collections.emptyList(), Visibility.PUBLIC)
+                    new VariableDefinition("a", new IntegerLiteral(new SimpleInteger(1)), new Modifiers(ModifierEnum.PRIVATE.getNum())),
+                    new FunctionDefinition("b", Collections.emptyList(), new Type("void"), Collections.emptyList(), new Modifiers(ModifierEnum.PUBLIC.getNum()))
                 )
             )
         ), gen("{" +
-            "class Test: { a: \"int\", b: \"int\" } typeof: {" +
+            "class Test: { a: \"int\", b: \"int\" } do: {" +
             "  private var a: 1\n" +
             "  public function b: {} void: {}" +
             "}" +
@@ -60,7 +61,7 @@ public class TestASTGen {
                             new Access("a"),
                             new Access("b")))
                     ),
-                    Visibility.NONE)
+                    new Modifiers(0))
             ),
             gen("{" +
                 "function sum: { a: 'int', b: 'int' } int: {" +
@@ -75,7 +76,7 @@ public class TestASTGen {
         assertEquals(Collections.singletonList(
             new ForLoop(
                 Collections.singletonList(
-                    new VariableDefinition("i", new IntegerLiteral(new SimpleInteger(0)), Visibility.NONE)
+                    new VariableDefinition("i", new IntegerLiteral(new SimpleInteger(0)), new Modifiers(0))
                 ),
                 new BinOp(BinOpType.CMP_LT, new Access("i"), new IntegerLiteral(new SimpleInteger(10))),
                 Collections.singletonList(
@@ -198,7 +199,7 @@ public class TestASTGen {
     public void variable() {
         assertEquals(
             Collections.singletonList(
-                new VariableDefinition("a", new IntegerLiteral(new SimpleInteger(1)), Visibility.NONE)
+                new VariableDefinition("a", new IntegerLiteral(new SimpleInteger(1)), new Modifiers(0))
             ),
             gen("{ var a: 1 }")
         );
@@ -227,11 +228,19 @@ public class TestASTGen {
     public void newArray() {
         assertEquals(
             Collections.singletonList(
-                new NewArray(new Type("int"), new BinOp(BinOpType.PLUS,
+                new NewArray(new Type("int[]"), new BinOp(BinOpType.PLUS,
                     new Access("a"),
                     new Access("b")))
             ),
             gen("{ new 'int[a + b]' }")
+        );
+        assertEquals(
+            Collections.singletonList(
+                new NewArray(new Type("int[][]"), new BinOp(BinOpType.PLUS,
+                    new Access("a"),
+                    new Access("b")))
+            ),
+            gen("{ new 'int[a + b][]' }")
         );
     }
 
@@ -298,10 +307,10 @@ public class TestASTGen {
         assertEquals(
             Collections.singletonList(
                 new VariableDefinition("a",
-                    new NewArray(new Type("int"), new BinOp(BinOpType.PLUS,
+                    new NewArray(new Type("int[]"), new BinOp(BinOpType.PLUS,
                         new IntegerLiteral(new SimpleInteger(10)),
                         new IntegerLiteral(new SimpleInteger(5)))),
-                    Visibility.NONE)
+                    new Modifiers(0))
             ),
             gen("{" +
                 "var a: { new 'int[10 + 5]' }" +
@@ -309,31 +318,20 @@ public class TestASTGen {
     }
 
     @Test
-    public void pass() {
-        System.out.println(gen("{\n" +
-            "function printPrimes: { searchRange: \"int\" } void: {\n" +
-            "  var notPrime: { new \"bool[searchRange + 1]\" }\n" +
-            "  for: [ { var i: 2 }, \"i <= searchRange\", \"i += 1\"] do: {\n" +
-            "    if: \"!notPrime[i]\" then: {\n" +
-            "      var j: 2\n" +
-            "      while: true do: {\n" +
-            "        var n: \"i * j\"\n" +
-            "        if: \"n > searchRange\" then: {\n" +
-            "          break\n" +
-            "        }\n" +
-            "        \"notPrime[n]\": true\n" +
-            "        j: \"j + 1\"\n" +
-            "      }\n" +
-            "    }\n" +
-            "  }\n" +
-            "  console.log: [ \"'primes:'\" ]\n" +
-            "  for: [ { var i: 2 }, \"i < notPrime.length\", \"i += 1\"] do: {\n" +
-            "    if: \"!notPrime[i]\" then: {\n" +
-            "      console.log: [ \"i\" ]\n" +
-            "    }\n" +
-            "  }\n" +
-            "}\n" +
-            "printPrimes: [ 10 ]\n" +
+    public void modifiers() {
+        assertEquals(Arrays.asList(
+            new VariableDefinition("a", new IntegerLiteral(new SimpleInteger(1)), new Modifiers(ModifierEnum.PUBLIC.getNum())),
+            new FunctionDefinition("x", Collections.emptyList(), new Type("void"), Collections.emptyList(), new Modifiers(ModifierEnum.PRIVATE.getNum())),
+            new VariableDefinition("b", new IntegerLiteral(new SimpleInteger(2)), new Modifiers(ModifierEnum.PUBLIC.getNum() | ModifierEnum.CONST.getNum()))
+        ), gen("{" +
+            "public var a: 1\n" +
+            "private function x: {} void: {}\n" +
+            "public const var b: 2" +
             "}"));
+    }
+
+    @Test
+    public void pass() {
+        System.out.println(gen(TestFeature.TEST_PROG));
     }
 }

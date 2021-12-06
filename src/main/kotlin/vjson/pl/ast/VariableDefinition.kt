@@ -12,12 +12,52 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.*
+import vjson.pl.type.*
+
 data class VariableDefinition(
   var name: String,
   var value: Expr,
-  var visibility: Visibility = Visibility.NONE,
+  var modifiers: Modifiers = Modifiers(0),
 ) : Statement() {
+  private var ctx: TypeContext? = null
+  private var variableIndex: Int = -1
+
+  override fun checkAST(ctx: TypeContext) {
+    this.ctx = ctx
+    if (ctx.hasVariable(name)) {
+      throw ParserException("variable $name is already defined")
+    }
+    val valueType = value.check(ctx)
+    if (valueType is NullType) {
+      throw ParserException("$this: cannot determine type for $value")
+    }
+    variableIndex = ctx.getMemoryAllocator().nextIndexFor(valueType)
+    ctx.addVariable(Variable(name, valueType, !modifiers.isConst(), MemPos(ctx.getMemoryDepth(), variableIndex)))
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    return false
+  }
+
+  override fun generateInstruction(): Instruction {
+    val valueInst = value.generateInstruction()
+    return when (value.typeInstance()) {
+      is IntType -> SetInt(ctx!!.getMemoryDepth(), variableIndex, valueInst)
+      is LongType -> SetLong(ctx!!.getMemoryDepth(), variableIndex, valueInst)
+      is FloatType -> SetFloat(ctx!!.getMemoryDepth(), variableIndex, valueInst)
+      is DoubleType -> SetDouble(ctx!!.getMemoryDepth(), variableIndex, valueInst)
+      is BoolType -> SetBool(ctx!!.getMemoryDepth(), variableIndex, valueInst)
+      else -> SetRef(ctx!!.getMemoryDepth(), variableIndex, valueInst)
+    }
+  }
+
+  fun getMemPos(): MemPos {
+    return MemPos(ctx!!.getMemoryDepth(), variableIndex)
+  }
+
   override fun toString(): String {
-    return (if (visibility == Visibility.NONE) "" else "$visibility ") + "var $name: ($value)"
+    return modifiers.toStringWithSpace() + "var $name: ($value)"
   }
 }

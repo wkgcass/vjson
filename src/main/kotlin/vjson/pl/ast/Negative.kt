@@ -12,7 +12,35 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.*
+import vjson.pl.type.*
+
 data class Negative(val expr: Expr) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    val exprType = expr.check(ctx)
+    if (exprType !is NumericTypeInstance) {
+      throw ParserException("$this: type of $expr ($exprType) is not numeric")
+    }
+    return exprType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return expr.typeInstance()
+  }
+
+  override fun generateInstruction(): Instruction {
+    val valueInst = expr.generateInstruction()
+    return when (expr.typeInstance()) {
+      is IntType -> NegativeInt(valueInst)
+      is LongType -> NegativeLong(valueInst)
+      is FloatType -> NegativeFloat(valueInst)
+      is DoubleType -> NegativeDouble(valueInst)
+      else -> throw UnsupportedOperationException()
+    }
+  }
+
   override fun toString(): String {
     return "-$expr"
   }

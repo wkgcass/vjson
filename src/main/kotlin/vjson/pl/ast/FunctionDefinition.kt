@@ -12,21 +12,98 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.ActionContext
+import vjson.pl.inst.CompositeInstruction
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.ValueHolder
+import vjson.pl.type.*
+
 data class FunctionDefinition(
   val name: String,
   val params: List<Param>,
   val returnType: Type,
   val code: List<Statement>,
-  val visibility: Visibility = Visibility.NONE,
-) : Statement() {
+  val modifiers: Modifiers = Modifiers(0),
+) : Statement(), MemoryAllocatorProvider {
+  private var ctx: TypeContext? = null
+  private var variableIndex: Int = -1
+  private val memoryAllocator = MemoryAllocator()
+
+  override fun checkAST(ctx: TypeContext) {
+    this.ctx = ctx
+
+    if (ctx.hasVariableInThisContext(name)) {
+      throw ParserException("variable $name is already defined")
+    }
+
+    val codeCtx = TypeContext(ctx, ast = this)
+    val paramTypes = ArrayList<ParamInstance>(params.size)
+    for (p in params) {
+      val paramType = p.check(codeCtx)
+      p.memIndex = memoryAllocator.nextIndexFor(paramType)
+      paramTypes.add(ParamInstance(paramType, p.memIndex))
+      codeCtx.addVariable(Variable(p.name, paramType, true, MemPos(codeCtx.getMemoryDepth(), p.memIndex)))
+    }
+    val returnTypeInstance = returnType.check(codeCtx)
+    val funcType = ctx.getFunctionDescriptor(paramTypes, returnTypeInstance, this)
+    variableIndex = ctx.getMemoryAllocator().nextRefIndex()
+    ctx.addVariable(Variable(name, FunctionDescriptorTypeInstance(funcType), false, MemPos(ctx.getMemoryDepth(), variableIndex)))
+
+    codeCtx.checkStatements(code)
+
+    // check whether it has return statement
+    if (returnTypeInstance !is VoidType) {
+      val lastStatement = code.last()
+      if (!lastStatement.functionTerminationCheck()) {
+        throw ParserException("function $name not ending properly: missing return statement")
+      }
+    }
+  }
+
+  override fun generateInstruction(): Instruction {
+    val memDepth = this.ctx!!.getMemoryDepth()
+
+    val ins = ArrayList<Instruction>(code.size)
+    for (stmt in code) {
+      ins.add(stmt.generateInstruction())
+    }
+
+    val composite = CompositeInstruction(ins)
+    return object : Instruction() {
+      override fun execute0(ctx: ActionContext, values: ValueHolder) {
+        ctx.getMem(memDepth).setRef(variableIndex, composite)
+      }
+    }
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    return false
+  }
+
+  fun descriptor(ctx: TypeContext): FunctionDescriptor {
+    val paramTypes = ArrayList<ParamInstance>(params.size)
+    for (p in params) {
+      paramTypes.add(ParamInstance(p.typeInstance(), p.memIndex))
+    }
+    val returnType = this.returnType.typeInstance()
+    return ctx.getFunctionDescriptor(paramTypes, returnType, this)
+  }
+
+  override fun memoryAllocator(): MemoryAllocator {
+    return memoryAllocator
+  }
+
+  fun getMemPos(): MemPos {
+    return MemPos(ctx!!.getMemoryDepth(), variableIndex)
+  }
+
   override fun toString(): String {
     val sb = StringBuilder()
-    if (visibility != Visibility.NONE) {
-      sb.append(visibility).append(" ")
-    }
-    sb.append("function ").append(name).append(": { ")
+    sb.append(modifiers.toStringWithSpace())
+    sb.append("function ").append(name).append(":")
     sb.append(params.joinToString(prefix = " { ", postfix = " } "))
-    sb.append(returnType.name)
+    sb.append(returnType)
     sb.append(": { ")
     sb.append(code.joinToString())
     sb.append(" }")

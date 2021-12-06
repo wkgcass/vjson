@@ -12,7 +12,31 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.LogicNotInstruction
+import vjson.pl.type.BoolType
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
+
 data class LogicNot(val expr: Expr) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    val exprType = expr.check(ctx)
+    if (exprType !is BoolType) {
+      throw ParserException("$this: type of $expr ($exprType) is not bool")
+    }
+    return BoolType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return BoolType
+  }
+
+  override fun generateInstruction(): Instruction {
+    return LogicNotInstruction(expr.generateInstruction())
+  }
+
   override fun toString(): String {
     return "!$expr"
   }

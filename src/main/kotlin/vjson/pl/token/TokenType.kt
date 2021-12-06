@@ -43,4 +43,5 @@ enum class TokenType(val isTerminator: Boolean = false) {
   DOT, // .
   COMMA(isTerminator = true), // ,
   COLON, // :
+  STRING, // 'xxx', the token value is xxx without `'`
 }

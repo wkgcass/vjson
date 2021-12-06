@@ -126,6 +126,17 @@ public class TestExprTokenizer {
     }
 
     @Test
+    public void string() throws Exception {
+        assertEquals(Arrays.asList(
+            new Token(TokenType.STRING, "'a'", new SimpleString("a")),
+            new Token(TokenType.STRING, "'a\\'b'", new SimpleString("a'b")),
+            new Token(TokenType.STRING, "''", new SimpleString("")),
+            new Token(TokenType.STRING, "'\\\\'", new SimpleString("\\")),
+            new Token(TokenType.STRING, "'\\b'", new SimpleString("\\b"))
+        ), token("'a' 'a\\'b' '' '\\\\' '\\b'"));
+    }
+
+    @Test
     public void all() {
         assertEquals(Arrays.asList(
             new Token(TokenType.INTEGER, "1", new SimpleInteger(1)),
@@ -196,7 +207,8 @@ public class TestExprTokenizer {
             new Token(TokenType.DOT, "."),
             new Token(TokenType.VAR_NAME, "d"),
             new Token(TokenType.COLON, ":"),
-            new Token(TokenType.COMMA, ",")
-        ), token("1+2*3-4/5 !false !true console.log (null) array[0] a+=1 a-=2 a*=3 a/=4 a>b c<d e>=f g<=h i!=j k==l test1.a&&test2.b test1.c||test2.d : ,"));
+            new Token(TokenType.COMMA, ","),
+            new Token(TokenType.STRING, "'abc'", new SimpleString("abc"))
+        ), token("1+2*3-4/5 !false !true console.log (null) array[0] a+=1 a-=2 a*=3 a/=4 a>b c<d e>=f g<=h i!=j k==l test1.a&&test2.b test1.c||test2.d : ,'abc'"));
     }
 }

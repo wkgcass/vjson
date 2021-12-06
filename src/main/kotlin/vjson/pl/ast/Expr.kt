@@ -12,5 +12,13 @@
 
 package vjson.pl.ast
 
-abstract class Expr : Statement() {
+import vjson.pl.type.MemoryAllocator
+import vjson.pl.type.TypeContext
+
+abstract class Expr : Statement(), TypedAST {
+  protected var ctx: TypeContext = TypeContext(MemoryAllocator())
+
+  override fun functionTerminationCheck(): Boolean {
+    return false
+  }
 }

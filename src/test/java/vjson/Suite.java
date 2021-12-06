@@ -43,6 +43,9 @@ import vpreprocessor.*;
     TestExprTokenizer.class,
     TestExprParser.class,
     TestASTGen.class,
+    TestTypeContext.class,
+    TestTypeCheck.class,
+    TestInterpreter.class,
 })
 public class Suite {
 }

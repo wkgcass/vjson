@@ -17,6 +17,7 @@ import vjson.ex.ParserException
 import vjson.pl.ast.*
 import vjson.pl.token.Token
 import vjson.pl.token.TokenType
+import vjson.simple.SimpleString
 import vjson.util.CastUtils.cast
 
 class ExprParser(private val tokenizer: ExprTokenizer) {
@@ -39,6 +40,7 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
       TokenType.PLUS -> positive(ctx)
       TokenType.MINUS -> negative(ctx)
       TokenType.LOGIC_NOT -> logicNot(ctx)
+      TokenType.STRING -> string(ctx)
       else -> throw ParserException("unexpected token $token")
     }
   }
@@ -289,18 +291,22 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
 
   private fun positive(ctx: ParserContext) {
     tokenizer.next()
+    ctx.unaryOpStack.push(1)
     exprEntry(ctx)
     val expr = ctx.exprStack.pop()
     ctx.exprStack.push(Positive(expr))
+    ctx.unaryOpStack.pop()
 
     exprContinue(ctx)
   }
 
   private fun negative(ctx: ParserContext) {
     tokenizer.next()
+    ctx.unaryOpStack.push(1)
     exprEntry(ctx)
     val expr = ctx.exprStack.pop()
     ctx.exprStack.push(Negative(expr))
+    ctx.unaryOpStack.pop()
 
     exprContinue(ctx)
   }
@@ -312,6 +318,14 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
     val expr = ctx.exprStack.pop()
     ctx.exprStack.push(LogicNot(expr))
     ctx.unaryOpStack.pop()
+
+    exprContinue(ctx)
+  }
+
+  private fun string(ctx: ParserContext) {
+    val token = tokenizer.next()
+    val str = token!!.value as SimpleString
+    ctx.exprStack.push(StringLiteral(str.toJavaObject()))
 
     exprContinue(ctx)
   }

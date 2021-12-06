@@ -12,7 +12,37 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.ContinueInstruction
+import vjson.pl.inst.Instruction
+import vjson.pl.type.TypeContext
+
 data class ContinueStatement(val flag: String? = null) : Statement() {
+  override fun checkAST(ctx: TypeContext) {
+    val ctxAST = ctx.getContextAST {
+      it is ClassDefinition || it is FunctionDefinition ||
+        (it is LoopStatement && (flag == null || it.flag == flag))
+    }
+    if (ctxAST == null || ctxAST !is LoopStatement) {
+      if (flag == null) {
+        throw ParserException("`continue` is not in a loop, current context is $ctxAST")
+      } else {
+        throw ParserException("unable to find loop $flag for `continue`")
+      }
+    }
+  }
+
+  override fun generateInstruction(): Instruction {
+    if (flag != null) {
+      throw UnsupportedOperationException("continue with flag is not supported yet")
+    }
+    return ContinueInstruction(1)
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    return false
+  }
+
   override fun toString(): String {
     return if (flag == null) {
       "continue"

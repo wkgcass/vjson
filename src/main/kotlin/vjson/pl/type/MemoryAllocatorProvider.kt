@@ -10,13 +10,27 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package vjson.pl.ast
+package vjson.pl.type
 
-data class Cast(
-  val value: Expr,
-  val type: Type,
-) : Expr() {
-  override fun toString(): String {
-    return "{$value: {as: $type}}"
+import vjson.pl.inst.RuntimeMemoryTotal
+
+interface MemoryAllocatorProvider {
+  fun memoryAllocator(): MemoryAllocator
+}
+
+object DummyMemoryAllocatorProvider : MemoryAllocatorProvider {
+  private val mem = MemoryAllocator()
+  override fun memoryAllocator(): MemoryAllocator {
+    return mem
+  }
+}
+
+class FixedMemoryAllocatorProvider(private val total: RuntimeMemoryTotal) : MemoryAllocatorProvider {
+  override fun memoryAllocator(): MemoryAllocator {
+    return object : MemoryAllocator() {
+      override fun getTotal(): RuntimeMemoryTotal {
+        return total
+      }
+    }
   }
 }

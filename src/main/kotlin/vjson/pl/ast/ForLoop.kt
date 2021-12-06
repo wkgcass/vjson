@@ -12,12 +12,50 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.ForLoopInstruction
+import vjson.pl.inst.Instruction
+import vjson.pl.type.BoolType
+import vjson.pl.type.TypeContext
+
 data class ForLoop(
   val init: List<Statement>,
   val condition: Expr,
   val incr: List<Statement>,
   val code: List<Statement>
-) : Statement() {
+) : LoopStatement() {
+  override fun checkAST(ctx: TypeContext) {
+    val forInitCtx = TypeContext(ctx)
+    forInitCtx.checkStatements(init)
+
+    val forConditionCtx = TypeContext(forInitCtx)
+    val conditionType = condition.check(forConditionCtx)
+    if (conditionType !is BoolType) {
+      throw ParserException("$condition ($conditionType) is not a boolean value, cannot be used as `for` loop condition")
+    }
+
+    val forIncrCtx = TypeContext(forInitCtx)
+    forIncrCtx.checkStatements(incr)
+
+    val forCodeCtx = TypeContext(forInitCtx, ast = this)
+    forCodeCtx.checkStatements(code)
+  }
+
+  override fun generateInstruction(): Instruction {
+    val initInst = init.map { it.generateInstruction() }
+    val conditionInst = condition.generateInstruction()
+    val incrInst = incr.map { it.generateInstruction() }
+    val codeInst = code.map { it.generateInstruction() }
+    return ForLoopInstruction(initInst, conditionInst, incrInst, codeInst)
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    if (condition !is BoolLiteral || condition.b.not()) {
+      return false
+    }
+    return this.isInfiniteLoop ?: return true
+  }
+
   override fun toString(): String {
     return "for: [ $init, $condition, $incr] do: $code"
   }

@@ -12,5 +12,51 @@
 
 package vjson.pl
 
-class Interpreter {
+import vjson.pl.ast.Statement
+import vjson.pl.inst.ActionContext
+import vjson.pl.inst.RuntimeMemory
+import vjson.pl.inst.RuntimeMemoryTotal
+import vjson.pl.inst.ValueHolder
+import vjson.pl.type.MemoryAllocator
+import vjson.pl.type.TypeContext
+import vjson.pl.type.lang.Types
+
+class Interpreter(private val types: List<Types>, private val ast: List<Statement>) {
+  private val typesOffset = ArrayList<RuntimeMemoryTotal>()
+  private val typeContext = TypeContext(MemoryAllocator())
+  private val valueForTypes = HashMap<Types, RuntimeMemory>()
+
+  init {
+    var offset = RuntimeMemoryTotal()
+    for (t in types) {
+      typesOffset.add(offset)
+      offset = t.initiateType(typeContext, offset)
+    }
+
+    typeContext.checkStatements(ast)
+  }
+
+  fun putValues(t: Types, values: RuntimeMemory) {
+    valueForTypes[t] = values
+  }
+
+  fun removeValues(t: Types) {
+    valueForTypes.remove(t)
+  }
+
+  fun execute(): RuntimeMemory {
+    val actionContext = ActionContext(typeContext.getMemoryAllocator().getTotal(), null)
+    for (i in types.indices) {
+      val t = types[i]
+      t.initiateValues(actionContext, typesOffset[i], valueForTypes[t])
+    }
+
+    val valueHolder = ValueHolder()
+    for (stmt in ast) {
+      val inst = stmt.generateInstruction()
+      inst.execute(actionContext, valueHolder)
+    }
+
+    return actionContext.getCurrentMem()
+  }
 }

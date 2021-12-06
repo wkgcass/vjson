@@ -12,11 +12,55 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.IfInstruction
+import vjson.pl.inst.Instruction
+import vjson.pl.type.BoolType
+import vjson.pl.type.TypeContext
+
 data class IfStatement(
   val condition: Expr,
   val ifCode: List<Statement>,
   val elseCode: List<Statement>
 ) : Statement() {
+  override fun checkAST(ctx: TypeContext) {
+    val conditionType = condition.check(ctx)
+    if (conditionType !is BoolType) {
+      throw ParserException("$this: type of condition ($conditionType) is not bool")
+    }
+    val ifCtx = TypeContext(ctx)
+    ifCtx.checkStatements(ifCode)
+    val elseCtx = TypeContext(ctx)
+    elseCtx.checkStatements(elseCode)
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    var ifCodeTerminate = false
+    for (stmt in ifCode) {
+      if (stmt.functionTerminationCheck()) {
+        ifCodeTerminate = true
+        break
+      }
+    }
+    if (!ifCodeTerminate) return false
+
+    var elseCodeTerminate = false
+    for (stmt in elseCode) {
+      if (stmt.functionTerminationCheck()) {
+        elseCodeTerminate = true
+        break
+      }
+    }
+    return elseCodeTerminate
+  }
+
+  override fun generateInstruction(): Instruction {
+    val conditionInst = condition.generateInstruction()
+    val ifCodeInst = ifCode.map { it.generateInstruction() }
+    val elseCodeInst = elseCode.map { it.generateInstruction() }
+    return IfInstruction(conditionInst, ifCodeInst, elseCodeInst)
+  }
+
   override fun toString(): String {
     return "if: $condition then: $ifCode else: $elseCode"
   }

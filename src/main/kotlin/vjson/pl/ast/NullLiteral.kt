@@ -12,7 +12,32 @@
 
 package vjson.pl.ast
 
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.LiteralNull
+import vjson.pl.type.NullType
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
+
 data class NullLiteral(val type: Type? = null) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    if (type == null) {
+      return NullType
+    }
+    return type.check(ctx)
+  }
+
+  override fun typeInstance(): TypeInstance {
+    if (type == null) {
+      return NullType
+    }
+    return type.typeInstance()
+  }
+
+  override fun generateInstruction(): Instruction {
+    return LiteralNull()
+  }
+
   override fun toString(): String {
     return if (type == null) "null" else "{null: $type}"
   }

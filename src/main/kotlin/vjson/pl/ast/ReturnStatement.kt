@@ -12,7 +12,44 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.ReturnInst
+import vjson.pl.type.TypeContext
+import vjson.pl.type.VoidType
+
 data class ReturnStatement(val expr: Expr? = null) : Statement() {
+  override fun checkAST(ctx: TypeContext) {
+    val exprType = expr?.check(ctx)
+
+    val astCtx = ctx.getContextAST { it is FunctionDefinition || it is ClassDefinition }
+    if (astCtx == null || astCtx !is FunctionDefinition) {
+      throw ParserException("`return` is not inside a function, current context is $astCtx")
+    }
+
+    @Suppress("UnnecessaryVariable")
+    val func = astCtx
+    val returnType = func.returnType.typeInstance()
+
+    if (exprType == null) {
+      if (returnType !is VoidType) {
+        throw ParserException("function ${func.name} returns $returnType, but the `return` statement does not have a value")
+      }
+    } else {
+      if (returnType != exprType) {
+        throw ParserException("function ${func.name} returns $returnType, but the `return` statement returns $exprType")
+      }
+    }
+  }
+
+  override fun generateInstruction(): Instruction {
+    return ReturnInst(expr?.generateInstruction())
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    return true
+  }
+
   override fun toString(): String {
     return if (expr == null) {
       "return"

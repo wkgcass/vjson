@@ -13,8 +13,27 @@
 package vjson.pl.ast
 
 import vjson.JSON
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.LiteralDouble
+import vjson.pl.inst.LiteralFloat
+import vjson.pl.type.DoubleType
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
 
 data class FloatLiteral(val n: JSON.Double) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    return DoubleType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return DoubleType
+  }
+
+  override fun generateInstruction(): Instruction {
+    return LiteralDouble(n.doubleValue())
+  }
+
   override fun toString(): String {
     return "" + n.stringify()
   }

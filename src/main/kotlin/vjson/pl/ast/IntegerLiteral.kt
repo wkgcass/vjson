@@ -13,8 +13,32 @@
 package vjson.pl.ast
 
 import vjson.JSON
+import vjson.pl.inst.Instruction
+import vjson.pl.inst.LiteralInt
+import vjson.pl.inst.LiteralLong
+import vjson.pl.type.IntType
+import vjson.pl.type.LongType
+import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
 
 data class IntegerLiteral(val n: JSON.Number<*>) : Expr() {
+  override fun check(ctx: TypeContext): TypeInstance {
+    this.ctx = ctx
+    return if (n is JSON.Long) LongType else IntType
+  }
+
+  override fun typeInstance(): TypeInstance {
+    return if (n is JSON.Long) LongType else IntType
+  }
+
+  override fun generateInstruction(): Instruction {
+    return if (n is JSON.Long) {
+      LiteralLong(n.toJavaObject())
+    } else {
+      LiteralInt((n as JSON.Integer).toJavaObject())
+    }
+  }
+
   override fun toString(): String {
     return "" + n.stringify()
   }
