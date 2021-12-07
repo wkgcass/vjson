@@ -93,7 +93,7 @@ open class SimpleArray : AbstractSimpleInstance<List<*>>, JSON.Array {
     return list.size
   }
 
-  @Throws(IndexOutOfBoundsException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IndexOutOfBoundsException::class) // }}
   override fun get(idx: Int): JSON.Instance<*> {
     return list[idx]
   }

@@ -22,29 +22,28 @@ import vjson.util.CastUtils.cast
 
 @Suppress("DuplicatedCode")
 object JSON {
-  @Throws(RuntimeException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(RuntimeException::class)
   @JvmStatic/*}}*/
   fun parse(json: kotlin.String): Instance<*> {
     return parse(from(json))
   }
 
-  @Throws(RuntimeException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(RuntimeException::class)
   @JvmStatic/*}}*/
   fun parse(cs: CharStream): Instance<*> {
     return buildFrom(cs)
   }
 
-  @Throws(RuntimeException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(RuntimeException::class)
   @JvmStatic/*}}*/
   fun <T> deserialize(json: kotlin.String, rule: Rule<T>): T {
     return deserialize(from(json), rule)
   }
-
-  @Throws(RuntimeException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(RuntimeException::class)
   @JvmStatic/*}}*/
   fun <T> deserialize(cs: CharStream, rule: Rule<T>): T {
     val listener = DeserializeParserListener(rule)
@@ -56,15 +55,15 @@ object JSON {
     return listener.get()!!
   }
 
-  @Throws(RuntimeException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(RuntimeException::class)
   @JvmStatic/*}}*/
   fun parseToJavaObject(json: kotlin.String): Any? {
     return parseToJavaObject(from(json))
   }
 
-  @Throws(RuntimeException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(RuntimeException::class)
   @JvmStatic/*}}*/
   fun parseToJavaObject(cs: CharStream): Any? {
     return buildJavaObject(cs)
@@ -94,10 +93,10 @@ object JSON {
     fun containsKey(key: kotlin.String): Boolean
     override fun toJavaObject(): LinkedHashMap<kotlin.String, Any?>
 
-    @Throws(NoSuchElementException::class)
+    /* #ifndef KOTLIN_NATIVE {{ */ @Throws(NoSuchElementException::class) // }}
     operator fun get(key: kotlin.String): Instance<*>
 
-    @Throws(NoSuchElementException::class)
+    /* #ifndef KOTLIN_NATIVE {{ */ @Throws(NoSuchElementException::class) // }}
     fun getAll(key: kotlin.String): List<Instance<*>>
 
     /*#ifndef KOTLIN_NATIVE {{ */
@@ -223,7 +222,7 @@ object JSON {
     fun length(): Int
     override fun toJavaObject(): List<Any?>
 
-    @Throws(IndexOutOfBoundsException::class)
+    /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IndexOutOfBoundsException::class) // }}
     operator fun get(idx: Int): Instance<*>
 
     /*#ifndef KOTLIN_NATIVE {{ */

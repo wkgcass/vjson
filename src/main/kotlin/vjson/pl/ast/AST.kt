@@ -17,7 +17,7 @@ import vjson.pl.inst.Instruction
 import vjson.pl.type.TypeContext
 
 interface AST {
-  @Throws(ParserException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(ParserException::class) // }}
   fun checkAST(ctx: TypeContext)
 
   fun generateInstruction(): Instruction

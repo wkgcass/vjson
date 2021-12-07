@@ -17,7 +17,7 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 interface TypedAST : AST {
-  @Throws(ParserException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(ParserException::class) // }}
   fun check(ctx: TypeContext): TypeInstance
   fun typeInstance(): TypeInstance
 

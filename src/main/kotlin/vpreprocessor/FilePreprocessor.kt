@@ -31,8 +31,9 @@ object FilePreprocessor {
     extensionMap["java"] = PreprocessorOptions.JAVA
   }
 
+  /* #ifndef KOTLIN_NATIVE {{ */
   @Throws(IOException::class, ParserException::class)
-  @JvmStatic
+  @JvmStatic // }}
   fun process(rootDir: String, params: ProcessParams) {
     val rootDirFile = File(rootDir)
     if (!rootDirFile.isDirectory) {
@@ -41,7 +42,7 @@ object FilePreprocessor {
     process("", rootDirFile, params)
   }
 
-  @Throws(IOException::class, ParserException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IOException::class, ParserException::class) // }}
   private fun process(relativePath: String, dir: File, params: ProcessParams) {
     val ls = dir.listFiles() ?: return
     for (f in ls) {
@@ -54,7 +55,7 @@ object FilePreprocessor {
     }
   }
 
-  @Throws(IOException::class, ParserException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IOException::class, ParserException::class) // }}
   private fun processFile(relativePath: String, file: File, params: ProcessParams) {
     var opts: PreprocessorOptions? = null
     for ((ext, o) in extensionMap) {
@@ -83,7 +84,7 @@ object FilePreprocessor {
     }
   }
 
-  @Throws(IOException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IOException::class) // }}
   private fun read(file: File): String {
     FileReader(file).use { reader ->
       val cbuf = CharArray(1024)

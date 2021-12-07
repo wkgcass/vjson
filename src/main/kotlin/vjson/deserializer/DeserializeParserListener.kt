@@ -224,7 +224,7 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
     return begin && parseStack.isEmpty()
   }
 
-  @Throws(IllegalStateException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IllegalStateException::class) // }}
   fun get(): T? {
     check(completed()) { "not completed yet" }
     @Suppress("UNCHECKED_CAST")

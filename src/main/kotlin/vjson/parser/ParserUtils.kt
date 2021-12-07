@@ -95,8 +95,8 @@ object ParserUtils {
     return ParserOptions(opts).setEnd(false)
   }
 
-  @Throws(JsonParseException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(JsonParseException::class)
   @JvmStatic/*}}*/
   fun buildFrom(cs: CharStream): JSON.Instance<*> {
     val opts = ParserOptions.DEFAULT
@@ -154,15 +154,15 @@ object ParserUtils {
     }
   }
 
-  @Throws(JsonParseException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(JsonParseException::class)
   @JvmStatic/*}}*/
   fun buildFrom(cs: CharStream, opts: ParserOptions): JSON.Instance<*> {
     return build(cs, opts)
   }
 
-  @Throws(JsonParseException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(JsonParseException::class)
   @JvmStatic/*}}*/
   fun buildJavaObject(cs: CharStream): Any? {
     val opts = ParserOptions.DEFAULT_JAVA_OBJECT
@@ -218,14 +218,14 @@ object ParserUtils {
     }
   }
 
-  @Throws(JsonParseException::class)
   /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(JsonParseException::class)
   @JvmStatic/*}}*/
   fun buildJavaObject(cs: CharStream, opts: ParserOptions): Any? {
     return buildJ(cs, opts)
   }
 
-  @Throws(JsonParseException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(JsonParseException::class) // }}
   private fun parser(cs: CharStream, opts: ParserOptions): Parser<*> {
     cs.skipBlank()
     if (!cs.hasNext()) {
@@ -254,12 +254,12 @@ object ParserUtils {
     }
   }
 
-  @Throws(IllegalArgumentException::class, JsonParseException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IllegalArgumentException::class, JsonParseException::class) // }}
   private fun build(cs: CharStream, opts: ParserOptions): JSON.Instance<*> {
     return parser(cs, opts).build(cs, true)!!
   }
 
-  @Throws(IllegalArgumentException::class, JsonParseException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IllegalArgumentException::class, JsonParseException::class) // }}
   private fun buildJ(cs: CharStream, opts: ParserOptions): Any? {
     opts.setMode(ParserMode.JAVA_OBJECT)
     return parser(cs, opts).buildJavaObject(cs, true)

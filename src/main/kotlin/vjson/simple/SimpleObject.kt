@@ -170,7 +170,7 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
     return _keySet().contains(key)
   }
 
-  @Throws(NoSuchElementException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(NoSuchElementException::class) // }}
   override fun get(key: String): JSON.Instance<*> {
     val fastMap = getFastSingleMap()
     if (fastMap.containsKey(key)) {

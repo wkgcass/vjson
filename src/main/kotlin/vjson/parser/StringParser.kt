@@ -234,7 +234,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
     return traveler?.done() ?: builder.toString()
   }
 
-  @Throws(JsonParseException::class, ParserFinishedException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(JsonParseException::class, ParserFinishedException::class) // }}
   override fun build(cs: CharStream, isComplete: Boolean): JSON.String? {
     if (tryParse(cs, isComplete)) {
       opts.listener.onStringEnd(this)
@@ -249,7 +249,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
     }
   }
 
-  @Throws(JsonParseException::class, ParserFinishedException::class)
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(JsonParseException::class, ParserFinishedException::class) // }}
   override fun buildJavaObject(cs: CharStream, isComplete: Boolean): String? {
     if (tryParse(cs, isComplete)) {
       opts.listener.onStringEnd(this)
