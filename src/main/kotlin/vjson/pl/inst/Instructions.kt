@@ -68,13 +68,14 @@ class StringConcat(
 
 class FunctionInstance(
   private val self: Instruction?,
+  private val funcMemDepth: Int,
   private val func: Instruction
 ) : Instruction() {
   var ctxBuilder: ((ActionContext) -> ActionContext)? = null
 
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     val capturedContext = if (self == null) {
-      ctx.getContext(0)
+      ctx.getContext(funcMemDepth)
     } else {
       self.execute(ctx, values)
       values.refValue as ActionContext

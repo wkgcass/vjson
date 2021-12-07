@@ -66,7 +66,7 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
         else -> {
           val inst = GetRef(variable.memPos.depth, variable.memPos.index)
           if (variable.type.functionDescriptor(ctx) != null) {
-            return FunctionInstance(null, inst)
+            return FunctionInstance(null, variable.memPos.depth, inst)
           }
           inst
         }
@@ -132,7 +132,7 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
         else -> {
           val inst = GetFieldRef(field.memPos.index)
           if (field.type.functionDescriptor(ctx) != null) {
-            return FunctionInstance(from, inst)
+            return FunctionInstance(from, field.memPos.depth, inst)
           }
           inst
         }
