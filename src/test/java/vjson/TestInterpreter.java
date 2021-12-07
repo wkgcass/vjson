@@ -429,7 +429,7 @@ public class TestInterpreter {
     @Test
     public void pass() {
         new InterpreterBuilder()
-            .addTypes(StdTypes.INSTANCE)
+            .addTypes(new StdTypes())
             .compile(TestFeature.TEST_PROG)
             .execute();
     }

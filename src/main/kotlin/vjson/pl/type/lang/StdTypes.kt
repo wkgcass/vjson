@@ -16,15 +16,22 @@ import vjson.pl.ast.Type
 import vjson.pl.inst.*
 import vjson.pl.type.*
 
-object StdTypes : Types {
+class StdTypes : Types {
   private val stdObject = ActionContext(RuntimeMemoryTotal(refTotal = 1), null)
   private val consoleObject = ActionContext(RuntimeMemoryTotal(refTotal = 1), null)
+
+  private var outputFunc: ((String) -> Unit)? = null
 
   init {
     stdObject.getCurrentMem().setRef(0, consoleObject)
     consoleObject.getCurrentMem().setRef(0, object : Instruction() {
       override fun execute0(ctx: ActionContext, values: ValueHolder) {
-        println(ctx.getCurrentMem().getRef(0))
+        val outputFunc = this@StdTypes.outputFunc
+        val str = ctx.getCurrentMem().getRef(0)
+        if (outputFunc == null)
+          println(str)
+        else
+          outputFunc(str as String)
       }
     })
   }
@@ -40,6 +47,10 @@ object StdTypes : Types {
 
   override fun initiateValues(ctx: ActionContext, offset: RuntimeMemoryTotal, values: RuntimeMemory?) {
     ctx.getCurrentMem().setRef(offset.refTotal, stdObject)
+  }
+
+  fun setOutput(func: (String) -> Unit) {
+    this.outputFunc = func
   }
 }
 

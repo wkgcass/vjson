@@ -46,7 +46,7 @@ public class TestTypeCheck {
         List<Statement> stmts = gen.parse();
         MemoryAllocator globalMem = new MemoryAllocator();
         TypeContext ctx = new TypeContext(globalMem);
-        StdTypes.INSTANCE.initiateType(ctx, new RuntimeMemoryTotal());
+        new StdTypes().initiateType(ctx, new RuntimeMemoryTotal());
         ctx.checkStatements(stmts);
     }
 }
