@@ -109,7 +109,7 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
       return
     }
     throw JsonParseException(
-      "invalid type: expecting: " + rule + ", value=" + value + "(" + (if (value == null) "nil" else value::class.qualifiedName) + ")"
+      "invalid type: expecting: " + rule + ", value=" + value + "(" + (if (value == null) "nil" else value::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */) + ")"
     )
   }
 

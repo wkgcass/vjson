@@ -197,6 +197,15 @@ val kotlinNative = tasks.create("kotlinNative") {
   }
 }
 
+val kotlinJs = tasks.create("kotlinJs") {
+  dependsOn(checkGit)
+  doLast {
+    System.setProperty("KOTLIN_NATIVE", "1")
+    System.setProperty("KOTLIN_JS", "1")
+    processSource()
+  }
+}
+
 fun loadVersion(): String {
   val prefix = "const val VERSION = \""
   val suffix = "\" // _THE_VERSION_"

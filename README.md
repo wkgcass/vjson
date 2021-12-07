@@ -69,13 +69,19 @@ compileKotlin {
 
 Run `./gradlew clean kotlinNative` to compile the source code to kotlin native version.
 
+## kotlin js
+
+Kotlin JS has more restrictions than kotlin native, a standalone task is provided for kotlin js:
+
+Run `./gradlew clean kotlinJs` to compile the source code to kotlin js version.
+
 ## vpreprocessor
 
 The same source code would be used on both jvm and kotlin native. Some jvm specific annotations and jdk classes are used to get better java interoperability. However they cannot be used when building kotlin native applications. To solve this problem, I developed a code preprocessor program which allow you to integrate `macro` into java/kotlin code using comments.
 
 See [vpreprocessor/README.md](https://github.com/wkgcass/vjson/blob/master/src/main/kotlin/vpreprocessor/README.md) for more info.
 
-Also note that the preprocessing directly rewrites source codes, so the building process requires you to keep git directory clean before doing preprocessing. A task `checkGit` is automatically invoked before `coverage` and `kotlinNative`.
+Also note that the preprocessing directly rewrites source codes, so the building process requires you to keep git directory clean before doing preprocessing. A task `checkGit` is automatically invoked before `coverage`, `kotlinNative` and `kotlinJs`.
 
 ## example
 

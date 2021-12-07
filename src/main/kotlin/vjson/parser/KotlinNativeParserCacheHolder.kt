@@ -14,7 +14,7 @@ package vjson.parser
 import vjson.util.StringDictionary
 
 class KotlinNativeParserCacheHolder : ParserCacheHolder {
-  /* #ifdef KOTLIN_NATIVE {{@ThreadLocal}}*/
+  /* #ifdef KOTLIN_JS {{ // }} */ /* #ifdef KOTLIN_NATIVE {{@ThreadLocal}}*/
   companion object {
     private var arrayParser: ArrayParser? = null
     private var objectParser: ObjectParser? = null

@@ -120,7 +120,7 @@ object JSON {
       } else if (inst is Number<*>) {
         return inst.toJavaObject().toInt()
       } else {
-        throw ClassCastException(inst::class.qualifiedName + " cannot be cast to " + Number::class.qualifiedName)
+        throw ClassCastException(inst::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */ + " cannot be cast to " + Number::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */)
       }
     }
 
@@ -138,7 +138,7 @@ object JSON {
       } else if (inst is Number<*>) {
         return inst.toJavaObject().toDouble()
       } else {
-        throw ClassCastException(inst::class.qualifiedName + " cannot be cast to " + Number::class.qualifiedName)
+        throw ClassCastException(inst::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */ + " cannot be cast to " + Number::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */)
       }
     }
 
@@ -156,7 +156,7 @@ object JSON {
       } else if (inst is Number<*>) {
         return inst.toJavaObject().toLong()
       } else {
-        throw ClassCastException(inst::class.qualifiedName + " cannot be cast to " + Number::class.qualifiedName)
+        throw ClassCastException(inst::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */ + " cannot be cast to " + Number::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */)
       }
     }
 
@@ -246,7 +246,7 @@ object JSON {
       } else if (inst is Number<*>) {
         return inst.toJavaObject().toInt()
       } else {
-        throw ClassCastException(inst::class.qualifiedName + " cannot be cast to " + Number::class.qualifiedName)
+        throw ClassCastException(inst::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */ + " cannot be cast to " + Number::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */)
       }
     }
 
@@ -264,7 +264,7 @@ object JSON {
       } else if (inst is Number<*>) {
         return inst.toJavaObject().toDouble()
       } else {
-        throw ClassCastException(inst::class.qualifiedName + " cannot be cast to " + Number::class.qualifiedName)
+        throw ClassCastException(inst::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */ + " cannot be cast to " + Number::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */)
       }
     }
 
@@ -282,7 +282,7 @@ object JSON {
       } else if (inst is Number<*>) {
         return inst.toJavaObject().toLong()
       } else {
-        throw ClassCastException(inst::class.qualifiedName + " cannot be cast to " + Number::class.qualifiedName)
+        throw ClassCastException(inst::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */ + " cannot be cast to " + Number::class./* #ifdef KOTLIN_JS {{ simpleName }} else {{ */qualifiedName/* }} */)
       }
     }
 
