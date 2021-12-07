@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vjson-lang js interpreter</title>
+    <style>
+        #editor {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: calc(50% - 2px);
+            height: 100%;
+        }
+
+        #console {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: calc(50% - 2px);
+            height: calc(100% - 40px);
+        }
+
+        #buttons {
+            position: absolute;
+            right: 0;
+            top: calc(100% - 40px);
+            width: calc(50% - 2px);
+            height: 40px;
+            background-color: #292c33;
+        }
+
+        #buttons > button {
+            height: 40px;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        @font-face {
+            font-family: JetBrainsMono-Light;
+            src: url(JetBrainsMono-Light.woff2);
+        }
+
+        .mono {
+            font-family: JetBrainsMono-Light;
+        }
+    </style>
+</head>
+<body style="background-color: #5c5c5c">
+<div id="root">
+    <div id="editor" class="mono" style="line-height: 32px;"></div>
+    <div id="console" class="mono" style="line-height: 24px;"></div>
+    <div id="buttons">
+        <button id="run-btn" style="width: 80px; margin-left: 1px;">Run</button>
+        <!--<button id="stop-btn" style="width: 80px;">Stop</button>-->
+        <button id="clear-btn" style="width: 120px">Clear Output</button>
+    </div>
+</div>
+</body>
+<script src="online_vjson_lang_interpreter.js"></script>
+<script src="ace.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="mode-javascript.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setFontSize(16);
+    editor.setTheme("ace/theme/one_dark");
+    editor.setShowPrintMargin(false)
+    var JavaScriptMode = ace.require("ace/mode/javascript").Mode;
+    editor.session.setMode(new JavaScriptMode());
+    editor.getSession().setValue("{\n" +
+        "function fib: { n: 'int' } int: {\n" +
+        "    var cache = { new 'int[n+1]' }\n" +
+        "    function fib0: { a: 'int' } int: {\n" +
+        "        if: 'cache[a] == 0' then: {\n" +
+        "            if: 'a == 1' then: { 'cache[a]' = 1 }\n" +
+        "            else if: 'a == 2' then: { 'cache[a]' = 1 }\n" +
+        "            else: { 'cache[a]' = 'fib0:[a-1] + fib0:[a-2]' }\n" +
+        "        }\n" +
+        "        return: 'cache[a]'\n" +
+        "    }\n" +
+        "    return: 'fib0:[n]'\n" +
+        "}\n" +
+        "var n = 10\n" +
+        "std.console.log: [\"n + 'th element of the Fibonacci sequence is ' + fib:[n]\"]\n" +
+        "}\n");
+
+    var aceConsole = ace.edit("console");
+    aceConsole.setFontSize(16);
+    aceConsole.setTheme("ace/theme/one_dark");
+    aceConsole.setShowPrintMargin(false);
+    aceConsole.setHighlightActiveLine(false);
+    aceConsole.setOptions({
+        showGutter: false,
+    });
+    aceConsole.setReadOnly(true);
+    aceConsole.getSession().setValue("\n");
+
+    online_vjson_lang_interpreter.registerOutput(function (line) {
+        var newLines = aceConsole.getSession().getValue() + line + '\n';
+        aceConsole.getSession().setValue(newLines);
+    });
+
+    document.getElementById("run-btn").addEventListener("click", function () {
+        var code = editor.getSession().getValue();
+        online_vjson_lang_interpreter.run(code);
+    });
+    document.getElementById("clear-btn").addEventListener("click", function () {
+        aceConsole.getSession().setValue("\n");
+    });
+</script>
+</html>
