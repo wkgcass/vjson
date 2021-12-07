@@ -16,7 +16,6 @@ import vjson.JSON
 import vjson.ex.ParserException
 import vjson.pl.ast.*
 import vjson.util.CastUtils.cast
-import java.util.*
 
 class ASTGen(_prog: JSON.Object) {
   private val prog = _prog.entryList().listIterator()
@@ -107,7 +106,8 @@ class ASTGen(_prog: JSON.Object) {
       if (!ModifierEnum.isModifier(nextEntry.key)) {
         break
       }
-      modifiers.modifiers = modifiers.modifiers.or(ModifierEnum.valueOf(nextEntry.key.uppercase(Locale.getDefault())).num)
+      @Suppress("DEPRECATION")
+      modifiers.modifiers = modifiers.modifiers.or(ModifierEnum.valueOf(nextEntry.key.toUpperCase()).num)
     }
     if (modifiers.isPublic() && modifiers.isPrivate()) {
       throw ParserException("invalid modifiers: $modifiers, cannot set public and private at the same time")
