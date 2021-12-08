@@ -68,19 +68,19 @@
     editor.session.setMode(new JavaScriptMode());
     editor.getSession().setValue("{\n" +
         "function fib: { n: 'int' } int: {\n" +
-        "    var cache = { new 'int[n+1]' }\n" +
+        "    var cache = { new (int[n+1]) }\n" +
         "    function fib0: { a: 'int' } int: {\n" +
-        "        if: 'cache[a] == 0' then: {\n" +
-        "            if: 'a == 1' then: { 'cache[a]' = 1 }\n" +
-        "            else if: 'a == 2' then: { 'cache[a]' = 1 }\n" +
-        "            else: { 'cache[a]' = 'fib0:[a-1] + fib0:[a-2]' }\n" +
+        "        if: (cache[a] == 0) then: {\n" +
+        "            if: (a == 1) then: { cache[a] = 1 }\n" +
+        "            else if: (a == 2) then: { cache[a] = 1 }\n" +
+        "            else: { cache[a] = (fib0:[a-1] + fib0:[a-2]) }\n" +
         "        }\n" +
-        "        return: 'cache[a]'\n" +
+        "        return: (cache[a])\n" +
         "    }\n" +
-        "    return: 'fib0:[n]'\n" +
+        "    return: (fib0:[n])\n" +
         "}\n" +
         "var n = 10\n" +
-        "std.console.log: [\"n + 'th element of the Fibonacci sequence is ' + fib:[n]\"]\n" +
+        "std.console.log: [(n + 'th element of the Fibonacci sequence is ' + fib:[n])]\n" +
         "}\n");
 
     var aceConsole = ace.edit("console");
