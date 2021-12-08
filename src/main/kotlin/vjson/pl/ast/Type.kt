@@ -12,6 +12,7 @@
 
 package vjson.pl.ast
 
+import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
 import vjson.pl.type.ArrayTypeInstance
@@ -20,6 +21,7 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class Type(private val name: String) : TypedAST {
+  override var lineCol: LineCol = LineCol("", 0, 0)
   private var ctx: TypeContext = TypeContext(MemoryAllocator())
   private val isArray: Boolean
   private val elementType: Type

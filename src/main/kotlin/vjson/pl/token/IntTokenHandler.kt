@@ -14,6 +14,7 @@ package vjson.pl.token
 
 import vjson.CharStream
 import vjson.JSON
+import vjson.cs.LineCol
 import vjson.parser.NumberParser
 
 class IntTokenHandler : TokenHandler {
@@ -73,8 +74,8 @@ class IntTokenHandler : TokenHandler {
     return finished && result != null
   }
 
-  override fun build(): Token {
-    return Token(TokenType.INTEGER, sb.toString(), result)
+  override fun build(lineCol: LineCol): Token {
+    return Token(TokenType.INTEGER, sb.toString(), lineCol, result)
   }
 
   override fun reset() {

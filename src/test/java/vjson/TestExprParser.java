@@ -1,6 +1,7 @@
 package vjson;
 
 import org.junit.Test;
+import vjson.cs.LineCol;
 import vjson.pl.ExprParser;
 import vjson.pl.ExprTokenizer;
 import vjson.pl.ast.*;
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestExprParser {
     private Expr parse(String str) {
-        ExprParser parser = new ExprParser(new ExprTokenizer(str));
+        ExprParser parser = new ExprParser(new ExprTokenizer(str, new LineCol("", 0, 0)));
         return parser.parse();
     }
 

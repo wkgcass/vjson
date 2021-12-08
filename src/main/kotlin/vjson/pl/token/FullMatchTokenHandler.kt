@@ -12,6 +12,8 @@
 
 package vjson.pl.token
 
+import vjson.cs.LineCol
+
 class FullMatchTokenHandler(
   private val type: TokenType, private val raw: String,
   private val precedence: Int = 0,
@@ -32,11 +34,11 @@ class FullMatchTokenHandler(
     return cursor == cs.size
   }
 
-  override fun build(): Token {
+  override fun build(lineCol: LineCol): Token {
     if (!check()) {
       throw Exception("check() returns false, but build() is called")
     }
-    return Token(type, raw, value)
+    return Token(type, raw, lineCol, value)
   }
 
   override fun reset() {

@@ -12,6 +12,10 @@
 
 package vjson.pl.ast
 
+import vjson.cs.LineCol
+
 abstract class Statement : AST {
+  override var lineCol: LineCol = LineCol("", 0, 0)
+
   abstract fun functionTerminationCheck(): Boolean
 }

@@ -12,6 +12,7 @@
 
 package vjson.pl.ast
 
+import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
 import vjson.pl.type.MemoryAllocator
@@ -23,6 +24,7 @@ data class Param(
   val name: String,
   val type: Type
 ) : TypedAST {
+  override var lineCol: LineCol = LineCol("", 0, 0)
   private var ctx: TypeContext = TypeContext(MemoryAllocator())
 
   override fun check(ctx: TypeContext): TypeInstance {

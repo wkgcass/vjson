@@ -13,14 +13,18 @@
 package vjson.pl
 
 import vjson.CharStream
+import vjson.cs.LineCol
+import vjson.cs.LineColCharStream
 import vjson.ex.ParserException
 import vjson.pl.token.*
 import vjson.simple.SimpleBool
 import vjson.simple.SimpleString
 import vjson.util.collection.VList
 
-class ExprTokenizer(private val cs: CharStream) {
-  constructor(str: String) : this(CharStream.from(str))
+class ExprTokenizer(cs: CharStream, offset: LineCol) {
+  private val cs: LineColCharStream = LineColCharStream(offset.filename, cs, offset)
+
+  constructor(str: String, offset: LineCol) : this(CharStream.from(str), offset)
 
   private val handlers: List<TokenHandler> = listOf(
     VariableNameTokenHandler(),
@@ -98,6 +102,8 @@ class ExprTokenizer(private val cs: CharStream) {
       return readStringToken()
     }
 
+    val lineCol = cs.lineCol()
+
     for (h in handlers) {
       h.reset()
     }
@@ -108,7 +114,7 @@ class ExprTokenizer(private val cs: CharStream) {
     var prevC: Char? = null
     while (true) {
       if (!cs.hasNext()) {
-        return finish(last, traveled, null)
+        return finish(lineCol, last, traveled, null)
       }
       val c = cs.peekNext()
       val current = ArrayList<TokenHandler>()
@@ -130,7 +136,7 @@ class ExprTokenizer(private val cs: CharStream) {
               "last applicable rules: $last"
           )
         }
-        return finish(last, traveled, c)
+        return finish(lineCol, last, traveled, c)
       } else {
         cs.moveNextAndGet()
       }
@@ -141,6 +147,7 @@ class ExprTokenizer(private val cs: CharStream) {
   }
 
   private fun readStringToken(): Token {
+    val lineCol = cs.lineCol()
     val raw = StringBuilder()
     val sb = StringBuilder()
     raw.append(cs.moveNextAndGet()) // '
@@ -175,10 +182,10 @@ class ExprTokenizer(private val cs: CharStream) {
     }
 
     val str = sb.toString()
-    return Token(TokenType.STRING, raw.toString(), SimpleString(str))
+    return Token(TokenType.STRING, raw.toString(), lineCol, SimpleString(str))
   }
 
-  private fun finish(last: ArrayList<TokenHandler>, traveled: StringBuilder, c: Char?): Token {
+  private fun finish(lineCol: LineCol, last: ArrayList<TokenHandler>, traveled: StringBuilder, c: Char?): Token {
     val current = ArrayList<TokenHandler>()
     for (h in last) {
       if (h.check()) {
@@ -210,7 +217,7 @@ class ExprTokenizer(private val cs: CharStream) {
       }
       handler = foo[0]
     }
-    return handler.build()
+    return handler.build(lineCol)
   }
 
   private fun canSplitTokens(c: Char): Boolean {

@@ -12,6 +12,8 @@
 
 package vjson.pl.token
 
+import vjson.cs.LineCol
+
 class VariableNameTokenHandler : TokenHandler {
   private val sb = StringBuilder()
 
@@ -33,8 +35,8 @@ class VariableNameTokenHandler : TokenHandler {
     return sb.isNotEmpty()
   }
 
-  override fun build(): Token {
-    return Token(TokenType.VAR_NAME, sb.toString())
+  override fun build(lineCol: LineCol): Token {
+    return Token(TokenType.VAR_NAME, sb.toString(), lineCol)
   }
 
   override fun reset() {

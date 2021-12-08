@@ -10,14 +10,51 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package vjson.pl.token
+package vjson.cs
 
-import vjson.cs.LineCol
+import vjson.CharStream
 
-interface TokenHandler {
-  fun feed(c: Char): Boolean
-  fun check(): Boolean
-  fun build(lineCol: LineCol): Token
-  fun reset()
-  fun precedence(): Int
+class LineColCharStream /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
+  private val filename: String,
+  private val cs: CharStream,
+  private val offset: LineCol? = null
+) : CharStream {
+  private var currentLine = 1
+  private var currentCol = 1
+
+  override fun hasNext(i: Int): Boolean {
+    return cs.hasNext(i)
+  }
+
+  override fun moveNextAndGet(): Char {
+    val c = cs.moveNextAndGet()
+    if (c == '\r') {
+      if (!cs.hasNext() || cs.peekNext() != '\n') {
+        newLine()
+      }
+    }
+    if (c == '\n') {
+      newLine()
+    } else {
+      currentCol += 1
+    }
+    return c
+  }
+
+  private fun newLine() {
+    currentLine += 1
+    currentCol = 1
+  }
+
+  override fun peekNext(i: Int): Char {
+    return cs.peekNext(i)
+  }
+
+  fun lineCol(): LineCol {
+    return if (offset == null) {
+      LineCol(filename, currentLine, currentCol)
+    } else {
+      LineCol(filename, currentLine + offset.line, currentCol + offset.col)
+    }
+  }
 }

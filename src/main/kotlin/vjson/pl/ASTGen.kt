@@ -13,6 +13,7 @@
 package vjson.pl
 
 import vjson.JSON
+import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.ast.*
 import vjson.util.CastUtils.cast
@@ -214,7 +215,7 @@ class ASTGen(_prog: JSON.Object) {
       val elementType = typeStr.substring(0, typeStr.indexOf("["))
       val lenEndIndex = typeStr.indexOf("]", typeStr.indexOf("[") + 1)
       val lenStr = typeStr.substring(typeStr.indexOf("[") + 1, lenEndIndex)
-      val lenExpr = exprString(lenStr)
+      val lenExpr = exprString(lenStr, nextEntry.lineCol)
 
       if (nextEntry.value !is JSON.Null) {
         throw ParserException("unexpected token ${nextEntry.value} for new array statement, expecting null value after key `$typeStr`")
@@ -354,7 +355,7 @@ class ASTGen(_prog: JSON.Object) {
   }
 
   private fun exprKey(entry: JSON.ObjectEntry): Expr {
-    val tokenizer = ExprTokenizer(entry.key)
+    val tokenizer = ExprTokenizer(entry.key, entry.lineCol)
     val parser = ExprParser(tokenizer)
     val expr = parser.parse()
     if (tokenizer.peek() != null) {
@@ -386,7 +387,7 @@ class ASTGen(_prog: JSON.Object) {
   private fun expr(json: JSON.Instance<*>): Expr {
     return when (json) {
       is JSON.Object -> exprObject(json)
-      is JSON.String -> exprString(json.toJavaObject())
+      is JSON.String -> exprString(json.toJavaObject(), json.lineCol())
       is JSON.Bool -> BoolLiteral(json.booleanValue())
       is JSON.Integer, is JSON.Long -> IntegerLiteral(cast(json))
       is JSON.Double -> FloatLiteral(json)
@@ -415,8 +416,8 @@ class ASTGen(_prog: JSON.Object) {
     return res
   }
 
-  private fun exprString(input: String): Expr {
-    val tokenizer = ExprTokenizer(input)
+  private fun exprString(input: String, lineCol: LineCol): Expr {
+    val tokenizer = ExprTokenizer(input, lineCol)
     val parser = ExprParser(tokenizer)
     val expr = parser.parse()
     if (tokenizer.peek() != null) {

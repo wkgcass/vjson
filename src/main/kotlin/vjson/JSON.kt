@@ -12,6 +12,7 @@
 package vjson
 
 import vjson.CharStream.Companion.from
+import vjson.cs.LineCol
 import vjson.deserializer.DeserializeParserListener
 import vjson.deserializer.rule.Rule
 import vjson.parser.ParserMode
@@ -42,6 +43,7 @@ object JSON {
   fun <T> deserialize(json: kotlin.String, rule: Rule<T>): T {
     return deserialize(from(json), rule)
   }
+
   /*#ifndef KOTLIN_NATIVE {{ */
   @Throws(RuntimeException::class)
   @JvmStatic/*}}*/
@@ -74,11 +76,19 @@ object JSON {
     fun stringify(): kotlin.String
     fun pretty(): kotlin.String
     fun stringify(builder: StringBuilder, sfr: Stringifier)
+
+    /*#ifndef KOTLIN_NATIVE {{ */
+    @Suppress("DEPRECATION")
+    @JvmDefault/*}}*/
+    fun lineCol(): LineCol {
+      return LineCol("", 0, 0)
+    }
   }
 
-  data class ObjectEntry(
+  data class ObjectEntry /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
     val key: kotlin.String,
-    val value: Instance<*>
+    val value: Instance<*>,
+    val lineCol: LineCol = LineCol("", 0, 0),
   ) {
     override fun toString(): kotlin.String {
       return "($key: $value)"

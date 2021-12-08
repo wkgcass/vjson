@@ -12,7 +12,11 @@
 
 package vjson.ex
 
+import vjson.cs.LineCol
+
 open class ParserException : RuntimeException {
   constructor(msg: String) : super(msg)
   constructor(msg: String, cause: Throwable) : super(msg, cause)
+  constructor(msg: String, lineCol: LineCol) : super("$msg at $lineCol")
+  constructor(msg: String, cause: Throwable, lineCol: LineCol) : super("$msg at $lineCol", cause)
 }

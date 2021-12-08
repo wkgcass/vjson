@@ -10,14 +10,22 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package vjson.pl.token
+package vjson.cs
 
-import vjson.cs.LineCol
+class LineCol(
+  val filename: String,
+  val line: Int,
+  val col: Int,
+) {
+  override fun toString(): String {
+    return "$filename($line:$col)"
+  }
 
-interface TokenHandler {
-  fun feed(c: Char): Boolean
-  fun check(): Boolean
-  fun build(lineCol: LineCol): Token
-  fun reset()
-  fun precedence(): Int
+  override fun equals(other: Any?): Boolean {
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return 0
+  }
 }

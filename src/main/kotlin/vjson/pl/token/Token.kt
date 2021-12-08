@@ -12,16 +12,19 @@
 
 package vjson.pl.token
 
+import vjson.cs.LineCol
+
 data class Token /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   val type: TokenType,
   val raw: String,
-  val value: Any? = null
+  val lineCol: LineCol,
+  val value: Any? = null,
 ) {
   override fun toString(): String {
     if (value == null) {
-      return "Token(type=$type, raw=`$raw`)"
+      return "Token(type=$type, raw=`$raw`)@$lineCol"
     } else {
-      return "Token(type=$type, raw=`$raw`, value=$value)"
+      return "Token(type=$type, raw=`$raw`, value=$value)@$lineCol"
     }
   }
 }
