@@ -44,4 +44,40 @@ public class TestCharArrayCharStream {
             assertEquals(expected, c);
         }
     }
+
+    @Test
+    public void skipBlank() throws Exception {
+        CharStream cs = CharStream.from(" ab c d");
+        cs.skipBlank();
+        assertEquals('a', cs.moveNextAndGet());
+        assertEquals('b', cs.moveNextAndGet());
+        cs.skipBlank();
+        assertEquals('c', cs.moveNextAndGet());
+        cs.skipBlank();
+        assertEquals('d', cs.moveNextAndGet());
+    }
+
+    @Test
+    public void skipComment() throws Exception {
+        CharStream cs = CharStream.from("//xxxxx\nab//yyyyyy\rc/*zzzzzz*/d#xxxxxxx\nef");
+        cs.skipBlank();
+        assertEquals('a', cs.moveNextAndGet());
+        assertEquals('b', cs.moveNextAndGet());
+        cs.skipBlank();
+        assertEquals('c', cs.moveNextAndGet());
+        cs.skipBlank();
+        assertEquals('d', cs.moveNextAndGet());
+        cs.skipBlank();
+        assertEquals('e', cs.moveNextAndGet());
+        assertEquals('f', cs.moveNextAndGet());
+    }
+
+    @Test
+    public void doNotSkipComment() throws Exception {
+        CharStream cs = CharStream.from("//x");
+        cs.skipBlank(false);
+        assertEquals('/', cs.moveNextAndGet());
+        assertEquals('/', cs.moveNextAndGet());
+        assertEquals('x', cs.moveNextAndGet());
+    }
 }

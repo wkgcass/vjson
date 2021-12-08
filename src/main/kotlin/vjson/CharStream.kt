@@ -77,12 +77,61 @@ interface CharStream : MutableIterator<Char>, Iterable<Char> {
   @Suppress("DEPRECATION")
   @JvmDefault/*}}*/
   fun skipBlank() {
+    skipBlank(true)
+  }
+
+  /*#ifndef KOTLIN_NATIVE {{ */
+  @Suppress("DEPRECATION")
+  @JvmDefault/*}}*/
+  fun skipBlank(skipComments: Boolean) {
     while (hasNext()) {
       val c = peekNext()
       if (isWhiteSpace(c)) {
         moveNextAndGet()
+      } else if (skipComments) {
+        if (c == '#') {
+          moveNextAndGet()
+          skipSingleLineComment()
+        } else if (c == '/' && hasNext(2)) {
+          val cc = peekNext(2)
+          if (cc == '/') {
+            moveNextAndGet()
+            moveNextAndGet()
+            skipSingleLineComment()
+          } else if (cc == '*') {
+            moveNextAndGet()
+            moveNextAndGet()
+            skipMultiLineComment()
+          } else {
+            break
+          }
+        } else {
+          break
+        }
       } else {
         break
+      }
+    }
+  }
+
+  private fun skipSingleLineComment() {
+    while (hasNext()) {
+      val c = moveNextAndGet()
+      if (c == '\n' || c == '\r') {
+        return
+      }
+    }
+  }
+
+  private fun skipMultiLineComment() {
+    while (hasNext()) {
+      val c = moveNextAndGet()
+      if (c == '*' && hasNext(2)) {
+        val cc = peekNext()
+        if (cc == '/') {
+          moveNextAndGet()
+          return
+        }
       }
     }
   }
