@@ -90,6 +90,12 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
         }
         getStringParser()
       }
+      '(' -> {
+        if (!opts.isAllowParenthesesString) {
+          throw JsonParseException("not valid json string")
+        }
+        getStringParser()
+      }
       '"' -> getStringParser()
       'n' -> getNullParser()
       't' -> getBoolParser()

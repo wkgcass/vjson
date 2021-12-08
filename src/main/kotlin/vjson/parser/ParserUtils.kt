@@ -134,6 +134,7 @@ object ParserUtils {
         return ret
       }
       '\'' -> throw JsonParseException("not valid json string: stringSingleQuotes not enabled")
+      '(' -> throw JsonParseException("not valid json string: allowParenthesesString not enabled")
       '"' -> {
         var p = holder.threadLocalStringParser()
         if (p == null) {
@@ -200,6 +201,7 @@ object ParserUtils {
         return ret
       }
       '\'' -> throw JsonParseException("not valid json string: stringSingleQuotes not enabled")
+      '(' -> throw JsonParseException("not valid json string: allowParenthesesString not enabled")
       '"' -> {
         var p = holder.threadLocalStringParserJavaObject()
         if (p == null) {
@@ -237,6 +239,12 @@ object ParserUtils {
       '\'' -> {
         if (!opts.isStringSingleQuotes) {
           throw JsonParseException("not valid json string: stringSingleQuotes not enabled")
+        }
+        return StringParser(opts)
+      }
+      '(' -> {
+        if (!opts.isAllowParenthesesString) {
+          throw JsonParseException("not valid json string: allowParenthesesString not enabled")
         }
         return StringParser(opts)
       }

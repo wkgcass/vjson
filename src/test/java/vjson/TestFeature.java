@@ -85,7 +85,7 @@ public class TestFeature {
     }
 
     @Test
-    public void keyNoQuotesWithDot() throws Exception {
+    public void keyNoQuotesAnyChar() throws Exception {
         try {
             ParserUtils.buildFrom(CharStream.from("{a.b:\"ab\"}"), new ParserOptions().setKeyNoQuotes(true));
         } catch (ParserException e) {
@@ -97,7 +97,7 @@ public class TestFeature {
                     .append("c.d", new SimpleString("cd"))),
                 ParserUtils.buildFrom(CharStream.from("{a.b:\"ab\",c.d:\"cd\"}"), new ParserOptions()
                     .setKeyNoQuotes(true)
-                    .setKeyNoQuotesWithDot(true)));
+                    .setKeyNoQuotesAnyChar(true)));
         }
     }
 
@@ -147,14 +147,36 @@ public class TestFeature {
     }
 
     @Test
+    public void allowParenthesesString() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions().setAllowParenthesesString(true));
+        assertEquals(new ObjectBuilder()
+                .put("a", "b")
+                .put("c", "d")
+                .put("e", "f")
+                .build(),
+            parser.last("{(a):(b),\"c\":(d),\"e\":\"f\"}"));
+        parser.reset();
+        assertEquals(new ObjectBuilder()
+                .put("a", "(a + (b * c)) - (d / e)")
+                .build(),
+            parser.last("{(a):((a + (b * c)) - (d / e))}"));
+        parser.reset();
+        assertEquals(new ObjectBuilder()
+                .put("a", "(a + (\nb\n * c)\n) - (d / e)")
+                .build(),
+            parser.last("{(a):((a + (\nb\n * c)\n) - (d / e))}"));
+    }
+
+    @Test
     public void all() throws Exception {
         ObjectParser parser = new ObjectParser(new ParserOptions()
             .setStringSingleQuotes(true)
             .setKeyNoQuotes(true)
-            .setKeyNoQuotesWithDot(true)
+            .setKeyNoQuotesAnyChar(true)
             .setAllowSkippingCommas(true)
             .setAllowObjectEntryWithoutValue(true)
-            .setEqualAsColon(true));
+            .setEqualAsColon(true)
+            .setAllowParenthesesString(true));
         assertEquals(new ObjectBuilder()
                 .put("function", null)
                 .putObject("a", o -> o
@@ -169,7 +191,7 @@ public class TestFeature {
                 .build(),
             parser.last("{\n" +
                 "  function a: {x: \"int\", y: \"string\"} void: {\n" +
-                "    while: \"b.c > 1\" do: {\n" +
+                "    while: (b.c > 1) do: {\n" +
                 "      break\n" +
                 "    }\n" +
                 "  }\n" +
@@ -178,24 +200,24 @@ public class TestFeature {
 
     public static final String TEST_PROG = "{\n" +
         "function printPrimes: { searchRange: \"int\" } void: {\n" +
-        "  var notPrime = { new \"bool[searchRange + 1]\" }\n" +
-        "  for: [ { var i = 2 }, \"i <= searchRange\", \"i += 1\"] do: {\n" +
-        "    if: \"!notPrime[i]\" then: {\n" +
+        "  var notPrime = { new (bool[searchRange + 1]) }\n" +
+        "  for: [ { var i = 2 }, (i <= searchRange), (i += 1)] do: {\n" +
+        "    if: (!notPrime[i]) then: {\n" +
         "      var j = 2\n" +
         "      while: true do: {\n" +
-        "        var n = \"i * j\"\n" +
-        "        if: \"n > searchRange\" then: {\n" +
+        "        var n = (i * j)\n" +
+        "        if: (n > searchRange) then: {\n" +
         "          break\n" +
         "        }\n" +
-        "        \"notPrime[n]\" = true\n" +
-        "        j = \"j + 1\"\n" +
+        "        notPrime[n] = true\n" +
+        "        j = (j + 1)\n" +
         "      }\n" +
         "    }\n" +
         "  }\n" +
-        "  std.console.log: [ \"'primes:'\" ]\n" +
-        "  for: [ { var i = 2 }, \"i < notPrime.length\", \"i += 1\"] do: {\n" +
-        "    if: \"!notPrime[i]\" then: {\n" +
-        "      std.console.log: [ \"''+i\" ]\n" +
+        "  std.console.log: [ ('primes:') ]\n" +
+        "  for: [ { var i = 2 }, (i < notPrime.length), (i += 1)] do: {\n" +
+        "    if: (!notPrime[i]) then: {\n" +
+        "      std.console.log: [ (''+i) ]\n" +
         "    }\n" +
         "  }\n" +
         "}\n" +
@@ -207,10 +229,11 @@ public class TestFeature {
         ObjectParser parser = new ObjectParser(new ParserOptions()
             .setStringSingleQuotes(true)
             .setKeyNoQuotes(true)
-            .setKeyNoQuotesWithDot(true)
+            .setKeyNoQuotesAnyChar(true)
             .setAllowSkippingCommas(true)
             .setAllowObjectEntryWithoutValue(true)
-            .setEqualAsColon(true));
+            .setEqualAsColon(true)
+            .setAllowParenthesesString(true));
         JSON.Object obj = parser.last(TEST_PROG);
         System.out.println(obj);
     }

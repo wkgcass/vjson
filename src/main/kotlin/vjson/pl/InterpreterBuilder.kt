@@ -31,10 +31,11 @@ class InterpreterBuilder {
       ParserOptions()
         .setStringSingleQuotes(true)
         .setKeyNoQuotes(true)
-        .setKeyNoQuotesWithDot(true)
+        .setKeyNoQuotesAnyChar(true)
         .setAllowSkippingCommas(true)
         .setAllowObjectEntryWithoutValue(true)
         .setEqualAsColon(true)
+        .setAllowParenthesesString(true)
     )
     val json = jsonParser.last(prog)!!
     return compile(json)

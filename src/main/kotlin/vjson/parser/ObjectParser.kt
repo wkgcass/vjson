@@ -169,7 +169,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         if (peek == '}') {
           cs.moveNextAndGet()
           state = 6
-        } else if (peek == '"' || peek == '\'') {
+        } else if (peek == '"' || peek == '\'' || peek == '(') {
           handleKeyParser(true, cs, isComplete)
         } else if (opts.isKeyNoQuotes) {
           state = 8
@@ -224,7 +224,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         cs.skipBlank()
         if (cs.hasNext()) {
           val peek = cs.peekNext()
-          if (peek == '\"' || peek == '\'') {
+          if (peek == '\"' || peek == '\'' || peek == '(') {
             handleKeyParser(true, cs, isComplete)
           } else if (opts.isKeyNoQuotes) {
             state = 8
@@ -254,7 +254,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           c = cs.moveNextAndGet()
           if (ParserUtils.isVarName(c)) {
             keyBuilder!!.next(c)
-          } else if (c == '.' && opts.isKeyNoQuotesWithDot) {
+          } else if (opts.isKeyNoQuotesAnyChar) {
             keyBuilder!!.next(c)
           } else {
             err = "invalid character for json object key without quotes: $c"

@@ -324,28 +324,28 @@ public class TestCorner {
     }
 
     @Test
-    public void parserOptionsSetKeyNoQuotesWithDot() throws Exception {
+    public void parserOptionsSetKeyNoQuotesAnyChar() throws Exception {
         ParserOptions opts = new ParserOptions();
         assertFalse(opts.isKeyNoQuotes());
-        assertFalse(opts.isKeyNoQuotesWithDot());
-        opts.setKeyNoQuotesWithDot(true);
+        assertFalse(opts.isKeyNoQuotesAnyChar());
+        opts.setKeyNoQuotesAnyChar(true);
         assertTrue(opts.isKeyNoQuotes());
-        assertTrue(opts.isKeyNoQuotesWithDot());
+        assertTrue(opts.isKeyNoQuotesAnyChar());
 
-        opts.setKeyNoQuotesWithDot(false);
+        opts.setKeyNoQuotesAnyChar(false);
         assertTrue(opts.isKeyNoQuotes());
-        assertFalse(opts.isKeyNoQuotesWithDot());
+        assertFalse(opts.isKeyNoQuotesAnyChar());
 
-        opts.setKeyNoQuotesWithDot(true);
+        opts.setKeyNoQuotesAnyChar(true);
         assertTrue(opts.isKeyNoQuotes());
-        assertTrue(opts.isKeyNoQuotesWithDot());
+        assertTrue(opts.isKeyNoQuotesAnyChar());
         opts.setKeyNoQuotes(false);
         assertFalse(opts.isKeyNoQuotes());
-        assertFalse(opts.isKeyNoQuotesWithDot());
+        assertFalse(opts.isKeyNoQuotesAnyChar());
 
         opts.setKeyNoQuotes(true);
         assertTrue(opts.isKeyNoQuotes());
-        assertFalse(opts.isKeyNoQuotesWithDot());
+        assertFalse(opts.isKeyNoQuotesAnyChar());
     }
 
     @Test

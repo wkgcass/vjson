@@ -32,6 +32,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
   // 6->escape_u4,
   // 7->finish
   // 8->already_returned
+  // 100->parenthesesString
 
   val builder: TextBuilder = TextBuilder(opts.bufLen)
   private val traveler: StringDictionary.Traveler? = dictionary?.traveler()
@@ -39,7 +40,9 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
   private var u1 = -1
   private var u2 = -1
   private var u3 = -1
+
   // u4 can be local variable
+  private var parenthesesStringStack = 0
 
   /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
   constructor(opts: ParserOptions = ParserOptions.DEFAULT) : this(opts, null)
@@ -49,6 +52,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
     builder.clear()
     traveler?.done()
     // start/u1/2/3 can keep their values
+    parenthesesStringStack = 0
   }
 
   private fun parseHex(c: Char): Int {
@@ -80,6 +84,9 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           beginning = '\"'
         } else if (c == '\'' && opts.isStringSingleQuotes) {
           beginning = '\''
+        } else if (c == '(' && opts.isAllowParenthesesString) {
+          state = 99 // will +1
+          parenthesesStringStack = 1
         } else {
           err = "invalid character for string: not starts with \": $c"
           throw ParserUtils.err(opts, err)
@@ -208,8 +215,11 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           state = 1
         }
       }
-      if (state == 8) {
+      if (state == 7 || state == 8) {
         break
+      }
+      if (state == 100) {
+        handleParenthesesString(cs.moveNextAndGet())
       }
     }
     if (state == 7) {
@@ -226,6 +236,22 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
       throw ParserUtils.err(opts, err)
     } else {
       return false
+    }
+  }
+
+  private fun handleParenthesesString(c: Char) {
+    if (c == ')') {
+      parenthesesStringStack -= 1
+      if (parenthesesStringStack == 0) {
+        state = 7
+        return
+      }
+      append(c)
+    } else if (c == '(') {
+      parenthesesStringStack += 1
+      append(c)
+    } else {
+      append(c)
     }
   }
 

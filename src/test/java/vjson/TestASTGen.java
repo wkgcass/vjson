@@ -21,11 +21,12 @@ public class TestASTGen {
         ASTGen gen = new ASTGen(new ObjectParser(new ParserOptions()
             .setStringSingleQuotes(true)
             .setKeyNoQuotes(true)
-            .setKeyNoQuotesWithDot(true)
+            .setKeyNoQuotesAnyChar(true)
             .setNullArraysAndObjects(true)
             .setAllowSkippingCommas(true)
             .setAllowObjectEntryWithoutValue(true)
             .setEqualAsColon(true)
+            .setAllowParenthesesString(true)
         ).last(input));
         return gen.parse();
     }

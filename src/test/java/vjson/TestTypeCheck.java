@@ -37,11 +37,12 @@ public class TestTypeCheck {
     public void pass() {
         //noinspection ConstantConditions
         ASTGen gen = new ASTGen(new ObjectParser(new ParserOptions()
-            .setKeyNoQuotesWithDot(true)
+            .setKeyNoQuotesAnyChar(true)
             .setAllowObjectEntryWithoutValue(true)
             .setAllowSkippingCommas(true)
             .setStringSingleQuotes(true)
             .setEqualAsColon(true)
+            .setAllowParenthesesString(true)
         ).last(TestFeature.TEST_PROG));
         List<Statement> stmts = gen.parse();
         MemoryAllocator globalMem = new MemoryAllocator();

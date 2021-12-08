@@ -53,7 +53,7 @@ class ParserOptions {
     private set
   var isKeyNoQuotes: Boolean
     private set
-  var isKeyNoQuotesWithDot: Boolean
+  var isKeyNoQuotesAnyChar: Boolean
     private set
   var isNullArraysAndObjects: Boolean
     private set
@@ -62,6 +62,8 @@ class ParserOptions {
   var isAllowObjectEntryWithoutValue: Boolean
     private set
   var isEqualAsColon: Boolean
+    private set
+  var isAllowParenthesesString: Boolean
     private set
 
   constructor() {
@@ -73,11 +75,12 @@ class ParserOptions {
     // features
     isStringSingleQuotes = false
     isKeyNoQuotes = false
-    isKeyNoQuotesWithDot = false
+    isKeyNoQuotesAnyChar = false
     isNullArraysAndObjects = false
     isAllowSkippingCommas = false
     isAllowObjectEntryWithoutValue = false
     isEqualAsColon = false
+    isAllowParenthesesString = false
   }
 
   constructor(opts: ParserOptions) {
@@ -89,11 +92,12 @@ class ParserOptions {
     // features
     isStringSingleQuotes = opts.isStringSingleQuotes
     isKeyNoQuotes = opts.isKeyNoQuotes
-    isKeyNoQuotesWithDot = opts.isKeyNoQuotesWithDot
+    isKeyNoQuotesAnyChar = opts.isKeyNoQuotesAnyChar
     isNullArraysAndObjects = opts.isNullArraysAndObjects
     isAllowSkippingCommas = opts.isAllowSkippingCommas
     isAllowObjectEntryWithoutValue = opts.isAllowObjectEntryWithoutValue
     isEqualAsColon = opts.isEqualAsColon
+    isAllowParenthesesString = opts.isAllowParenthesesString
   }
 
   fun setBufLen(bufLen: Int): ParserOptions {
@@ -131,17 +135,17 @@ class ParserOptions {
 
   fun setKeyNoQuotes(keyNoQuotes: Boolean): ParserOptions {
     if (!keyNoQuotes) {
-      isKeyNoQuotesWithDot = false
+      isKeyNoQuotesAnyChar = false
     }
     isKeyNoQuotes = keyNoQuotes
     return this
   }
 
-  fun setKeyNoQuotesWithDot(keyNoQuotesWithDot: Boolean): ParserOptions {
-    if (keyNoQuotesWithDot) {
+  fun setKeyNoQuotesAnyChar(keyNoQuotesAnyChar: Boolean): ParserOptions {
+    if (keyNoQuotesAnyChar) {
       isKeyNoQuotes = true
     }
-    isKeyNoQuotesWithDot = keyNoQuotesWithDot
+    isKeyNoQuotesAnyChar = keyNoQuotesAnyChar
     return this
   }
 
@@ -162,6 +166,11 @@ class ParserOptions {
 
   fun setEqualAsColon(equalAsColon: Boolean): ParserOptions {
     isEqualAsColon = equalAsColon
+    return this
+  }
+
+  fun setAllowParenthesesString(allowParenthesesString: Boolean): ParserOptions {
+    isAllowParenthesesString = allowParenthesesString
     return this
   }
 }

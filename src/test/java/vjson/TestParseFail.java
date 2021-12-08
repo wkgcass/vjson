@@ -87,6 +87,7 @@ public class TestParseFail {
             p.feed("\"abc\"");
             p.feed("\"");
         });
+        parseFail("expecting more characters to build string", () -> new StringParser(new ParserOptions().setAllowParenthesesString(true)).last("(abc"));
     }
 
     @Test
@@ -149,8 +150,11 @@ public class TestParseFail {
         parseFail("not valid json string", () -> JSON.parse("e"));
         parseFail("not valid json string", () -> JSON.parse("+"));
         parseFail("not valid json string: stringSingleQuotes not enabled", () -> ParserUtils.buildFrom(CharStream.from("''"), new ParserOptions()));
+        parseFail("not valid json string: allowParenthesesString not enabled", () -> ParserUtils.buildFrom(CharStream.from("()"), new ParserOptions()));
         parseFail("not valid json string: stringSingleQuotes not enabled", () -> JSON.parse("''"));
+        parseFail("not valid json string: allowParenthesesString not enabled", () -> JSON.parse("()"));
         parseFail("not valid json string: stringSingleQuotes not enabled", () -> JSON.parseToJavaObject("''"));
+        parseFail("not valid json string: allowParenthesesString not enabled", () -> JSON.parseToJavaObject("()"));
     }
 
     @Test
