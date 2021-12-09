@@ -49,31 +49,31 @@ data class OpAssignment(
   override fun generateInstruction(): Instruction {
     val calculateInst = when (op) {
       BinOpType.PLUS -> when (variable.typeInstance()) {
-        is IntType -> PlusInt(variable.generateInstruction(), value.generateInstruction())
-        is LongType -> PlusLong(variable.generateInstruction(), value.generateInstruction())
-        is FloatType -> PlusFloat(variable.generateInstruction(), value.generateInstruction())
-        is DoubleType -> PlusDouble(variable.generateInstruction(), value.generateInstruction())
+        is IntType -> PlusInt(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is LongType -> PlusLong(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is FloatType -> PlusFloat(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is DoubleType -> PlusDouble(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
         else -> throw IllegalStateException()
       }
       BinOpType.MINUS -> when (variable.typeInstance()) {
-        is IntType -> MinusInt(variable.generateInstruction(), value.generateInstruction())
-        is LongType -> MinusLong(variable.generateInstruction(), value.generateInstruction())
-        is FloatType -> MinusFloat(variable.generateInstruction(), value.generateInstruction())
-        is DoubleType -> MinusDouble(variable.generateInstruction(), value.generateInstruction())
+        is IntType -> MinusInt(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is LongType -> MinusLong(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is FloatType -> MinusFloat(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is DoubleType -> MinusDouble(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
         else -> throw IllegalStateException()
       }
       BinOpType.MULTIPLY -> when (variable.typeInstance()) {
-        is IntType -> MultiplyInt(variable.generateInstruction(), value.generateInstruction())
-        is LongType -> MultiplyLong(variable.generateInstruction(), value.generateInstruction())
-        is FloatType -> MultiplyFloat(variable.generateInstruction(), value.generateInstruction())
-        is DoubleType -> MultiplyDouble(variable.generateInstruction(), value.generateInstruction())
+        is IntType -> MultiplyInt(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is LongType -> MultiplyLong(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is FloatType -> MultiplyFloat(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is DoubleType -> MultiplyDouble(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
         else -> throw IllegalStateException()
       }
       BinOpType.DIVIDE -> when (variable.typeInstance()) {
-        is IntType -> DivideInt(variable.generateInstruction(), value.generateInstruction())
-        is LongType -> DivideLong(variable.generateInstruction(), value.generateInstruction())
-        is FloatType -> DivideFloat(variable.generateInstruction(), value.generateInstruction())
-        is DoubleType -> DivideDouble(variable.generateInstruction(), value.generateInstruction())
+        is IntType -> DivideInt(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is LongType -> DivideLong(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is FloatType -> DivideFloat(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is DoubleType -> DivideDouble(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
         else -> throw IllegalStateException()
       }
       else -> throw IllegalStateException()

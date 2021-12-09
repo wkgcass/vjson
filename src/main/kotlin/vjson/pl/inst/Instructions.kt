@@ -17,6 +17,8 @@ import vjson.pl.type.ExecutableField
 data class CompositeInstruction(
   val instructions: List<Instruction>
 ) : Instruction() {
+  override val stackInfo: StackInfo = StackInfo.EMPTY
+
   @Suppress("UNCHECKED_CAST")
   constructor(vararg instructions: Instruction) : this(instructions.asList())
 
@@ -27,13 +29,17 @@ data class CompositeInstruction(
   }
 }
 
-class ExecutableFieldInstruction(private val field: ExecutableField) : Instruction() {
+class ExecutableFieldInstruction(
+  private val field: ExecutableField,
+  override val stackInfo: StackInfo
+) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     field.execute(ctx, values)
   }
 }
 
 class NoOp : Instruction() {
+  override val stackInfo: StackInfo = StackInfo.EMPTY
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
   }
 }
@@ -41,13 +47,14 @@ class NoOp : Instruction() {
 data class ReturnInst(
   private val returnValueInst: Instruction?,
 ) : Instruction() {
+  override val stackInfo: StackInfo = StackInfo.EMPTY
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     returnValueInst?.execute(ctx, values)
     ctx.returnImmediately = true
   }
 }
 
-class LiteralNull : Instruction() {
+class LiteralNull(override val stackInfo: StackInfo) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.refValue = null
   }
@@ -56,6 +63,7 @@ class LiteralNull : Instruction() {
 class StringConcat(
   val a: Instruction,
   val b: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     a.execute(ctx, values)
@@ -69,7 +77,8 @@ class StringConcat(
 class FunctionInstance(
   private val self: Instruction?,
   private val funcMemDepth: Int,
-  private val func: Instruction
+  private val func: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   var ctxBuilder: ((ActionContext) -> ActionContext)? = null
 
@@ -89,6 +98,7 @@ class FunctionInstance(
 
 data class LogicNotInstruction(
   private val expr: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     expr.execute(ctx, values)
@@ -99,6 +109,7 @@ data class LogicNotInstruction(
 data class BreakInstruction(
   private val level: Int
 ) : Instruction() {
+  override val stackInfo: StackInfo = StackInfo.EMPTY
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     ctx.breakImmediately = level
   }
@@ -107,12 +118,14 @@ data class BreakInstruction(
 data class ContinueInstruction(
   private val level: Int
 ) : Instruction() {
+  override val stackInfo: StackInfo = StackInfo.EMPTY
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     ctx.continueImmediately = level
   }
 }
 
 abstract class FlowControlInstruction : Instruction() {
+  override val stackInfo: StackInfo = StackInfo.EMPTY
   protected fun needReturn(ctx: ActionContext): Boolean {
     return ctx.breakImmediately > 0 || ctx.continueImmediately > 0 || ctx.returnImmediately
   }

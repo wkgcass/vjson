@@ -12,8 +12,10 @@
 
 package vjson.pl.type
 
+import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.ast.*
+import vjson.pl.inst.StackInfo
 
 class TypeContext {
   private val contextType: TypeInstance?
@@ -142,12 +144,40 @@ class TypeContext {
     return null
   }
 
+  fun getContextByAST(func: (AST) -> Boolean): TypeContext? {
+    if (ast != null && func(ast)) {
+      return this
+    }
+    if (parent != null) {
+      return parent.getContextByAST(func)
+    }
+    return null
+  }
+
   fun getMemoryAllocator(): MemoryAllocator {
     return memoryAllocator
   }
 
   fun getMemoryDepth(): Int {
     return memoryDepth
+  }
+
+  fun stackInfo(lineCol: LineCol): StackInfo {
+    val funcCtx = getContextByAST { it is FunctionDefinition }
+    val clsCtx = getContextByAST { it is ClassDefinition }
+    return if (clsCtx != null && funcCtx != null) {
+      if (clsCtx.memoryDepth < funcCtx.memoryDepth) {
+        StackInfo(cls = (clsCtx.ast as ClassDefinition).name, function = (funcCtx.ast as FunctionDefinition).name, lineCol)
+      } else {
+        StackInfo(cls = (clsCtx.ast as ClassDefinition).name, function = null, lineCol)
+      }
+    } else if (clsCtx == null && funcCtx != null) {
+      StackInfo(cls = null, function = (funcCtx.ast as FunctionDefinition).name, lineCol)
+    } else if (clsCtx != null) {
+      StackInfo(cls = (clsCtx.ast as ClassDefinition).name, function = null, lineCol)
+    } else {
+      StackInfo(cls = null, function = null, lineCol)
+    }
   }
 
   companion object {

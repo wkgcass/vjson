@@ -29,6 +29,7 @@ data = []
 LITERAL = '''
 data class Literal{{Type}}(
   val value: {{KtType}},
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.{{type}}Value = value
@@ -44,6 +45,7 @@ GET = '''
 data class Get{{Type}}(
   val depth: Int,
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.{{type}}Value = ctx.getMem(depth).get{{Type}}(index)
@@ -58,6 +60,7 @@ data.append({
 GET_FIELD = '''
 data class GetField{{Type}}(
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
@@ -74,6 +77,7 @@ GET_INDEX = '''
 data class GetIndex{{Type}}(
   val array: Instruction,
   val index: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
@@ -94,6 +98,7 @@ data class Set{{Type}}(
   val depth: Int,
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -111,6 +116,7 @@ data class SetIndex{{Type}}(
   val array: Instruction,
   val index: Instruction,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -132,6 +138,7 @@ SET_FIELD = '''
 data class SetField{{Type}}(
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -149,6 +156,7 @@ BIN_OP = '''
 data class {{Op}}{{Type}}(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -234,6 +242,7 @@ data.append({
 NEGATIVE = '''
 data class Negative{{Type}}(
   private val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -249,6 +258,7 @@ data.append({
 NEW_ARRAY_PRIMITIVES = '''
 data class NewArray{{Type}}(
   val lenInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
@@ -264,6 +274,7 @@ data.append({
 NEW_ARRAY_REF = '''
 data class NewArray{{Type}}(
   val lenInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)

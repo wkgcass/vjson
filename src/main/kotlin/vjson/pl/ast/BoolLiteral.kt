@@ -29,7 +29,7 @@ data class BoolLiteral(val b: Boolean) : Expr() {
   }
 
   override fun generateInstruction(): Instruction {
-    return LiteralBool(b)
+    return LiteralBool(b, ctx.stackInfo(lineCol))
   }
 
   override fun toString(): String {

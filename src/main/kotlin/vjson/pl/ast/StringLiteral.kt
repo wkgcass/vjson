@@ -30,7 +30,7 @@ data class StringLiteral(val str: String) : Expr() {
   }
 
   override fun generateInstruction(): Instruction {
-    return LiteralRef(str)
+    return LiteralRef(str, ctx.stackInfo(lineCol))
   }
 
   override fun toString(): String {

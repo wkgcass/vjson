@@ -33,9 +33,9 @@ data class IntegerLiteral(val n: JSON.Number<*>) : Expr() {
 
   override fun generateInstruction(): Instruction {
     return if (n is JSON.Long) {
-      LiteralLong(n.toJavaObject())
+      LiteralLong(n.toJavaObject(), ctx.stackInfo(lineCol))
     } else {
-      LiteralInt((n as JSON.Integer).toJavaObject())
+      LiteralInt((n as JSON.Integer).toJavaObject(), ctx.stackInfo(lineCol))
     }
   }
 

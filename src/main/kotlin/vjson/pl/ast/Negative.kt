@@ -33,10 +33,10 @@ data class Negative(val expr: Expr) : Expr() {
   override fun generateInstruction(): Instruction {
     val valueInst = expr.generateInstruction()
     return when (expr.typeInstance()) {
-      is IntType -> NegativeInt(valueInst)
-      is LongType -> NegativeLong(valueInst)
-      is FloatType -> NegativeFloat(valueInst)
-      is DoubleType -> NegativeDouble(valueInst)
+      is IntType -> NegativeInt(valueInst, ctx.stackInfo(lineCol))
+      is LongType -> NegativeLong(valueInst, ctx.stackInfo(lineCol))
+      is FloatType -> NegativeFloat(valueInst, ctx.stackInfo(lineCol))
+      is DoubleType -> NegativeDouble(valueInst, ctx.stackInfo(lineCol))
       else -> throw UnsupportedOperationException()
     }
   }

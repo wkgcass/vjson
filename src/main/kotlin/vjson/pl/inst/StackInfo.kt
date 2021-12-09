@@ -12,28 +12,40 @@
 
 package vjson.pl.inst
 
-abstract class Instruction {
-  abstract val stackInfo: StackInfo
+import vjson.cs.LineCol
 
-  fun execute(ctx: ActionContext, values: ValueHolder) {
-    if (ctx.returnImmediately) {
-      return
-    }
-    try {
-      execute0(ctx, values)
-    } catch (e: InstructionException) {
-      e.stackTrace.add(stackInfo)
-      throw e
-    } catch (e: Throwable) {
-      val msg = e.message
-      val ex = if (msg == null) {
-        InstructionException(stackInfo, e)
-      } else {
-        InstructionException(msg, stackInfo, e)
-      }
-      throw ex
-    }
+data class StackInfo(
+  val cls: String?,
+  val function: String?,
+  val lineCol: LineCol
+) {
+  override fun equals(other: Any?): Boolean {
+    return other is StackInfo
   }
 
-  protected abstract fun execute0(ctx: ActionContext, values: ValueHolder)
+  override fun hashCode(): Int {
+    return 0
+  }
+
+  override fun toString(): String {
+    val sb = StringBuilder()
+    if (cls != null) {
+      sb.append(cls)
+    }
+    if (cls != null && function != null) {
+      sb.append(".")
+    }
+    if (function != null) {
+      sb.append(function)
+    }
+    if (cls == null && function == null) {
+      sb.append("<no info>")
+    }
+    sb.append(" at ").append(lineCol)
+    return sb.toString()
+  }
+
+  companion object {
+    val EMPTY = StackInfo(null, null, LineCol.EMPTY)
+  }
 }

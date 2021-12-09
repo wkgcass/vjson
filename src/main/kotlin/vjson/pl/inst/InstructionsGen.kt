@@ -2,6 +2,7 @@ package vjson.pl.inst
 
 data class LiteralInt(
   val value: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.intValue = value
@@ -10,6 +11,7 @@ data class LiteralInt(
 
 data class LiteralLong(
   val value: Long,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.longValue = value
@@ -18,6 +20,7 @@ data class LiteralLong(
 
 data class LiteralFloat(
   val value: Float,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.floatValue = value
@@ -26,6 +29,7 @@ data class LiteralFloat(
 
 data class LiteralDouble(
   val value: Double,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.doubleValue = value
@@ -34,6 +38,7 @@ data class LiteralDouble(
 
 data class LiteralBool(
   val value: Boolean,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.boolValue = value
@@ -42,6 +47,7 @@ data class LiteralBool(
 
 data class LiteralRef(
   val value: Any?,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.refValue = value
@@ -51,6 +57,7 @@ data class LiteralRef(
 data class GetInt(
   val depth: Int,
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.intValue = ctx.getMem(depth).getInt(index)
@@ -60,6 +67,7 @@ data class GetInt(
 data class GetLong(
   val depth: Int,
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.longValue = ctx.getMem(depth).getLong(index)
@@ -69,6 +77,7 @@ data class GetLong(
 data class GetFloat(
   val depth: Int,
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.floatValue = ctx.getMem(depth).getFloat(index)
@@ -78,6 +87,7 @@ data class GetFloat(
 data class GetDouble(
   val depth: Int,
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.doubleValue = ctx.getMem(depth).getDouble(index)
@@ -87,6 +97,7 @@ data class GetDouble(
 data class GetBool(
   val depth: Int,
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.boolValue = ctx.getMem(depth).getBool(index)
@@ -96,6 +107,7 @@ data class GetBool(
 data class GetRef(
   val depth: Int,
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.refValue = ctx.getMem(depth).getRef(index)
@@ -104,6 +116,7 @@ data class GetRef(
 
 data class GetFieldInt(
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
@@ -113,6 +126,7 @@ data class GetFieldInt(
 
 data class GetFieldLong(
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
@@ -122,6 +136,7 @@ data class GetFieldLong(
 
 data class GetFieldFloat(
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
@@ -131,6 +146,7 @@ data class GetFieldFloat(
 
 data class GetFieldDouble(
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
@@ -140,6 +156,7 @@ data class GetFieldDouble(
 
 data class GetFieldBool(
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
@@ -149,6 +166,7 @@ data class GetFieldBool(
 
 data class GetFieldRef(
   val index: Int,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
@@ -159,6 +177,7 @@ data class GetFieldRef(
 data class GetIndexInt(
   val array: Instruction,
   val index: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
@@ -172,6 +191,7 @@ data class GetIndexInt(
 data class GetIndexLong(
   val array: Instruction,
   val index: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
@@ -185,6 +205,7 @@ data class GetIndexLong(
 data class GetIndexFloat(
   val array: Instruction,
   val index: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
@@ -198,6 +219,7 @@ data class GetIndexFloat(
 data class GetIndexDouble(
   val array: Instruction,
   val index: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
@@ -211,6 +233,7 @@ data class GetIndexDouble(
 data class GetIndexBool(
   val array: Instruction,
   val index: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
@@ -224,6 +247,7 @@ data class GetIndexBool(
 data class GetIndexRef(
   val array: Instruction,
   val index: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
@@ -238,6 +262,7 @@ data class SetInt(
   val depth: Int,
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -249,6 +274,7 @@ data class SetLong(
   val depth: Int,
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -260,6 +286,7 @@ data class SetFloat(
   val depth: Int,
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -271,6 +298,7 @@ data class SetDouble(
   val depth: Int,
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -282,6 +310,7 @@ data class SetBool(
   val depth: Int,
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -293,6 +322,7 @@ data class SetRef(
   val depth: Int,
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -304,6 +334,7 @@ data class SetIndexInt(
   val array: Instruction,
   val index: Instruction,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -320,6 +351,7 @@ data class SetIndexLong(
   val array: Instruction,
   val index: Instruction,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -336,6 +368,7 @@ data class SetIndexFloat(
   val array: Instruction,
   val index: Instruction,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -352,6 +385,7 @@ data class SetIndexDouble(
   val array: Instruction,
   val index: Instruction,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -368,6 +402,7 @@ data class SetIndexBool(
   val array: Instruction,
   val index: Instruction,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -384,6 +419,7 @@ data class SetIndexRef(
   val array: Instruction,
   val index: Instruction,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -399,6 +435,7 @@ data class SetIndexRef(
 data class SetFieldInt(
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -410,6 +447,7 @@ data class SetFieldInt(
 data class SetFieldLong(
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -421,6 +459,7 @@ data class SetFieldLong(
 data class SetFieldFloat(
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -432,6 +471,7 @@ data class SetFieldFloat(
 data class SetFieldDouble(
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -443,6 +483,7 @@ data class SetFieldDouble(
 data class SetFieldBool(
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -454,6 +495,7 @@ data class SetFieldBool(
 data class SetFieldRef(
   val index: Int,
   val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -465,6 +507,7 @@ data class SetFieldRef(
 data class PlusInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -478,6 +521,7 @@ data class PlusInt(
 data class PlusLong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -491,6 +535,7 @@ data class PlusLong(
 data class PlusFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -504,6 +549,7 @@ data class PlusFloat(
 data class PlusDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -517,6 +563,7 @@ data class PlusDouble(
 data class MinusInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -530,6 +577,7 @@ data class MinusInt(
 data class MinusLong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -543,6 +591,7 @@ data class MinusLong(
 data class MinusFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -556,6 +605,7 @@ data class MinusFloat(
 data class MinusDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -569,6 +619,7 @@ data class MinusDouble(
 data class MultiplyInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -582,6 +633,7 @@ data class MultiplyInt(
 data class MultiplyLong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -595,6 +647,7 @@ data class MultiplyLong(
 data class MultiplyFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -608,6 +661,7 @@ data class MultiplyFloat(
 data class MultiplyDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -621,6 +675,7 @@ data class MultiplyDouble(
 data class DivideInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -634,6 +689,7 @@ data class DivideInt(
 data class DivideLong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -647,6 +703,7 @@ data class DivideLong(
 data class DivideFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -660,6 +717,7 @@ data class DivideFloat(
 data class DivideDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -673,6 +731,7 @@ data class DivideDouble(
 data class CmpGTInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -686,6 +745,7 @@ data class CmpGTInt(
 data class CmpGTLong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -699,6 +759,7 @@ data class CmpGTLong(
 data class CmpGTFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -712,6 +773,7 @@ data class CmpGTFloat(
 data class CmpGTDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -725,6 +787,7 @@ data class CmpGTDouble(
 data class CmpGEInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -738,6 +801,7 @@ data class CmpGEInt(
 data class CmpGELong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -751,6 +815,7 @@ data class CmpGELong(
 data class CmpGEFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -764,6 +829,7 @@ data class CmpGEFloat(
 data class CmpGEDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -777,6 +843,7 @@ data class CmpGEDouble(
 data class CmpLTInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -790,6 +857,7 @@ data class CmpLTInt(
 data class CmpLTLong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -803,6 +871,7 @@ data class CmpLTLong(
 data class CmpLTFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -816,6 +885,7 @@ data class CmpLTFloat(
 data class CmpLTDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -829,6 +899,7 @@ data class CmpLTDouble(
 data class CmpLEInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -842,6 +913,7 @@ data class CmpLEInt(
 data class CmpLELong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -855,6 +927,7 @@ data class CmpLELong(
 data class CmpLEFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -868,6 +941,7 @@ data class CmpLEFloat(
 data class CmpLEDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -881,6 +955,7 @@ data class CmpLEDouble(
 data class LogicAndBool(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -894,6 +969,7 @@ data class LogicAndBool(
 data class LogicOrBool(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -907,6 +983,7 @@ data class LogicOrBool(
 data class CmpNEInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -920,6 +997,7 @@ data class CmpNEInt(
 data class CmpNELong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -933,6 +1011,7 @@ data class CmpNELong(
 data class CmpNEFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -946,6 +1025,7 @@ data class CmpNEFloat(
 data class CmpNEDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -959,6 +1039,7 @@ data class CmpNEDouble(
 data class CmpNEBool(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -972,6 +1053,7 @@ data class CmpNEBool(
 data class CmpNERef(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -985,6 +1067,7 @@ data class CmpNERef(
 data class CmpEQInt(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -998,6 +1081,7 @@ data class CmpEQInt(
 data class CmpEQLong(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -1011,6 +1095,7 @@ data class CmpEQLong(
 data class CmpEQFloat(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -1024,6 +1109,7 @@ data class CmpEQFloat(
 data class CmpEQDouble(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -1037,6 +1123,7 @@ data class CmpEQDouble(
 data class CmpEQBool(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -1050,6 +1137,7 @@ data class CmpEQBool(
 data class CmpEQRef(
   val left: Instruction,
   val right: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
@@ -1062,6 +1150,7 @@ data class CmpEQRef(
 
 data class NegativeInt(
   private val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -1071,6 +1160,7 @@ data class NegativeInt(
 
 data class NegativeLong(
   private val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -1080,6 +1170,7 @@ data class NegativeLong(
 
 data class NegativeFloat(
   private val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -1089,6 +1180,7 @@ data class NegativeFloat(
 
 data class NegativeDouble(
   private val valueInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
@@ -1098,6 +1190,7 @@ data class NegativeDouble(
 
 data class NewArrayInt(
   val lenInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
@@ -1107,6 +1200,7 @@ data class NewArrayInt(
 
 data class NewArrayLong(
   val lenInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
@@ -1116,6 +1210,7 @@ data class NewArrayLong(
 
 data class NewArrayFloat(
   val lenInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
@@ -1125,6 +1220,7 @@ data class NewArrayFloat(
 
 data class NewArrayDouble(
   val lenInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
@@ -1134,6 +1230,7 @@ data class NewArrayDouble(
 
 data class NewArrayBool(
   val lenInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
@@ -1143,6 +1240,7 @@ data class NewArrayBool(
 
 data class NewArrayRef(
   val lenInst: Instruction,
+  override val stackInfo: StackInfo
 ) : Instruction() {
   override fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)

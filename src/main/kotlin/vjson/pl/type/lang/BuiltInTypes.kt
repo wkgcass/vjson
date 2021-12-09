@@ -14,54 +14,55 @@ package vjson.pl.type.lang
 
 import vjson.pl.inst.ActionContext
 import vjson.pl.inst.Instruction
+import vjson.pl.inst.PrebuiltStackInfoInstruction
 import vjson.pl.inst.ValueHolder
 import vjson.pl.type.*
 
 object BuiltInTypes {
-  private val intToString = object : Instruction() {
+  private val intToString = object : PrebuiltStackInfoInstruction("int", "toString") {
     override fun execute0(ctx: ActionContext, values: ValueHolder) {
       val n = values.intValue
-      values.refValue = object : Instruction() {
+      values.refValue = object : PrebuiltStackInfoInstruction("int", "toString") {
         override fun execute0(ctx: ActionContext, values: ValueHolder) {
           values.refValue = n.toString()
         }
       }
     }
   }
-  private val longToString = object : Instruction() {
+  private val longToString = object : PrebuiltStackInfoInstruction("long", "toString") {
     override fun execute0(ctx: ActionContext, values: ValueHolder) {
       val n = values.longValue
-      values.refValue = object : Instruction() {
+      values.refValue = object : PrebuiltStackInfoInstruction("long", "toString") {
         override fun execute0(ctx: ActionContext, values: ValueHolder) {
           values.refValue = n.toString()
         }
       }
     }
   }
-  private val floatToString = object : Instruction() {
+  private val floatToString = object : PrebuiltStackInfoInstruction("float", "toString") {
     override fun execute0(ctx: ActionContext, values: ValueHolder) {
       val n = values.floatValue
-      values.refValue = object : Instruction() {
+      values.refValue = object : PrebuiltStackInfoInstruction("float", "toString") {
         override fun execute0(ctx: ActionContext, values: ValueHolder) {
           values.refValue = n.toString()
         }
       }
     }
   }
-  private val doubleToString = object : Instruction() {
+  private val doubleToString = object : PrebuiltStackInfoInstruction("double", "toString") {
     override fun execute0(ctx: ActionContext, values: ValueHolder) {
       val n = values.doubleValue
-      values.refValue = object : Instruction() {
+      values.refValue = object : PrebuiltStackInfoInstruction("double", "toString") {
         override fun execute0(ctx: ActionContext, values: ValueHolder) {
           values.refValue = n.toString()
         }
       }
     }
   }
-  private val boolToString = object : Instruction() {
+  private val boolToString = object : PrebuiltStackInfoInstruction("bool", "toString") {
     override fun execute0(ctx: ActionContext, values: ValueHolder) {
       val n = values.boolValue
-      values.refValue = object : Instruction() {
+      values.refValue = object : PrebuiltStackInfoInstruction("bool", "toString") {
         override fun execute0(ctx: ActionContext, values: ValueHolder) {
           values.refValue = n.toString()
         }

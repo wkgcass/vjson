@@ -13,10 +13,7 @@
 package vjson.pl
 
 import vjson.pl.ast.Statement
-import vjson.pl.inst.ActionContext
-import vjson.pl.inst.RuntimeMemory
-import vjson.pl.inst.RuntimeMemoryTotal
-import vjson.pl.inst.ValueHolder
+import vjson.pl.inst.*
 import vjson.pl.type.MemoryAllocator
 import vjson.pl.type.TypeContext
 import vjson.pl.type.lang.Types
@@ -54,9 +51,30 @@ class Interpreter(private val types: List<Types>, private val ast: List<Statemen
     val valueHolder = ValueHolder()
     for (stmt in ast) {
       val inst = stmt.generateInstruction()
-      inst.execute(actionContext, valueHolder)
+      try {
+        inst.execute(actionContext, valueHolder)
+      } catch (e: InstructionException) {
+        throw formatException(e)
+      }
     }
 
     return actionContext.getCurrentMem()
+  }
+
+  private fun formatException(e: InstructionException): Exception {
+    val sb = StringBuilder()
+    if (e.message != null) {
+      sb.append(": ").append(e.message).append("\n")
+    }
+    var isFirst = true
+    for (info in e.stackTrace) {
+      if (isFirst) {
+        isFirst = false
+      } else {
+        sb.append("\n")
+      }
+      sb.append("  ").append(info)
+    }
+    return Exception(sb.toString(), e.cause)
   }
 }

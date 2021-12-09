@@ -35,7 +35,7 @@ data class NullLiteral(val type: Type? = null) : Expr() {
   }
 
   override fun generateInstruction(): Instruction {
-    return LiteralNull()
+    return LiteralNull(ctx.stackInfo(lineCol))
   }
 
   override fun toString(): String {

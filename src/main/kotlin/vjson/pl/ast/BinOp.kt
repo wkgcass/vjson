@@ -109,98 +109,99 @@ data class BinOp(
     val rightInst = right.generateInstruction()
     return when (op) {
       MULTIPLY -> when (lType) {
-        is IntType -> MultiplyInt(leftInst, rightInst)
-        is LongType -> MultiplyLong(leftInst, rightInst)
-        is FloatType -> MultiplyFloat(leftInst, rightInst)
-        is DoubleType -> MultiplyDouble(leftInst, rightInst)
+        is IntType -> MultiplyInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> MultiplyLong(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is FloatType -> MultiplyFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is DoubleType -> MultiplyDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
         else -> throw IllegalStateException("$lType $op $rType")
       }
       DIVIDE -> when (lType) {
-        is IntType -> DivideInt(leftInst, rightInst)
-        is LongType -> DivideLong(leftInst, rightInst)
-        is FloatType -> DivideFloat(leftInst, rightInst)
-        is DoubleType -> DivideDouble(leftInst, rightInst)
+        is IntType -> DivideInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> DivideLong(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is FloatType -> DivideFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is DoubleType -> DivideDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
         else -> throw IllegalStateException("$lType $op $rType")
       }
       PLUS -> {
         if (lType is StringType || rType is StringType) {
           if (lType is StringType && rType is StringType) {
-            StringConcat(leftInst, rightInst)
+            StringConcat(leftInst, rightInst, ctx.stackInfo(lineCol))
           } else {
             val toStringFuncInst = Access.buildGetFieldInstruction(
               ctx,
               (if (lType is StringType) rightInst else leftInst),
               (if (lType is StringType) rType else lType),
-              "toString"
+              "toString",
+              lineCol
             )
             val callToStringFuncInst = buildToStringInstruction(ctx, (if (lType is StringType) rType else lType), toStringFuncInst)
             if (lType is StringType)
-              StringConcat(leftInst, callToStringFuncInst)
+              StringConcat(leftInst, callToStringFuncInst, ctx.stackInfo(lineCol))
             else
-              StringConcat(callToStringFuncInst, rightInst)
+              StringConcat(callToStringFuncInst, rightInst, ctx.stackInfo(lineCol))
           }
         } else
           when (lType) {
-            is IntType -> PlusInt(leftInst, rightInst)
-            is LongType -> PlusLong(leftInst, rightInst)
-            is FloatType -> PlusFloat(leftInst, rightInst)
-            is DoubleType -> PlusDouble(leftInst, rightInst)
+            is IntType -> PlusInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+            is LongType -> PlusLong(leftInst, rightInst, ctx.stackInfo(lineCol))
+            is FloatType -> PlusFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+            is DoubleType -> PlusDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
             else -> throw IllegalStateException("$lType $op $rType")
           }
       }
       MINUS -> when (lType) {
-        is IntType -> MinusInt(leftInst, rightInst)
-        is LongType -> MinusLong(leftInst, rightInst)
-        is FloatType -> MinusFloat(leftInst, rightInst)
-        is DoubleType -> MinusDouble(leftInst, rightInst)
+        is IntType -> MinusInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> MinusLong(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is FloatType -> MinusFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is DoubleType -> MinusDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
         else -> throw IllegalStateException("$lType $op $rType")
       }
       CMP_GT -> when (lType) {
-        is IntType -> CmpGTInt(leftInst, rightInst)
-        is LongType -> CmpGTLong(leftInst, rightInst)
-        is FloatType -> CmpGTFloat(leftInst, rightInst)
-        is DoubleType -> CmpGTDouble(leftInst, rightInst)
+        is IntType -> CmpGTInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> CmpGTLong(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is FloatType -> CmpGTFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is DoubleType -> CmpGTDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
         else -> throw IllegalStateException("$lType $op $rType")
       }
       CMP_GE -> when (lType) {
-        is IntType -> CmpGEInt(leftInst, rightInst)
-        is LongType -> CmpGELong(leftInst, rightInst)
-        is FloatType -> CmpGEFloat(leftInst, rightInst)
-        is DoubleType -> CmpGEDouble(leftInst, rightInst)
+        is IntType -> CmpGEInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> CmpGELong(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is FloatType -> CmpGEFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is DoubleType -> CmpGEDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
         else -> throw IllegalStateException("$lType $op $rType")
       }
       CMP_LT -> when (lType) {
-        is IntType -> CmpLTInt(leftInst, rightInst)
-        is LongType -> CmpLTLong(leftInst, rightInst)
-        is FloatType -> CmpLTFloat(leftInst, rightInst)
-        is DoubleType -> CmpLTDouble(leftInst, rightInst)
+        is IntType -> CmpLTInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> CmpLTLong(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is FloatType -> CmpLTFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is DoubleType -> CmpLTDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
         else -> throw IllegalStateException("$lType $op $rType")
       }
       CMP_LE -> when (lType) {
-        is IntType -> CmpLEInt(leftInst, rightInst)
-        is LongType -> CmpLELong(leftInst, rightInst)
-        is FloatType -> CmpLEFloat(leftInst, rightInst)
-        is DoubleType -> CmpLEDouble(leftInst, rightInst)
+        is IntType -> CmpLEInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> CmpLELong(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is FloatType -> CmpLEFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is DoubleType -> CmpLEDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
         else -> throw IllegalStateException("$lType $op $rType")
       }
       CMP_NE -> when (lType) {
-        is IntType -> CmpNEInt(leftInst, rightInst)
-        is LongType -> CmpNELong(leftInst, rightInst)
-        is FloatType -> CmpNEFloat(leftInst, rightInst)
-        is DoubleType -> CmpNEDouble(leftInst, rightInst)
-        is BoolType -> CmpNEBool(leftInst, rightInst)
-        else -> CmpNERef(leftInst, rightInst)
+        is IntType -> CmpNEInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> CmpNELong(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is FloatType -> CmpNEFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is DoubleType -> CmpNEDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is BoolType -> CmpNEBool(leftInst, rightInst, ctx.stackInfo(lineCol))
+        else -> CmpNERef(leftInst, rightInst, ctx.stackInfo(lineCol))
       }
       CMP_EQ -> when (lType) {
-        is IntType -> CmpEQInt(leftInst, rightInst)
-        is LongType -> CmpEQLong(leftInst, rightInst)
-        is FloatType -> CmpEQFloat(leftInst, rightInst)
-        is DoubleType -> CmpEQDouble(leftInst, rightInst)
-        is BoolType -> CmpEQBool(leftInst, rightInst)
-        else -> CmpEQRef(leftInst, rightInst)
+        is IntType -> CmpEQInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> CmpEQLong(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is FloatType -> CmpEQFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is DoubleType -> CmpEQDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is BoolType -> CmpEQBool(leftInst, rightInst, ctx.stackInfo(lineCol))
+        else -> CmpEQRef(leftInst, rightInst, ctx.stackInfo(lineCol))
       }
-      LOGIC_AND -> LogicAndBool(leftInst, rightInst)
-      LOGIC_OR -> LogicOrBool(leftInst, rightInst)
+      LOGIC_AND -> LogicAndBool(leftInst, rightInst, ctx.stackInfo(lineCol))
+      LOGIC_OR -> LogicOrBool(leftInst, rightInst, ctx.stackInfo(lineCol))
     }
   }
 
@@ -214,6 +215,7 @@ data class BinOp(
     } else 0
 
     return object : Instruction() {
+      override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
       override fun execute0(ctx: ActionContext, values: ValueHolder) {
         getFuncInst.execute(ctx, values)
         val func = values.refValue as Instruction

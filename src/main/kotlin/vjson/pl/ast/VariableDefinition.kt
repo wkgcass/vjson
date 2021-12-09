@@ -44,12 +44,12 @@ data class VariableDefinition(
   override fun generateInstruction(): Instruction {
     val valueInst = value.generateInstruction()
     return when (value.typeInstance()) {
-      is IntType -> SetInt(ctx!!.getMemoryDepth(), variableIndex, valueInst)
-      is LongType -> SetLong(ctx!!.getMemoryDepth(), variableIndex, valueInst)
-      is FloatType -> SetFloat(ctx!!.getMemoryDepth(), variableIndex, valueInst)
-      is DoubleType -> SetDouble(ctx!!.getMemoryDepth(), variableIndex, valueInst)
-      is BoolType -> SetBool(ctx!!.getMemoryDepth(), variableIndex, valueInst)
-      else -> SetRef(ctx!!.getMemoryDepth(), variableIndex, valueInst)
+      is IntType -> SetInt(ctx!!.getMemoryDepth(), variableIndex, valueInst, ctx!!.stackInfo(lineCol))
+      is LongType -> SetLong(ctx!!.getMemoryDepth(), variableIndex, valueInst, ctx!!.stackInfo(lineCol))
+      is FloatType -> SetFloat(ctx!!.getMemoryDepth(), variableIndex, valueInst, ctx!!.stackInfo(lineCol))
+      is DoubleType -> SetDouble(ctx!!.getMemoryDepth(), variableIndex, valueInst, ctx!!.stackInfo(lineCol))
+      is BoolType -> SetBool(ctx!!.getMemoryDepth(), variableIndex, valueInst, ctx!!.stackInfo(lineCol))
+      else -> SetRef(ctx!!.getMemoryDepth(), variableIndex, valueInst, ctx!!.stackInfo(lineCol))
     }
   }
 

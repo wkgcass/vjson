@@ -12,6 +12,7 @@
 
 package vjson.pl.ast
 
+import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.inst.*
 import vjson.pl.type.*
@@ -58,21 +59,21 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
     return if (from == null) {
       val variable = ctx.getVariable(name)
       when (typeInstance()) {
-        is IntType -> GetInt(variable.memPos.depth, variable.memPos.index)
-        is LongType -> GetLong(variable.memPos.depth, variable.memPos.index)
-        is FloatType -> GetFloat(variable.memPos.depth, variable.memPos.index)
-        is DoubleType -> GetDouble(variable.memPos.depth, variable.memPos.index)
-        is BoolType -> GetBool(variable.memPos.depth, variable.memPos.index)
+        is IntType -> GetInt(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
+        is LongType -> GetLong(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
+        is FloatType -> GetFloat(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
+        is DoubleType -> GetDouble(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
+        is BoolType -> GetBool(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
         else -> {
-          val inst = GetRef(variable.memPos.depth, variable.memPos.index)
+          val inst = GetRef(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
           if (variable.type.functionDescriptor(ctx) != null) {
-            return FunctionInstance(null, variable.memPos.depth, inst)
+            return FunctionInstance(null, variable.memPos.depth, inst, ctx.stackInfo(lineCol))
           }
           inst
         }
       }
     } else {
-      buildGetFieldInstruction(ctx, from.generateInstruction(), from.typeInstance(), name)
+      buildGetFieldInstruction(ctx, from.generateInstruction(), from.typeInstance(), name, lineCol)
     }
   }
 
@@ -80,25 +81,26 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
     return if (from == null) {
       val variable = ctx.getVariable(name)
       when (typeInstance()) {
-        is IntType -> SetInt(variable.memPos.depth, variable.memPos.index, valueInst)
-        is LongType -> SetLong(variable.memPos.depth, variable.memPos.index, valueInst)
-        is FloatType -> SetFloat(variable.memPos.depth, variable.memPos.index, valueInst)
-        is DoubleType -> SetDouble(variable.memPos.depth, variable.memPos.index, valueInst)
-        is BoolType -> SetBool(variable.memPos.depth, variable.memPos.index, valueInst)
-        else -> SetRef(variable.memPos.depth, variable.memPos.index, valueInst)
+        is IntType -> SetInt(variable.memPos.depth, variable.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        is LongType -> SetLong(variable.memPos.depth, variable.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        is FloatType -> SetFloat(variable.memPos.depth, variable.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        is DoubleType -> SetDouble(variable.memPos.depth, variable.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        is BoolType -> SetBool(variable.memPos.depth, variable.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        else -> SetRef(variable.memPos.depth, variable.memPos.index, valueInst, ctx.stackInfo(lineCol))
       }
     } else {
       val fromInst = from.generateInstruction()
       val field = from.typeInstance().field(ctx, name, ctx.getContextType())
       val setField = when (field!!.type) {
-        is IntType -> SetFieldInt(field.memPos.index, valueInst)
-        is LongType -> SetFieldLong(field.memPos.index, valueInst)
-        is FloatType -> SetFieldFloat(field.memPos.index, valueInst)
-        is DoubleType -> SetFieldDouble(field.memPos.index, valueInst)
-        is BoolType -> SetFieldBool(field.memPos.index, valueInst)
-        else -> SetFieldRef(field.memPos.index, valueInst)
+        is IntType -> SetFieldInt(field.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        is LongType -> SetFieldLong(field.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        is FloatType -> SetFieldFloat(field.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        is DoubleType -> SetFieldDouble(field.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        is BoolType -> SetFieldBool(field.memPos.index, valueInst, ctx.stackInfo(lineCol))
+        else -> SetFieldRef(field.memPos.index, valueInst, ctx.stackInfo(lineCol))
       }
       object : Instruction() {
+        override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
         override fun execute0(ctx: ActionContext, values: ValueHolder) {
           fromInst.execute(ctx, values)
           val objCtx = values.refValue as ActionContext
@@ -117,22 +119,22 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
   }
 
   companion object {
-    fun buildGetFieldInstruction(ctx: TypeContext, from: Instruction, fromType: TypeInstance, name: String): Instruction {
+    fun buildGetFieldInstruction(ctx: TypeContext, from: Instruction, fromType: TypeInstance, name: String, lineCol: LineCol): Instruction {
       val field = fromType.field(ctx, name, ctx.getContextType())
       val getFieldInst = if (field is ExecutableField) {
-        ExecutableFieldInstruction(field)
+        ExecutableFieldInstruction(field, ctx.stackInfo(lineCol))
       } else if (fromType is BuiltInTypeInstance) {
         BuiltInTypes.getField(fromType, name)
       } else when (field!!.type) {
-        is IntType -> GetFieldInt(field.memPos.index)
-        is LongType -> GetFieldLong(field.memPos.index)
-        is FloatType -> GetFieldFloat(field.memPos.index)
-        is DoubleType -> GetFieldDouble(field.memPos.index)
-        is BoolType -> GetFieldBool(field.memPos.index)
+        is IntType -> GetFieldInt(field.memPos.index, ctx.stackInfo(lineCol))
+        is LongType -> GetFieldLong(field.memPos.index, ctx.stackInfo(lineCol))
+        is FloatType -> GetFieldFloat(field.memPos.index, ctx.stackInfo(lineCol))
+        is DoubleType -> GetFieldDouble(field.memPos.index, ctx.stackInfo(lineCol))
+        is BoolType -> GetFieldBool(field.memPos.index, ctx.stackInfo(lineCol))
         else -> {
-          val inst = GetFieldRef(field.memPos.index)
+          val inst = GetFieldRef(field.memPos.index, ctx.stackInfo(lineCol))
           if (field.type.functionDescriptor(ctx) != null) {
-            return FunctionInstance(from, field.memPos.depth, inst)
+            return FunctionInstance(from, field.memPos.depth, inst, ctx.stackInfo(lineCol))
           }
           inst
         }

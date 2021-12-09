@@ -15,6 +15,7 @@ package vjson.pl.ast
 import vjson.ex.ParserException
 import vjson.pl.inst.ActionContext
 import vjson.pl.inst.Instruction
+import vjson.pl.inst.StackInfo
 import vjson.pl.inst.ValueHolder
 import vjson.pl.type.*
 
@@ -60,6 +61,7 @@ data class NewInstance(
     val code = cls.code.map { it.generateInstruction() }
 
     return object : Instruction() {
+      override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
       override fun execute0(ctx: ActionContext, values: ValueHolder) {
         val newCtx = ActionContext(total, ctx.getContext(memDepth))
         for (i in args.indices) {

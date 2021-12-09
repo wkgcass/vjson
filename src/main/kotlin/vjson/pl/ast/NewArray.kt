@@ -39,12 +39,12 @@ data class NewArray(
 
   override fun generateInstruction(): Instruction {
     return when (type.typeInstance().elementType(ctx)) {
-      is IntType -> NewArrayInt(len.generateInstruction())
-      is LongType -> NewArrayLong(len.generateInstruction())
-      is FloatType -> NewArrayFloat(len.generateInstruction())
-      is DoubleType -> NewArrayDouble(len.generateInstruction())
-      is BoolType -> NewArrayBool(len.generateInstruction())
-      else -> NewArrayRef(len.generateInstruction())
+      is IntType -> NewArrayInt(len.generateInstruction(), ctx.stackInfo(lineCol))
+      is LongType -> NewArrayLong(len.generateInstruction(), ctx.stackInfo(lineCol))
+      is FloatType -> NewArrayFloat(len.generateInstruction(), ctx.stackInfo(lineCol))
+      is DoubleType -> NewArrayDouble(len.generateInstruction(), ctx.stackInfo(lineCol))
+      is BoolType -> NewArrayBool(len.generateInstruction(), ctx.stackInfo(lineCol))
+      else -> NewArrayRef(len.generateInstruction(), ctx.stackInfo(lineCol))
     }
   }
 

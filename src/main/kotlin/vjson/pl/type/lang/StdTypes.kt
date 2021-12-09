@@ -24,7 +24,7 @@ class StdTypes : Types {
 
   init {
     stdObject.getCurrentMem().setRef(0, consoleObject)
-    consoleObject.getCurrentMem().setRef(0, object : Instruction() {
+    consoleObject.getCurrentMem().setRef(0, object : PrebuiltStackInfoInstruction("std.Console", "log") {
       override fun execute0(ctx: ActionContext, values: ValueHolder) {
         val outputFunc = this@StdTypes.outputFunc
         val str = ctx.getCurrentMem().getRef(0)

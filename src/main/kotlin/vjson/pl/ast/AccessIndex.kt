@@ -41,23 +41,23 @@ data class AccessIndex(val from: Expr, val index: Expr) : AssignableExpr() {
 
   override fun generateInstruction(): Instruction {
     return when (typeInstance()) {
-      is IntType -> GetIndexInt(from.generateInstruction(), index.generateInstruction())
-      is LongType -> GetIndexLong(from.generateInstruction(), index.generateInstruction())
-      is FloatType -> GetIndexFloat(from.generateInstruction(), index.generateInstruction())
-      is DoubleType -> GetIndexDouble(from.generateInstruction(), index.generateInstruction())
-      is BoolType -> GetIndexBool(from.generateInstruction(), index.generateInstruction())
-      else -> GetIndexRef(from.generateInstruction(), index.generateInstruction())
+      is IntType -> GetIndexInt(from.generateInstruction(), index.generateInstruction(), ctx.stackInfo(lineCol))
+      is LongType -> GetIndexLong(from.generateInstruction(), index.generateInstruction(), ctx.stackInfo(lineCol))
+      is FloatType -> GetIndexFloat(from.generateInstruction(), index.generateInstruction(), ctx.stackInfo(lineCol))
+      is DoubleType -> GetIndexDouble(from.generateInstruction(), index.generateInstruction(), ctx.stackInfo(lineCol))
+      is BoolType -> GetIndexBool(from.generateInstruction(), index.generateInstruction(), ctx.stackInfo(lineCol))
+      else -> GetIndexRef(from.generateInstruction(), index.generateInstruction(), ctx.stackInfo(lineCol))
     }
   }
 
   override fun generateSetInstruction(valueInst: Instruction): Instruction {
     return when (typeInstance()) {
-      is IntType -> SetIndexInt(from.generateInstruction(), index.generateInstruction(), valueInst)
-      is LongType -> SetIndexLong(from.generateInstruction(), index.generateInstruction(), valueInst)
-      is FloatType -> SetIndexFloat(from.generateInstruction(), index.generateInstruction(), valueInst)
-      is DoubleType -> SetIndexDouble(from.generateInstruction(), index.generateInstruction(), valueInst)
-      is BoolType -> SetIndexBool(from.generateInstruction(), index.generateInstruction(), valueInst)
-      else -> SetIndexRef(from.generateInstruction(), index.generateInstruction(), valueInst)
+      is IntType -> SetIndexInt(from.generateInstruction(), index.generateInstruction(), valueInst, ctx.stackInfo(lineCol))
+      is LongType -> SetIndexLong(from.generateInstruction(), index.generateInstruction(), valueInst, ctx.stackInfo(lineCol))
+      is FloatType -> SetIndexFloat(from.generateInstruction(), index.generateInstruction(), valueInst, ctx.stackInfo(lineCol))
+      is DoubleType -> SetIndexDouble(from.generateInstruction(), index.generateInstruction(), valueInst, ctx.stackInfo(lineCol))
+      is BoolType -> SetIndexBool(from.generateInstruction(), index.generateInstruction(), valueInst, ctx.stackInfo(lineCol))
+      else -> SetIndexRef(from.generateInstruction(), index.generateInstruction(), valueInst, ctx.stackInfo(lineCol))
     }
   }
 

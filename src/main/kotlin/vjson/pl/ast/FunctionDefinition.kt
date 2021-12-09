@@ -13,10 +13,7 @@
 package vjson.pl.ast
 
 import vjson.ex.ParserException
-import vjson.pl.inst.ActionContext
-import vjson.pl.inst.CompositeInstruction
-import vjson.pl.inst.Instruction
-import vjson.pl.inst.ValueHolder
+import vjson.pl.inst.*
 import vjson.pl.type.*
 
 data class FunctionDefinition(
@@ -71,6 +68,7 @@ data class FunctionDefinition(
 
     val composite = CompositeInstruction(ins)
     return object : Instruction() {
+      override val stackInfo: StackInfo = ctx!!.stackInfo(lineCol)
       override fun execute0(ctx: ActionContext, values: ValueHolder) {
         ctx.getMem(memDepth).setRef(variableIndex, composite)
       }

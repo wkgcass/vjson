@@ -13,10 +13,7 @@
 package vjson.pl.ast
 
 import vjson.ex.ParserException
-import vjson.pl.inst.ActionContext
-import vjson.pl.inst.FunctionInstance
-import vjson.pl.inst.Instruction
-import vjson.pl.inst.ValueHolder
+import vjson.pl.inst.*
 import vjson.pl.type.*
 
 data class FunctionInvocation(
@@ -64,6 +61,7 @@ data class FunctionInvocation(
       val funcDesc = func.target.typeInstance().functionDescriptor(ctx)!!
       val funcInst = func.target.generateInstruction()
       return object : Instruction() {
+        override val stackInfo: StackInfo = ctx.stackInfo(func.lineCol)
         override fun execute0(ctx: ActionContext, values: ValueHolder) {
           if (funcInst is FunctionInstance) {
             funcInst.ctxBuilder = { buildContext(ctx, it, values, funcDesc, args) }

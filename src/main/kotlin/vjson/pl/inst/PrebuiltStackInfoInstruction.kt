@@ -12,28 +12,8 @@
 
 package vjson.pl.inst
 
-abstract class Instruction {
-  abstract val stackInfo: StackInfo
+import vjson.cs.LineCol
 
-  fun execute(ctx: ActionContext, values: ValueHolder) {
-    if (ctx.returnImmediately) {
-      return
-    }
-    try {
-      execute0(ctx, values)
-    } catch (e: InstructionException) {
-      e.stackTrace.add(stackInfo)
-      throw e
-    } catch (e: Throwable) {
-      val msg = e.message
-      val ex = if (msg == null) {
-        InstructionException(stackInfo, e)
-      } else {
-        InstructionException(msg, stackInfo, e)
-      }
-      throw ex
-    }
-  }
-
-  protected abstract fun execute0(ctx: ActionContext, values: ValueHolder)
+abstract class PrebuiltStackInfoInstruction(cls: String, func: String) : Instruction() {
+  override val stackInfo: StackInfo = StackInfo(cls, func, LineCol.EMPTY)
 }

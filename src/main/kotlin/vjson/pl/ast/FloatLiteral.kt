@@ -31,7 +31,7 @@ data class FloatLiteral(val n: JSON.Double) : Expr() {
   }
 
   override fun generateInstruction(): Instruction {
-    return LiteralDouble(n.doubleValue())
+    return LiteralDouble(n.doubleValue(), ctx.stackInfo(lineCol))
   }
 
   override fun toString(): String {

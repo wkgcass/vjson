@@ -34,7 +34,7 @@ data class LogicNot(val expr: Expr) : Expr() {
   }
 
   override fun generateInstruction(): Instruction {
-    return LogicNotInstruction(expr.generateInstruction())
+    return LogicNotInstruction(expr.generateInstruction(), ctx.stackInfo(lineCol))
   }
 
   override fun toString(): String {
