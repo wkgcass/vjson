@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>vjson-lang js interpreter</title>
+    <title>vjson-lang interpreter</title>
     <style>
         #editor {
             position: absolute;
@@ -98,6 +98,9 @@
     online_vjson_lang_interpreter.registerOutput(function (line) {
         var newLines = aceConsole.getSession().getValue() + line + '\n';
         aceConsole.getSession().setValue(newLines);
+    });
+    online_vjson_lang_interpreter.registerCursorJump(function (line, col) {
+        editor.gotoLine(line, col, true);
     });
 
     document.getElementById("run-btn").addEventListener("click", function () {

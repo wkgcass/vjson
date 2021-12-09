@@ -1,3 +1,4 @@
+import vjson.ex.ParserException
 import vjson.pl.InterpreterBuilder
 import vjson.pl.type.lang.StdTypes
 
@@ -5,10 +6,19 @@ var outputFunc: (String) -> Unit = {
   println(it)
 }
 
+var cursorJumpFunc: (Int, Int) -> Unit = { _, _ ->
+}
+
 @ExperimentalJsExport
 @JsExport
 fun registerOutput(func: (String) -> Unit) {
   outputFunc = func
+}
+
+@ExperimentalJsExport
+@JsExport
+fun registerCursorJump(func: (Int, Int) -> Unit) {
+  cursorJumpFunc = func
 }
 
 @ExperimentalJsExport
@@ -22,8 +32,12 @@ fun run(prog: String) {
     builder.compile(prog)
   } catch (e: Throwable) {
     outputFunc("Compilation failed")
-    if (e.message != null) {
-      outputFunc(e.message!!)
+    outputFunc(e.toString())
+    if (e is ParserException) {
+      val lineCol = e.lineCol
+      if (lineCol != null) {
+        cursorJumpFunc(lineCol.line, lineCol.col)
+      }
     }
     return
   }
@@ -31,8 +45,6 @@ fun run(prog: String) {
     interpreter.execute()
   } catch (e: Throwable) {
     outputFunc("Runtime failure")
-    if (e.message != null) {
-      outputFunc(e.message!!)
-    }
+    outputFunc(e.toString())
   }
 }
