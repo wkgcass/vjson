@@ -14,6 +14,7 @@ package vjson.parser
 import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
+import vjson.cs.LineCol
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleNull
@@ -46,6 +47,8 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
   var currentKey: String? = null
     private set
   private var valueParser: Parser<*>? = null
+  private var objectLineCol = LineCol.EMPTY
+  private var objectEntryLineCol = LineCol.EMPTY
 
   init {
     reset()
@@ -73,6 +76,8 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     _keyParser = null
     currentKey = null
     valueParser = null
+    objectLineCol = LineCol.EMPTY
+    objectEntryLineCol = LineCol.EMPTY
   }
 
   // only used for test cases
@@ -84,6 +89,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     try {
       if (_keyParser == null) {
         if (tryGetNewParser) {
+          objectEntryLineCol = LineCol(cs.lineCol(), innerOffsetIncrease = 1)
           _keyParser = getKeyParser()
         } else {
           return
@@ -132,7 +138,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           val key = currentKey!!
           valueParser = null
           currentKey = null
-          map!!.add(SimpleObjectEntry(key, inst))
+          map!!.add(SimpleObjectEntry(key, inst, objectEntryLineCol))
           opts.listener.onObjectValue(this, key, inst)
         }
         // otherwise exception would be thrown or cs.hasNext() would return false
@@ -152,6 +158,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     if (state == 0) {
       cs.skipBlank()
       if (cs.hasNext()) {
+        objectLineCol = cs.lineCol()
         opts.listener.onObjectBegin(this)
         c = cs.moveNextAndGet()
         if (c == '{') {
@@ -172,6 +179,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         } else if (peek == '"' || peek == '\'' || peek == '(') {
           handleKeyParser(true, cs, isComplete)
         } else if (opts.isKeyNoQuotes) {
+          objectEntryLineCol = cs.lineCol()
           state = 8
         } else {
           err = "invalid character for json object key: $peek"
@@ -185,7 +193,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         if (cs.hasNext()) {
           c = cs.peekNext()
           if (!isColon(c) && opts.isAllowObjectEntryWithoutValue) {
-            fillEntryWithoutValue()
+            fillEntryWithoutValue(cs)
             state = 4
           } else if (!isColon(c)) {
             err = "invalid key-value separator for json object, expecting `:`, but got $c"
@@ -227,6 +235,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           if (peek == '\"' || peek == '\'' || peek == '(') {
             handleKeyParser(true, cs, isComplete)
           } else if (opts.isKeyNoQuotes) {
+            objectEntryLineCol = cs.lineCol()
             state = 8
           } else {
             err = "invalid character for json object key: $peek"
@@ -302,7 +311,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     return c == ':' || (opts.isEqualAsColon && c == '=')
   }
 
-  private fun fillEntryWithoutValue() {
+  private fun fillEntryWithoutValue(cs: CharStream) {
     if (opts.mode == ParserMode.JAVA_OBJECT) {
       val key: String = currentKey!!
       currentKey = null
@@ -313,8 +322,8 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     } else {
       val key = currentKey!!
       currentKey = null
-      val value = SimpleNull()
-      map!!.add(SimpleObjectEntry(key, value))
+      val value = SimpleNull(cs.lineCol())
+      map!!.add(SimpleObjectEntry(key, value, objectEntryLineCol))
       opts.listener.onObjectValue(this, key, value)
     }
   }
@@ -325,7 +334,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
       opts.listener.onObjectEnd(this)
       val map: MutableList<SimpleObjectEntry<JSON.Instance<*>>> =
         if (this.map == null) ArrayList(0) else this.map!!
-      val ret: SimpleObject = object : SimpleObject(map, TrustedFlag.FLAG) {}
+      val ret: SimpleObject = object : SimpleObject(map, TrustedFlag.FLAG, objectLineCol) {}
       opts.listener.onObject(ret)
 
       ParserUtils.checkEnd(cs, opts, "object")

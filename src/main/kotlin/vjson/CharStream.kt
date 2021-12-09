@@ -12,6 +12,7 @@
 package vjson
 
 import vjson.cs.CharArrayCharStream
+import vjson.cs.LineCol
 import vjson.parser.ParserUtils.isWhiteSpace
 
 interface CharStream : MutableIterator<Char>, Iterable<Char> {
@@ -134,5 +135,9 @@ interface CharStream : MutableIterator<Char>, Iterable<Char> {
         }
       }
     }
+  }
+
+  fun lineCol(): LineCol {
+    return LineCol.EMPTY
   }
 }

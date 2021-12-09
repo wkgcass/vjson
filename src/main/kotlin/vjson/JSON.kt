@@ -81,14 +81,14 @@ object JSON {
     @Suppress("DEPRECATION")
     @JvmDefault/*}}*/
     fun lineCol(): LineCol {
-      return LineCol("", 0, 0)
+      return LineCol.EMPTY
     }
   }
 
   data class ObjectEntry /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
     val key: kotlin.String,
     val value: Instance<*>,
-    val lineCol: LineCol = LineCol("", 0, 0),
+    val lineCol: LineCol = LineCol.EMPTY,
   ) {
     override fun toString(): kotlin.String {
       return "($key: $value)"

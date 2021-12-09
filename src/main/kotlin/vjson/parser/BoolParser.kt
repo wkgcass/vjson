@@ -14,6 +14,7 @@ package vjson.parser
 import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
+import vjson.cs.LineCol
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleBool
@@ -26,9 +27,11 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   // 0->[t|f],1->t[r]ue,2->tr[u]e,3->tru[e],4->f[a]lse,5->fa[l]se,6->fal[s]e,7->fals[e],8->finish,9->already_returned
   private var state = 0
   private var result = false
+  private var boolLineCol = LineCol.EMPTY
 
   override fun reset() {
     state = 0
+    boolLineCol = LineCol.EMPTY
   }
 
   private fun tryParse(cs: CharStream, isComplete: Boolean): Boolean {
@@ -37,6 +40,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
     if (state == 0) {
       cs.skipBlank()
       if (cs.hasNext()) {
+        boolLineCol = cs.lineCol()
         opts.listener.onBoolBegin(this)
         c = cs.moveNextAndGet()
         if (c == 't') {
@@ -142,7 +146,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   override fun build(cs: CharStream, isComplete: Boolean): JSON.Bool? {
     if (tryParse(cs, isComplete)) {
       opts.listener.onBoolEnd(this)
-      val ret = SimpleBool(result)
+      val ret = SimpleBool(result, boolLineCol)
       opts.listener.onBool(ret)
 
       ParserUtils.checkEnd(cs, opts, "`true|false`")

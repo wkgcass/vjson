@@ -40,23 +40,35 @@ data class BinOp(
               variableToStringCheck = right
             }
             val toStringField = typeToStringCheck.field(ctx, "toString", ctx.getContextType())
-              ?: throw ParserException("$this: cannot concat string, $variableToStringCheck ($typeToStringCheck) does not have `toString` field")
+              ?: throw ParserException(
+                "$this: cannot concat string, $variableToStringCheck ($typeToStringCheck) does not have `toString` field",
+                lineCol
+              )
             val toStringFunc = toStringField.type.functionDescriptor(ctx)
-              ?: throw ParserException("$this: cannot concat string, $variableToStringCheck ($typeToStringCheck) `toString` field is not a function")
+              ?: throw ParserException(
+                "$this: cannot concat string, $variableToStringCheck ($typeToStringCheck) `toString` field is not a function",
+                lineCol
+              )
             if (toStringFunc.params.isNotEmpty())
-              throw ParserException("$this: cannot concat string, $variableToStringCheck ($typeToStringCheck) `toString` function parameters list is not empty")
+              throw ParserException(
+                "$this: cannot concat string, $variableToStringCheck ($typeToStringCheck) `toString` function parameters list is not empty",
+                lineCol
+              )
             if (toStringFunc.returnType !is StringType) {
-              throw ParserException("$this: cannot concat string, $variableToStringCheck ($typeToStringCheck) `toString` function return type (${toStringField.type}) is not $StringType")
+              throw ParserException(
+                "$this: cannot concat string, $variableToStringCheck ($typeToStringCheck) `toString` function return type (${toStringField.type}) is not $StringType",
+                lineCol
+              )
             }
           }
           StringType
         } else {
           if (leftType != rightType) {
-            throw ParserException("$this: cannot calculate $leftType $op $rightType, type mismatch")
+            throw ParserException("$this: cannot calculate $leftType $op $rightType, type mismatch", lineCol)
           }
 
           if (leftType != IntType && leftType != LongType && leftType != DoubleType) {
-            throw ParserException("$this: cannot calculate $leftType $op $rightType, not numeric values")
+            throw ParserException("$this: cannot calculate $leftType $op $rightType, not numeric values", lineCol)
           }
           when (op) {
             PLUS, MINUS, MULTIPLY, DIVIDE -> leftType
@@ -66,16 +78,16 @@ data class BinOp(
       }
       LOGIC_AND, LOGIC_OR -> {
         if (leftType != BoolType) {
-          throw ParserException("$this: cannot calculate $leftType $op $rightType, not boolean values")
+          throw ParserException("$this: cannot calculate $leftType $op $rightType, not boolean values", lineCol)
         }
         if (rightType != BoolType) {
-          throw ParserException("$this: cannot calculate $leftType $op $rightType, not boolean values")
+          throw ParserException("$this: cannot calculate $leftType $op $rightType, not boolean values", lineCol)
         }
         BoolType
       }
       CMP_NE, CMP_EQ -> {
         if (leftType != rightType) {
-          throw ParserException("$this: cannot calculate $leftType $op $rightType, type mismatch")
+          throw ParserException("$this: cannot calculate $leftType $op $rightType, type mismatch", lineCol)
         }
         BoolType
       }

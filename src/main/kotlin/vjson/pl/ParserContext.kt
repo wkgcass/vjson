@@ -12,6 +12,7 @@
 
 package vjson.pl
 
+import vjson.cs.LineCol
 import vjson.pl.ast.BinOp
 import vjson.pl.ast.BinOpType
 import vjson.pl.ast.Expr
@@ -20,7 +21,7 @@ import vjson.util.collection.Stack
 
 class ParserContext(val parent: ParserContext?, val beginToken: TokenType?) {
   val exprStack = Stack<Expr>()
-  val opStack = Stack<BinOpType>()
+  val opStack = Stack<OpInfo>()
   val unaryOpStack = Stack<Any>()
   var ends = false
 
@@ -30,13 +31,17 @@ class ParserContext(val parent: ParserContext?, val beginToken: TokenType?) {
     }
     while (!opStack.isEmpty()) {
       val op = opStack.peek()
-      if (op.precedence < precedence) {
+      if (op.type.precedence < precedence) {
         break
       }
       opStack.pop()
       val right = exprStack.pop()
       val left = exprStack.pop()
-      exprStack.push(BinOp(op, left, right))
+      val binOp = BinOp(op.type, left, right)
+      binOp.lineCol = op.lineCol
+      exprStack.push(binOp)
     }
   }
+
+  data class OpInfo(val type: BinOpType, val lineCol: LineCol)
 }

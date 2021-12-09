@@ -14,6 +14,7 @@ package vjson.simple
 import vjson.JSON
 import vjson.JSON.String.Companion.stringify
 import vjson.Stringifier
+import vjson.cs.LineCol
 import vjson.parser.TrustedFlag
 
 open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, JSON.Object {
@@ -37,7 +38,10 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
     return fastMultiMap!!
   }
 
-  constructor(initMap: Map<String, JSON.Instance<*>>) {
+  private val lineCol: LineCol
+
+  /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
+  constructor(initMap: Map<String, JSON.Instance<*>>, lineCol: LineCol = LineCol.EMPTY) {
     for ((key, value) in initMap) {
       requireNotNull(key) { "key should not be null" }
       requireNotNull(value) { "value should not be null" }
@@ -46,9 +50,11 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
     for ((key, value) in initMap) {
       map.add(SimpleObjectEntry(key, value))
     }
+    this.lineCol = lineCol
   }
 
-  constructor(initMap: List<SimpleObjectEntry<JSON.Instance<*>>>) {
+  /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
+  constructor(initMap: List<SimpleObjectEntry<JSON.Instance<*>>>, lineCol: LineCol = LineCol.EMPTY) {
     for (entry in initMap) {
       requireNotNull(entry) { "entry should not be null" }
       // requireNotNull(entry.key) { "key should not be null" }
@@ -56,13 +62,15 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
       requireNotNull(entry.value) { "value should not be null" }
     }
     map = ArrayList(initMap)
+    this.lineCol = lineCol
   }
 
-  protected constructor(initMap: MutableList<SimpleObjectEntry<JSON.Instance<*>>>, flag: TrustedFlag?) {
+  protected constructor(initMap: MutableList<SimpleObjectEntry<JSON.Instance<*>>>, flag: TrustedFlag?, lineCol: LineCol) {
     if (flag == null) {
       throw UnsupportedOperationException()
     }
     map = initMap
+    this.lineCol = lineCol
   }
 
   protected constructor(initMap: MutableList<SimpleObjectEntry<JSON.Instance<*>>>, flag: vjson.util.TrustedFlag?) {
@@ -70,6 +78,7 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
       throw UnsupportedOperationException()
     }
     map = initMap
+    this.lineCol = LineCol.EMPTY
   }
 
   override fun toJavaObject(): LinkedHashMap<String, Any?> {
@@ -155,7 +164,7 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
     if (entryList == null) {
       val list: MutableList<JSON.ObjectEntry> = ArrayList(map.size)
       for (entry in map) {
-        list.add(JSON.ObjectEntry(entry.key, entry.value))
+        list.add(JSON.ObjectEntry(entry.key, entry.value, entry.lineCol))
       }
       entryList = list
     }
@@ -206,6 +215,10 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
     val immutableRet: List<JSON.Instance<*>> = ret
     fastMap[key] = immutableRet
     return immutableRet
+  }
+
+  override fun lineCol(): LineCol {
+    return lineCol
   }
 
   override fun equals(other: Any?): Boolean {

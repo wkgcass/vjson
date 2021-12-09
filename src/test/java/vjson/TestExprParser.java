@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestExprParser {
     private Expr parse(String str) {
-        ExprParser parser = new ExprParser(new ExprTokenizer(str, new LineCol("", 0, 0)));
+        ExprParser parser = new ExprParser(new ExprTokenizer(str, LineCol.Companion.getEMPTY()));
         return parser.parse();
     }
 

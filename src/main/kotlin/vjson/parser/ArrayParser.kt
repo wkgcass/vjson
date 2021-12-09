@@ -14,6 +14,7 @@ package vjson.parser
 import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
+import vjson.cs.LineCol
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleArray
@@ -29,6 +30,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   var javaList: MutableList<Any?>? = null
     private set
   private var subParser: Parser<*>? = null
+  private var arrayLineCol = LineCol.EMPTY
 
   init {
     reset()
@@ -46,6 +48,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
       list = ArrayList()
     }
     subParser = null
+    arrayLineCol = LineCol.EMPTY
   }
 
   private fun handleSubParser(tryGetNewSubParser: Boolean, cs: CharStream, isComplete: Boolean) {
@@ -91,6 +94,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
     if (state == 0) {
       cs.skipBlank()
       if (cs.hasNext()) {
+        arrayLineCol = cs.lineCol()
         opts.listener.onArrayBegin(this)
         c = cs.moveNextAndGet()
         if (c != '[') {
@@ -167,7 +171,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
       opts.listener.onArrayEnd(this)
       val list: List<JSON.Instance<*>> =
         if (this.list == null) emptyList() else cast(this.list)
-      val ret: SimpleArray = object : SimpleArray(list, TrustedFlag.FLAG) {}
+      val ret: SimpleArray = object : SimpleArray(list, TrustedFlag.FLAG, arrayLineCol) {}
       opts.listener.onArray(ret)
 
       ParserUtils.checkEnd(cs, opts, "array")

@@ -15,8 +15,16 @@ package vjson.ex
 import vjson.cs.LineCol
 
 open class ParserException : RuntimeException {
+  var lineCol: LineCol? = null
+    private set
+
   constructor(msg: String) : super(msg)
   constructor(msg: String, cause: Throwable) : super(msg, cause)
-  constructor(msg: String, lineCol: LineCol) : super("$msg at $lineCol")
-  constructor(msg: String, cause: Throwable, lineCol: LineCol) : super("$msg at $lineCol", cause)
+  constructor(msg: String, lineCol: LineCol) : super("$msg at $lineCol") {
+    this.lineCol = lineCol
+  }
+
+  constructor(msg: String, cause: Throwable, lineCol: LineCol) : super("$msg at $lineCol", cause) {
+    this.lineCol = lineCol
+  }
 }

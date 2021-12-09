@@ -24,7 +24,7 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
     this.ctx = ctx
     if (from == null) {
       if (!ctx.hasVariable(name)) {
-        throw ParserException("$this: variable $name is not defined")
+        throw ParserException("$this: variable $name is not defined", lineCol)
       }
       return ctx.getVariable(name).type // ok
     }
@@ -33,7 +33,7 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
     if (fieldType != null) {
       return fieldType.type // ok
     }
-    throw ParserException("$this: $fromType doesn't have field `$name`")
+    throw ParserException("$this: $fromType doesn't have field `$name`", lineCol)
   }
 
   override fun typeInstance(): TypeInstance {

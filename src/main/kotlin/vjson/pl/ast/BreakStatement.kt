@@ -25,9 +25,9 @@ data class BreakStatement(val flag: String? = null) : Statement() {
     }
     if (ctxAST == null || ctxAST !is LoopStatement) {
       if (flag == null) {
-        throw ParserException("`break` is not in a loop, current context is $ctxAST")
+        throw ParserException("`break` is not in a loop, current context is $ctxAST", lineCol)
       } else {
-        throw ParserException("unable to find loop $flag for `break`")
+        throw ParserException("unable to find loop $flag for `break`", lineCol)
       }
     }
     ctxAST.isInfiniteLoop = false

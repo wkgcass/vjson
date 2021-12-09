@@ -13,24 +13,31 @@ package vjson.simple
 
 import vjson.JSON
 import vjson.Stringifier
+import vjson.cs.LineCol
 import vjson.parser.TrustedFlag
 
 open class SimpleArray : AbstractSimpleInstance<List<*>>, JSON.Array {
   private val list: List<JSON.Instance<*>>
+  private val lineCol: LineCol
 
   constructor(vararg list: JSON.Instance<*>) : this(listOf(*list))
-  constructor(list: List<JSON.Instance<*>>) {
+  constructor(lineCol: LineCol, vararg list: JSON.Instance<*>) : this(listOf(*list), lineCol)
+
+  /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
+  constructor(list: List<JSON.Instance<*>>, lineCol: LineCol = LineCol.EMPTY) {
     for (inst in list) {
       requireNotNull(inst) { "element should not be null" }
     }
     this.list = ArrayList(list)
+    this.lineCol = lineCol
   }
 
-  protected constructor(list: List<JSON.Instance<*>>, flag: TrustedFlag?) {
+  protected constructor(list: List<JSON.Instance<*>>, flag: TrustedFlag?, lineCol: LineCol) {
     if (flag == null) {
       throw UnsupportedOperationException()
     }
     this.list = list
+    this.lineCol = lineCol
   }
 
   protected constructor(list: List<JSON.Instance<*>>, flag: vjson.util.TrustedFlag?) {
@@ -38,6 +45,7 @@ open class SimpleArray : AbstractSimpleInstance<List<*>>, JSON.Array {
       throw UnsupportedOperationException()
     }
     this.list = list
+    this.lineCol = LineCol.EMPTY
   }
 
   override fun toJavaObject(): List<Any?> {
@@ -96,6 +104,10 @@ open class SimpleArray : AbstractSimpleInstance<List<*>>, JSON.Array {
   /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IndexOutOfBoundsException::class) // }}
   override fun get(idx: Int): JSON.Instance<*> {
     return list[idx]
+  }
+
+  override fun lineCol(): LineCol {
+    return lineCol
   }
 
   override fun equals(other: Any?): Boolean {

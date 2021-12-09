@@ -13,9 +13,11 @@ package vjson.simple
 
 import vjson.JSON
 import vjson.Stringifier
+import vjson.cs.LineCol
 
-class SimpleDouble(
-  private val value: Double
+class SimpleDouble /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
+  private val value: Double,
+  private val lineCol: LineCol = LineCol.EMPTY
 ) : AbstractSimpleInstance<Double>(), JSON.Double {
   public override fun _toJavaObject(): Double {
     return value
@@ -23,6 +25,10 @@ class SimpleDouble(
 
   override fun stringify(builder: StringBuilder, sfr: Stringifier) {
     builder.append(value)
+  }
+
+  override fun lineCol(): LineCol {
+    return lineCol
   }
 
   override fun _toString(): String {

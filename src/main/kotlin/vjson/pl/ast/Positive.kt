@@ -23,7 +23,7 @@ data class Positive(val expr: Expr) : Expr() {
     this.ctx = ctx
     val exprType = expr.check(ctx)
     if (exprType !is NumericTypeInstance) {
-      throw ParserException("$this: $expr ($exprType) is not numeric")
+      throw ParserException("$this: $expr ($exprType) is not numeric", lineCol)
     }
     return exprType
   }

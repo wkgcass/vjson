@@ -14,6 +14,7 @@ package vjson.parser
 import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
+import vjson.cs.LineCol
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleDouble
@@ -64,6 +65,8 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
   var exponent = 0
     private set
 
+  private var numberLineCol = LineCol.EMPTY
+
   init {
     reset()
   }
@@ -79,6 +82,7 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     hasExponent = false
     isExponentNegative = false
     exponent = 0
+    numberLineCol = LineCol.EMPTY
   }
 
   fun hasFraction(): Boolean {
@@ -192,6 +196,7 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     if (state == 0) {
       cs.skipBlank()
       if (cs.hasNext()) {
+        numberLineCol = cs.lineCol()
         opts.listener.onNumberBegin(this)
         c = cs.moveNextAndGet()
         if (c == '-') {
@@ -377,26 +382,26 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         var num = integer + calcFraction()
         num = if (isNegative) -num else num
         if (hasExponent) {
-          ret = SimpleExp(num, if (isExponentNegative) -exponent else exponent)
+          ret = SimpleExp(num, if (isExponentNegative) -exponent else exponent, numberLineCol)
         } else {
-          ret = SimpleDouble(num)
+          ret = SimpleDouble(num, numberLineCol)
         }
       } else {
         val num = if (isNegative) -integer else integer
         if (hasExponent) {
-          ret = SimpleExp(num.toDouble(), if (isExponentNegative) -exponent else exponent)
+          ret = SimpleExp(num.toDouble(), if (isExponentNegative) -exponent else exponent, numberLineCol)
         } else {
           if (isNegative) {
             if (num < Int.MIN_VALUE) {
-              ret = SimpleLong(num)
+              ret = SimpleLong(num, numberLineCol)
             } else {
-              ret = SimpleInteger(num.toInt())
+              ret = SimpleInteger(num.toInt(), numberLineCol)
             }
           } else {
             if (num > Int.MAX_VALUE) {
-              ret = SimpleLong(num)
+              ret = SimpleLong(num, numberLineCol)
             } else {
-              ret = SimpleInteger(num.toInt())
+              ret = SimpleInteger(num.toInt(), numberLineCol)
             }
           }
         }

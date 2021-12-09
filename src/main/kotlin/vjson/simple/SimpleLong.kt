@@ -13,9 +13,11 @@ package vjson.simple
 
 import vjson.JSON
 import vjson.Stringifier
+import vjson.cs.LineCol
 
-class SimpleLong(
-  private val value: Long
+class SimpleLong /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
+  private val value: Long,
+  private val lineCol: LineCol = LineCol.EMPTY
 ) : AbstractSimpleInstance<Long>(), JSON.Long {
   public override fun _toJavaObject(): Long {
     return value
@@ -23,6 +25,10 @@ class SimpleLong(
 
   override fun stringify(builder: StringBuilder, sfr: Stringifier) {
     builder.append(value)
+  }
+
+  override fun lineCol(): LineCol {
+    return lineCol
   }
 
   override fun _toString(): String {

@@ -24,11 +24,11 @@ data class NewArray(
     this.ctx = ctx
     val arrayType = type.check(ctx)
     if (arrayType !is ArrayTypeInstance) {
-      throw ParserException("$this: $arrayType is not array type")
+      throw ParserException("$this: $arrayType is not array type", lineCol)
     }
     val lenType = len.check(ctx)
     if (lenType !is IntType) {
-      throw ParserException("$this: typeof $len ($lenType) is not int")
+      throw ParserException("$this: typeof $len ($lenType) is not int", lineCol)
     }
     return arrayType
   }
@@ -52,6 +52,6 @@ data class NewArray(
     val typeStr = type.toString()
     val bracketLeft = typeStr.indexOf("[")
     val bracketRight = typeStr.indexOf("]", bracketLeft + 1)
-    return "new: ${typeStr.substring(0, bracketLeft + 1)}$len${typeStr.substring(bracketRight)}"
+    return "new ${typeStr.substring(0, bracketLeft + 1)}$len${typeStr.substring(bracketRight)}"
   }
 }

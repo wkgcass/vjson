@@ -40,6 +40,7 @@ class ASTGen(_prog: JSON.Object) {
         "return" -> aReturn(entry)
         else -> exprKey(entry)
       }
+      stmt.lineCol = entry.lineCol
       ls.add(stmt)
     }
     return ls
@@ -54,7 +55,7 @@ class ASTGen(_prog: JSON.Object) {
    */
   private fun aClass(entry: JSON.ObjectEntry): ClassDefinition {
     if (entry.value !is JSON.Null) {
-      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `class`")
+      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `class`", entry.value.lineCol())
     }
     if (!prog.hasNext()) {
       throw ParserException("unexpected eof, expecting class name")
@@ -62,16 +63,19 @@ class ASTGen(_prog: JSON.Object) {
     val nameAndParams = prog.next()
     val className = nameAndParams.key
     if (nameAndParams.value !is JSON.Object) {
-      throw ParserException("expecting parameters for class `$className`, but got ${nameAndParams.value}")
+      throw ParserException("expecting parameters for class `$className`, but got ${nameAndParams.value}", nameAndParams.value.lineCol())
     }
     val params = nameAndParams.value
     if (params.keySet().size != params.keyList().size) {
-      throw ParserException("duplicated parameter name for class `$className`")
+      throw ParserException("duplicated parameter name for class `$className`", nameAndParams.value.lineCol())
     }
     val astParams = ArrayList<Param>()
     params.entryList().forEachIndexed { idx, e ->
       if (e.value !is JSON.String) {
-        throw ParserException("parameter type must be a string, type for parameters[$idx] is ${e.value} in class `$className`")
+        throw ParserException(
+          "parameter type must be a string, type for parameters[$idx] is ${e.value} in class `$className`",
+          e.value.lineCol()
+        )
       }
       val type = e.value.toJavaObject()
       astParams.add(Param(e.key, Type(type)))
@@ -82,11 +86,14 @@ class ASTGen(_prog: JSON.Object) {
     }
     val doAndCode = prog.next()
     if (doAndCode.key != "do") {
-      throw ParserException("unexpected token $doAndCode, expecting `do` and class content")
+      throw ParserException("unexpected token $doAndCode, expecting `do` and class content", doAndCode.lineCol)
     }
 
     if (doAndCode.value !is JSON.Object) {
-      throw ParserException("class content must be encapsulated into a json object, but got ${doAndCode.value} for class `$className`")
+      throw ParserException(
+        "class content must be encapsulated into a json object, but got ${doAndCode.value} for class `$className`",
+        doAndCode.value.lineCol()
+      )
     }
     val astCode = ASTGen(doAndCode.value).parse()
 
@@ -95,7 +102,7 @@ class ASTGen(_prog: JSON.Object) {
 
   private fun modifier(entry: JSON.ObjectEntry, modifier: ModifierEnum): Statement {
     if (entry.value !is JSON.Null) {
-      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `public`")
+      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `public`", entry.value.lineCol())
     }
     val modifiers = Modifiers(modifier.num)
     var nextEntry: JSON.ObjectEntry
@@ -111,7 +118,7 @@ class ASTGen(_prog: JSON.Object) {
       modifiers.modifiers = modifiers.modifiers.or(ModifierEnum.valueOf(nextEntry.key.toUpperCase()).num)
     }
     if (modifiers.isPublic() && modifiers.isPrivate()) {
-      throw ParserException("invalid modifiers: $modifiers, cannot set public and private at the same time")
+      throw ParserException("invalid modifiers: $modifiers, cannot set public and private at the same time", nextEntry.lineCol)
     }
     return when (nextEntry.key) {
       "var" -> {
@@ -123,7 +130,7 @@ class ASTGen(_prog: JSON.Object) {
         FunctionDefinition(res.name, res.params, res.returnType, res.code, modifiers)
       }
       else -> {
-        throw ParserException("unexpected token $nextEntry, expecting variable or function definition")
+        throw ParserException("unexpected token $nextEntry, expecting variable or function definition", nextEntry.lineCol)
       }
     }
   }
@@ -137,7 +144,7 @@ class ASTGen(_prog: JSON.Object) {
    */
   private fun function(entry: JSON.ObjectEntry): FunctionDefinition {
     if (entry.value !is JSON.Null) {
-      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `function`")
+      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `function`", entry.value.lineCol())
     }
     if (!prog.hasNext()) {
       throw ParserException("unexpected eof, expecting function name")
@@ -145,16 +152,19 @@ class ASTGen(_prog: JSON.Object) {
     val nameAndParams = prog.next()
     val funcName = nameAndParams.key
     if (nameAndParams.value !is JSON.Object) {
-      throw ParserException("expecting parameters for function `$funcName`, but got ${nameAndParams.value}")
+      throw ParserException("expecting parameters for function `$funcName`, but got ${nameAndParams.value}", nameAndParams.value.lineCol())
     }
     val params = nameAndParams.value
     if (params.keySet().size != params.keyList().size) {
-      throw ParserException("duplicated parameter name for function `$funcName`")
+      throw ParserException("duplicated parameter name for function `$funcName`", nameAndParams.value.lineCol())
     }
     val astParams = ArrayList<Param>()
     params.entryList().forEachIndexed { idx, e ->
       if (e.value !is JSON.String) {
-        throw ParserException("parameter type must be a string, type for parameters[$idx] is ${e.value} in function `$funcName`")
+        throw ParserException(
+          "parameter type must be a string, type for parameters[$idx] is ${e.value} in function `$funcName`",
+          e.value.lineCol()
+        )
       }
       val type = e.value.toJavaObject()
       astParams.add(Param(e.key, Type(type)))
@@ -167,7 +177,10 @@ class ASTGen(_prog: JSON.Object) {
     val astReturnType = Type(returnTypeAndCode.key)
 
     if (returnTypeAndCode.value !is JSON.Object) {
-      throw ParserException("function payload must be encapsulated into a json object, but got ${returnTypeAndCode.value} for function `$funcName`")
+      throw ParserException(
+        "function payload must be encapsulated into a json object, but got ${returnTypeAndCode.value} for function `$funcName`",
+        returnTypeAndCode.value.lineCol()
+      )
     }
     val astCode = ASTGen(returnTypeAndCode.value).parse()
 
@@ -181,7 +194,7 @@ class ASTGen(_prog: JSON.Object) {
    */
   private fun aVar(entry: JSON.ObjectEntry): VariableDefinition {
     if (entry.value !is JSON.Null) {
-      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `var`")
+      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `var`", entry.value.lineCol())
     }
     if (!prog.hasNext()) {
       throw ParserException("unexpected eof, expecting variable name")
@@ -201,7 +214,7 @@ class ASTGen(_prog: JSON.Object) {
    */
   private fun aNew(entry: JSON.ObjectEntry): Expr {
     if (entry.value !is JSON.Null) {
-      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `new`")
+      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `new`", entry.value.lineCol())
     }
     if (!prog.hasNext()) {
       throw ParserException("unexpected eof, expecting the type to be instantiated")
@@ -210,34 +223,42 @@ class ASTGen(_prog: JSON.Object) {
     val typeStr = nextEntry.key
     return if (typeStr.contains("[")) {
       if (!typeStr.endsWith("]")) {
-        throw ParserException("unexpected type for creating array: found `[` in type string but it does not end with `]`: $typeStr")
+        throw ParserException(
+          "unexpected type for creating array: found `[` in type string but it does not end with `]`: $typeStr",
+          nextEntry.lineCol
+        )
       }
       val elementType = typeStr.substring(0, typeStr.indexOf("["))
       val lenEndIndex = typeStr.indexOf("]", typeStr.indexOf("[") + 1)
       val lenStr = typeStr.substring(typeStr.indexOf("[") + 1, lenEndIndex)
-      val lenExpr = exprString(lenStr, nextEntry.lineCol)
+      val lenExpr = exprString(lenStr, nextEntry.lineCol.inner().addCol(typeStr.indexOf("[") + 1))
 
       if (nextEntry.value !is JSON.Null) {
-        throw ParserException("unexpected token ${nextEntry.value} for new array statement, expecting null value after key `$typeStr`")
+        throw ParserException(
+          "unexpected token ${nextEntry.value} for new array statement, expecting null value after key `$typeStr`",
+          nextEntry.value.lineCol()
+        )
       }
       NewArray(Type(elementType + "[]" + typeStr.substring(lenEndIndex + 1)), lenExpr)
     } else {
       when (nextEntry.value) {
         is JSON.Null -> NewInstance(Type(typeStr), listOf())
         is JSON.Array -> NewInstance(Type(typeStr), exprArray(nextEntry.value))
-        else ->
-          throw ParserException("unexpected token ${nextEntry.value} for new instance statement, expecting null or array value after key `$typeStr`")
+        else -> throw ParserException(
+          "unexpected token ${nextEntry.value} for new instance statement, expecting null or array value after key `$typeStr`",
+          nextEntry.value.lineCol()
+        )
       }
     }
   }
 
   private fun aFor(entry: JSON.ObjectEntry): ForLoop {
     if (entry.value !is JSON.Array) {
-      throw ParserException("unexpected token ${entry.value}, expecting a 3-element array for `for` loop")
+      throw ParserException("unexpected token ${entry.value}, expecting a 3-element array for `for` loop", entry.value.lineCol())
     }
     val array = entry.value
     if (array.length() != 3) {
-      throw ParserException("unexpected token ${entry.value}, expecting a 3-element array for `for` loop")
+      throw ParserException("unexpected token ${entry.value}, expecting a 3-element array for `for` loop", entry.value.lineCol())
     }
     val init = array[0]
     val cond = array[1]
@@ -260,10 +281,10 @@ class ASTGen(_prog: JSON.Object) {
     }
     val nextEntry = prog.next()
     if (nextEntry.key != "do") {
-      throw ParserException("unexpected token $nextEntry, expecting `do` to begin the `for` loop code")
+      throw ParserException("unexpected token $nextEntry, expecting `do` to begin the `for` loop code", nextEntry.lineCol)
     }
     if (nextEntry.value !is JSON.Object) {
-      throw ParserException("unexpected token ${nextEntry.value}, expecting code block for the `for` loop")
+      throw ParserException("unexpected token ${nextEntry.value}, expecting code block for the `for` loop", nextEntry.value.lineCol())
     }
     val code = ASTGen(nextEntry.value).parse()
 
@@ -277,10 +298,10 @@ class ASTGen(_prog: JSON.Object) {
     }
     val nextEntry = prog.next()
     if (nextEntry.key != "do") {
-      throw ParserException("unexpected token $nextEntry, expecting `do` to begin the `while` loop code")
+      throw ParserException("unexpected token $nextEntry, expecting `do` to begin the `while` loop code", nextEntry.lineCol)
     }
     if (nextEntry.value !is JSON.Object) {
-      throw ParserException("unexpected token ${nextEntry.value}, expecting code block for the `while` loop")
+      throw ParserException("unexpected token ${nextEntry.value}, expecting code block for the `while` loop", nextEntry.value.lineCol())
     }
     val code = ASTGen(nextEntry.value).parse()
 
@@ -294,10 +315,10 @@ class ASTGen(_prog: JSON.Object) {
     }
     val nextEntry = prog.next()
     if (nextEntry.key != "then") {
-      throw ParserException("unexpected token $nextEntry, expecting `then` after `if`")
+      throw ParserException("unexpected token $nextEntry, expecting `then` after `if`", nextEntry.lineCol)
     }
     if (nextEntry.value !is JSON.Object) {
-      throw ParserException("unexpected token ${nextEntry.value}, expecting code block for `if`")
+      throw ParserException("unexpected token ${nextEntry.value}, expecting code block for `if`", nextEntry.value.lineCol())
     }
     val ifCode = ASTGen(nextEntry.value).parse()
 
@@ -310,11 +331,14 @@ class ASTGen(_prog: JSON.Object) {
         is JSON.Null -> {
           // expecting else if
           if (!prog.hasNext()) {
-            throw ParserException("unexpected eof, found `else: null`, but not following another `if`")
+            throw ParserException("unexpected eof, found `else` without colon `:`, but not following another `if`")
           }
           val nextNextNextEntry = prog.next()
           if (nextNextNextEntry.key != "if") {
-            throw ParserException("unexpected token $nextNextNextEntry, found `else: null`, but not following another `if`")
+            throw ParserException(
+              "unexpected token $nextNextNextEntry, found `else: null`, but not following another `if`",
+              nextNextNextEntry.lineCol
+            )
           }
           val nextIf = aIf(nextNextNextEntry)
           return IfStatement(astCond, ifCode, listOf(nextIf))
@@ -323,7 +347,10 @@ class ASTGen(_prog: JSON.Object) {
           val elseCode = ASTGen(nextNextEntry.value).parse()
           return IfStatement(astCond, ifCode, elseCode)
         }
-        else -> throw ParserException("unexpected token ${nextNextEntry.value}, expecting code block for `else`")
+        else -> throw ParserException(
+          "unexpected token ${nextNextEntry.value}, expecting code block for `else`",
+          nextNextEntry.value.lineCol()
+        )
       }
     } else {
       // not if statement
@@ -334,14 +361,14 @@ class ASTGen(_prog: JSON.Object) {
 
   private fun aBreak(entry: JSON.ObjectEntry): BreakStatement {
     if (entry.value !is JSON.Null) {
-      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `break`")
+      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `break`", entry.value.lineCol())
     }
     return BreakStatement()
   }
 
   private fun aContinue(entry: JSON.ObjectEntry): ContinueStatement {
     if (entry.value !is JSON.Null) {
-      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `continue`")
+      throw ParserException("unexpected token ${entry.value}, expecting null as value for key `continue`", entry.value.lineCol())
     }
     return ContinueStatement()
   }
@@ -355,22 +382,25 @@ class ASTGen(_prog: JSON.Object) {
   }
 
   private fun exprKey(entry: JSON.ObjectEntry): Expr {
-    val tokenizer = ExprTokenizer(entry.key, entry.lineCol)
+    val tokenizer = ExprTokenizer(entry.key, entry.lineCol.inner())
     val parser = ExprParser(tokenizer)
     val expr = parser.parse()
     if (tokenizer.peek() != null) {
-      throw ParserException("only one expression can be used, but multiple found, next token: ${tokenizer.peek()}")
+      throw ParserException(
+        "only one expression can be used, but multiple found, next token: ${tokenizer.peek()}",
+        tokenizer.currentLineCol()
+      )
     }
     return if (entry.value is JSON.Array) {
       callFunction(expr, entry.value)
     } else if (expr is NullLiteral) {
       if (entry.value !is JSON.String) {
-        throw ParserException("unexpected token ${entry.value}, expecting type for the `null` literal")
+        throw ParserException("unexpected token ${entry.value}, expecting type for the `null` literal", entry.value.lineCol())
       }
       NullLiteral(Type(entry.value.toJavaObject()))
     } else {
       if (expr !is AssignableExpr) {
-        throw ParserException("unable to assign value to $expr")
+        throw ParserException("unable to assign value to $expr", expr.lineCol)
       }
       Assignment(expr, expr(entry.value))
     }
@@ -387,23 +417,23 @@ class ASTGen(_prog: JSON.Object) {
   private fun expr(json: JSON.Instance<*>): Expr {
     return when (json) {
       is JSON.Object -> exprObject(json)
-      is JSON.String -> exprString(json.toJavaObject(), json.lineCol())
+      is JSON.String -> exprString(json.toJavaObject(), json.lineCol().inner())
       is JSON.Bool -> BoolLiteral(json.booleanValue())
       is JSON.Integer, is JSON.Long -> IntegerLiteral(cast(json))
       is JSON.Double -> FloatLiteral(json)
       is JSON.Null -> NullLiteral()
-      else -> throw ParserException("unexpected expression $json")
+      else -> throw ParserException("unexpected expression $json", json.lineCol())
     }
   }
 
   private fun exprObject(json: JSON.Object): Expr {
     val stmts = ASTGen(json).parse()
     if (stmts.size != 1) {
-      throw ParserException("unexpected ast $stmts, expecting one and only one expression to be generated")
+      throw ParserException("unexpected ast $stmts, expecting one and only one expression to be generated", json.lineCol())
     }
     val stmt = stmts[0]
     if (stmt !is Expr) {
-      throw ParserException("unexpected ast $stmt, expecting expression")
+      throw ParserException("unexpected ast $stmt, expecting expression", stmt.lineCol)
     }
     return stmt
   }
@@ -421,7 +451,7 @@ class ASTGen(_prog: JSON.Object) {
     val parser = ExprParser(tokenizer)
     val expr = parser.parse()
     if (tokenizer.peek() != null) {
-      throw ParserException("only one expression can be used, but multiple found, next token: ${tokenizer.peek()}")
+      throw ParserException("only one expression can be used, but multiple found, next token: ${tokenizer.peek()}", lineCol)
     }
     return expr
   }

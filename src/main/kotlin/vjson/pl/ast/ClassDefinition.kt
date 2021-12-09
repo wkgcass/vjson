@@ -28,7 +28,7 @@ data class ClassDefinition(
   override fun checkAST(ctx: TypeContext) {
     memDepth = ctx.getMemoryDepth()
     if (ctx.hasTypeInThisContext(Type(name))) {
-      throw ParserException("type `$name` is already defined")
+      throw ParserException("type `$name` is already defined", lineCol)
     }
     val thisType = ClassTypeInstance(this)
     ctx.addType(Type(name), thisType)

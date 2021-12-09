@@ -22,11 +22,11 @@ data class AccessIndex(val from: Expr, val index: Expr) : AssignableExpr() {
     val type = from.check(ctx)
     val elementType = type.elementType(ctx)
     if (elementType == null) {
-      throw ParserException("$this: $elementType doesn't have elements")
+      throw ParserException("$this: $elementType doesn't have elements", lineCol)
     }
     val indexType = index.check(ctx)
     if (indexType !is IntType) {
-      throw ParserException("$this: typeof $index ($indexType) is not `int`")
+      throw ParserException("$this: typeof $index ($indexType) is not `int`", lineCol)
     }
     return elementType
   }

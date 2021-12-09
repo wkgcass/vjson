@@ -24,13 +24,13 @@ data class Param(
   val name: String,
   val type: Type
 ) : TypedAST {
-  override var lineCol: LineCol = LineCol("", 0, 0)
+  override var lineCol: LineCol = LineCol.EMPTY
   private var ctx: TypeContext = TypeContext(MemoryAllocator())
 
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     if (!ctx.hasType(type)) {
-      throw ParserException("type of parameter $name (${type}) is not defined")
+      throw ParserException("type of parameter $name (${type}) is not defined", lineCol)
     }
     return ctx.getType(type)
   }

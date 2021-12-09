@@ -24,7 +24,7 @@ data class LogicNot(val expr: Expr) : Expr() {
     this.ctx = ctx
     val exprType = expr.check(ctx)
     if (exprType !is BoolType) {
-      throw ParserException("$this: type of $expr ($exprType) is not bool")
+      throw ParserException("$this: type of $expr ($exprType) is not bool", lineCol)
     }
     return BoolType
   }

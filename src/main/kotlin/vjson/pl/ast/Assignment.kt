@@ -31,10 +31,10 @@ data class Assignment(
       if (valueType is NullType && variableType !is PrimitiveTypeInstance) {
         return variableType
       }
-      throw ParserException("$this: cannot assign $valueType to $variableType, type mismatch")
+      throw ParserException("$this: cannot assign $valueType to $variableType, type mismatch", lineCol)
     }
     if (!variable.isModifiable()) {
-      throw ParserException("$this: cannot assign value to $variable, the variable/field is unmodifiable")
+      throw ParserException("$this: cannot assign value to $variable, the variable/field is unmodifiable", lineCol)
     }
     return valueType
   }

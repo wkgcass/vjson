@@ -21,7 +21,7 @@ data class Negative(val expr: Expr) : Expr() {
     this.ctx = ctx
     val exprType = expr.check(ctx)
     if (exprType !is NumericTypeInstance) {
-      throw ParserException("$this: type of $expr ($exprType) is not numeric")
+      throw ParserException("$this: type of $expr ($exprType) is not numeric", lineCol)
     }
     return exprType
   }

@@ -3,6 +3,7 @@ package vjson;
 import kotlin.jvm.internal.Reflection;
 import org.junit.Test;
 import vjson.cs.CharArrayCharStream;
+import vjson.cs.LineCol;
 import vjson.parser.*;
 import vjson.simple.*;
 import vjson.util.AppendableMap;
@@ -40,7 +41,7 @@ public class TestParamValidationReport {
         }
         class T extends SimpleArray {
             private T(List<JSON.Instance<?>> list, vjson.parser.TrustedFlag flag) {
-                super(list, flag);
+                super(list, flag, LineCol.Companion.getEMPTY());
             }
 
             private T(List<JSON.Instance<?>> list, vjson.util.TrustedFlag flag) {
@@ -125,7 +126,7 @@ public class TestParamValidationReport {
         }
         class T extends SimpleObject {
             private T(List<SimpleObjectEntry<JSON.Instance<?>>> initMap, vjson.parser.TrustedFlag flag) {
-                super(initMap, flag);
+                super(initMap, flag, LineCol.Companion.getEMPTY());
             }
 
             private T(List<SimpleObjectEntry<JSON.Instance<?>>> initMap, vjson.util.TrustedFlag flag) {

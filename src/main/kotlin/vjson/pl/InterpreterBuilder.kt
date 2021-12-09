@@ -12,7 +12,9 @@
 
 package vjson.pl
 
+import vjson.CharStream
 import vjson.JSON
+import vjson.cs.LineColCharStream
 import vjson.parser.ObjectParser
 import vjson.parser.ParserOptions
 import vjson.pl.ast.Statement
@@ -26,7 +28,8 @@ class InterpreterBuilder {
     return this
   }
 
-  fun compile(prog: String): Interpreter {
+  /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
+  fun compile(prog: String, filename: String = ""): Interpreter {
     val jsonParser = ObjectParser(
       ParserOptions()
         .setStringSingleQuotes(true)
@@ -37,7 +40,7 @@ class InterpreterBuilder {
         .setEqualAsColon(true)
         .setAllowParenthesesString(true)
     )
-    val json = jsonParser.last(prog)!!
+    val json = jsonParser.last(LineColCharStream(CharStream.from(prog), filename))!!
     return compile(json)
   }
 

@@ -15,8 +15,8 @@ package vjson.cs
 import vjson.CharStream
 
 class LineColCharStream /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
-  private val filename: String,
   private val cs: CharStream,
+  private val filename: String,
   private val offset: LineCol? = null
 ) : CharStream {
   private var currentLine = 1
@@ -31,9 +31,10 @@ class LineColCharStream /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constr
     if (c == '\r') {
       if (!cs.hasNext() || cs.peekNext() != '\n') {
         newLine()
+      } else {
+        currentCol += 1
       }
-    }
-    if (c == '\n') {
+    } else if (c == '\n') {
       newLine()
     } else {
       currentCol += 1
@@ -50,11 +51,11 @@ class LineColCharStream /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constr
     return cs.peekNext(i)
   }
 
-  fun lineCol(): LineCol {
+  override fun lineCol(): LineCol {
     return if (offset == null) {
       LineCol(filename, currentLine, currentCol)
     } else {
-      LineCol(filename, currentLine + offset.line, currentCol + offset.col)
+      LineCol(filename, currentLine + offset.line - 1, currentCol + offset.col - 1)
     }
   }
 }

@@ -25,9 +25,9 @@ data class ContinueStatement(val flag: String? = null) : Statement() {
     }
     if (ctxAST == null || ctxAST !is LoopStatement) {
       if (flag == null) {
-        throw ParserException("`continue` is not in a loop, current context is $ctxAST")
+        throw ParserException("`continue` is not in a loop, current context is $ctxAST", lineCol)
       } else {
-        throw ParserException("unable to find loop $flag for `continue`")
+        throw ParserException("unable to find loop $flag for `continue`", lineCol)
       }
     }
   }

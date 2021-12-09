@@ -24,19 +24,19 @@ data class OpAssignment(
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     if (op != BinOpType.PLUS && op != BinOpType.MINUS && op != BinOpType.MULTIPLY && op != BinOpType.DIVIDE) {
-      throw ParserException("invalid operator for assigning: $op")
+      throw ParserException("invalid operator for assigning: $op", lineCol)
     }
     val variableType = variable.check(ctx)
     val valueType = value.check(ctx)
     if (variableType != valueType) {
-      throw ParserException("$this: cannot calculate and assign $valueType to $variableType, type mismatch")
+      throw ParserException("$this: cannot calculate and assign $valueType to $variableType, type mismatch", lineCol)
     }
     if (valueType !is NumericTypeInstance) {
-      throw ParserException("$this: cannot execute $op on type $valueType, not numeric")
+      throw ParserException("$this: cannot execute $op on type $valueType, not numeric", lineCol)
     }
 
     if (!variable.isModifiable()) {
-      throw ParserException("$this: cannot assign values to $variable, the variable/field is unmodifiable")
+      throw ParserException("$this: cannot assign values to $variable, the variable/field is unmodifiable", lineCol)
     }
 
     return valueType

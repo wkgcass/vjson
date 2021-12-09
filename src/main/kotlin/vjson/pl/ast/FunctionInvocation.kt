@@ -27,15 +27,21 @@ data class FunctionInvocation(
     this.ctx = ctx
     val targetType = target.check(ctx)
     val func = targetType.functionDescriptor(ctx)
-      ?: throw ParserException("$this: unable to invoke $target, which is not a functional object")
+      ?: throw ParserException("$this: unable to invoke $target, which is not a functional object", lineCol)
     if (func.params.size != args.size) {
-      throw ParserException("$this: unable to invoke $target with $args, arguments count (${args.size}) parameters count (${func.params.size}) mismatch")
+      throw ParserException(
+        "$this: unable to invoke $target with $args, arguments count (${args.size}) parameters count (${func.params.size}) mismatch",
+        lineCol
+      )
     }
     for (idx in args.indices) {
       val argType = args[idx].check(ctx)
       val paramType = func.params[idx]
       if (argType != paramType.type) {
-        throw ParserException("$this: unable to invoke $target with $args, args[$idx] $argType does not match params[$idx] $paramType")
+        throw ParserException(
+          "$this: unable to invoke $target with $args, args[$idx] $argType does not match params[$idx] $paramType",
+          lineCol
+        )
       }
     }
     return func.returnType

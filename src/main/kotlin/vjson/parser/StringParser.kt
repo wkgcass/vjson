@@ -14,6 +14,7 @@ package vjson.parser
 import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
+import vjson.cs.LineCol
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleString
@@ -40,9 +41,10 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
   private var u1 = -1
   private var u2 = -1
   private var u3 = -1
-
   // u4 can be local variable
+
   private var parenthesesStringStack = 0
+  private var stringLineCol = LineCol.EMPTY
 
   /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
   constructor(opts: ParserOptions = ParserOptions.DEFAULT) : this(opts, null)
@@ -53,6 +55,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
     traveler?.done()
     // start/u1/2/3 can keep their values
     parenthesesStringStack = 0
+    stringLineCol = LineCol.EMPTY
   }
 
   private fun parseHex(c: Char): Int {
@@ -78,6 +81,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
     if (state == 0) {
       cs.skipBlank()
       if (cs.hasNext()) {
+        stringLineCol = LineCol(cs.lineCol(), innerOffsetIncrease = 1)
         opts.listener.onStringBegin(this)
         c = cs.moveNextAndGet()
         if (c == '\"') {
@@ -265,7 +269,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
     if (tryParse(cs, isComplete)) {
       opts.listener.onStringEnd(this)
       val s = buildResultString()
-      val ret = SimpleString(s)
+      val ret = SimpleString(s, stringLineCol)
       opts.listener.onString(ret)
 
       ParserUtils.checkEnd(cs, opts, "string")

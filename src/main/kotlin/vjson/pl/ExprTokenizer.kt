@@ -22,7 +22,7 @@ import vjson.simple.SimpleString
 import vjson.util.collection.VList
 
 class ExprTokenizer(cs: CharStream, offset: LineCol) {
-  private val cs: LineColCharStream = LineColCharStream(offset.filename, cs, offset)
+  private val cs: LineColCharStream = LineColCharStream(cs, offset.filename, offset)
 
   constructor(str: String, offset: LineCol) : this(CharStream.from(str), offset)
 
@@ -228,5 +228,9 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
     if (c in '0'..'9') return false
     if (c.code < 128) return true
     return false
+  }
+
+  fun currentLineCol(): LineCol {
+    return cs.lineCol()
   }
 }

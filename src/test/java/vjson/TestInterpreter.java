@@ -319,7 +319,7 @@ public class TestInterpreter {
         RuntimeMemory mem = new InterpreterBuilder()
             .compile("{\n" +
                 "function fib: { n: 'int' } int: {\n" +
-                "  var cache = {new (int[n+1])}" +
+                "  var cache = {new (int[n+1])}\n" +
                 "  function fib0: { a: 'int' } int: {\n" +
                 "    if: (cache[a] == 0) then: {\n" +
                 "      if: (a == 1) then: { cache[a] = 1 }\n" +

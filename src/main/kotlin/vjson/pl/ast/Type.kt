@@ -21,7 +21,7 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class Type(private val name: String) : TypedAST {
-  override var lineCol: LineCol = LineCol("", 0, 0)
+  override var lineCol: LineCol = LineCol.EMPTY
   private var ctx: TypeContext = TypeContext(MemoryAllocator())
   private val isArray: Boolean
   private val elementType: Type
@@ -32,10 +32,10 @@ data class Type(private val name: String) : TypedAST {
       val leftBracketIndex = name.lastIndexOf("[")
       val rightBracketIndex = name.lastIndexOf("]")
       if (leftBracketIndex != name.length - 2) {
-        throw ParserException("$name is not a valid array type")
+        throw ParserException("$name is not a valid array type", lineCol)
       }
       if (rightBracketIndex != name.length - 1) {
-        throw ParserException("$name is not a valid array type")
+        throw ParserException("$name is not a valid array type", lineCol)
       }
       elementType = Type(name.substring(0, name.length - 2))
     } else {

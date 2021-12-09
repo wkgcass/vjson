@@ -27,11 +27,11 @@ data class VariableDefinition(
   override fun checkAST(ctx: TypeContext) {
     this.ctx = ctx
     if (ctx.hasVariable(name)) {
-      throw ParserException("variable $name is already defined")
+      throw ParserException("variable $name is already defined", lineCol)
     }
     val valueType = value.check(ctx)
     if (valueType is NullType) {
-      throw ParserException("$this: cannot determine type for $value")
+      throw ParserException("$this: cannot determine type for $value", lineCol)
     }
     variableIndex = ctx.getMemoryAllocator().nextIndexFor(valueType)
     ctx.addVariable(Variable(name, valueType, !modifiers.isConst(), MemPos(ctx.getMemoryDepth(), variableIndex)))

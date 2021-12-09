@@ -25,15 +25,21 @@ data class NewInstance(
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val typeInstance = type.check(ctx)
-    val constructor = typeInstance.constructor(ctx) ?: throw ParserException("$this: cannot instantiate $typeInstance")
+    val constructor = typeInstance.constructor(ctx) ?: throw ParserException("$this: cannot instantiate $typeInstance", lineCol)
     if (args.size != constructor.params.size) {
-      throw ParserException("$this: unable to instantiate $typeInstance with $args: arguments count (${args.size}) and parameters count (${constructor.params.size}) mismatch")
+      throw ParserException(
+        "$this: unable to instantiate $typeInstance with $args: arguments count (${args.size}) and parameters count (${constructor.params.size}) mismatch",
+        lineCol
+      )
     }
     for (idx in args.indices) {
       val argType = args[idx].check(ctx)
       val paramType = constructor.params[idx]
       if (argType != paramType.type) {
-        throw ParserException("$this: unable to instantiate $typeInstance with $args, args[$idx] $argType does not match params[$idx] $paramType")
+        throw ParserException(
+          "$this: unable to instantiate $typeInstance with $args, args[$idx] $argType does not match params[$idx] $paramType",
+          lineCol
+        )
       }
     }
     return typeInstance

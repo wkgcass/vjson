@@ -24,7 +24,7 @@ data class ReturnStatement(val expr: Expr? = null) : Statement() {
 
     val astCtx = ctx.getContextAST { it is FunctionDefinition || it is ClassDefinition }
     if (astCtx == null || astCtx !is FunctionDefinition) {
-      throw ParserException("`return` is not inside a function, current context is $astCtx")
+      throw ParserException("`return` is not inside a function, current context is $astCtx", lineCol)
     }
 
     @Suppress("UnnecessaryVariable")
@@ -33,11 +33,11 @@ data class ReturnStatement(val expr: Expr? = null) : Statement() {
 
     if (exprType == null) {
       if (returnType !is VoidType) {
-        throw ParserException("function ${func.name} returns $returnType, but the `return` statement does not have a value")
+        throw ParserException("function ${func.name} returns $returnType, but the `return` statement does not have a value", lineCol)
       }
     } else {
       if (returnType != exprType) {
-        throw ParserException("function ${func.name} returns $returnType, but the `return` statement returns $exprType")
+        throw ParserException("function ${func.name} returns $returnType, but the `return` statement returns $exprType", lineCol)
       }
     }
   }

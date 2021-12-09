@@ -12,17 +12,37 @@
 
 package vjson.cs
 
-class LineCol(
+class LineCol /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   val filename: String,
   val line: Int,
   val col: Int,
+  private val innerOffset: Int = 0,
 ) {
+  companion object {
+    val EMPTY = LineCol("", 0, 0)
+  }
+
+  constructor(lineCol: LineCol, innerOffsetIncrease: Int = 0) : this(
+    lineCol.filename, lineCol.line, lineCol.col,
+    lineCol.innerOffset + innerOffsetIncrease
+  )
+
+  fun addCol(n: Int): LineCol {
+    if (filename == "" && line == 0 && col == 0) return EMPTY
+    return LineCol(filename, line, col + n)
+  }
+
+  fun inner(): LineCol {
+    if (innerOffset == 0) return this
+    return LineCol(filename, line, col + innerOffset)
+  }
+
   override fun toString(): String {
     return "$filename($line:$col)"
   }
 
   override fun equals(other: Any?): Boolean {
-    return true
+    return other is LineCol
   }
 
   override fun hashCode(): Int {

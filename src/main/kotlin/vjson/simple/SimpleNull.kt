@@ -13,8 +13,11 @@ package vjson.simple
 
 import vjson.JSON
 import vjson.Stringifier
+import vjson.cs.LineCol
 
-class SimpleNull : JSON.Null {
+class SimpleNull /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
+  private val lineCol: LineCol = LineCol.EMPTY
+) : JSON.Null {
   override fun stringify(): String {
     return "null"
   }
@@ -25,6 +28,10 @@ class SimpleNull : JSON.Null {
 
   override fun stringify(builder: StringBuilder, sfr: Stringifier) {
     builder.append(stringify())
+  }
+
+  override fun lineCol(): LineCol {
+    return lineCol
   }
 
   override fun toString(): String {

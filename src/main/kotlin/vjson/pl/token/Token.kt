@@ -22,9 +22,9 @@ data class Token /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
 ) {
   override fun toString(): String {
     if (value == null) {
-      return "Token(type=$type, raw=`$raw`)@$lineCol"
+      return "Token(type=$type, raw=`$raw`)"
     } else {
-      return "Token(type=$type, raw=`$raw`, value=$value)@$lineCol"
+      return "Token(type=$type, raw=`$raw`, value=$value)"
     }
   }
 }

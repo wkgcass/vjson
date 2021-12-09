@@ -14,6 +14,7 @@ package vjson.parser
 import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
+import vjson.cs.LineCol
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleNull
@@ -23,9 +24,11 @@ class NullParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
 ) : Parser<JSON.Null> {
   private val opts: ParserOptions = ParserOptions.ensureNotModifiedByOutside(opts)
   private var state = 0 // 0->[n]ull,1->n[u]ll,2->nu[l]l,3->nul[l],4->finish,5->already_returned
+  private var nullLineCol = LineCol.EMPTY
 
   override fun reset() {
     state = 0
+    nullLineCol = LineCol.EMPTY
   }
 
   private fun tryParse(cs: CharStream, isComplete: Boolean): Boolean {
@@ -34,6 +37,7 @@ class NullParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
     if (state == 0) {
       cs.skipBlank()
       if (cs.hasNext()) {
+        nullLineCol = cs.lineCol()
         opts.listener.onNullBegin(this)
         c = cs.moveNextAndGet()
         if (c != 'n') {
@@ -94,7 +98,7 @@ class NullParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   override fun build(cs: CharStream, isComplete: Boolean): JSON.Null? {
     if (tryParse(cs, isComplete)) {
       opts.listener.onNullEnd(this)
-      val n = SimpleNull()
+      val n = SimpleNull(nullLineCol)
       opts.listener.onNull(n)
 
       ParserUtils.checkEnd(cs, opts, "`null`")

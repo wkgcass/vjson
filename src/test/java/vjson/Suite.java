@@ -39,6 +39,7 @@ import vpreprocessor.*;
     TestKotlinDSL.class,
     TestJavaDSL.class,
     TestStringCache.class,
+    TestJsonLineCol.class,
 
     TestExprTokenizer.class,
     TestExprParser.class,

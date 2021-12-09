@@ -26,7 +26,7 @@ data class IfStatement(
   override fun checkAST(ctx: TypeContext) {
     val conditionType = condition.check(ctx)
     if (conditionType !is BoolType) {
-      throw ParserException("$this: type of condition ($conditionType) is not bool")
+      throw ParserException("$this: type of condition ($conditionType) is not bool", lineCol)
     }
     val ifCtx = TypeContext(ctx)
     ifCtx.checkStatements(ifCode)

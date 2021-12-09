@@ -34,7 +34,7 @@ data class FunctionDefinition(
     this.ctx = ctx
 
     if (ctx.hasVariableInThisContext(name)) {
-      throw ParserException("variable $name is already defined")
+      throw ParserException("variable $name is already defined", lineCol)
     }
 
     val codeCtx = TypeContext(ctx, ast = this)
@@ -56,7 +56,7 @@ data class FunctionDefinition(
     if (returnTypeInstance !is VoidType) {
       val lastStatement = code.last()
       if (!lastStatement.functionTerminationCheck()) {
-        throw ParserException("function $name not ending properly: missing return statement")
+        throw ParserException("function $name not ending properly: missing return statement", lineCol)
       }
     }
   }
