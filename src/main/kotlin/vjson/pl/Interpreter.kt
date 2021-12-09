@@ -64,7 +64,7 @@ class Interpreter(private val types: List<Types>, private val ast: List<Statemen
   private fun formatException(e: InstructionException): Exception {
     val sb = StringBuilder()
     if (e.message != null) {
-      sb.append(": ").append(e.message).append("\n")
+      sb.append(e.message).append("\n")
     }
     var isFirst = true
     for (info in e.stackTrace) {
