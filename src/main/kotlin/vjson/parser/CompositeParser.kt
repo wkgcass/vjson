@@ -86,13 +86,13 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
       '[' -> getArrayParser()
       '\'' -> {
         if (!opts.isStringSingleQuotes) {
-          throw JsonParseException("not valid json string")
+          throw JsonParseException("not valid json string", cs.lineCol())
         }
         getStringParser()
       }
       '(' -> {
         if (!opts.isAllowParenthesesString) {
-          throw JsonParseException("not valid json string")
+          throw JsonParseException("not valid json string", cs.lineCol())
         }
         getStringParser()
       }
@@ -105,7 +105,7 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
         if (first in '0'..'9') {
           return getNumberParser()
         }
-        throw JsonParseException("not valid json string")
+        throw JsonParseException("not valid json string", cs.lineCol())
       }
     }
   }

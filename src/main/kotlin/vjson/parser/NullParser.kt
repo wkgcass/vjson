@@ -42,7 +42,7 @@ class NullParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'n') {
           err = "invalid character for `[n]ull`: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -52,7 +52,7 @@ class NullParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'u') {
           err = "invalid character for `n[u]ll`: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -62,7 +62,7 @@ class NullParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'l') {
           err = "invalid character for `nu[l]l`: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -72,7 +72,7 @@ class NullParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'l') {
           err = "invalid character for `nul[l]`: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -88,7 +88,7 @@ class NullParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
       return false
     } else if (isComplete) {
       err = "expecting more characters to build `null`"
-      throw ParserUtils.err(opts, err)
+      throw ParserUtils.err(cs, opts, err)
     } else {
       return false // expecting more data
     }

@@ -93,7 +93,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           parenthesesStringStack = 1
         } else {
           err = "invalid character for string: not starts with \": $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -114,7 +114,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           continue
         } else {
           err = "invalid character in string: code is: " + c.code
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
       }
       if (state == 2) {
@@ -130,7 +130,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
               // so check if user enables stringSingleQuotes
               if (!opts.isStringSingleQuotes) {
                 err = "invalid escape character: $c"
-                throw ParserUtils.err(opts, err)
+                throw ParserUtils.err(cs, opts, err)
               }
               append('\'')
               state = 1
@@ -166,7 +166,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
             'u' -> state = 3
             else -> {
               err = "invalid escape character: $c"
-              throw ParserUtils.err(opts, err)
+              throw ParserUtils.err(cs, opts, err)
             }
           }
           if (state == 1) {
@@ -180,7 +180,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           u1 = parseHex(c)
           if (u1 == -1) {
             err = "invalid hex character in \\u[H]HHH: $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
           ++state
         }
@@ -191,7 +191,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           u2 = parseHex(c)
           if (u2 == -1) {
             err = "invalid hex character in \\u$u1[H]HH: $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
           ++state
         }
@@ -202,7 +202,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           u3 = parseHex(c)
           if (u3 == -1) {
             err = "invalid hex character in \\u$u1$u2[H]H: $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
           ++state
         }
@@ -213,7 +213,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           val u4 = parseHex(c)
           if (u4 == -1) {
             err = "invalid hex character in \\u$u1$u2$u3[H]: $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
           append(((u1 shl 12) or (u2 shl 8) or (u3 shl 4) or u4).toChar())
           state = 1
@@ -237,7 +237,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
       return false
     } else if (isComplete) {
       err = "expecting more characters to build string"
-      throw ParserUtils.err(opts, err)
+      throw ParserUtils.err(cs, opts, err)
     } else {
       return false
     }

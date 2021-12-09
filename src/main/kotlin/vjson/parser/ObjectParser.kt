@@ -105,7 +105,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
       // otherwise exception would be thrown or cs.hasNext() would return false
     } catch (e: JsonParseException) {
       val err = "invalid json object: failed when parsing key: (" + e.message + ")"
-      throw ParserUtils.err(opts, err)
+      throw ParserUtils.err(cs, opts, err)
     }
   }
 
@@ -144,7 +144,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         // otherwise exception would be thrown or cs.hasNext() would return false
       }
     } catch (e: JsonParseException) {
-      throw JsonParseException("invalid json object: failed when parsing value: (" + e.message + ")", e)
+      throw JsonParseException("invalid json object: failed when parsing value: (" + e.message + ")", e, cs.lineCol())
     }
   }
 
@@ -165,7 +165,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           state = 1
         } else {
           err = "invalid character for json object: not starts with `{`: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
       }
     }
@@ -183,7 +183,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           state = 8
         } else {
           err = "invalid character for json object key: $peek"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
       }
     }
@@ -197,7 +197,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
             state = 4
           } else if (!isColon(c)) {
             err = "invalid key-value separator for json object, expecting `:`, but got $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           } else {
             cs.moveNextAndGet()
             state = 3
@@ -224,7 +224,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
             state = 5
           } else {
             err = "invalid character for json object, expecting `}` or `,`, but got $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
         }
       }
@@ -239,7 +239,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
             state = 8
           } else {
             err = "invalid character for json object key: $peek"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
         }
       }
@@ -253,7 +253,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           val key = keyBuilder.toString()
           if (key.isEmpty()) {
             err = "empty key is not allowed when parsing object key without quotes"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
           state = 9
           currentKey = key
@@ -267,7 +267,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
             keyBuilder!!.next(c)
           } else {
             err = "invalid character for json object key without quotes: $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
         }
       }
@@ -279,7 +279,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
             state = 2
           } else {
             err = "invalid character after json object key without quotes: $peek"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
         }
       }
@@ -301,7 +301,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
       return false
     } else if (isComplete) {
       err = "expecting more characters to build object"
-      throw ParserUtils.err(opts, err)
+      throw ParserUtils.err(cs, opts, err)
     } else {
       return false
     }

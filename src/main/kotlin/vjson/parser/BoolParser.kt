@@ -51,7 +51,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
           state = 4
         } else {
           err = "invalid character for [t]rue|[f]alse: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
       }
     }
@@ -60,7 +60,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'r') {
           err = "invalid character for t[r]ue: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -70,7 +70,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'u') {
           err = "invalid character for tr[u]e: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -80,7 +80,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'e') {
           err = "invalid character for tru[e]: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         state = 8
       }
@@ -90,7 +90,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'a') {
           err = "invalid character for f[a]lse: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -100,7 +100,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'l') {
           err = "invalid character for fa[l]se: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -110,7 +110,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 's') {
           err = "invalid character for fal[s]e: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -120,7 +120,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != 'e') {
           err = "invalid character for fals[e]: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -136,7 +136,7 @@ class BoolParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
       return false
     } else if (isComplete) {
       err = "expecting more characters to build `true` or `false`"
-      throw ParserUtils.err(opts, err)
+      throw ParserUtils.err(cs, opts, err)
     } else {
       return false
     }

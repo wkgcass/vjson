@@ -37,6 +37,10 @@ class LineCol /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
     return LineCol(filename, line, col + innerOffset)
   }
 
+  fun isEmpty(): Boolean {
+    return filename == "" && line == 0 && col == 0
+  }
+
   override fun toString(): String {
     return "$filename($line:$col)"
   }

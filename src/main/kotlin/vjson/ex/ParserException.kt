@@ -20,11 +20,11 @@ open class ParserException : RuntimeException {
 
   constructor(msg: String) : super(msg)
   constructor(msg: String, cause: Throwable) : super(msg, cause)
-  constructor(msg: String, lineCol: LineCol) : super("$msg at $lineCol") {
+  constructor(msg: String, lineCol: LineCol) : super(msg + (if (lineCol.isEmpty()) "" else " at $lineCol")) {
     this.lineCol = lineCol
   }
 
-  constructor(msg: String, cause: Throwable, lineCol: LineCol) : super("$msg at $lineCol", cause) {
+  constructor(msg: String, cause: Throwable, lineCol: LineCol) : super(msg + (if (lineCol.isEmpty()) "" else " at $lineCol"), cause) {
     this.lineCol = lineCol
   }
 }

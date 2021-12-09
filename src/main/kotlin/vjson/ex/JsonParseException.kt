@@ -11,7 +11,11 @@
  */
 package vjson.ex
 
+import vjson.cs.LineCol
+
 class JsonParseException : ParserException {
   constructor(msg: String) : super(msg)
   constructor(msg: String, cause: Throwable) : super(msg, cause)
+  constructor(msg: String, lineCol: LineCol) : super(msg, lineCol)
+  constructor(msg: String, cause: Throwable, lineCol: LineCol) : super(msg, cause, lineCol)
 }

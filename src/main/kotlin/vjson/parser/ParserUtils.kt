@@ -68,16 +68,16 @@ object ParserUtils {
       if (cs.hasNext()) {
         val err = "input stream contain extra characters other than $type"
         opts.listener.onError(err)
-        throw JsonParseException(err)
+        throw JsonParseException(err, cs.lineCol())
       }
     }
   }
 
   internal
   /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
-  fun err(opts: ParserOptions, msg: String): JsonParseException {
+  fun err(cs: CharStream, opts: ParserOptions, msg: String): JsonParseException {
     opts.listener.onError(msg)
-    return JsonParseException(msg)
+    return JsonParseException(msg, cs.lineCol())
   }
 
   internal
@@ -102,7 +102,7 @@ object ParserUtils {
     val opts = ParserOptions.DEFAULT
     cs.skipBlank()
     if (!cs.hasNext()) {
-      throw JsonParseException("empty input string")
+      throw JsonParseException("empty input string", cs.lineCol())
     }
     when (cs.peekNext()) {
       '{' -> {
@@ -133,8 +133,8 @@ object ParserUtils {
         }
         return ret
       }
-      '\'' -> throw JsonParseException("not valid json string: stringSingleQuotes not enabled")
-      '(' -> throw JsonParseException("not valid json string: allowParenthesesString not enabled")
+      '\'' -> throw JsonParseException("not valid json string: stringSingleQuotes not enabled", cs.lineCol())
+      '(' -> throw JsonParseException("not valid json string: allowParenthesesString not enabled", cs.lineCol())
       '"' -> {
         var p = holder.threadLocalStringParser()
         if (p == null) {
@@ -169,7 +169,7 @@ object ParserUtils {
     val opts = ParserOptions.DEFAULT_JAVA_OBJECT
     cs.skipBlank()
     if (!cs.hasNext()) {
-      throw JsonParseException("empty input string")
+      throw JsonParseException("empty input string", cs.lineCol())
     }
     when (cs.peekNext()) {
       '{' -> {
@@ -200,8 +200,8 @@ object ParserUtils {
         }
         return ret
       }
-      '\'' -> throw JsonParseException("not valid json string: stringSingleQuotes not enabled")
-      '(' -> throw JsonParseException("not valid json string: allowParenthesesString not enabled")
+      '\'' -> throw JsonParseException("not valid json string: stringSingleQuotes not enabled", cs.lineCol())
+      '(' -> throw JsonParseException("not valid json string: allowParenthesesString not enabled", cs.lineCol())
       '"' -> {
         var p = holder.threadLocalStringParserJavaObject()
         if (p == null) {
@@ -231,20 +231,20 @@ object ParserUtils {
   private fun parser(cs: CharStream, opts: ParserOptions): Parser<*> {
     cs.skipBlank()
     if (!cs.hasNext()) {
-      throw JsonParseException("empty input string")
+      throw JsonParseException("empty input string", cs.lineCol())
     }
     return when (val first = cs.peekNext()) {
       '{' -> ObjectParser(opts)
       '[' -> ArrayParser(opts)
       '\'' -> {
         if (!opts.isStringSingleQuotes) {
-          throw JsonParseException("not valid json string: stringSingleQuotes not enabled")
+          throw JsonParseException("not valid json string: stringSingleQuotes not enabled", cs.lineCol())
         }
         return StringParser(opts)
       }
       '(' -> {
         if (!opts.isAllowParenthesesString) {
-          throw JsonParseException("not valid json string: allowParenthesesString not enabled")
+          throw JsonParseException("not valid json string: allowParenthesesString not enabled", cs.lineCol())
         }
         return StringParser(opts)
       }
@@ -257,7 +257,7 @@ object ParserUtils {
         if (first in '0'..'9') {
           return NumberParser(opts)
         }
-        throw JsonParseException("not valid json string")
+        throw JsonParseException("not valid json string", cs.lineCol())
       }
     }
   }

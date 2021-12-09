@@ -82,7 +82,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         // otherwise exception would be thrown or cs.hasNext() would return false
       }
     } catch (e: JsonParseException) {
-      throw JsonParseException("invalid json array: failed when parsing element: (" + e.message + ")", e)
+      throw JsonParseException("invalid json array: failed when parsing element: (" + e.message + ")", e, cs.lineCol())
     }
   }
 
@@ -99,7 +99,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
         c = cs.moveNextAndGet()
         if (c != '[') {
           err = "invalid character for json array: not starts with `[`: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         ++state
       }
@@ -131,7 +131,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
             state = 3
           } else {
             err = "invalid character for json array, expecting `]` or `,`, but got $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
         }
       }
@@ -159,7 +159,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
       return false
     } else if (isComplete) {
       err = "expecting more characters to build array"
-      throw ParserUtils.err(opts, err)
+      throw ParserUtils.err(cs, opts, err)
     } else {
       return false
     }

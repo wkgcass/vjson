@@ -206,7 +206,7 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           val d = parseDigit(c)
           if (d == -1) {
             err = "invalid digit in number: $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
           if (d == 0) {
             integer = 0
@@ -224,7 +224,7 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         val d = parseDigit(c)
         if (d == -1) {
           err = "invalid digit in number: $c"
-          throw ParserUtils.err(opts, err)
+          throw ParserUtils.err(cs, opts, err)
         }
         if (d == 0) {
           integer = 0
@@ -263,7 +263,7 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           val d = parseDigit(c)
           if (d == -1) {
             err = "invalid digit in fraction: $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
           // assert fraction = 0
           fraction = d.toLong()
@@ -308,7 +308,7 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
             val d = parseDigit(c)
             if (d == -1) {
               err = "invalid digit in exponent: $c"
-              throw ParserUtils.err(opts, err)
+              throw ParserUtils.err(cs, opts, err)
             }
             exponent *= 10
             exponent += d
@@ -322,7 +322,7 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           val d = parseDigit(c)
           if (d == -1) {
             err = "invalid digit in exponent: $c"
-            throw ParserUtils.err(opts, err)
+            throw ParserUtils.err(cs, opts, err)
           }
           exponent *= 10
           exponent += d
@@ -366,7 +366,7 @@ class NumberParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         return true
       } else {
         err = "expecting more characters to build number"
-        throw ParserUtils.err(opts, err)
+        throw ParserUtils.err(cs, opts, err)
       }
     } else {
       return false
