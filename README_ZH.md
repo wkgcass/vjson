@@ -75,6 +75,18 @@ Kotlin JS 的限制比 Kotlin Native 更多，所以额外提供了一个task用
 
 执行`./gradlew clean kotlinJs`，将源代码编译到kotlin js的版本。
 
+你还可以执行如下命令，来更新web版本的解释器代码：
+
+```shell
+./gradlew clean kotlinJs
+rm -r misc/online_vjson_lang_interpreter/src/main/kotlin/vjson/*
+cp -r src/main/kotlin/vjson/* misc/online_vjson_lang_interpreter/src/main/kotlin/vjson
+
+# 然后你可以运行这个web版本的解释器:
+cd misc/online_vjson_lang_interpreter/
+./gradlew clean run
+```
+
 ## vpreprocessor
 
 在jvm和kotlin native上，`vjson`使用相同的源代码。为了实现更好的java互操作性，`vjson`中使用了一些jvm特有的注解和jdk类库。但是在kotlin native中并没有提供这些类。为了解决这个问题，我开发了一个代码预处理器，可以将“宏”通过注释插入java/kotlin代码中。

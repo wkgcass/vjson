@@ -75,6 +75,18 @@ Kotlin JS has more restrictions than kotlin native, a standalone task is provide
 
 Run `./gradlew clean kotlinJs` to compile the source code to kotlin js version.
 
+Also you can run the following commands to update the web interpreter code:
+
+```shell
+./gradlew clean kotlinJs
+rm -r misc/online_vjson_lang_interpreter/src/main/kotlin/vjson/*
+cp -r src/main/kotlin/vjson/* misc/online_vjson_lang_interpreter/src/main/kotlin/vjson
+
+# Then you can run the interpreter:
+cd misc/online_vjson_lang_interpreter/
+./gradlew clean run
+```
+
 ## vpreprocessor
 
 The same source code would be used on both jvm and kotlin native. Some jvm specific annotations and jdk classes are used to get better java interoperability. However they cannot be used when building kotlin native applications. To solve this problem, I developed a code preprocessor program which allow you to integrate `macro` into java/kotlin code using comments.
