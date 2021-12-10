@@ -63,21 +63,24 @@
         "// function invocation\n" +
         "var result = (max:[1, 2])\n" +
         "\n" +
-        "// number, bool literals can directly be used\n" +
+        "// number, bool literals can be directly used\n" +
         "var intVar = 1\n" +
         "var longVar = 1000000000 // exceeds Integer.MAX_VALUE\n" +
+        "var doubleVar = 1.2\n" +
+        "// use toFloat to convert other number types to float\n" +
+        "var floatVar = doubleVar.toFloat\n" +
         "var boolVar = true\n" +
         "// strings should be inside (...)\n" +
         "var strVar = ('hello')\n" +
         "// other expressions should be inside (...)\n" +
         "var calc = (1 + 2 * 3 - 4)\n" +
         "// if you are not sure which expression can be used without parentheses\n" +
-        "// simply add parentheses around it, it will always work with parentheses\n" +
+        "// simply add parentheses around it, it will always work in this way\n" +
         "\n" +
-        "// to define a variable with null, you must specify type\n" +
+        "// to define a variable with null, you must specify the type\n" +
         "var nullVariable = {null: 'string'}\n" +
         "nullVariable = ('abc') // assign a string to it\n" +
-        "// assigning a variable with null does not require type\n" +
+        "// assigning a variable with null does not require a type\n" +
         "nullVariable = null\n" +
         "\n" +
         "// class definition\n" +
@@ -142,7 +145,7 @@
         "\n" +
         "/* If a type has .toString:[] function,\n" +
         " * you can use `+` to concat it to a string\n" +
-        " */\n " +
+        " */\n" +
         "var stringPlusInt = ('' + intVar)\n" +
         "var intPlusString = (intVar + '')\n" +
         "class MyType: {a: 'int', b: 'double'} do: {\n" +
