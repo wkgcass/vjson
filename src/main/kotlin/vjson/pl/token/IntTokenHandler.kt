@@ -74,8 +74,8 @@ class IntTokenHandler : TokenHandler {
     return finished && result != null
   }
 
-  override fun build(lineCol: LineCol): Token {
-    return Token(TokenType.INTEGER, sb.toString(), lineCol, result)
+  override fun build(lineCol: LineCol): List<Token> {
+    return listOf(Token(TokenType.INTEGER, sb.toString(), lineCol, result))
   }
 
   override fun reset() {

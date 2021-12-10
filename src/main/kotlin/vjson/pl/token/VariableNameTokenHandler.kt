@@ -35,8 +35,8 @@ class VariableNameTokenHandler : TokenHandler {
     return sb.isNotEmpty()
   }
 
-  override fun build(lineCol: LineCol): Token {
-    return Token(TokenType.VAR_NAME, sb.toString(), lineCol)
+  override fun build(lineCol: LineCol): List<Token> {
+    return listOf(Token(TokenType.VAR_NAME, sb.toString(), lineCol))
   }
 
   override fun reset() {

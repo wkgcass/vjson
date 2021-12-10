@@ -22,6 +22,7 @@ class FloatTokenHandler : TokenHandler {
   private var result: JSON.Number<*>? = null
   private var finished = false
   private val sb = StringBuilder()
+  private var endsWithDot = false
 
   @Suppress("DuplicatedCode")
   override fun feed(c: Char): Boolean {
@@ -51,6 +52,10 @@ class FloatTokenHandler : TokenHandler {
   }
 
   private fun finish() {
+    if (sb.last() == '.') {
+      endsWithDot = true
+      sb.deleteAt(sb.length - 1)
+    }
     val res = try {
       NumberParser().build(CharStream.from(sb.toString()), true)
     } catch (e: Exception) {
@@ -59,8 +64,14 @@ class FloatTokenHandler : TokenHandler {
     if (res != null) {
       finished = true
     }
-    if (res is JSON.Double) {
-      result = res
+    if (endsWithDot) {
+      if (res is JSON.Integer || res is JSON.Long) {
+        result = res
+      }
+    } else {
+      if (res is JSON.Double) {
+        result = res
+      }
     }
   }
 
@@ -71,8 +82,16 @@ class FloatTokenHandler : TokenHandler {
     return finished && result != null
   }
 
-  override fun build(lineCol: LineCol): Token {
-    return Token(TokenType.FLOAT, sb.toString(), lineCol, result)
+  override fun build(lineCol: LineCol): List<Token> {
+    val raw = sb.toString()
+    return if (endsWithDot) {
+      listOf(
+        Token(TokenType.INTEGER, raw, lineCol, result),
+        Token(TokenType.DOT, ".", lineCol.addCol(sb.length))
+      )
+    } else {
+      listOf(Token(TokenType.FLOAT, raw, lineCol, result))
+    }
   }
 
   override fun reset() {
@@ -80,6 +99,7 @@ class FloatTokenHandler : TokenHandler {
     result = null
     finished = false
     sb.clear()
+    endsWithDot = false
   }
 
   override fun precedence(): Int {

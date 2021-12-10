@@ -63,13 +63,15 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
 
   fun peek(n: Int = 1): Token? {
     if (tokenBuffer.size() >= n) return tokenBuffer.get(n - 1)
-    var nn = n - tokenBuffer.size()
     while (true) {
-      --nn
-      val token = readToken() ?: return null
-      tokenBuffer.add(token)
-      if (nn == 0) {
-        return token
+      val sizeBeforeRead = tokenBuffer.size()
+      readToken()
+      val size = tokenBuffer.size()
+      if (size == sizeBeforeRead) { // eof
+        return null
+      }
+      if (n <= size) {
+        return tokenBuffer.get(n - 1)
       }
     }
   }
@@ -80,26 +82,32 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
       tokenBuffer.removeFirst(n)
       return ret
     }
-    var nn = n - tokenBuffer.size()
+    val nn = n - tokenBuffer.size()
     tokenBuffer.clear()
     while (true) {
-      --nn
-      val token = readToken() ?: return null
-      if (nn == 0) {
-        return token
+      val sizeBeforeRead = tokenBuffer.size()
+      readToken()
+      val size = tokenBuffer.size()
+      if (sizeBeforeRead == size) { // eof
+        return null
+      }
+      if (nn <= size) {
+        tokenBuffer.removeFirst(nn - 1)
+        return tokenBuffer.removeFirst()
       }
     }
   }
 
-  private fun readToken(): Token? {
+  private fun readToken() {
     cs.skipBlank()
     if (!cs.hasNext()) {
-      return null
+      return
     }
 
     val preCheck = cs.peekNext()
     if (preCheck == '\'') {
-      return readStringToken()
+      tokenBuffer.add(readStringToken())
+      return
     }
 
     val lineCol = cs.lineCol()
@@ -125,15 +133,14 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
       }
       if (current.isEmpty()) {
         if (traveled.isEmpty()) {
-          throw ParserException(
-            "unable to parse the token: all rules failed when reading the first character $c"
-          )
+          throw ParserException("unable to parse the token: all rules failed when reading the first character $c", cs.lineCol())
         }
         if (!canSplitTokens(c) && (prevC != null && !canSplitTokens(prevC))) {
           throw ParserException(
             "unable to parse the token: all rules failed after reading `$traveled`, the next character is $c, " +
               "both ${traveled[traveled.length - 1]} and $c cannot be used to split a token, " +
-              "last applicable rules: $last"
+              "last applicable rules: $last",
+            cs.lineCol()
           )
         }
         return finish(lineCol, last, traveled, c)
@@ -178,14 +185,14 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
     }
 
     if (!finishes) {
-      throw ParserException("unable to parse the token: incomplete string literal: $raw")
+      throw ParserException("unable to parse the token: incomplete string literal: $raw", cs.lineCol())
     }
 
     val str = sb.toString()
     return Token(TokenType.STRING, raw.toString(), lineCol, SimpleString(str))
   }
 
-  private fun finish(lineCol: LineCol, last: ArrayList<TokenHandler>, traveled: StringBuilder, c: Char?): Token {
+  private fun finish(lineCol: LineCol, last: ArrayList<TokenHandler>, traveled: StringBuilder, c: Char?) {
     val current = ArrayList<TokenHandler>()
     for (h in last) {
       if (h.check()) {
@@ -193,7 +200,10 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
       }
     }
     if (current.size == 0) {
-      throw ParserException("unable to parse the token: all rules failed after reading `$traveled`, the next character is ${c?.toString() ?: "(eof)"}, last applicable rules: $last")
+      throw ParserException(
+        "unable to parse the token: all rules failed after reading `$traveled`, the next character is ${c?.toString() ?: "(eof)"}, last applicable rules: $last",
+        cs.lineCol()
+      )
     }
     val handler: TokenHandler
     if (current.size == 1) {
@@ -213,11 +223,20 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
         }
       }
       if (foo.size > 1) {
-        throw ParserException("unable to parse the token: multiple rules conflict after reading `$traveled${c?.toString() ?: ""}`: $foo")
+        throw ParserException(
+          "unable to parse the token: multiple rules conflict after reading `$traveled${c?.toString() ?: ""}`: $foo",
+          cs.lineCol()
+        )
       }
       handler = foo[0]
     }
-    return handler.build(lineCol)
+    val tokens = handler.build(lineCol)
+    if (tokens.isEmpty()) {
+      throw ParserException("unable to parse the token: no tokens built by $handler", cs.lineCol())
+    }
+    for (t in tokens) {
+      tokenBuffer.add(t)
+    }
   }
 
   private fun canSplitTokens(c: Char): Boolean {

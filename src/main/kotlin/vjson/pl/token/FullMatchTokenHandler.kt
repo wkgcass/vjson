@@ -34,11 +34,11 @@ class FullMatchTokenHandler(
     return cursor == cs.size
   }
 
-  override fun build(lineCol: LineCol): Token {
+  override fun build(lineCol: LineCol): List<Token> {
     if (!check()) {
       throw Exception("check() returns false, but build() is called")
     }
-    return Token(type, raw, lineCol, value)
+    return listOf(Token(type, raw, lineCol, value))
   }
 
   override fun reset() {

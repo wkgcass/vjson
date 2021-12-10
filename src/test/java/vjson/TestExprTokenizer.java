@@ -138,6 +138,21 @@ public class TestExprTokenizer {
     }
 
     @Test
+    public void intAndDot() {
+        assertEquals(Arrays.asList(
+            new Token(TokenType.INTEGER, "1", LineCol.Companion.getEMPTY(), new SimpleInteger(1)),
+            new Token(TokenType.DOT, ".", LineCol.Companion.getEMPTY()),
+            new Token(TokenType.VAR_NAME, "toString", LineCol.Companion.getEMPTY()),
+            new Token(TokenType.INTEGER, "2", LineCol.Companion.getEMPTY(), new SimpleInteger(2)),
+            new Token(TokenType.DOT, ".", LineCol.Companion.getEMPTY()),
+            new Token(TokenType.VAR_NAME, "toFloat", LineCol.Companion.getEMPTY()),
+            new Token(TokenType.INTEGER, "10000000000", LineCol.Companion.getEMPTY(), new SimpleLong(10000000000L)),
+            new Token(TokenType.DOT, ".", LineCol.Companion.getEMPTY()),
+            new Token(TokenType.VAR_NAME, "toInt", LineCol.Companion.getEMPTY())
+        ), token("1.toString  2.toFloat 10000000000.toInt"));
+    }
+
+    @Test
     public void all() {
         assertEquals(Arrays.asList(
             new Token(TokenType.INTEGER, "1", LineCol.Companion.getEMPTY(), new SimpleInteger(1)),

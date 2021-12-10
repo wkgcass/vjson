@@ -17,7 +17,7 @@ import vjson.cs.LineCol
 interface TokenHandler {
   fun feed(c: Char): Boolean
   fun check(): Boolean
-  fun build(lineCol: LineCol): Token
+  fun build(lineCol: LineCol): List<Token>
   fun reset()
   fun precedence(): Int
 }
