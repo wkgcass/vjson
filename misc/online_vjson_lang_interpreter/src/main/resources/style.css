@@ -1,0 +1,116 @@
+#editor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(50% - 2px);
+    height: calc(100% - 40px);
+}
+
+#tmpl {
+    position: absolute;
+    left: 0;
+    top: calc(100% - 40px);
+    width: calc(50% - 2px);
+    height: 40px;
+    background-color: #292c33;
+}
+
+#console {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: calc(50% - 2px);
+    height: calc(100% - 40px);
+}
+
+#buttons {
+    position: absolute;
+    right: 0;
+    top: calc(100% - 40px);
+    width: calc(50% - 2px);
+    height: 40px;
+    background-color: #292c33;
+}
+
+#buttons > button {
+    height: 40px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+@font-face {
+    font-family: JetBrainsMono-Light;
+    src: url(JetBrainsMono-Light.woff2);
+}
+
+.mono {
+    font-family: JetBrainsMono-Light;
+}
+
+/* ========================================================================================= */
+/* the following code is copied from https://www.w3schools.com/howto/howto_custom_select.asp */
+/* ========================================================================================= */
+
+/* The container must be positioned relative: */
+.custom-select {
+    position: relative;
+    font-family: Arial;
+}
+
+.custom-select select {
+    display: none; /*hide original SELECT element: */
+}
+
+.select-selected {
+    background-color: #292c33;
+}
+
+/* Style the arrow inside the select element: */
+.select-selected:after {
+    position: absolute;
+    content: "";
+    top: 7px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-color: transparent transparent #fff transparent;
+}
+
+/* Point the arrow upwards when the select box is open (active): */
+.select-selected.select-arrow-active:after {
+    border-color: #fff transparent transparent transparent;
+    top: 14px;
+}
+
+/* style the items (options), including the selected item: */
+.select-items div, .select-selected {
+    color: #b3b9c5;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+    cursor: pointer;
+}
+
+/* Style items (options): */
+.select-items {
+    position: absolute;
+    background-color: #292c33;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+
+/* Hide the items when the select box is closed: */
+.select-hide {
+    display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================================================================= */
+/* the following code is copied from https://www.w3schools.com/howto/howto_custom_select.asp */
+/* ========================================================================================= */
