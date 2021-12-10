@@ -88,6 +88,7 @@ public class TestParseFail {
             p.feed("\"");
         });
         parseFail("expecting more characters to build string", () -> new StringParser(new ParserOptions().setAllowParenthesesString(true)).last("(abc"));
+        parseFail("expecting more characters to build string", () -> new StringParser(new ParserOptions().setAllowParenthesesString(true)).last("(abc\\"));
     }
 
     @Test

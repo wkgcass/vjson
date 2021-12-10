@@ -15,7 +15,6 @@ package vjson.pl.ast
 import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
-import vjson.pl.type.MemoryAllocator
 import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 import vjson.simple.SimpleString
@@ -25,13 +24,12 @@ data class Param(
   val type: Type
 ) : TypedAST {
   override var lineCol: LineCol = LineCol.EMPTY
-  private var ctx: TypeContext = TypeContext(MemoryAllocator())
 
   override fun check(ctx: TypeContext): TypeInstance {
-    this.ctx = ctx
     if (!ctx.hasType(type)) {
       throw ParserException("type of parameter $name (${type}) is not defined", lineCol)
     }
+    type.check(ctx)
     return ctx.getType(type)
   }
 

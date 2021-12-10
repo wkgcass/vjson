@@ -16,6 +16,8 @@ import vjson.CharStream
 import vjson.cs.LineCol
 import vjson.cs.LineColCharStream
 import vjson.ex.ParserException
+import vjson.parser.ParserOptions
+import vjson.parser.StringParser
 import vjson.pl.token.*
 import vjson.simple.SimpleBool
 import vjson.simple.SimpleString
@@ -105,7 +107,7 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
     }
 
     val preCheck = cs.peekNext()
-    if (preCheck == '\'') {
+    if (preCheck == '\'' || preCheck == '\"') {
       tokenBuffer.add(readStringToken())
       return
     }
@@ -156,40 +158,23 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
   private fun readStringToken(): Token {
     val lineCol = cs.lineCol()
     val raw = StringBuilder()
-    val sb = StringBuilder()
-    raw.append(cs.moveNextAndGet()) // '
-    var finishes = false
-    var state = 0
+    val stringParser = StringParser(ParserOptions().setStringSingleQuotes(true))
+    var result: SimpleString? = null
     while (cs.hasNext()) {
       val c = cs.moveNextAndGet()
       raw.append(c)
-      if (state == 0) {
-        if (c == '\\') {
-          state = 1
-        } else if (c == '\'') {
-          finishes = true
-          break
-        } else {
-          sb.append(c)
-        }
-      } else {
-        if (c == '\'' || c == '\\') {
-          sb.append(c)
-          state = 0
-        } else {
-          sb.append("\\")
-          sb.append(c)
-          state = 0
-        }
+      val res = stringParser.feed(LineColCharStream(CharStream.from(charArrayOf(c)), lineCol.filename, cs.lineCol()))
+      if (res != null) {
+        result = res as SimpleString
+        break
       }
     }
 
-    if (!finishes) {
+    if (result == null) {
       throw ParserException("unable to parse the token: incomplete string literal: $raw", cs.lineCol())
     }
 
-    val str = sb.toString()
-    return Token(TokenType.STRING, raw.toString(), lineCol, SimpleString(str))
+    return Token(TokenType.STRING, raw.toString(), lineCol, result)
   }
 
   private fun finish(lineCol: LineCol, last: ArrayList<TokenHandler>, traveled: StringBuilder, c: Char?) {

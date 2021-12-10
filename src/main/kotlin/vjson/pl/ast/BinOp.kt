@@ -217,10 +217,15 @@ data class BinOp(
     return object : Instruction() {
       override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
       override fun execute0(ctx: ActionContext, values: ValueHolder) {
-        getFuncInst.execute(ctx, values)
-        val func = values.refValue as Instruction
-        val newCtx = ActionContext(total, ctx.getContext(depth))
-        func.execute(newCtx, values)
+        if (getFuncInst is FunctionInstance) {
+          getFuncInst.ctxBuilder = { ActionContext(total, it) }
+          getFuncInst.execute(ctx, values)
+        } else {
+          getFuncInst.execute(ctx, values)
+          val func = values.refValue as Instruction
+          val newCtx = ActionContext(total, ctx.getContext(depth))
+          func.execute(newCtx, values)
+        }
       }
     }
   }

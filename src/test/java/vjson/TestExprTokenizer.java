@@ -133,7 +133,7 @@ public class TestExprTokenizer {
             new Token(TokenType.STRING, "'a\\'b'", LineCol.Companion.getEMPTY(), new SimpleString("a'b")),
             new Token(TokenType.STRING, "''", LineCol.Companion.getEMPTY(), new SimpleString("")),
             new Token(TokenType.STRING, "'\\\\'", LineCol.Companion.getEMPTY(), new SimpleString("\\")),
-            new Token(TokenType.STRING, "'\\b'", LineCol.Companion.getEMPTY(), new SimpleString("\\b"))
+            new Token(TokenType.STRING, "'\\b'", LineCol.Companion.getEMPTY(), new SimpleString("\b"))
         ), token("'a' 'a\\'b' '' '\\\\' '\\b'"));
     }
 

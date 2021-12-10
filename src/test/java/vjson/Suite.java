@@ -47,6 +47,7 @@ import vpreprocessor.*;
     TestTypeContext.class,
     TestTypeCheck.class,
     TestInterpreter.class,
+    TestInterpreterSamplePrograms.class,
 })
 public class Suite {
 }

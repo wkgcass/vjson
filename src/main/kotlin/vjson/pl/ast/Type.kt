@@ -22,7 +22,7 @@ import vjson.pl.type.TypeInstance
 
 data class Type(private val name: String) : TypedAST {
   override var lineCol: LineCol = LineCol.EMPTY
-  private var ctx: TypeContext = TypeContext(MemoryAllocator())
+  private var ctx: TypeContext? = null
   private val isArray: Boolean
   private val elementType: Type
 
@@ -59,7 +59,7 @@ data class Type(private val name: String) : TypedAST {
   }
 
   override fun typeInstance(): TypeInstance {
-    return ctx.getType(this)
+    return ctx!!.getType(this)
   }
 
   override fun generateInstruction(): Instruction {

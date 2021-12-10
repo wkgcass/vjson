@@ -16,11 +16,15 @@ import vjson.pl.ast.*
 
 class ClassTypeInstance(val cls: ClassDefinition) : TypeInstance {
   private val constructorParams: List<Param>
+  private val constructorFields: MutableMap<String, Param> = HashMap()
   private val fields: MutableMap<String, VariableDefinition> = HashMap()
   private val functions: MutableMap<String, FunctionDefinition> = HashMap()
 
   init {
     constructorParams = cls.params
+    for (param in constructorParams) {
+      constructorFields[param.name] = param
+    }
     for (stmt in cls.code) {
       if (stmt is VariableDefinition) {
         fields[stmt.name] = stmt
@@ -40,6 +44,12 @@ class ClassTypeInstance(val cls: ClassDefinition) : TypeInstance {
 
   @Suppress("LiftReturnOrAssignment")
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
+    if (accessFrom == this) {
+      val consField = constructorFields[name]
+      if (consField != null) {
+        return Field(consField.name, consField.typeInstance(), MemPos(cls.getMemDepth() + 1, consField.memIndex), true)
+      }
+    }
     val field = fields[name]
     if (field != null) {
       if (field.modifiers.isPublic() || accessFrom == this) {
@@ -57,5 +67,9 @@ class ClassTypeInstance(val cls: ClassDefinition) : TypeInstance {
       }
     }
     return null
+  }
+
+  override fun toString(): String {
+    return "class ${cls.name}"
   }
 }

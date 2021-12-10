@@ -165,6 +165,16 @@ public class TestFeature {
                 .put("a", "(a + (\nb\n * c)\n) - (d / e)")
                 .build(),
             parser.last("{(a):((a + (\nb\n * c)\n) - (d / e))}"));
+        parser.reset();
+        assertEquals(new ObjectBuilder()
+                .put("a", "(a + (\\nb\\n * c)\\n) - (d / e)")
+                .build(),
+            parser.last("{(a):((a + (\\nb\\n * c)\\n) - (d / e))}"));
+
+        StringParser parser1 = new StringParser(new ParserOptions().setAllowParenthesesString(true));
+        assertEquals(new SimpleString("\\"), parser1.last("(\\)"));
+        parser1.reset();
+        assertEquals(new SimpleString("\\r\\n"), parser1.last("(\\r\\n)"));
     }
 
     @Test

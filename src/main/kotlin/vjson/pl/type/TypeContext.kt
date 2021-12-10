@@ -65,7 +65,7 @@ class TypeContext {
   }
 
   fun getType(type: Type): TypeInstance {
-    return typeNameMap[type] ?: (parent?.getType(type) ?: throw NoSuchElementException())
+    return typeNameMap[type] ?: (parent?.getType(type) ?: throw NoSuchElementException(type.toString()))
   }
 
   fun addType(astType: Type, type: TypeInstance) {
