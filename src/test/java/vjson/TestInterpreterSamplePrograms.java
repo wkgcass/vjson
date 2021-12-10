@@ -33,7 +33,7 @@ public class TestInterpreterSamplePrograms {
             "var longVar = 1000000000 // exceeds Integer.MAX_VALUE\n" +
             "var doubleVar = 1.2\n" +
             "// use toFloat to convert other number types to float\n" +
-            "var floatVar = doubleVar.toFloat\n" +
+            "var floatVar = (doubleVar.toFloat)\n" +
             "var boolVar = true\n" +
             "// strings should be inside (...)\n" +
             "var strVar = ('hello')\n" +
