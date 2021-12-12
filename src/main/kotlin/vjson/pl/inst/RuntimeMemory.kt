@@ -95,6 +95,12 @@ class RuntimeMemory(
   }
 
   override fun toString(): String {
-    return "RuntimeMemory(intValues=${intValues.contentToString()}, longValues=${longValues.contentToString()}, floatValues=${floatValues.contentToString()}, doubleValues=${doubleValues.contentToString()}, boolValues=${boolValues.contentToString()}, refValues=${refValues.contentToString()})"
+    return "RuntimeMemory(\n" +
+      "intValues=${intValues.contentToString()}\n" +
+      "longValues=${longValues.contentToString()}\n" +
+      "floatValues=${floatValues.contentToString()}\n" +
+      "doubleValues=${doubleValues.contentToString()}\n" +
+      "boolValues=${boolValues.contentToString()}\n" +
+      "refValues=${refValues.toList().mapIndexed { idx, o -> "[$idx]: $o" }.joinToString("\n  ", prefix = "\n  ")})"
   }
 }
