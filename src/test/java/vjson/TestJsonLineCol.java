@@ -3,8 +3,8 @@ package vjson;
 import org.junit.Test;
 import vjson.cs.LineCol;
 import vjson.cs.LineColCharStream;
-import vjson.parser.ParserOptions;
 import vjson.parser.ParserUtils;
+import vjson.pl.InterpreterBuilder;
 
 import java.util.List;
 
@@ -34,16 +34,7 @@ public class TestJsonLineCol {
                 "  i j\n" +
                 "  k = 'kkk'\n" +
                 "}"), "test"),
-            new ParserOptions()
-                .setStringSingleQuotes(true)
-                .setKeyNoQuotes(true)
-                .setKeyNoQuotesAnyChar(true)
-                .setAllowSkippingCommas(true)
-                .setAllowObjectEntryWithoutValue(true)
-                .setEqualAsColon(true)
-                .setSemicolonAsComma(true)
-                .setParenthesesString(true)
-                .setStringValueNoQuotes(true));
+            InterpreterBuilder.Companion.interpreterOptions());
         assertLineCol(new LineCol("test", 1, 2), json.lineCol());
         JSON.Object o = (JSON.Object) json;
         List<JSON.ObjectEntry> entries = o.entryList();

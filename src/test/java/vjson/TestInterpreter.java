@@ -120,6 +120,27 @@ public class TestInterpreter {
     }
 
     @Test
+    public void binOpNull() {
+        Interpreter interpreter = new InterpreterBuilder()
+            .compile("{\n" +
+                "var a = ('a' == null)\n" +
+                "var b = (null == 'a')\n" +
+                "var c = (null == null)\n" +
+                "var d = ('a' != null)\n" +
+                "var e = (null != 'a')\n" +
+                "var f = (null != null)\n" +
+                "}");
+        RuntimeMemory mem = interpreter.execute();
+        assertFalse(mem.getBool(0));
+        assertFalse(mem.getBool(1));
+        assertTrue(mem.getBool(2));
+        assertTrue(mem.getBool(3));
+        assertTrue(mem.getBool(4));
+        assertFalse(mem.getBool(5));
+        assertEquals(6, mem.boolLen());
+    }
+
+    @Test
     public void unaryOp() {
         Interpreter interpreter = new InterpreterBuilder()
             .compile("{\n" +

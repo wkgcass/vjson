@@ -2,8 +2,8 @@ package vjson;
 
 import org.junit.Test;
 import vjson.parser.ObjectParser;
-import vjson.parser.ParserOptions;
 import vjson.pl.ASTGen;
+import vjson.pl.InterpreterBuilder;
 import vjson.pl.ast.*;
 import vjson.simple.SimpleDouble;
 import vjson.simple.SimpleInteger;
@@ -18,18 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class TestASTGen {
     private List<Statement> gen(String input) {
         //noinspection ConstantConditions
-        ASTGen gen = new ASTGen(new ObjectParser(new ParserOptions()
-            .setStringSingleQuotes(true)
-            .setKeyNoQuotes(true)
-            .setKeyNoQuotesAnyChar(true)
-            .setNullArraysAndObjects(true)
-            .setAllowSkippingCommas(true)
-            .setAllowObjectEntryWithoutValue(true)
-            .setEqualAsColon(true)
-            .setSemicolonAsComma(true)
-            .setParenthesesString(true)
-            .setStringValueNoQuotes(true)
-        ).last(input));
+        ASTGen gen = new ASTGen(new ObjectParser(InterpreterBuilder.Companion.interpreterOptions()).last(input));
         return gen.parse();
     }
 

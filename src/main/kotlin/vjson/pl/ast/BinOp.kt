@@ -67,7 +67,7 @@ data class BinOp(
             throw ParserException("$this: cannot calculate $leftType $op $rightType, type mismatch", lineCol)
           }
 
-          if (leftType != IntType && leftType != LongType && leftType != DoubleType) {
+          if (leftType !is NumericTypeInstance) {
             throw ParserException("$this: cannot calculate $leftType $op $rightType, not numeric values", lineCol)
           }
           when (op) {
@@ -87,6 +87,12 @@ data class BinOp(
       }
       CMP_NE, CMP_EQ -> {
         if (leftType != rightType) {
+          if (leftType is NullType || rightType is NullType) {
+            if (leftType !is PrimitiveTypeInstance && rightType !is PrimitiveTypeInstance) {
+              // non-primitive types can compare to null
+              return BoolType
+            }
+          }
           throw ParserException("$this: cannot calculate $leftType $op $rightType, type mismatch", lineCol)
         }
         BoolType

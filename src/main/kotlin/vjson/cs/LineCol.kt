@@ -28,11 +28,12 @@ class LineCol /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   )
 
   fun addCol(n: Int): LineCol {
-    if (filename == "" && line == 0 && col == 0) return EMPTY
+    if (isEmpty()) return EMPTY
     return LineCol(filename, line, col + n)
   }
 
   fun inner(): LineCol {
+    if (isEmpty()) return EMPTY
     if (innerOffset == 0) return this
     return LineCol(filename, line, col + innerOffset)
   }
