@@ -24,7 +24,7 @@ class LineCol /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
 
   constructor(lineCol: LineCol, innerOffsetIncrease: Int = 0) : this(
     lineCol.filename, lineCol.line, lineCol.col,
-    lineCol.innerOffset + innerOffsetIncrease
+    if (lineCol.isEmpty()) 0 else lineCol.innerOffset + innerOffsetIncrease
   )
 
   fun addCol(n: Int): LineCol {

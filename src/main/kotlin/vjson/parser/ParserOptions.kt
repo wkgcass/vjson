@@ -63,7 +63,11 @@ class ParserOptions {
     private set
   var isEqualAsColon: Boolean
     private set
-  var isAllowParenthesesString: Boolean
+  var isSemicolonAsComma: Boolean
+    private set
+  var isParenthesesString: Boolean
+    private set
+  var isStringValueNoQuotes: Boolean
     private set
 
   constructor() {
@@ -80,7 +84,9 @@ class ParserOptions {
     isAllowSkippingCommas = false
     isAllowObjectEntryWithoutValue = false
     isEqualAsColon = false
-    isAllowParenthesesString = false
+    isSemicolonAsComma = false
+    isParenthesesString = false
+    isStringValueNoQuotes = false
   }
 
   constructor(opts: ParserOptions) {
@@ -97,7 +103,9 @@ class ParserOptions {
     isAllowSkippingCommas = opts.isAllowSkippingCommas
     isAllowObjectEntryWithoutValue = opts.isAllowObjectEntryWithoutValue
     isEqualAsColon = opts.isEqualAsColon
-    isAllowParenthesesString = opts.isAllowParenthesesString
+    isSemicolonAsComma = opts.isSemicolonAsComma
+    isParenthesesString = opts.isParenthesesString
+    isStringValueNoQuotes = opts.isStringValueNoQuotes
   }
 
   fun setBufLen(bufLen: Int): ParserOptions {
@@ -135,7 +143,7 @@ class ParserOptions {
 
   fun setKeyNoQuotes(keyNoQuotes: Boolean): ParserOptions {
     if (!keyNoQuotes) {
-      isKeyNoQuotesAnyChar = false
+      setKeyNoQuotesAnyChar(false)
     }
     isKeyNoQuotes = keyNoQuotes
     return this
@@ -143,7 +151,7 @@ class ParserOptions {
 
   fun setKeyNoQuotesAnyChar(keyNoQuotesAnyChar: Boolean): ParserOptions {
     if (keyNoQuotesAnyChar) {
-      isKeyNoQuotes = true
+      setKeyNoQuotes(true)
     }
     isKeyNoQuotesAnyChar = keyNoQuotesAnyChar
     return this
@@ -169,8 +177,18 @@ class ParserOptions {
     return this
   }
 
-  fun setAllowParenthesesString(allowParenthesesString: Boolean): ParserOptions {
-    isAllowParenthesesString = allowParenthesesString
+  fun setSemicolonAsComma(semicolonAsComma: Boolean): ParserOptions {
+    isSemicolonAsComma = semicolonAsComma
+    return this
+  }
+
+  fun setParenthesesString(parenthesesString: Boolean): ParserOptions {
+    isParenthesesString = parenthesesString
+    return this
+  }
+
+  fun setStringValueNoQuotes(stringValueNoQuotes: Boolean): ParserOptions {
+    isStringValueNoQuotes = stringValueNoQuotes
     return this
   }
 }

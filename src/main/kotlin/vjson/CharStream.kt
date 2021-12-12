@@ -137,6 +137,12 @@ interface CharStream : MutableIterator<Char>, Iterable<Char> {
     }
   }
 
+  fun skip(n: Int) {
+    for (i in 1..n) {
+      moveNextAndGet()
+    }
+  }
+
   fun lineCol(): LineCol {
     return LineCol.EMPTY
   }

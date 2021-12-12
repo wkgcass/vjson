@@ -217,7 +217,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           if (c == '}') {
             cs.moveNextAndGet()
             state = 6
-          } else if (c == ',') {
+          } else if (isComma(c)) {
             cs.moveNextAndGet()
             state = 5
           } else if (opts.isAllowSkippingCommas) {
@@ -309,6 +309,10 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
 
   private fun isColon(c: Char): Boolean {
     return c == ':' || (opts.isEqualAsColon && c == '=')
+  }
+
+  private fun isComma(c: Char): Boolean {
+    return c == ',' || (opts.isSemicolonAsComma && c == ';')
   }
 
   private fun fillEntryWithoutValue(cs: CharStream) {

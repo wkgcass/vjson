@@ -93,4 +93,8 @@ class RuntimeMemory(
   fun refLen(): Int {
     return refValues.size
   }
+
+  override fun toString(): String {
+    return "RuntimeMemory(intValues=${intValues.contentToString()}, longValues=${longValues.contentToString()}, floatValues=${floatValues.contentToString()}, doubleValues=${doubleValues.contentToString()}, boolValues=${boolValues.contentToString()}, refValues=${refValues.contentToString()})"
+  }
 }

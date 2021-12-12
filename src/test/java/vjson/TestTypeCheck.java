@@ -42,7 +42,9 @@ public class TestTypeCheck {
             .setAllowSkippingCommas(true)
             .setStringSingleQuotes(true)
             .setEqualAsColon(true)
-            .setAllowParenthesesString(true)
+            .setSemicolonAsComma(true)
+            .setParenthesesString(true)
+            .setStringValueNoQuotes(true)
         ).last(TestFeature.TEST_PROG));
         List<Statement> stmts = gen.parse();
         MemoryAllocator globalMem = new MemoryAllocator();

@@ -41,7 +41,9 @@ public class TestJsonLineCol {
                 .setAllowSkippingCommas(true)
                 .setAllowObjectEntryWithoutValue(true)
                 .setEqualAsColon(true)
-                .setAllowParenthesesString(true));
+                .setSemicolonAsComma(true)
+                .setParenthesesString(true)
+                .setStringValueNoQuotes(true));
         assertLineCol(new LineCol("test", 1, 2), json.lineCol());
         JSON.Object o = (JSON.Object) json;
         List<JSON.ObjectEntry> entries = o.entryList();

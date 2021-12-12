@@ -81,6 +81,12 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
 
   protected fun getSubParser(cs: CharStream): Parser<*> {
     // the caller is responsible for cs.skipBlank() and checking cs.hasNext()
+    if (opts.isStringValueNoQuotes) {
+      val first = cs.peekNext()
+      if (first != '{' && first != '[' && first != '(' && first != '\'' && first != '"') {
+        return parserForValueNoQuotes(cs)
+      }
+    }
     return when (val first = cs.peekNext()) {
       '{' -> getObjectParser()
       '[' -> getArrayParser()
@@ -91,7 +97,7 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
         getStringParser()
       }
       '(' -> {
-        if (!opts.isAllowParenthesesString) {
+        if (!opts.isParenthesesString) {
           throw JsonParseException("not valid json string", cs.lineCol())
         }
         getStringParser()
@@ -123,5 +129,39 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
       keyParser!!.reset()
     }
     return keyParser!!
+  }
+
+  private fun parserForValueNoQuotes(cs: CharStream): Parser<*> {
+    val (str, _) = ParserUtils.extractNoQuotesString(cs, opts)
+    // try number, bool and null
+    try {
+      val newCS = CharStream.from(str)
+      val res = getNumberParser().last(newCS)
+      newCS.skipBlank()
+      if (res != null && !newCS.hasNext()) {
+        return getNumberParser()
+      }
+    } catch (ignore: JsonParseException) {
+    }
+    try {
+      val newCS = CharStream.from(str)
+      val res = getBoolParser().last(newCS)
+      newCS.skipBlank()
+      if (res != null && !newCS.hasNext()) {
+        return getBoolParser()
+      }
+    } catch (ignore: JsonParseException) {
+    }
+    try {
+      val newCS = CharStream.from(str)
+      val res = getNullParser().last(newCS)
+      newCS.skipBlank()
+      if (res != null && !newCS.hasNext()) {
+        return getNullParser()
+      }
+    } catch (ignore: JsonParseException) {
+    }
+
+    return getStringParser()
   }
 }

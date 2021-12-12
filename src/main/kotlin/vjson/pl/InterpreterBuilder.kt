@@ -23,6 +23,19 @@ import vjson.pl.type.lang.Types
 class InterpreterBuilder {
   private val types: MutableList<Types> = ArrayList()
 
+  companion object {
+    fun interpreterOptions(): ParserOptions = ParserOptions()
+      .setStringSingleQuotes(true)
+      .setKeyNoQuotes(true)
+      .setKeyNoQuotesAnyChar(true)
+      .setAllowSkippingCommas(true)
+      .setAllowObjectEntryWithoutValue(true)
+      .setEqualAsColon(true)
+      .setSemicolonAsComma(true)
+      .setParenthesesString(true)
+      .setStringValueNoQuotes(true)
+  }
+
   fun addTypes(types: Types): InterpreterBuilder {
     this.types.add(types)
     return this
@@ -30,16 +43,7 @@ class InterpreterBuilder {
 
   /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
   fun compile(prog: String, filename: String = ""): Interpreter {
-    val jsonParser = ObjectParser(
-      ParserOptions()
-        .setStringSingleQuotes(true)
-        .setKeyNoQuotes(true)
-        .setKeyNoQuotesAnyChar(true)
-        .setAllowSkippingCommas(true)
-        .setAllowObjectEntryWithoutValue(true)
-        .setEqualAsColon(true)
-        .setAllowParenthesesString(true)
-    )
+    val jsonParser = ObjectParser(interpreterOptions())
     val json = jsonParser.last(LineColCharStream(CharStream.from(prog), filename))!!
     return compile(json)
   }

@@ -83,14 +83,25 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
       if (cs.hasNext()) {
         stringLineCol = LineCol(cs.lineCol(), innerOffsetIncrease = 1)
         opts.listener.onStringBegin(this)
-        c = cs.moveNextAndGet()
+        c = cs.peekNext()
         if (c == '\"') {
+          cs.moveNextAndGet()
           beginning = '\"'
         } else if (c == '\'' && opts.isStringSingleQuotes) {
+          cs.moveNextAndGet()
           beginning = '\''
-        } else if (c == '(' && opts.isAllowParenthesesString) {
+        } else if (c == '(' && opts.isParenthesesString) {
+          cs.moveNextAndGet()
           state = 99 // will +1
           parenthesesStringStack = 1
+        } else if (opts.isStringValueNoQuotes) {
+          val (str, cursor) = ParserUtils.extractNoQuotesString(cs, opts)
+          cs.skip(cursor)
+          for (ch in str.trim().toCharArray()) {
+            append(ch)
+          }
+          state = 6 // will +1
+          stringLineCol = LineCol(stringLineCol, innerOffsetIncrease = -1)
         } else {
           err = "invalid character for string: not starts with \": $c"
           throw ParserUtils.err(cs, opts, err)

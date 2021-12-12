@@ -26,7 +26,9 @@ public class TestASTGen {
             .setAllowSkippingCommas(true)
             .setAllowObjectEntryWithoutValue(true)
             .setEqualAsColon(true)
-            .setAllowParenthesesString(true)
+            .setSemicolonAsComma(true)
+            .setParenthesesString(true)
+            .setStringValueNoQuotes(true)
         ).last(input));
         return gen.parse();
     }

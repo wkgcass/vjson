@@ -124,7 +124,7 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
           if (c == ']') {
             cs.moveNextAndGet()
             state = 4
-          } else if (c == ',') {
+          } else if (isComma(c)) {
             cs.moveNextAndGet()
             state = 3
           } else if (opts.isAllowSkippingCommas) {
@@ -163,6 +163,10 @@ class ArrayParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
     } else {
       return false
     }
+  }
+
+  private fun isComma(c: Char): Boolean {
+    return c == ',' || (opts.isSemicolonAsComma && c == ';')
   }
 
   /* #ifndef KOTLIN_NATIVE {{ */ @Throws(JsonParseException::class, ParserFinishedException::class) // }}

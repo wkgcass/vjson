@@ -8,6 +8,7 @@ import vjson.simple.SimpleNull;
 import vjson.simple.SimpleObject;
 import vjson.simple.SimpleString;
 import vjson.util.AppendableMap;
+import vjson.util.ArrayBuilder;
 import vjson.util.ObjectBuilder;
 
 import java.util.Arrays;
@@ -147,8 +148,26 @@ public class TestFeature {
     }
 
     @Test
-    public void allowParenthesesString() throws Exception {
-        ObjectParser parser = new ObjectParser(new ParserOptions().setAllowParenthesesString(true));
+    public void semicolonAsComma() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions().setSemicolonAsComma(true));
+        assertEquals(new SimpleObject(new AppendableMap<>()
+                .append("a", new SimpleString("b"))
+                .append("c", new SimpleNull())
+                .append("e", new SimpleString("f"))),
+            parser.last("{" +
+                "\"a\":\"b\";" +
+                "\"c\":null;" +
+                "\"e\":\"f\"}"));
+        ArrayParser parser2 = new ArrayParser(new ParserOptions().setSemicolonAsComma(true));
+        assertEquals(new ArrayBuilder()
+                .add(1).add(2).add("abc")
+                .build(),
+            parser2.last("[1;2;\"abc\"]"));
+    }
+
+    @Test
+    public void parenthesesString() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions().setParenthesesString(true));
         assertEquals(new ObjectBuilder()
                 .put("a", "b")
                 .put("c", "d")
@@ -171,10 +190,42 @@ public class TestFeature {
                 .build(),
             parser.last("{(a):((a + (\\nb\\n * c)\\n) - (d / e))}"));
 
-        StringParser parser1 = new StringParser(new ParserOptions().setAllowParenthesesString(true));
+        StringParser parser1 = new StringParser(new ParserOptions().setParenthesesString(true));
         assertEquals(new SimpleString("\\"), parser1.last("(\\)"));
         parser1.reset();
         assertEquals(new SimpleString("\\r\\n"), parser1.last("(\\r\\n)"));
+    }
+
+    @Test
+    public void stringValueNoQuotes() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions().setStringValueNoQuotes(true));
+        assertEquals(new ObjectBuilder()
+                .put("a", "b")
+                .put("c", "d")
+                .put("e", "f")
+                .put("g", "")
+                .put("h", "")
+                .build(),
+            parser.last("{\"a\":b,\"c\":d,\"e\":\"f\",\"g\": ,\"h\":}"));
+        ArrayParser parser2 = new ArrayParser(new ParserOptions().setStringValueNoQuotes(true));
+        assertEquals(new ArrayBuilder()
+                .add("a")
+                .add("b")
+                .add("")
+                .add("c")
+                .build(),
+            parser2.last("[\"a\",\"b\", ,\"c\"]"));
+
+        assertEquals(new SimpleString("hello(\r\nworld)"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
+            .last("hello(\r\nworld)"));
+        assertEquals(new SimpleString("hello(\r\nworld)zzz"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
+            .last("hello(\r\nworld)zzz"));
+        assertEquals(new SimpleString("hello[\r\nworld]"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
+            .last("hello[\r\nworld]"));
+        assertEquals(new SimpleString("hello{\r\nworld}"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
+            .last("hello{\r\nworld}"));
+        assertEquals(new SimpleString("hello"), new StringParser(new ParserOptions().setStringValueNoQuotes(true).setEnd(false))
+            .last("hello\r\nworld"));
     }
 
     @Test
@@ -186,7 +237,9 @@ public class TestFeature {
             .setAllowSkippingCommas(true)
             .setAllowObjectEntryWithoutValue(true)
             .setEqualAsColon(true)
-            .setAllowParenthesesString(true));
+            .setSemicolonAsComma(true)
+            .setParenthesesString(true)
+            .setStringValueNoQuotes(true));
         assertEquals(new ObjectBuilder()
                 .put("function", null)
                 .putObject("a", o -> o
@@ -209,25 +262,25 @@ public class TestFeature {
     }
 
     public static final String TEST_PROG = "{\n" +
-        "function printPrimes: { searchRange: \"int\" } void: {\n" +
+        "function printPrimes: { searchRange: int } void: {\n" +
         "  var notPrime = { new (bool[searchRange + 1]) }\n" +
-        "  for: [ { var i = 2 }, (i <= searchRange), (i += 1)] do: {\n" +
-        "    if: (!notPrime[i]) then: {\n" +
+        "  for: [ { var i = 2 }; i <= searchRange; i += 1] do: {\n" +
+        "    if: !notPrime[i]; then: {\n" +
         "      var j = 2\n" +
-        "      while: true do: {\n" +
-        "        var n = (i * j)\n" +
-        "        if: (n > searchRange) then: {\n" +
+        "      while: true; do: {\n" +
+        "        var n = i * j\n" +
+        "        if: n > searchRange, then: {\n" +
         "          break\n" +
         "        }\n" +
         "        notPrime[n] = true\n" +
-        "        j = (j + 1)\n" +
+        "        j = j + 1\n" +
         "      }\n" +
         "    }\n" +
         "  }\n" +
         "  std.console.log: [ ('primes:') ]\n" +
-        "  for: [ { var i = 2 }, (i < notPrime.length), (i += 1)] do: {\n" +
-        "    if: (!notPrime[i]) then: {\n" +
-        "      std.console.log: [ (''+i) ]\n" +
+        "  for: [ { var i = 2 }; i < notPrime.length; i += 1] do: {\n" +
+        "    if: !notPrime[i]; then: {\n" +
+        "      std.console.log: [ ('' + i) ]\n" +
         "    }\n" +
         "  }\n" +
         "}\n" +
@@ -243,7 +296,9 @@ public class TestFeature {
             .setAllowSkippingCommas(true)
             .setAllowObjectEntryWithoutValue(true)
             .setEqualAsColon(true)
-            .setAllowParenthesesString(true));
+            .setSemicolonAsComma(true)
+            .setParenthesesString(true)
+            .setStringValueNoQuotes(true));
         JSON.Object obj = parser.last(TEST_PROG);
         System.out.println(obj);
     }
