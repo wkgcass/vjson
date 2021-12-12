@@ -73,7 +73,7 @@ public class TestInterpreterSamplePrograms {
             "// loops\n" +
             "// for loop\n" +
             "var sum = 0\n" +
-            "for: [{ var i = 1 }, i <= 10, i += 1] do: {\n" +
+            "for: [{ var i = 1 }; i <= 10; i += 1] do: {\n" +
             "  sum = sum + i\n" +
             "}\n" +
             "std.console.log:[ ('sum of 1 to 10 is ' + sum) ]\n" +
@@ -81,9 +81,9 @@ public class TestInterpreterSamplePrograms {
             "sum = 0\n" +
             "var n = 1\n" +
             "while: true; do: {\n" +
-            "  sum = (sum + n)\n" +
-            "  n = (n + 1)\n" +
-            "  if: (n >= 10) then: {\n" +
+            "  sum = sum + n\n" +
+            "  n = n + 1\n" +
+            "  if: n >= 10; then: {\n" +
             "    break\n" +
             "  }\n" +
             "}\n" +
@@ -162,7 +162,7 @@ public class TestInterpreterSamplePrograms {
             "  '\\nstringPlusInt = ' + stringPlusInt +\n" +
             "  '\\nintPlusString = ' + intPlusString +\n" +
             "  '\\nmyInstance = ' + myInstance\n" +
-            ")]" +
+            ")]\n" +
             "}\n";
         StdTypes std = new StdTypes();
         String[] output = new String[1];
