@@ -39,6 +39,7 @@
 <script src="ace.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="mode-javascript.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="custom-select.js"></script>
+<script src="base64.js"></script>
 <script>
     var PROG_HELLO = "{\n" +
         "std.console.log: [('Hello vjson-lang')]\n" +
@@ -203,7 +204,17 @@
     editor.setShowPrintMargin(false)
     var JavaScriptMode = ace.require("ace/mode/javascript").Mode;
     editor.session.setMode(new JavaScriptMode());
-    editor.getSession().setValue(PROG_FIB);
+    // try to read program from url
+    var prog = new URLSearchParams(window.location.search).get('prog')
+    if (prog) {
+        try {
+            editor.getSession().setValue(UTF8ArrToStr(base64DecToArr(prog)))
+        } catch (e) {
+            editor.getSession().setValue("unable to read program from url:\n" + prog + "\nerror=" + e + "\n")
+        }
+    } else {
+        editor.getSession().setValue(PROG_FIB);
+    }
 
     var aceConsole = ace.edit("console");
     aceConsole.setFontSize(16);
