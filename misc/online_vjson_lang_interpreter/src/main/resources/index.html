@@ -9,7 +9,7 @@
 <div id="root">
     <div id="editor" class="mono" style="line-height: 32px;"></div>
     <div id="tmpl">
-        <div class="custom-select" style="width:200px;">
+        <div class="custom-select" style="width:200px; float: left">
             <select>
                 <option>Fibonacci</option>
                 <option>HelloWorld</option>
@@ -17,15 +17,18 @@
                 <option>BuiltInTypes</option>
             </select>
         </div>
+        <div style="float: right;">
+            <button id="share-btn" class="button-31" style="margin-right: 1px; width: 100px">Share Code</button>
+        </div>
     </div>
     <div id="console" class="mono" style="line-height: 24px;"></div>
     <div id="buttons">
-        <button id="run-btn" style="width: 80px; margin-left: 1px;">Run</button>
-        <button id="clear-btn" style="width: 120px">Clear Output</button>
-        <button id="eval-btn" style="width: 80px">Evaluate</button>
-        <button id="json-btn" style="width: 180px;">Print JSON Representation</button>
-        <button id="ast-btn" style="width: 100px;">Print AST</button>
-        <button id="run-print-mem-btn" style="width: 140px">Run and Print Mem</button>
+        <button id="run-btn" class="button-31" style="width: 80px; margin-left: 1px; font-weight: bold; font-size: 16px">Run</button>
+        <button id="clear-btn" class="button-31" style="width: 120px">Clear Output</button>
+        <button id="eval-btn" class="button-31" style="width: 80px">Evaluate</button>
+        <button id="json-btn" class="button-31" style="width: 200px;">Print JSON Representation</button>
+        <button id="ast-btn" class="button-31" style="width: 100px;">Print AST</button>
+        <button id="run-print-mem-btn" class="button-31" style="width: 140px">Run and Print Mem</button>
     </div>
 </div>
 <a href="https://github.com/wkgcass/vjson" target="_blank">
@@ -40,6 +43,7 @@
 <script src="mode-javascript.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="custom-select.js"></script>
 <script src="base64.js"></script>
+<script src="pako.min.js"></script>
 <script>
     var PROG_HELLO = "{\n" +
         "std.console.log: [('Hello vjson-lang')]\n" +
@@ -201,14 +205,14 @@
     var editor = ace.edit("editor");
     editor.setFontSize(16);
     editor.setTheme("ace/theme/one_dark");
-    editor.setShowPrintMargin(false)
+    editor.setShowPrintMargin(false);
     var JavaScriptMode = ace.require("ace/mode/javascript").Mode;
     editor.session.setMode(new JavaScriptMode());
     // try to read program from url
     var prog = new URLSearchParams(window.location.search).get('prog')
     if (prog) {
         try {
-            editor.getSession().setValue(UTF8ArrToStr(base64DecToArr(prog)))
+            editor.getSession().setValue(pako.ungzip(base64DecToArr(prog), {to: 'string'}));
         } catch (e) {
             editor.getSession().setValue("unable to read program from url:\n" + prog + "\nerror=" + e + "\n")
         }
@@ -237,6 +241,15 @@
         editor.focus();
     });
 
+    document.getElementById("share-btn").addEventListener("click", function () {
+        var code = editor.getSession().getValue();
+        var base64 = base64EncArr(pako.gzip(code, {level: 9})).split('\r\n').join('');
+        console.log(base64);
+        var newLine = '### you can share this link: ###\n' +
+            'https://vproxy.io/vjson-lang-interpreter/index.html?prog=' + base64
+        var oldLines = aceConsole.getSession().getValue() + '\n';
+        aceConsole.getSession().setValue(oldLines + newLine);
+    });
     document.getElementById("run-btn").addEventListener("click", function () {
         var code = editor.getSession().getValue();
         online_vjson_lang_interpreter.run(code, false);

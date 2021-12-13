@@ -15,6 +15,12 @@
     background-color: #292c33;
 }
 
+#tmpl > div > button {
+    height: 40px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 #console {
     position: absolute;
     right: 0;
@@ -36,6 +42,39 @@
     height: 40px;
     margin-left: 5px;
     margin-right: 5px;
+}
+
+.button-31 {
+    background-color: #222;
+    border-radius: 4px;
+    border-style: none;
+    box-sizing: border-box;
+    color: /*#fff*/ #bbc1ce;
+    cursor: pointer;
+    display: inline-block;
+    /* font-family: "Farfetch Basis","Helvetica Neue",Arial,sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+    max-width: none;
+    min-height: 44px;
+    min-width: 10px; */
+    font-family: JetBrainsMono-Light;
+    outline: none;
+    overflow: hidden;
+    /* padding: 9px 20px 8px; */
+    position: relative;
+    text-align: center;
+    text-transform: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    /* width: 100%; */
+}
+
+.button-31:hover,
+.button-31:focus {
+    opacity: .75;
 }
 
 @font-face {
