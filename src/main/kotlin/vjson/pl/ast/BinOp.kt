@@ -27,7 +27,7 @@ data class BinOp(
     val leftType = left.check(ctx)
     val rightType = right.check(ctx)
     return when (op) {
-      PLUS, MINUS, MULTIPLY, DIVIDE, CMP_GT, CMP_GE, CMP_LT, CMP_LE -> {
+      PLUS, MINUS, MULTIPLY, DIVIDE, MOD, CMP_GT, CMP_GE, CMP_LT, CMP_LE -> {
         if (op == PLUS && (leftType is StringType || rightType is StringType)) {
           if (leftType !is StringType || rightType !is StringType) {
             val typeToStringCheck: TypeInstance
@@ -70,8 +70,13 @@ data class BinOp(
           if (leftType !is NumericTypeInstance) {
             throw ParserException("$this: cannot calculate $leftType $op $rightType, not numeric values", lineCol)
           }
+          if (op == MOD) {
+            if (leftType !is IntType && leftType !is LongType) {
+              throw ParserException("$this: cannot calculate $leftType $op $rightType, must be int or long", lineCol)
+            }
+          }
           when (op) {
-            PLUS, MINUS, MULTIPLY, DIVIDE -> leftType
+            PLUS, MINUS, MULTIPLY, DIVIDE, MOD -> leftType
             else -> BoolType
           }
         }
@@ -103,7 +108,7 @@ data class BinOp(
   override fun typeInstance(): TypeInstance {
     return when (op) {
       PLUS -> if (left.typeInstance() is StringType || right.typeInstance() is StringType) StringType else left.typeInstance()
-      MINUS, MULTIPLY, DIVIDE -> left.typeInstance()
+      MINUS, MULTIPLY, DIVIDE, MOD -> left.typeInstance()
       else -> BoolType
     }
   }
@@ -126,6 +131,11 @@ data class BinOp(
         is LongType -> DivideLong(leftInst, rightInst, ctx.stackInfo(lineCol))
         is FloatType -> DivideFloat(leftInst, rightInst, ctx.stackInfo(lineCol))
         is DoubleType -> DivideDouble(leftInst, rightInst, ctx.stackInfo(lineCol))
+        else -> throw IllegalStateException("$lType $op $rType")
+      }
+      MOD -> when (lType) {
+        is IntType -> ModInt(leftInst, rightInst, ctx.stackInfo(lineCol))
+        is LongType -> ModLong(leftInst, rightInst, ctx.stackInfo(lineCol))
         else -> throw IllegalStateException("$lType $op $rType")
       }
       PLUS -> {

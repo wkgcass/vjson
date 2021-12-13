@@ -101,13 +101,15 @@ public class TestInterpreter {
                 "var j = 'd == a'\n" +
                 "var k = 'h && i'\n" +
                 "var l = 'h || i'\n" +
+                "var m = '100 % 7'\n" +
                 "}");
         RuntimeMemory mem = interpreter.execute();
         assertEquals(4, mem.getInt(0));
         assertEquals(8, mem.getInt(1));
         assertEquals(-1, mem.getInt(2));
         assertEquals(4, mem.getInt(3));
-        assertEquals(4, mem.intLen());
+        assertEquals(2, mem.getInt(4));
+        assertEquals(5, mem.intLen());
         assertTrue(mem.getBool(0));
         assertTrue(mem.getBool(1));
         assertTrue(mem.getBool(2));

@@ -72,7 +72,7 @@ public class TestTypeCheck {
                 new Pair<>("1.toFloat", "2.toFloat"),
                 new Pair<>("1.0", "2.0")
             )) {
-                prog.append(nums.getFirst()).append(" ").append(op).append(nums.getSecond()).append("\n");
+                prog.append(nums.getFirst()).append(" ").append(op).append(" ").append(nums.getSecond()).append("\n");
             }
         }
 
@@ -91,6 +91,24 @@ public class TestTypeCheck {
     }
 
     @Test
+    public void modBinOp() {
+        StringBuilder prog = new StringBuilder();
+        for (Pair<String, String> nums : Arrays.asList(
+            new Pair<>("1", "2"),
+            new Pair<>("1.toLong", "2.toLong")
+        )) {
+            prog.append(nums.getFirst()).append(" % ").append(nums.getSecond()).append("\n");
+        }
+
+        List<Statement> ast = ast(prog.toString());
+
+        Expr s0 = exprOf(ast, 0);
+        assertTrue("% int", s0.typeInstance() instanceof IntType);
+        Expr s1 = exprOf(ast, 1);
+        assertTrue("% long", s1.typeInstance() instanceof LongType);
+    }
+
+    @Test
     public void cmpBinOp() {
         StringBuilder prog = new StringBuilder();
         List<String> ops = Arrays.asList(">", ">=", "<", "<=");
@@ -101,7 +119,7 @@ public class TestTypeCheck {
                 new Pair<>("1.toFloat", "2.toFloat"),
                 new Pair<>("1.0", "2.0")
             )) {
-                prog.append(nums.getFirst()).append(" ").append(op).append(nums.getSecond()).append("\n");
+                prog.append(nums.getFirst()).append(" ").append(op).append(" ").append(nums.getSecond()).append("\n");
             }
         }
 
@@ -127,7 +145,7 @@ public class TestTypeCheck {
                 new Pair<>("'a'", "'b'"),
                 new Pair<>("'a'", "null")
             )) {
-                prog.append(nums.getFirst()).append(" ").append(op).append(nums.getSecond()).append("\n");
+                prog.append(nums.getFirst()).append(" ").append(op).append(" ").append(nums.getSecond()).append("\n");
             }
         }
 

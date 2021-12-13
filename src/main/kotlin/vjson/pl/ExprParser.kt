@@ -63,6 +63,7 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
       TokenType.MINUS -> binOp(ctx, BinOpType.MINUS)
       TokenType.MULTIPLY -> binOp(ctx, BinOpType.MULTIPLY)
       TokenType.DIVIDE -> binOp(ctx, BinOpType.DIVIDE)
+      TokenType.MOD -> binOp(ctx, BinOpType.MOD)
       TokenType.CMP_GT -> binOp(ctx, BinOpType.CMP_GT)
       TokenType.CMP_GE -> binOp(ctx, BinOpType.CMP_GE)
       TokenType.CMP_LT -> binOp(ctx, BinOpType.CMP_LT)
@@ -82,7 +83,7 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
       return
     }
     when (token.type) {
-      TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE,
+      TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MOD,
       TokenType.CMP_GT, TokenType.CMP_GE, TokenType.CMP_LT, TokenType.CMP_LE, TokenType.CMP_NE, TokenType.CMP_EQ,
       TokenType.LOGIC_AND, TokenType.LOGIC_OR,
       -> exprBinOp(ctx)
@@ -90,6 +91,7 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
       TokenType.MINUS_ASSIGN -> opAssign(ctx, BinOpType.MINUS)
       TokenType.MULTIPLY_ASSIGN -> opAssign(ctx, BinOpType.MULTIPLY)
       TokenType.DIVIDE_ASSIGN -> opAssign(ctx, BinOpType.DIVIDE)
+      TokenType.MOD_ASSIGN -> opAssign(ctx, BinOpType.MOD)
       TokenType.RIGHT_PAR -> parEnd(ctx)
       TokenType.RIGHT_BRACKET -> bracketEnd(ctx)
       TokenType.DOT -> accessField(ctx)

@@ -728,6 +728,34 @@ data class DivideDouble(
   }
 }
 
+data class ModInt(
+  val left: Instruction,
+  val right: Instruction,
+  override val stackInfo: StackInfo
+) : Instruction() {
+  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+    left.execute(ctx, values)
+    val leftValue = values.intValue
+    right.execute(ctx, values)
+    val rightValue = values.intValue
+    values.intValue = leftValue % rightValue
+  }
+}
+
+data class ModLong(
+  val left: Instruction,
+  val right: Instruction,
+  override val stackInfo: StackInfo
+) : Instruction() {
+  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+    left.execute(ctx, values)
+    val leftValue = values.longValue
+    right.execute(ctx, values)
+    val rightValue = values.longValue
+    values.longValue = leftValue % rightValue
+  }
+}
+
 data class CmpGTInt(
   val left: Instruction,
   val right: Instruction,

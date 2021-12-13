@@ -69,13 +69,15 @@ public class TestExprParser {
                         new IntegerLiteral(new SimpleInteger(3))
                     )
                 ),
-                new BinOp(
-                    BinOpType.DIVIDE,
-                    new IntegerLiteral(new SimpleInteger(4)),
-                    new IntegerLiteral(new SimpleInteger(5))
-                )
+                new BinOp(BinOpType.MOD,
+                    new BinOp(
+                        BinOpType.DIVIDE,
+                        new IntegerLiteral(new SimpleInteger(4)),
+                        new IntegerLiteral(new SimpleInteger(5))
+                    ),
+                    new IntegerLiteral(new SimpleInteger(6)))
             ),
-            parse("1 + 2 * 3 - 4 / 5")
+            parse("1 + 2 * 3 - 4 / 5 % 6")
         );
     }
 
@@ -94,13 +96,15 @@ public class TestExprParser {
                         new FloatLiteral(new SimpleDouble(3.0))
                     )
                 ),
-                new BinOp(
-                    BinOpType.DIVIDE,
-                    new FloatLiteral(new SimpleDouble(4.0)),
-                    new FloatLiteral(new SimpleDouble(5.0))
-                )
+                new BinOp(BinOpType.MOD,
+                    new BinOp(
+                        BinOpType.DIVIDE,
+                        new FloatLiteral(new SimpleDouble(4.0)),
+                        new FloatLiteral(new SimpleDouble(5.0))
+                    ),
+                    new FloatLiteral(new SimpleDouble(6.0)))
             ),
-            parse("1.0 + 2.0 * 3.0 - 4.0 / 5.0")
+            parse("1.0 + 2.0 * 3.0 - 4.0 / 5.0 % 6.0")
         );
     }
 
@@ -116,9 +120,12 @@ public class TestExprParser {
                                 new BinOp(BinOpType.MULTIPLY,
                                     new Access("b"),
                                     new Access("c"))),
-                            new BinOp(BinOpType.DIVIDE,
-                                new Access("d"),
-                                new Access("e"))),
+                            new BinOp(BinOpType.MOD,
+                                new BinOp(BinOpType.DIVIDE,
+                                    new Access("d"),
+                                    new Access("e")),
+                                new Access("x"))
+                        ),
                         new Access("f")),
                     new BinOp(BinOpType.LOGIC_AND,
                         new BinOp(BinOpType.CMP_LT,
@@ -138,7 +145,7 @@ public class TestExprParser {
             new BinOp(BinOpType.CMP_NE,
                 new Access("o"),
                 new Access("p")));
-        assertEquals(expr, parse("a + b * c - d / e > f || g < h && i >= j || k <= l && m == n || o != p"));
+        assertEquals(expr, parse("a + b * c - d / e % x > f || g < h && i >= j || k <= l && m == n || o != p"));
     }
 
     @Test
@@ -186,6 +193,12 @@ public class TestExprParser {
                 new Access("a"),
                 new FloatLiteral(new SimpleDouble(1.0))),
             parse("a /= 1.0")
+        );
+        assertEquals(
+            new OpAssignment(BinOpType.MOD,
+                new Access("a"),
+                new IntegerLiteral(new SimpleInteger(1))),
+            parse("a %= 1")
         );
     }
 

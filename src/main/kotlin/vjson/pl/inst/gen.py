@@ -191,6 +191,11 @@ data.append({
             'types': numTypes
         },
         {
+            'Op': 'Mod',
+            'op': '%',
+            'types': [tInt, tLong]
+        },
+        {
             'Op': 'CmpGT',
             'op': '>',
             'opResType': 'bool',

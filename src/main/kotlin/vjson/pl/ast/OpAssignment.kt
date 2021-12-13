@@ -23,7 +23,7 @@ data class OpAssignment(
 ) : Expr() {
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
-    if (op != BinOpType.PLUS && op != BinOpType.MINUS && op != BinOpType.MULTIPLY && op != BinOpType.DIVIDE) {
+    if (op != BinOpType.PLUS && op != BinOpType.MINUS && op != BinOpType.MULTIPLY && op != BinOpType.DIVIDE && op != BinOpType.MOD) {
       throw ParserException("invalid operator for assigning: $op", lineCol)
     }
     val variableType = variable.check(ctx)
@@ -33,6 +33,11 @@ data class OpAssignment(
     }
     if (valueType !is NumericTypeInstance) {
       throw ParserException("$this: cannot execute $op on type $valueType, not numeric", lineCol)
+    }
+    if (op == BinOpType.MOD) {
+      if (valueType !is IntType && valueType !is LongType) {
+        throw ParserException("$this: cannot execute $op on type $valueType, must be int or long", lineCol)
+      }
     }
 
     if (!variable.isModifiable()) {
@@ -74,6 +79,11 @@ data class OpAssignment(
         is LongType -> DivideLong(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
         is FloatType -> DivideFloat(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
         is DoubleType -> DivideDouble(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        else -> throw IllegalStateException()
+      }
+      BinOpType.MOD -> when (variable.typeInstance()) {
+        is IntType -> ModInt(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
+        is LongType -> ModLong(variable.generateInstruction(), value.generateInstruction(), ctx.stackInfo(lineCol))
         else -> throw IllegalStateException()
       }
       else -> throw IllegalStateException()

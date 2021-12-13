@@ -18,6 +18,7 @@ enum class BinOpType(
 ) {
   MULTIPLY("*", 11),
   DIVIDE("/", 11),
+  MOD("%", 11),
   PLUS("+", 10),
   MINUS("-", 10),
 
