@@ -1,10 +1,12 @@
 import vjson.CharStream
+import vjson.cs.LineCol
 import vjson.cs.LineColCharStream
 import vjson.ex.JsonParseException
 import vjson.ex.ParserException
 import vjson.parser.ObjectParser
-import vjson.pl.ASTGen
-import vjson.pl.InterpreterBuilder
+import vjson.pl.*
+import vjson.pl.ast.VariableDefinition
+import vjson.pl.type.*
 import vjson.pl.type.lang.StdTypes
 
 var outputFunc: (String) -> Unit = {
@@ -49,6 +51,102 @@ fun run(prog: String, printMem: Boolean) {
   if (printMem) {
     outputFunc(mem.toString())
   }
+}
+
+@ExperimentalJsExport
+@JsExport
+fun eval(_prog: String) {
+  var prog = _prog
+  if (!prog.startsWith("{")) {
+    // the last line should be an expression
+    val ls = ArrayList(prog.split("\n"))
+    if (ls.isNotEmpty()) {
+      val lastLine = ls.last()
+      val ok = if (lastLine.trim().startsWith("new ")) {
+        true
+      } else {
+        val parser = ExprParser(ExprTokenizer(CharStream.from(lastLine), LineCol.EMPTY))
+        try {
+          parser.parse()
+          true
+        } catch (e: Throwable) {
+          false
+        }
+      }
+      if (ok) {
+        outputFunc("### extra characters are added to last line (${lastLine.trim()}) by eval process ###")
+        val newLine = if (lastLine.trim().startsWith("new ")) {
+          "var \"$$$\" = {${lastLine.trim()}};var \"@@@\" = $$$.toString:[]"
+        } else {
+          "var \"@@@\" = (${lastLine.trim()})"
+        }
+        outputFunc("### the last line is now transformed into: ###\n### $newLine ###")
+        ls.removeLast()
+        ls.add(newLine)
+
+        prog = ls.joinToString(separator = "\n")
+      }
+    }
+    prog = "{$prog}"
+  }
+  val jsonObj = try {
+    ObjectParser(InterpreterBuilder.interpreterOptions()).last(
+      LineColCharStream(CharStream.from(prog), "")
+    )!!
+  } catch (e: Throwable) {
+    printParsingFailedMessage(e, "Compilation failed")
+    return
+  }
+  val ast = ArrayList(
+    try {
+      ASTGen(jsonObj).parse()
+    } catch (e: Throwable) {
+      printParsingFailedMessage(e, "Compilation failed")
+      return
+    }
+  )
+  var lastVarDef: VariableDefinition? = null
+  if (ast.isNotEmpty() && ast.last() is VariableDefinition) {
+    lastVarDef = ast.last() as VariableDefinition
+  }
+
+  val stdTypes = StdTypes()
+  stdTypes.setOutput(outputFunc)
+
+  val interpreter = try {
+    Interpreter(listOf(stdTypes), ast)
+  } catch (e: Throwable) {
+    printParsingFailedMessage(e, "Compilation failed")
+    return
+  }
+
+  val mem = try {
+    interpreter.execute()
+  } catch (e: Throwable) {
+    outputFunc("Runtime failure")
+    outputFunc(e.message ?: "")
+    return
+  }
+
+  if (lastVarDef == null) {
+    outputFunc("### Last statement is not expression nor variable definition ###")
+    return
+  }
+  if (lastVarDef.value.typeInstance() !is BuiltInTypeInstance) {
+    outputFunc("### Type of the last statement is not a built-in type ###")
+    outputFunc("### you may need to add .toString:[] in order to print the value ###")
+    return
+  }
+  val index = lastVarDef.getMemPos().index
+  outputFunc(
+    when (lastVarDef.value.typeInstance()) {
+      IntType -> mem.getInt(index).toString()
+      LongType -> mem.getLong(index).toString()
+      FloatType -> mem.getFloat(index).toString()
+      DoubleType -> mem.getDouble(index).toString()
+      else -> mem.getRef(index).toString()
+    }
+  )
 }
 
 fun printParsingFailedMessage(e: Throwable, msg: String = "Parsing failed") {

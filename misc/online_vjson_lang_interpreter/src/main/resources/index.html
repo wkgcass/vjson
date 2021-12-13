@@ -22,6 +22,7 @@
     <div id="buttons">
         <button id="run-btn" style="width: 80px; margin-left: 1px;">Run</button>
         <button id="clear-btn" style="width: 120px">Clear Output</button>
+        <button id="eval-btn" style="width: 80px">Evaluate</button>
         <button id="json-btn" style="width: 180px;">Print JSON Representation</button>
         <button id="ast-btn" style="width: 100px;">Print AST</button>
         <button id="run-print-mem-btn" style="width: 140px">Run and Print Mem</button>
@@ -231,6 +232,10 @@
     });
     document.getElementById("clear-btn").addEventListener("click", function () {
         aceConsole.getSession().setValue("\n");
+    });
+    document.getElementById("eval-btn").addEventListener("click", function () {
+        var code = editor.getSession().getValue();
+        online_vjson_lang_interpreter.eval(code);
     });
     document.getElementById("json-btn").addEventListener("click", function () {
         var code = editor.getSession().getValue();
