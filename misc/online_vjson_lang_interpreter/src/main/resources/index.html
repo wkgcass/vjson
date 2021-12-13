@@ -242,9 +242,8 @@
     document.getElementById("share-btn").addEventListener("click", function () {
         var code = editor.getSession().getValue();
         var base64 = base64EncArr(pako.gzip(code, {level: 9})).split('\r\n').join('');
-        console.log(base64);
         var newLine = '### you can share this link: ###\n' +
-            'https://vproxy.io/vjson-lang-interpreter/index.html?prog=' + base64
+            'https://vproxy.io/vjson-lang-interpreter/index.html?prog=' + encodeURIComponent(base64);
         var oldLines = aceConsole.getSession().getValue() + '\n';
         aceConsole.getSession().setValue(oldLines + newLine);
     });
