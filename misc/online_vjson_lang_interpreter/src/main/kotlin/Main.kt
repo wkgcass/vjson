@@ -8,6 +8,7 @@ import vjson.pl.*
 import vjson.pl.ast.VariableDefinition
 import vjson.pl.type.*
 import vjson.pl.type.lang.StdTypes
+import kotlin.js.Date
 
 var outputFunc: (String) -> Unit = {
   println(it)
@@ -35,12 +36,18 @@ fun run(prog: String, printMem: Boolean) {
   stdTypes.setOutput(outputFunc)
   val builder = InterpreterBuilder()
     .addTypes(stdTypes)
+
+  val startTime = Date.now()
+
   val interpreter = try {
     builder.compile(prog)
   } catch (e: Throwable) {
     printParsingFailedMessage(e, "Compilation failed")
     return
   }
+
+  val compileFinishTime = Date.now()
+
   val mem = try {
     interpreter.execute()
   } catch (e: Throwable) {
@@ -48,6 +55,11 @@ fun run(prog: String, printMem: Boolean) {
     outputFunc(e.message ?: "")
     return
   }
+
+  val executeFinishTime = Date.now()
+
+  outputFunc("### compile time: ${compileFinishTime - startTime}ms, execute time: ${executeFinishTime - compileFinishTime}ms ###")
+
   if (printMem) {
     outputFunc(mem.toString())
   }
@@ -89,6 +101,9 @@ fun eval(_prog: String) {
     }
     prog = "{$prog}"
   }
+
+  val startTime = Date.now()
+
   val jsonObj = try {
     ObjectParser(InterpreterBuilder.interpreterOptions()).last(
       LineColCharStream(CharStream.from(prog), "")
@@ -120,6 +135,8 @@ fun eval(_prog: String) {
     return
   }
 
+  val compileFinishTime = Date.now()
+
   val mem = try {
     interpreter.execute()
   } catch (e: Throwable) {
@@ -127,6 +144,10 @@ fun eval(_prog: String) {
     outputFunc(e.message ?: "")
     return
   }
+
+  val executeFinishTime = Date.now()
+
+  outputFunc("### compile time: ${compileFinishTime - startTime}ms, execute time: ${executeFinishTime - compileFinishTime}ms ###")
 
   if (lastVarDef == null) {
     outputFunc("### Last statement is not expression nor variable definition ###")
