@@ -14,8 +14,8 @@ package vjson.parser
 import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
+import vjson.cs.PeekCharStream
 import vjson.ex.JsonParseException
-import vjson.ex.ParserException
 import vjson.util.CastUtils.cast
 import vjson.util.StringDictionary
 import vjson.util.collection.Stack
@@ -283,6 +283,7 @@ object ParserUtils {
 
   fun extractNoQuotesString(cs: CharStream, opts: ParserOptions): Pair<String, Int> {
     cs.skipBlank()
+    val beginLineCol = cs.lineCol()
     val sb = StringBuilder()
     val symbolStack = Stack<Char>()
     var cursor = 0 // cursor is the character already read
@@ -326,14 +327,41 @@ object ParserUtils {
               sb.append(c)
             } else {
               cs.skip(cursor)
-              throw ParserException("unexpected char code=${c.code}, expecting ${symbolStack.peek()}", cs.lineCol())
+              throw JsonParseException(
+                "unexpected char code=${c.code}, expecting ${symbolStack.peek()}" +
+                  (if (beginLineCol.isEmpty()) "" else ", reading noQuotesString starting from $beginLineCol"),
+                cs.lineCol()
+              )
             }
           }
+        '\'', '\"' -> {
+          // use a string parser to read the content
+          val pcs = PeekCharStream(cs, cursor - 1)
+          val jsonStr = try {
+            StringParser(ParserOptions().setStringSingleQuotes(true).setEnd(false)).last(pcs)
+          } catch (e: JsonParseException) {
+            cs.skip(pcs.getCursor())
+            throw JsonParseException(
+              "" + e.message +
+                (if (beginLineCol.isEmpty()) "" else ", reading noQuotesString starting from $beginLineCol"),
+              e, cs.lineCol()
+            )
+          }
+          jsonStr!! // it should be non-empty because `last(...)` method is used
+          val _cursor = pcs.getCursor()
+          for (i in cursor.._cursor) {
+            sb.append(cs.peekNext(i))
+          }
+          cursor = _cursor
+        }
         else -> sb.append(c)
       }
     }
     if (!symbolStack.isEmpty()) { // only eof reaches here
-      throw ParserException("unexpected eof, expecting symbols: $symbolStack")
+      throw JsonParseException(
+        "unexpected eof, expecting symbols: $symbolStack" +
+          (if (beginLineCol.isEmpty()) "" else ", reading noQuotesString starting from $beginLineCol")
+      )
     }
     return Pair(sb.toString(), cursor)
   }

@@ -15,6 +15,7 @@ import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
 import vjson.cs.LineCol
+import vjson.cs.PeekCharStream
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleString
@@ -44,6 +45,8 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
   // u4 can be local variable
 
   private var parenthesesStringStack = 0
+  private var parenthesesStringNeedStringParser = false
+  private var parenthesesStringStringParser: StringParser? = null
   private var stringLineCol = LineCol.EMPTY
 
   /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
@@ -55,6 +58,8 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
     traveler?.done()
     // start/u1/2/3 can keep their values
     parenthesesStringStack = 0
+    parenthesesStringNeedStringParser = false
+    parenthesesStringStringParser?.reset()
     stringLineCol = LineCol.EMPTY
   }
 
@@ -234,7 +239,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
         break
       }
       if (state == 100) {
-        handleParenthesesString(cs.moveNextAndGet())
+        handleParenthesesString(cs)
       }
     }
     if (state == 7) {
@@ -254,8 +259,14 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
     }
   }
 
-  private fun handleParenthesesString(c: Char) {
+  private fun handleParenthesesString(cs: CharStream) {
+    if (parenthesesStringNeedStringParser) {
+      handleInnerStringOfParenthesesString(cs)
+      return
+    }
+    val c = cs.peekNext()
     if (c == ')') {
+      cs.moveNextAndGet()
       parenthesesStringStack -= 1
       if (parenthesesStringStack == 0) {
         state = 7
@@ -263,10 +274,40 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
       }
       append(c)
     } else if (c == '(') {
+      cs.moveNextAndGet()
       parenthesesStringStack += 1
       append(c)
+    } else if (c == '\"' || c == '\'') {
+      parenthesesStringNeedStringParser = true
+      val parser = parenthesesStringStringParser
+      if (parser == null) {
+        val opts = ParserOptions().setEnd(false).setStringSingleQuotes(true)
+        parenthesesStringStringParser = StringParser(opts)
+      } else {
+        parser.reset()
+      }
+      handleInnerStringOfParenthesesString(cs)
     } else {
+      cs.moveNextAndGet()
       append(c)
+    }
+  }
+
+  private fun handleInnerStringOfParenthesesString(cs: CharStream) {
+    val parser = parenthesesStringStringParser!!
+    val pcs = PeekCharStream(cs)
+    val res = try {
+      parser.feed(pcs)
+    } catch (e: JsonParseException) {
+      cs.skip(pcs.getCursor())
+      throw ParserUtils.err(cs, opts, "failed reading inner string in parentheses string: " + e.message)
+    }
+    val cursor = pcs.getCursor()
+    for (i in 0 until cursor) {
+      append(cs.moveNextAndGet())
+    }
+    if (res != null) {
+      parenthesesStringNeedStringParser = false
     }
   }
 

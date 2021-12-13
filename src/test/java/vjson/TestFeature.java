@@ -1,6 +1,7 @@
 package vjson;
 
 import org.junit.Test;
+import vjson.ex.JsonParseException;
 import vjson.ex.ParserException;
 import vjson.parser.*;
 import vjson.simple.SimpleArray;
@@ -13,7 +14,7 @@ import vjson.util.ObjectBuilder;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("RedundantThrows")
 public class TestFeature {
@@ -197,6 +198,23 @@ public class TestFeature {
     }
 
     @Test
+    public void parenthesesStringInnerString() throws Exception {
+        assertEquals(new SimpleString("abc\"inner\"def"), new StringParser(new ParserOptions().setParenthesesString(true))
+            .last("(abc\"inner\"def)"));
+        assertEquals(new SimpleString("abc\")\"def"), new StringParser(new ParserOptions().setParenthesesString(true))
+            .last("(abc\")\"def)"));
+        assertEquals(new SimpleString("abc\"((\"def"), new StringParser(new ParserOptions().setParenthesesString(true))
+            .last("(abc\"((\"def)"));
+
+        StringParser parser = new StringParser(new ParserOptions().setParenthesesString(true));
+        parser.feed("(abc\"de");
+        parser.feed("f)gh");
+        JSON.String res = parser.feed("\"ijk)");
+        assertNotNull(res);
+        assertEquals("abc\"def)gh\"ijk", res.toJavaObject());
+    }
+
+    @Test
     public void stringValueNoQuotes() throws Exception {
         ObjectParser parser = new ObjectParser(new ParserOptions().setStringValueNoQuotes(true));
         assertEquals(new ObjectBuilder()
@@ -226,6 +244,26 @@ public class TestFeature {
             .last("hello{\r\nworld}"));
         assertEquals(new SimpleString("hello"), new StringParser(new ParserOptions().setStringValueNoQuotes(true).setEnd(false))
             .last("hello\r\nworld"));
+    }
+
+    @Test
+    public void stringValueNoQuotesWithStringLiteral() throws Exception {
+        assertEquals(new SimpleString("hello\"xyz\"world"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
+            .last("hello\"xyz\"world"));
+        assertEquals(new SimpleString("hello'xyz'world"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
+            .last("hello'xyz'world"));
+        assertEquals(new SimpleString("hello\"[java/lang/Object;\"world"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
+            .last("hello\"[java/lang/Object;\"world"));
+
+        try {
+            new StringParser(new ParserOptions().setStringValueNoQuotes(true))
+                .last("hello(xyz)world\nabc\n)def");
+            fail();
+        } catch (JsonParseException e) {
+            assertEquals("input stream contain extra characters other than string", e.getMessage());
+        }
+        assertEquals(new SimpleString("hello(xyz\")\"world\nabc\n)def"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
+            .last("hello(xyz\")\"world\nabc\n)def"));
     }
 
     @Test
