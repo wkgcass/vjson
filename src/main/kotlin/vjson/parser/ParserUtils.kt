@@ -136,7 +136,6 @@ object ParserUtils {
         return ret
       }
       '\'' -> throw JsonParseException("not valid json string: stringSingleQuotes not enabled", cs.lineCol())
-      '(' -> throw JsonParseException("not valid json string: parenthesesString not enabled", cs.lineCol())
       '"' -> {
         var p = holder.threadLocalStringParser()
         if (p == null) {
@@ -203,7 +202,6 @@ object ParserUtils {
         return ret
       }
       '\'' -> throw JsonParseException("not valid json string: stringSingleQuotes not enabled", cs.lineCol())
-      '(' -> throw JsonParseException("not valid json string: parenthesesString not enabled", cs.lineCol())
       '"' -> {
         var p = holder.threadLocalStringParserJavaObject()
         if (p == null) {
@@ -237,7 +235,7 @@ object ParserUtils {
     }
     if (opts.isStringValueNoQuotes) {
       val first = cs.peekNext()
-      if (first != '{' && first != '[' && first != '(' && first != '\'' && first != '"') {
+      if (first != '{' && first != '[' && first != '\'' && first != '"') {
         return parserForValueNoQuotes(cs, opts)
       }
     }
@@ -247,12 +245,6 @@ object ParserUtils {
       '\'' -> {
         if (!opts.isStringSingleQuotes) {
           throw JsonParseException("not valid json string: stringSingleQuotes not enabled", cs.lineCol())
-        }
-        return StringParser(opts)
-      }
-      '(' -> {
-        if (!opts.isParenthesesString) {
-          throw JsonParseException("not valid json string: parenthesesString not enabled", cs.lineCol())
         }
         return StringParser(opts)
       }

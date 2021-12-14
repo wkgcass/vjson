@@ -65,8 +65,6 @@ class ParserOptions {
     private set
   var isSemicolonAsComma: Boolean
     private set
-  var isParenthesesString: Boolean
-    private set
   var isStringValueNoQuotes: Boolean
     private set
 
@@ -85,7 +83,6 @@ class ParserOptions {
     isAllowObjectEntryWithoutValue = false
     isEqualAsColon = false
     isSemicolonAsComma = false
-    isParenthesesString = false
     isStringValueNoQuotes = false
   }
 
@@ -104,7 +101,6 @@ class ParserOptions {
     isAllowObjectEntryWithoutValue = opts.isAllowObjectEntryWithoutValue
     isEqualAsColon = opts.isEqualAsColon
     isSemicolonAsComma = opts.isSemicolonAsComma
-    isParenthesesString = opts.isParenthesesString
     isStringValueNoQuotes = opts.isStringValueNoQuotes
   }
 
@@ -179,11 +175,6 @@ class ParserOptions {
 
   fun setSemicolonAsComma(semicolonAsComma: Boolean): ParserOptions {
     isSemicolonAsComma = semicolonAsComma
-    return this
-  }
-
-  fun setParenthesesString(parenthesesString: Boolean): ParserOptions {
-    isParenthesesString = parenthesesString
     return this
   }
 

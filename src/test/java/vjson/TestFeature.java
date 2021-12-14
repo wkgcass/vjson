@@ -167,54 +167,6 @@ public class TestFeature {
     }
 
     @Test
-    public void parenthesesString() throws Exception {
-        ObjectParser parser = new ObjectParser(new ParserOptions().setParenthesesString(true));
-        assertEquals(new ObjectBuilder()
-                .put("a", "b")
-                .put("c", "d")
-                .put("e", "f")
-                .build(),
-            parser.last("{(a):(b),\"c\":(d),\"e\":\"f\"}"));
-        parser.reset();
-        assertEquals(new ObjectBuilder()
-                .put("a", "(a + (b * c)) - (d / e)")
-                .build(),
-            parser.last("{(a):((a + (b * c)) - (d / e))}"));
-        parser.reset();
-        assertEquals(new ObjectBuilder()
-                .put("a", "(a + (\nb\n * c)\n) - (d / e)")
-                .build(),
-            parser.last("{(a):((a + (\nb\n * c)\n) - (d / e))}"));
-        parser.reset();
-        assertEquals(new ObjectBuilder()
-                .put("a", "(a + (\\nb\\n * c)\\n) - (d / e)")
-                .build(),
-            parser.last("{(a):((a + (\\nb\\n * c)\\n) - (d / e))}"));
-
-        StringParser parser1 = new StringParser(new ParserOptions().setParenthesesString(true));
-        assertEquals(new SimpleString("\\"), parser1.last("(\\)"));
-        parser1.reset();
-        assertEquals(new SimpleString("\\r\\n"), parser1.last("(\\r\\n)"));
-    }
-
-    @Test
-    public void parenthesesStringInnerString() throws Exception {
-        assertEquals(new SimpleString("abc\"inner\"def"), new StringParser(new ParserOptions().setParenthesesString(true))
-            .last("(abc\"inner\"def)"));
-        assertEquals(new SimpleString("abc\")\"def"), new StringParser(new ParserOptions().setParenthesesString(true))
-            .last("(abc\")\"def)"));
-        assertEquals(new SimpleString("abc\"((\"def"), new StringParser(new ParserOptions().setParenthesesString(true))
-            .last("(abc\"((\"def)"));
-
-        StringParser parser = new StringParser(new ParserOptions().setParenthesesString(true));
-        parser.feed("(abc\"de");
-        parser.feed("f)gh");
-        JSON.String res = parser.feed("\"ijk)");
-        assertNotNull(res);
-        assertEquals("abc\"def)gh\"ijk", res.toJavaObject());
-    }
-
-    @Test
     public void stringValueNoQuotes() throws Exception {
         ObjectParser parser = new ObjectParser(new ParserOptions().setStringValueNoQuotes(true));
         assertEquals(new ObjectBuilder()
@@ -276,7 +228,6 @@ public class TestFeature {
             .setAllowObjectEntryWithoutValue(true)
             .setEqualAsColon(true)
             .setSemicolonAsComma(true)
-            .setParenthesesString(true)
             .setStringValueNoQuotes(true));
         assertEquals(new ObjectBuilder()
                 .put("function", null)
@@ -292,7 +243,7 @@ public class TestFeature {
                 .build(),
             parser.last("{\n" +
                 "  function a: {x: \"int\", y: \"string\"} void: {\n" +
-                "    while: (b.c > 1) do: {\n" +
+                "    while: b.c > 1; do: {\n" +
                 "      break\n" +
                 "    }\n" +
                 "  }\n" +
@@ -335,7 +286,6 @@ public class TestFeature {
             .setAllowObjectEntryWithoutValue(true)
             .setEqualAsColon(true)
             .setSemicolonAsComma(true)
-            .setParenthesesString(true)
             .setStringValueNoQuotes(true));
         JSON.Object obj = parser.last(TEST_PROG);
         System.out.println(obj);

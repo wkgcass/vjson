@@ -32,7 +32,6 @@ class InterpreterBuilder {
       .setAllowObjectEntryWithoutValue(true)
       .setEqualAsColon(true)
       .setSemicolonAsComma(true)
-      .setParenthesesString(true)
       .setStringValueNoQuotes(true)
   }
 

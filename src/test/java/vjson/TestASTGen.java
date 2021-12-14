@@ -323,6 +323,22 @@ public class TestASTGen {
     }
 
     @Test
+    public void exprStartsWithParentheses() {
+        assertEquals(Collections.singletonList(
+                new VariableDefinition("a",
+                    new BinOp(BinOpType.MINUS,
+                        new BinOp(BinOpType.MULTIPLY,
+                            new BinOp(BinOpType.PLUS,
+                                new IntegerLiteral(new SimpleInteger(1)),
+                                new IntegerLiteral(new SimpleInteger(2))),
+                            new IntegerLiteral(new SimpleInteger(3))),
+                        new IntegerLiteral(new SimpleInteger(4))),
+                    new Modifiers(0))
+            ),
+            gen("{var a = (1 + 2) * 3 - 4}"));
+    }
+
+    @Test
     public void pass() {
         System.out.println(gen(TestFeature.TEST_PROG));
     }

@@ -220,7 +220,10 @@ class ASTGen(_prog: JSON.Object) {
       throw ParserException("unexpected eof, expecting the type to be instantiated")
     }
     val nextEntry = prog.next()
-    val typeStr = nextEntry.key
+    var typeStr = nextEntry.key
+    if (typeStr.startsWith("(") && typeStr.endsWith(")")) {
+      typeStr = typeStr.substring(1, typeStr.length - 1)
+    }
     return if (typeStr.contains("[")) {
       if (!typeStr.endsWith("]")) {
         throw ParserException(

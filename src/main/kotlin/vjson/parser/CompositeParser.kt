@@ -83,7 +83,7 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
     // the caller is responsible for cs.skipBlank() and checking cs.hasNext()
     if (opts.isStringValueNoQuotes) {
       val first = cs.peekNext()
-      if (first != '{' && first != '[' && first != '(' && first != '\'' && first != '"') {
+      if (first != '{' && first != '[' && first != '\'' && first != '"') {
         return parserForValueNoQuotes(cs)
       }
     }
@@ -92,12 +92,6 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
       '[' -> getArrayParser()
       '\'' -> {
         if (!opts.isStringSingleQuotes) {
-          throw JsonParseException("not valid json string", cs.lineCol())
-        }
-        getStringParser()
-      }
-      '(' -> {
-        if (!opts.isParenthesesString) {
           throw JsonParseException("not valid json string", cs.lineCol())
         }
         getStringParser()
