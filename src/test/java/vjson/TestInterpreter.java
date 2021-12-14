@@ -450,6 +450,25 @@ public class TestInterpreter {
     }
 
     @Test
+    public void newAsExpr() {
+        RuntimeMemory mem = new InterpreterBuilder()
+            .compile("{var a = new int[3].length}")
+            .execute();
+        assertEquals(3, mem.getInt(0));
+        mem = new InterpreterBuilder()
+            .compile("{\n" +
+                "class A: {x: int, y: string} do: {\n" +
+                "  function toString:{} string: {\n" +
+                "    return: ('A(x=' + x + ', y=' + y + ')')\n" +
+                "  }\n" +
+                "}\n" +
+                "var a = new A:[1, 'a'].toString:[]\n" +
+                "}")
+            .execute();
+        assertEquals("A(x=1, y=a)", mem.getRef(0));
+    }
+
+    @Test
     public void pass() {
         new InterpreterBuilder()
             .addTypes(new StdTypes())

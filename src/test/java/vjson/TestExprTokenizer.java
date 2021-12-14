@@ -174,6 +174,7 @@ public class TestExprTokenizer {
             new Token(TokenType.LEFT_PAR, "(", LineCol.Companion.getEMPTY()),
             new Token(TokenType.KEY_NULL, "null", LineCol.Companion.getEMPTY()),
             new Token(TokenType.RIGHT_PAR, ")", LineCol.Companion.getEMPTY()),
+            new Token(TokenType.KEY_NEW, "new", LineCol.Companion.getEMPTY()),
             new Token(TokenType.VAR_NAME, "array", LineCol.Companion.getEMPTY()),
             new Token(TokenType.LEFT_BRACKET, "[", LineCol.Companion.getEMPTY()),
             new Token(TokenType.INTEGER, "0", LineCol.Companion.getEMPTY(), new SimpleInteger(0)),
@@ -225,6 +226,6 @@ public class TestExprTokenizer {
             new Token(TokenType.COLON, ":", LineCol.Companion.getEMPTY()),
             new Token(TokenType.COMMA, ",", LineCol.Companion.getEMPTY()),
             new Token(TokenType.STRING, "'abc'", LineCol.Companion.getEMPTY(), new SimpleString("abc"))
-        ), token("1+2*3-4/5 !false !true console.log (null) array[0] a+=1 a-=2 a*=3 a/=4 a>b c<d e>=f g<=h i!=j k==l test1.a&&test2.b test1.c||test2.d : ,'abc'"));
+        ), token("1+2*3-4/5 !false !true console.log (null) new array[0] a+=1 a-=2 a*=3 a/=4 a>b c<d e>=f g<=h i!=j k==l test1.a&&test2.b test1.c||test2.d : ,'abc'"));
     }
 }

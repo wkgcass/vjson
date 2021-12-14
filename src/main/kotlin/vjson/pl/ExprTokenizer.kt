@@ -35,6 +35,7 @@ class ExprTokenizer(cs: CharStream, offset: LineCol) {
     FullMatchTokenHandler(TokenType.BOOL_TRUE, "true", precedence = 1, value = SimpleBool(true)),
     FullMatchTokenHandler(TokenType.BOOL_FALSE, "false", precedence = 1, value = SimpleBool(false)),
     FullMatchTokenHandler(TokenType.KEY_NULL, "null", precedence = 1),
+    FullMatchTokenHandler(TokenType.KEY_NEW, "new", precedence = 1),
     FullMatchTokenHandler(TokenType.LEFT_PAR, "("),
     FullMatchTokenHandler(TokenType.RIGHT_PAR, ")"),
     FullMatchTokenHandler(TokenType.LEFT_BRACKET, "["),

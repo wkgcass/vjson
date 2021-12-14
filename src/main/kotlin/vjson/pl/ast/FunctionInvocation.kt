@@ -18,7 +18,7 @@ import vjson.pl.type.*
 
 data class FunctionInvocation(
   val target: Expr,
-  val args: List<Expr> = listOf()
+  val args: List<Expr>
 ) : Expr() {
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx

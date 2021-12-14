@@ -18,6 +18,7 @@ enum class TokenType(val isTerminator: Boolean = false) {
   BOOL_TRUE,
   BOOL_FALSE,
   KEY_NULL,
+  KEY_NEW,
   LEFT_PAR,
   RIGHT_PAR,
   LEFT_BRACKET,

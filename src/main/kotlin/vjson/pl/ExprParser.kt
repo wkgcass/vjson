@@ -35,6 +35,7 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
       TokenType.BOOL_TRUE -> bool(ctx)
       TokenType.BOOL_FALSE -> bool(ctx)
       TokenType.KEY_NULL -> exprNull(ctx)
+      TokenType.KEY_NEW -> exprNew(ctx)
       TokenType.VAR_NAME -> accessVar(ctx)
       TokenType.LEFT_PAR -> par(ctx)
       TokenType.PLUS -> positive(ctx)
@@ -145,19 +146,22 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
   private fun methodInvocation(ctx: ParserContext) {
     val token = tokenizer.next()!! // :
     val exp = ctx.exprStack.pop()
-    var next = tokenizer.next() ?: throw ParserException("unexpected eof when trying to invoke function $exp")
+    val next = tokenizer.next() ?: throw ParserException("unexpected eof when trying to invoke function $exp")
     if (next.type != TokenType.LEFT_BRACKET) {
       throw ParserException("unexpected token $next, expecting `[` for invoking $exp", next.lineCol)
     }
-    next = tokenizer.peek() ?: throw ParserException("unexpected eof when preparing arguments for invoking function $exp")
+    val args = parseArguments(ctx, "invoking function $exp")
+    val funcInvoke = FunctionInvocation(exp, args)
+    funcInvoke.lineCol = token.lineCol
+    ctx.exprStack.push(funcInvoke)
+    exprContinue(ctx)
+  }
+
+  private fun parseArguments(ctx: ParserContext, handlingTarget: String): List<Expr> {
+    var next = tokenizer.peek() ?: throw ParserException("unexpected eof when preparing arguments for $handlingTarget")
     if (next.type == TokenType.RIGHT_BRACKET) {
       tokenizer.next()
-      val funcInvoke = FunctionInvocation(exp)
-      funcInvoke.lineCol = token.lineCol
-      ctx.exprStack.push(funcInvoke)
-
-      exprContinue(ctx)
-      return
+      return emptyList()
     }
 
     val subCtx = ParserContext(ctx, TokenType.LEFT_BRACKET)
@@ -171,17 +175,14 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
       if (subCtx.ends) {
         break
       }
-      next = tokenizer.peek() ?: throw ParserException("unexpected eof when preparing arguments[$argIdx] for invoking function $exp")
+      next = tokenizer.peek() ?: throw ParserException("unexpected eof when preparing arguments[$argIdx] for $handlingTarget")
       if (next.type == TokenType.RIGHT_BRACKET) {
         tokenizer.next()
         break
       }
       ++argIdx
     }
-    val funcInvoke = FunctionInvocation(exp, args)
-    funcInvoke.lineCol = token.lineCol
-    ctx.exprStack.push(funcInvoke)
-    exprContinue(ctx)
+    return args
   }
 
   private fun accessIndex(ctx: ParserContext) {
@@ -244,7 +245,7 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
     val token = tokenizer.peek()
     if (!isTerminator(token)) {
       if (token == null) {
-        throw ParserException("expression not terminating after parsing ${ctx.exprStack.peek()}, got token $token")
+        throw ParserException("expression not terminating after parsing ${ctx.exprStack.peek()}, got eof")
       } else {
         throw ParserException("expression not terminating after parsing ${ctx.exprStack.peek()}, got token $token", token.lineCol)
       }
@@ -297,6 +298,62 @@ class ExprParser(private val tokenizer: ExprTokenizer) {
     ctx.exprStack.push(nullLiteral)
 
     exprContinue(ctx)
+  }
+
+  private fun exprNew(ctx: ParserContext) {
+    val lineCol = tokenizer.next()!!.lineCol
+    val typeToken = tokenizer.next() ?: throw ParserException("unexpected eof when trying to get the type to be instantiated")
+    if (typeToken.type != TokenType.VAR_NAME) {
+      throw ParserException("unexpected token $typeToken, expecting the type to be instantiated", typeToken.lineCol)
+    }
+    val typeStr = typeToken.raw
+    val mightBeBracketOrColon =
+      tokenizer.next() ?: throw ParserException("unexpected eof when trying to identify type instantiation or array creation")
+    if (mightBeBracketOrColon.type == TokenType.COLON) {
+      // call constructor
+      val bracket = tokenizer.next() ?: throw ParserException("unexpected eof when invoking constructor of $typeStr, expecting `[`")
+      if (bracket.type != TokenType.LEFT_BRACKET) {
+        throw ParserException("unexpected token $bracket, expecting `[` for invoking constructor of $typeStr", bracket.lineCol)
+      }
+      val args = parseArguments(ctx, "invoking constructor of $typeStr")
+      val newInst = NewInstance(Type(typeStr), args)
+      newInst.lineCol = lineCol
+      ctx.exprStack.push(newInst)
+      exprContinue(ctx)
+    } else if (mightBeBracketOrColon.type == TokenType.LEFT_BRACKET) {
+      // new array
+      val subCtx = ParserContext(ctx, TokenType.LEFT_BRACKET)
+      exprEntry(subCtx)
+      if (!subCtx.ends) {
+        throw ParserException(
+          "only one element can be used to create $typeStr array, the next token is " + (if (tokenizer.peek() == null) "eof" else tokenizer.peek()),
+          mightBeBracketOrColon.lineCol
+        )
+      }
+      val lenExpr = subCtx.exprStack.pop()
+      var dimension = 1
+      while (true) {
+        val nx = tokenizer.peek()
+        if (nx == null || nx.type != TokenType.LEFT_BRACKET) {
+          break
+        }
+        tokenizer.next()
+        val nxnx = tokenizer.next() ?: throw ParserException("unexpected eof when trying to determine dimension of the new array")
+        if (nxnx.type != TokenType.RIGHT_BRACKET) {
+          throw ParserException("unexpected token $nxnx, expecting `]` when trying to determine dimension of the new array", nxnx.lineCol)
+        }
+        ++dimension
+      }
+      val newArray = NewArray(Type(typeStr + "[]".repeat(dimension)), lenExpr)
+      newArray.lineCol = lineCol
+      ctx.exprStack.push(newArray)
+      exprContinue(ctx)
+    } else {
+      throw ParserException(
+        "unexpected token $mightBeBracketOrColon, expecting `:` or `[` for the `new` expression",
+        mightBeBracketOrColon.lineCol
+      )
+    }
   }
 
   private fun accessVar(ctx: ParserContext) {

@@ -269,4 +269,36 @@ public class TestExprParser {
         assertEquals(new AccessIndex(new Access("a"), new IntegerLiteral(new SimpleInteger(1))),
             parse("a[1]"));
     }
+
+    @Test
+    public void newExpr() {
+        assertEquals(new NewArray(new Type("A[]"), new IntegerLiteral(new SimpleInteger(1))),
+            parse("new A[1]"));
+        assertEquals(new NewArray(new Type("A[]"), new BinOp(BinOpType.MULTIPLY,
+                new IntegerLiteral(new SimpleInteger(1)),
+                new IntegerLiteral(new SimpleInteger(2)))),
+            parse("new A[1 * 2]"));
+        assertEquals(new NewArray(new Type("A[][]"), new IntegerLiteral(new SimpleInteger(1))),
+            parse("new A[1][]"));
+        assertEquals(new Access("length",
+                new NewArray(new Type("A[][]"), new IntegerLiteral(new SimpleInteger(1)))),
+            parse("new A[1][].length"));
+        assertEquals(new NewInstance(new Type("A"), Collections.singletonList(
+                new IntegerLiteral(new SimpleInteger(1))
+            )),
+            parse("new A:[1]"));
+        assertEquals(new NewInstance(new Type("A"), Arrays.asList(
+                new IntegerLiteral(new SimpleInteger(1)),
+                new IntegerLiteral(new SimpleInteger(2))
+            )),
+            parse("new A:[1, 2]"));
+        assertEquals(
+            new FunctionInvocation(new Access("toString",
+                new NewInstance(new Type("A"), Arrays.asList(
+                    new IntegerLiteral(new SimpleInteger(1)),
+                    new IntegerLiteral(new SimpleInteger(2))
+                ))),
+                Collections.emptyList()),
+            parse("new A:[1, 2].toString:[]"));
+    }
 }
