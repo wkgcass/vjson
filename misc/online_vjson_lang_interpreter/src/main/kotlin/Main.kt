@@ -88,7 +88,7 @@ fun eval(_prog: String) {
       if (ok) {
         outputFunc("### extra characters are added to last line (${lastLine.trim()}) by eval process ###")
         val newLine = if (lastLine.trim().startsWith("new ")) {
-          "var \"$$$\" = {${lastLine.trim()}};var \"@@@\" = $$$.toString:[]"
+          "var \"@@@\" = (${lastLine.trim()}).toString:[]"
         } else {
           "var \"@@@\" = (${lastLine.trim()})"
         }
