@@ -21,6 +21,12 @@ data class VariableDefinition(
   var value: Expr,
   var modifiers: Modifiers = Modifiers(0),
 ) : Statement() {
+  override fun copy(): VariableDefinition {
+    val ret = VariableDefinition(name, value.copy(), modifiers)
+    ret.lineCol = lineCol
+    return ret
+  }
+
   private var ctx: TypeContext? = null
   private var variableIndex: Int = -1
 

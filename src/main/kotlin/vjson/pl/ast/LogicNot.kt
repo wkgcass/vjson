@@ -20,6 +20,12 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class LogicNot(val expr: Expr) : Expr() {
+  override fun copy(): LogicNot {
+    val ret = LogicNot(expr.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val exprType = expr.check(ctx)

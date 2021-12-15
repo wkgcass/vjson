@@ -23,6 +23,12 @@ data class FunctionDefinition(
   val code: List<Statement>,
   val modifiers: Modifiers = Modifiers(0),
 ) : Statement(), MemoryAllocatorProvider {
+  override fun copy(): FunctionDefinition {
+    val ret = FunctionDefinition(name, params.map { it.copy() }, returnType.copy(), code.map { it.copy() }, modifiers)
+    ret.lineCol
+    return ret
+  }
+
   private var ctx: TypeContext? = null
   private var variableIndex: Int = -1
   private val memoryAllocator = MemoryAllocator()

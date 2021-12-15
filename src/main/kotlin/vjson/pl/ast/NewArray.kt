@@ -20,6 +20,12 @@ data class NewArray(
   val type: Type,
   val len: Expr,
 ) : Expr() {
+  override fun copy(): NewArray {
+    val ret = NewArray(type.copy(), len.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val arrayType = type.check(ctx)

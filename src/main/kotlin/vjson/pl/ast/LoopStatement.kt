@@ -14,4 +14,5 @@ package vjson.pl.ast
 
 abstract class LoopStatement(val flag: String? = null) : Statement() {
   var isInfiniteLoop: Boolean? = null
+  abstract override fun copy(): LoopStatement
 }

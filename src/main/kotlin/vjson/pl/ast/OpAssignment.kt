@@ -21,6 +21,12 @@ data class OpAssignment(
   val variable: AssignableExpr,
   val value: Expr,
 ) : Expr() {
+  override fun copy(): OpAssignment {
+    val ret = OpAssignment(op, variable.copy(), value.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     if (op != BinOpType.PLUS && op != BinOpType.MINUS && op != BinOpType.MULTIPLY && op != BinOpType.DIVIDE && op != BinOpType.MOD) {

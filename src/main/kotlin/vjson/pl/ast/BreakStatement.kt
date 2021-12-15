@@ -18,6 +18,12 @@ import vjson.pl.inst.Instruction
 import vjson.pl.type.TypeContext
 
 data class BreakStatement(val flag: String? = null) : Statement() {
+  override fun copy(): BreakStatement {
+    val ret = BreakStatement(flag)
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun checkAST(ctx: TypeContext) {
     val ctxAST = ctx.getContextAST {
       it is ClassDefinition || it is FunctionDefinition ||

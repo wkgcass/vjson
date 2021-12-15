@@ -18,6 +18,8 @@ import vjson.pl.type.TypeContext
 abstract class Expr : Statement(), TypedAST {
   protected var ctx: TypeContext = TypeContext(MemoryAllocator())
 
+  abstract override fun copy(): Expr
+
   override fun functionTerminationCheck(): Boolean {
     return false
   }

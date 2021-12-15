@@ -12,6 +12,8 @@
 
 package vjson.pl.type
 
+import vjson.ex.ParserException
+import vjson.pl.ast.ParamType
 import vjson.pl.inst.RuntimeMemoryTotal
 
 interface TypeInstance {
@@ -24,4 +26,11 @@ interface TypeInstance {
   fun functionDescriptor(ctx: TypeContext): FunctionDescriptor? = null
 
   fun elementType(ctx: TypeContext): TypeInstance? = null
+
+  fun typeParameters(): List<ParamType>? = null
+
+  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(ParserException::class) // }}
+  fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
+    throw ParserException("unsupported")
+  }
 }

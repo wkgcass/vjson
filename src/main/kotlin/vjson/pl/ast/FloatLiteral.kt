@@ -15,12 +15,17 @@ package vjson.pl.ast
 import vjson.JSON
 import vjson.pl.inst.Instruction
 import vjson.pl.inst.LiteralDouble
-import vjson.pl.inst.LiteralFloat
 import vjson.pl.type.DoubleType
 import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class FloatLiteral(val n: JSON.Double) : Expr() {
+  override fun copy(): FloatLiteral {
+    val ret = FloatLiteral(n)
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     return DoubleType

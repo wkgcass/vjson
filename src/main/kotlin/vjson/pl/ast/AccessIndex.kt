@@ -17,6 +17,12 @@ import vjson.pl.inst.*
 import vjson.pl.type.*
 
 data class AccessIndex(val from: Expr, val index: Expr) : AssignableExpr() {
+  override fun copy(): AccessIndex {
+    val ret = AccessIndex(from.copy(), index.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val type = from.check(ctx)

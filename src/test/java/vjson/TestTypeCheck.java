@@ -41,10 +41,12 @@ public class TestTypeCheck {
 
     private List<Statement> ast(String prog) {
         int[] idx = {0};
-        prog = "{\n" +
-            Arrays.stream(prog.split("\n")).map(line -> "var var" + (idx[0]++) + " = (" + line + ")")
-                .collect(Collectors.joining("\n")) +
-            "\n}";
+        if (!prog.startsWith("{")) {
+            prog = "{\n" +
+                Arrays.stream(prog.split("\n")).map(line -> "var var" + (idx[0]++) + " = (" + line + ")")
+                    .collect(Collectors.joining("\n")) +
+                "\n}";
+        }
         JSON.Object o = new ObjectParser(InterpreterBuilder.Companion.interpreterOptions())
             .last(prog);
         //noinspection ConstantConditions
@@ -171,6 +173,24 @@ public class TestTypeCheck {
             Expr s0 = exprOf(ast, i);
             assertTrue("var" + i, s0.typeInstance() instanceof BoolType);
         }
+    }
+
+    @Test
+    public void templateType() {
+        List<Statement> stmts = ast("{\n" +
+            "template: { T, U } class BiContainer: { _t: T, _u: U } do: {\n" +
+            "  public var t = _t\n" +
+            "  public var u = _u\n" +
+            "}\n" +
+            "let IntLongContainer = { BiContainer:[ int, long ] }\n" +
+            "var c = new IntLongContainer:[1, 2.toLong]\n" +
+            "}");
+        VariableDefinition varDef = (VariableDefinition) stmts.get(stmts.size() - 1);
+        ClassTypeInstance type = (ClassTypeInstance) varDef.getValue().typeInstance();
+        assertEquals(IntType.INSTANCE, type.getCls().getParams().get(0).typeInstance());
+        assertEquals(LongType.INSTANCE, type.getCls().getParams().get(1).typeInstance());
+        assertEquals(IntType.INSTANCE, ((VariableDefinition) type.getCls().getCode().get(0)).getValue().typeInstance());
+        assertEquals(LongType.INSTANCE, ((VariableDefinition) type.getCls().getCode().get(1)).getValue().typeInstance());
     }
 
     @Test

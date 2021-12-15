@@ -12,44 +12,56 @@
 
 package vjson.pl.ast
 
-import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
+import vjson.pl.inst.NoOp
+import vjson.pl.type.TemplateClassTypeInstance
 import vjson.pl.type.TypeContext
-import vjson.pl.type.TypeInstance
-import vjson.simple.SimpleString
 
-data class Param(
-  val name: String,
-  val type: Type
-) : TypedAST {
-  override var lineCol: LineCol = LineCol.EMPTY
+data class TemplateClassDefinition(
+  val paramTypes: List<ParamType>,
+  val classDef: ClassDefinition
+) : Statement() {
+  private var ctx: TypeContext? = null
 
-  override fun copy(): Param {
-    val ret = Param(name, type)
+  override fun copy(): TemplateClassDefinition {
+    val ret = TemplateClassDefinition(paramTypes.map { it.copy() }, classDef.copy())
     ret.lineCol = lineCol
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
-    if (!ctx.hasType(type)) {
-      throw ParserException("type of parameter $name (${type}) is not defined", lineCol)
-    }
-    type.check(ctx)
-    return ctx.getType(type)
+  override fun functionTerminationCheck(): Boolean {
+    return false
   }
 
-  override fun typeInstance(): TypeInstance {
-    return type.typeInstance()
+  override fun checkAST(ctx: TypeContext) {
+    if (ctx.hasTypeInThisContext(Type(classDef.name))) {
+      throw ParserException("type `${classDef.name}` is already defined", lineCol)
+    }
+    ctx.addType(Type(classDef.name), TemplateClassTypeInstance(this))
+    this.ctx = ctx.copy()
   }
 
   override fun generateInstruction(): Instruction {
-    throw UnsupportedOperationException()
+    return NoOp()
   }
 
-  internal var memIndex: Int = -1
+  fun getCtx(): TypeContext {
+    return ctx!!
+  }
 
   override fun toString(): String {
-    return name + ": " + SimpleString(type.toString()).stringify()
+    val sb = StringBuilder("template:{ ")
+    var isFirst = true
+    for (p in paramTypes) {
+      if (isFirst) {
+        isFirst = false
+      } else {
+        sb.append(", ")
+      }
+      sb.append(p.name)
+    }
+    sb.append(" } ").append(classDef)
+    return sb.toString()
   }
 }

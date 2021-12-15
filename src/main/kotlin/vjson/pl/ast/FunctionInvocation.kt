@@ -20,6 +20,12 @@ data class FunctionInvocation(
   val target: Expr,
   val args: List<Expr>
 ) : Expr() {
+  override fun copy(): FunctionInvocation {
+    val ret = FunctionInvocation(target.copy(), args.map { it.copy() })
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val targetType = target.check(ctx)

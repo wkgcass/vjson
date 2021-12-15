@@ -17,6 +17,12 @@ import vjson.pl.inst.*
 import vjson.pl.type.*
 
 data class Negative(val expr: Expr) : Expr() {
+  override fun copy(): Negative {
+    val ret = Negative(expr.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val exprType = expr.check(ctx)

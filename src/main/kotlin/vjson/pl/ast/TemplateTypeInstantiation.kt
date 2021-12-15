@@ -13,61 +13,51 @@
 package vjson.pl.ast
 
 import vjson.ex.ParserException
-import vjson.pl.inst.IfInstruction
 import vjson.pl.inst.Instruction
-import vjson.pl.type.BoolType
+import vjson.pl.inst.NoOp
 import vjson.pl.type.TypeContext
 
-data class IfStatement(
-  val condition: Expr,
-  val ifCode: List<Statement>,
-  val elseCode: List<Statement>
-) : Statement() {
-  override fun copy(): IfStatement {
-    val ret = IfStatement(condition.copy(), ifCode.map { it.copy() }, elseCode.map { it.copy() })
+data class TemplateTypeInstantiation(val typeName: String, val templateType: Type, val typeParams: List<Type>) : Statement() {
+  override fun copy(): TemplateTypeInstantiation {
+    val ret = TemplateTypeInstantiation(typeName, templateType.copy(), typeParams.map { it.copy() })
     ret.lineCol = lineCol
     return ret
   }
 
-  override fun checkAST(ctx: TypeContext) {
-    val conditionType = condition.check(ctx)
-    if (conditionType !is BoolType) {
-      throw ParserException("$this: type of condition ($conditionType) is not bool", lineCol)
-    }
-    val ifCtx = TypeContext(ctx)
-    ifCtx.checkStatements(ifCode)
-    val elseCtx = TypeContext(ctx)
-    elseCtx.checkStatements(elseCode)
+  override fun functionTerminationCheck(): Boolean {
+    return false
   }
 
-  override fun functionTerminationCheck(): Boolean {
-    var ifCodeTerminate = false
-    for (stmt in ifCode) {
-      if (stmt.functionTerminationCheck()) {
-        ifCodeTerminate = true
-        break
-      }
+  override fun checkAST(ctx: TypeContext) {
+    if (ctx.hasTypeInThisContext(Type(typeName))) {
+      throw ParserException("type `$typeName` is already defined", lineCol)
     }
-    if (!ifCodeTerminate) return false
+    val templateType = this.templateType.check(ctx)
+    val astTypeParams = templateType.typeParameters() ?: throw ParserException("type `$templateType` is not a template class", lineCol)
 
-    var elseCodeTerminate = false
-    for (stmt in elseCode) {
-      if (stmt.functionTerminationCheck()) {
-        elseCodeTerminate = true
-        break
-      }
+    val typeParams = this.typeParams.map { it.check(ctx) }
+
+    if (astTypeParams.size != typeParams.size) {
+      throw ParserException(
+        "template type `$templateType` has ${astTypeParams.size} type parameters, but $typeName provides ${typeParams.size}",
+        lineCol
+      )
     }
-    return elseCodeTerminate
+
+    val typeInstance = try {
+      templateType.concrete(ctx, typeParams)
+    } catch (e: ParserException) {
+      throw ParserException("constructing concrete type $typeName failed: ${e.message}", e, this.lineCol)
+    }
+
+    ctx.addType(Type(typeName), typeInstance)
   }
 
   override fun generateInstruction(): Instruction {
-    val conditionInst = condition.generateInstruction()
-    val ifCodeInst = ifCode.map { it.generateInstruction() }
-    val elseCodeInst = elseCode.map { it.generateInstruction() }
-    return IfInstruction(conditionInst, ifCodeInst, elseCodeInst)
+    return NoOp()
   }
 
   override fun toString(): String {
-    return "if: $condition then: $ifCode else: $elseCode"
+    return "let $typeName = { $templateType:[" + typeParams.joinToString(", ") + "] }"
   }
 }

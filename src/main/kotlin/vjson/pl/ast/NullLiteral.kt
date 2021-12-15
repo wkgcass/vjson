@@ -19,6 +19,12 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class NullLiteral(val type: Type? = null) : Expr() {
+  override fun copy(): NullLiteral {
+    val ret = NullLiteral(type?.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     if (type == null) {

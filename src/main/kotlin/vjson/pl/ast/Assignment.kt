@@ -23,6 +23,12 @@ data class Assignment(
   val variable: AssignableExpr,
   val value: Expr,
 ) : Expr() {
+  override fun copy(): Assignment {
+    val ret = Assignment(variable.copy(), value.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val variableType = variable.check(ctx)

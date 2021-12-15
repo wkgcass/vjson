@@ -20,6 +20,12 @@ import vjson.pl.type.TypeInstance
 import vjson.simple.SimpleString
 
 data class StringLiteral(val str: String) : Expr() {
+  override fun copy(): StringLiteral {
+    val ret = StringLiteral(str)
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     return StringType

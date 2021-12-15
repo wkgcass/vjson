@@ -23,7 +23,7 @@ import vjson.simple.SimpleBool
 import vjson.simple.SimpleString
 import vjson.util.collection.VList
 
-class ExprTokenizer(cs: CharStream, offset: LineCol) {
+class ExprTokenizer(cs: CharStream, val offset: LineCol) {
   private val cs: LineColCharStream = LineColCharStream(cs, offset.filename, offset)
 
   constructor(str: String, offset: LineCol) : this(CharStream.from(str), offset)

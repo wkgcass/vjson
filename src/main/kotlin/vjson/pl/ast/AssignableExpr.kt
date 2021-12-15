@@ -15,6 +15,7 @@ package vjson.pl.ast
 import vjson.pl.inst.Instruction
 
 abstract class AssignableExpr : Expr() {
+  abstract override fun copy(): AssignableExpr
   abstract fun isModifiable(): Boolean
   abstract fun generateSetInstruction(valueInst: Instruction): Instruction
 }

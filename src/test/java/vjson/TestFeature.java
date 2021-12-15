@@ -14,7 +14,8 @@ import vjson.util.ObjectBuilder;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @SuppressWarnings("RedundantThrows")
 public class TestFeature {
@@ -133,6 +134,19 @@ public class TestFeature {
                 "\"c\"," +
                 "\"e\":\"f\"" +
                 "}"));
+    }
+
+    @Test
+    public void entryWithoutValueAndKeyNoQuotes() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions()
+            .setAllowObjectEntryWithoutValue(true)
+            .setKeyNoQuotes(true)
+            .setKeyNoQuotesAnyChar(true));
+        assertEquals(new ObjectBuilder()
+            .put("a", null)
+            .put("b", null)
+            .put("c", null)
+            .build(), parser.last("{a, b, c}"));
     }
 
     @Test

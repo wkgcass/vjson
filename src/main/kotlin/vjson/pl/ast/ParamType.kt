@@ -14,9 +14,12 @@ package vjson.pl.ast
 
 import vjson.cs.LineCol
 
-abstract class Statement : AST {
-  override var lineCol: LineCol = LineCol.EMPTY
+data class ParamType(val name: String) {
+  var lineCol: LineCol = LineCol.EMPTY
 
-  abstract override fun copy(): Statement
-  abstract fun functionTerminationCheck(): Boolean
+  fun copy(): ParamType {
+    val ret = ParamType(name)
+    ret.lineCol = lineCol
+    return ret
+  }
 }

@@ -38,6 +38,8 @@ class ASTGen(_prog: JSON.Object) {
         "break" -> aBreak(entry)
         "continue" -> aContinue(entry)
         "return" -> aReturn(entry)
+        "template" -> template(entry)
+        "let" -> aLet(entry)
         else -> exprKey(entry)
       }
       stmt.lineCol = entry.lineCol
@@ -58,7 +60,7 @@ class ASTGen(_prog: JSON.Object) {
       throw ParserException("unexpected token ${entry.value}, expecting null as value for key `class`", entry.value.lineCol())
     }
     if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting class name")
+      throw ParserException("unexpected end of object, expecting class name", entry.lineCol)
     }
     val nameAndParams = prog.next()
     val className = nameAndParams.key
@@ -82,7 +84,7 @@ class ASTGen(_prog: JSON.Object) {
     }
 
     if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting class content")
+      throw ParserException("unexpected end of object, expecting class content", entry.lineCol)
     }
     val doAndCode = prog.next()
     if (doAndCode.key != "do") {
@@ -108,7 +110,7 @@ class ASTGen(_prog: JSON.Object) {
     var nextEntry: JSON.ObjectEntry
     while (true) {
       if (!prog.hasNext()) {
-        throw ParserException("unexpected eof, expecting variable or function definition")
+        throw ParserException("unexpected end of object, expecting variable or function definition", entry.lineCol)
       }
       nextEntry = prog.next()
       if (!ModifierEnum.isModifier(nextEntry.key)) {
@@ -147,7 +149,7 @@ class ASTGen(_prog: JSON.Object) {
       throw ParserException("unexpected token ${entry.value}, expecting null as value for key `function`", entry.value.lineCol())
     }
     if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting function name")
+      throw ParserException("unexpected end of object, expecting function name", entry.lineCol)
     }
     val nameAndParams = prog.next()
     val funcName = nameAndParams.key
@@ -171,7 +173,7 @@ class ASTGen(_prog: JSON.Object) {
     }
 
     if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting function return type")
+      throw ParserException("unexpected end of object, expecting function return type", entry.lineCol)
     }
     val returnTypeAndCode = prog.next()
     val astReturnType = Type(returnTypeAndCode.key)
@@ -197,7 +199,7 @@ class ASTGen(_prog: JSON.Object) {
       throw ParserException("unexpected token ${entry.value}, expecting null as value for key `var`", entry.value.lineCol())
     }
     if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting variable name")
+      throw ParserException("unexpected end of object, expecting variable name", entry.lineCol)
     }
     val nextEntry = prog.next()
     val varname = nextEntry.key
@@ -217,7 +219,7 @@ class ASTGen(_prog: JSON.Object) {
       throw ParserException("unexpected token ${entry.value}, expecting null as value for key `new`", entry.value.lineCol())
     }
     if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting the type to be instantiated")
+      throw ParserException("unexpected end of object, expecting the type to be instantiated", entry.lineCol)
     }
     val nextEntry = prog.next()
     var typeStr = nextEntry.key
@@ -280,7 +282,7 @@ class ASTGen(_prog: JSON.Object) {
     }
 
     if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting code for the `for` loop")
+      throw ParserException("unexpected end of object, expecting code for the `for` loop", entry.lineCol)
     }
     val nextEntry = prog.next()
     if (nextEntry.key != "do") {
@@ -297,7 +299,7 @@ class ASTGen(_prog: JSON.Object) {
   private fun aWhile(entry: JSON.ObjectEntry): WhileLoop {
     val astCond = expr(entry.value)
     if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting code for the `while` loop")
+      throw ParserException("unexpected end of object, expecting code for the `while` loop", entry.lineCol)
     }
     val nextEntry = prog.next()
     if (nextEntry.key != "do") {
@@ -314,7 +316,7 @@ class ASTGen(_prog: JSON.Object) {
   private fun aIf(entry: JSON.ObjectEntry): IfStatement {
     val astCond = expr(entry.value)
     if (!prog.hasNext()) {
-      throw ParserException("unexpected eof, expecting content for `if`")
+      throw ParserException("unexpected end of object, expecting content for `if`", entry.lineCol)
     }
     val nextEntry = prog.next()
     if (nextEntry.key != "then") {
@@ -334,7 +336,10 @@ class ASTGen(_prog: JSON.Object) {
         is JSON.Null -> {
           // expecting else if
           if (!prog.hasNext()) {
-            throw ParserException("unexpected eof, found `else` without colon `:`, but not following another `if`")
+            throw ParserException(
+              "unexpected end of object, found `else` without colon `:`, but not following another `if`",
+              nextNextEntry.lineCol
+            )
           }
           val nextNextNextEntry = prog.next()
           if (nextNextNextEntry.key != "if") {
@@ -382,6 +387,84 @@ class ASTGen(_prog: JSON.Object) {
     } else {
       ReturnStatement(expr(entry.value))
     }
+  }
+
+  /**
+   * ```
+   * template: { T, U, V } class ClassName: {} do: { }
+   * ```
+   */
+  private fun template(entry: JSON.ObjectEntry): TemplateClassDefinition {
+    if (entry.value !is JSON.Object) {
+      throw ParserException(
+        "unexpected token ${entry.value}, expecting { ... } for defining param type names",
+        entry.value.lineCol()
+      )
+    }
+    val paramTypesObj = entry.value
+    val types = ArrayList<ParamType>()
+    val typeNames = HashSet<String>()
+    for (p in paramTypesObj.entryList()) {
+      if (p.value !is JSON.Null) {
+        throw ParserException("unexpected token ${p.value}, expecting null as value for the param type name", p.value.lineCol())
+      }
+      if (!typeNames.add(p.key)) {
+        throw ParserException("duplicated param type name", p.lineCol)
+      }
+      types.add(ParamType(p.key))
+    }
+    if (!prog.hasNext()) {
+      throw ParserException("unexpected end of object, expecting class definition after `template`", entry.lineCol)
+    }
+    val nextEntry = prog.next()
+    if (nextEntry.key != "class") {
+      throw ParserException("unexpected token $nextEntry, expecting class definition after `template`", entry.lineCol)
+    }
+    val cls = aClass(nextEntry)
+    return TemplateClassDefinition(types, cls)
+  }
+
+  /**
+   * ```
+   * let Type = { TemplateType:[Type1, Type2] }
+   * ```
+   */
+  private fun aLet(entry: JSON.ObjectEntry): TemplateTypeInstantiation {
+    if (entry.value !is JSON.Null) {
+      throw ParserException("unexpected token ${entry.value}, expecting null for key `let`", entry.value.lineCol())
+    }
+    if (!prog.hasNext()) {
+      throw ParserException("unexpected end of object, expecting the type to be defined from a template type", entry.lineCol)
+    }
+    val next = prog.next()
+    val typeName = next.key
+    if (next.value !is JSON.Object) {
+      throw ParserException("unexpected token ${entry.value}, expecting object for constructing the type", next.value.lineCol())
+    }
+    val obj = next.value.entryList()
+    if (obj.isEmpty()) {
+      throw ParserException("unexpected token ${entry.value}, expecting object for constructing the type", next.value.lineCol())
+    }
+    if (obj.size != 1) {
+      throw ParserException(
+        "unexpected token ${entry.value}, expecting object for constructing the type, got extra tokens",
+        next.value.lineCol()
+      )
+    }
+    val paramTypeName = obj[0].key
+    if (obj[0].value !is JSON.Array) {
+      throw ParserException("unexpected token ${obj[0].value}, expecting array for type parameters", obj[0].value.lineCol())
+    }
+    val arr = obj[0].value as JSON.Array
+    val typeParams = ArrayList<Type>()
+    for (i in 0 until arr.length()) {
+      val x = arr[i]
+      if (x !is JSON.String) {
+        throw ParserException("unexpected token $x, expecting string for type parameters", x.lineCol())
+      }
+      typeParams.add(Type(x.toJavaObject()))
+    }
+    return TemplateTypeInstantiation(typeName, Type(paramTypeName), typeParams)
   }
 
   private fun exprKey(entry: JSON.ObjectEntry): Expr {

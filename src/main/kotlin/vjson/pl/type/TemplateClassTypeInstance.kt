@@ -10,13 +10,28 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package vjson.pl.ast
+package vjson.pl.type
 
-import vjson.cs.LineCol
+import vjson.pl.ast.ParamType
+import vjson.pl.ast.TemplateClassDefinition
+import vjson.pl.ast.Type
 
-abstract class Statement : AST {
-  override var lineCol: LineCol = LineCol.EMPTY
+class TemplateClassTypeInstance(val tmpl: TemplateClassDefinition) : TypeInstance {
+  override fun typeParameters(): List<ParamType> {
+    return tmpl.paramTypes
+  }
 
-  abstract override fun copy(): Statement
-  abstract fun functionTerminationCheck(): Boolean
+  override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
+    val ast = tmpl.copy()
+    val newCtx = TypeContext(tmpl.getCtx())
+    for (i in 0 until ast.paramTypes.size) {
+      newCtx.addType(Type(ast.paramTypes[i].name), typeParams[i])
+    }
+    ast.classDef.checkAST(newCtx)
+    return newCtx.getType(Type(ast.classDef.name))
+  }
+
+  override fun toString(): String {
+    return "template class ${tmpl.classDef.name}"
+  }
 }

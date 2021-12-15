@@ -18,6 +18,12 @@ import vjson.pl.inst.Instruction
 import vjson.pl.type.TypeContext
 
 data class ContinueStatement(val flag: String? = null) : Statement() {
+  override fun copy(): ContinueStatement {
+    val ret = ContinueStatement(flag)
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun checkAST(ctx: TypeContext) {
     val ctxAST = ctx.getContextAST {
       it is ClassDefinition || it is FunctionDefinition ||

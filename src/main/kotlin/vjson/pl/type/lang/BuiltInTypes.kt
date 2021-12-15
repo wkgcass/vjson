@@ -69,6 +69,16 @@ object BuiltInTypes {
       }
     }
   }
+  private val stringToString = object : PrebuiltStackInfoInstruction("string", "toString") {
+    override fun execute0(ctx: ActionContext, values: ValueHolder) {
+      val n = values.refValue
+      values.refValue = object : PrebuiltStackInfoInstruction("string", "toString") {
+        override fun execute0(ctx: ActionContext, values: ValueHolder) {
+          values.refValue = n
+        }
+      }
+    }
+  }
 
   fun getField(type: TypeInstance, field: String): Instruction {
     return when (type) {
@@ -99,6 +109,12 @@ object BuiltInTypes {
       is BoolType -> {
         when (field) {
           "toString" -> boolToString
+          else -> throw UnsupportedOperationException()
+        }
+      }
+      is StringType -> {
+        when (field) {
+          "toString" -> stringToString
           else -> throw UnsupportedOperationException()
         }
       }

@@ -249,7 +249,7 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         // the character will be checked before entering state8
         // or would already be checked in the loop condition
         val peek = cs.peekNext()
-        if ((isColon(peek) || ParserUtils.isWhiteSpace(peek)) || (peek == '}' && opts.isAllowObjectEntryWithoutValue)) {
+        if ((isColon(peek) || peek == ',' || ParserUtils.isWhiteSpace(peek)) || (peek == '}' && opts.isAllowObjectEntryWithoutValue)) {
           val key = keyBuilder.toString()
           if (key.isEmpty()) {
             err = "empty key is not allowed when parsing object key without quotes"

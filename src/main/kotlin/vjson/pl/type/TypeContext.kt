@@ -180,6 +180,30 @@ class TypeContext {
     }
   }
 
+  private constructor(
+    contextType: TypeInstance?,
+    ast: AST?,
+    parent: TypeContext?,
+    memoryAllocator: MemoryAllocator,
+    typeNameMap: Map<Type, TypeInstance>,
+    functionDescriptorSet: Set<FunctionDescriptor>,
+    variableMap: Map<String, Variable>,
+    memoryDepth: Int
+  ) {
+    this.contextType = contextType
+    this.ast = ast
+    this.parent = parent
+    this.memoryAllocator = memoryAllocator
+    this.typeNameMap.putAll(typeNameMap)
+    this.functionDescriptorSet.addAll(functionDescriptorSet)
+    this.variableMap.putAll(variableMap)
+    this.memoryDepth = memoryDepth
+  }
+
+  fun copy(): TypeContext {
+    return TypeContext(contextType, ast, parent, memoryAllocator, typeNameMap, functionDescriptorSet, variableMap, memoryDepth)
+  }
+
   companion object {
     private val rootContext = TypeContext(0)
 

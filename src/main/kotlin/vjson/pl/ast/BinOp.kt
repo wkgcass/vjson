@@ -22,6 +22,12 @@ data class BinOp(
   val left: Expr,
   val right: Expr,
 ) : Expr() {
+  override fun copy(): BinOp {
+    val ret = BinOp(op, left.copy(), right.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val leftType = left.check(ctx)

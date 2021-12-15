@@ -19,6 +19,12 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.VoidType
 
 data class ReturnStatement(val expr: Expr? = null) : Statement() {
+  override fun copy(): Statement {
+    val ret = ReturnStatement(expr?.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun checkAST(ctx: TypeContext) {
     val exprType = expr?.check(ctx)
 

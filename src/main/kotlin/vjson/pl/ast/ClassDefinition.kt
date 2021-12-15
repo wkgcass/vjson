@@ -25,6 +25,12 @@ data class ClassDefinition(
   private var memDepth: Int = -1
   private val memoryAllocator = MemoryAllocator()
 
+  override fun copy(): ClassDefinition {
+    val ret = ClassDefinition(name, params.map { it.copy() }, code.map { it.copy() })
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun checkAST(ctx: TypeContext) {
     memDepth = ctx.getMemoryDepth()
     if (ctx.hasTypeInThisContext(Type(name))) {
@@ -59,7 +65,7 @@ data class ClassDefinition(
 
   override fun toString(): String {
     val sb = StringBuilder()
-    sb.append("class ").append(name).append(": { ")
+    sb.append("class ").append(name)
     sb.append(params.joinToString(prefix = " { ", postfix = " } "))
     sb.append("do: { ")
     sb.append(code.joinToString())

@@ -21,6 +21,12 @@ import vjson.pl.type.lang.BuiltInTypes
 data class Access
 /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
 constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
+  override fun copy(): Access {
+    val ret = Access(name, from?.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     if (from == null) {

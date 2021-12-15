@@ -19,6 +19,12 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class BoolLiteral(val b: Boolean) : Expr() {
+  override fun copy(): BoolLiteral {
+    val ret = BoolLiteral(b)
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     return BoolType

@@ -22,6 +22,12 @@ data class WhileLoop(
   val condition: Expr,
   val code: List<Statement>
 ) : LoopStatement() {
+  override fun copy(): WhileLoop {
+    val ret = WhileLoop(condition.copy(), code.map { it.copy() })
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun checkAST(ctx: TypeContext) {
     val conditionType = condition.typeInstance()
     if (conditionType !is BoolType) {

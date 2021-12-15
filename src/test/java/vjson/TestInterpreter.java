@@ -469,6 +469,41 @@ public class TestInterpreter {
     }
 
     @Test
+    public void templateType() {
+        RuntimeMemory mem = new InterpreterBuilder()
+            .compile("{\n" +
+                "template: { T, U } class BiContainer: { t: T, u: U } do: {\n" +
+                "  function calc:{} int: {\n" +
+                "    return: t.toInt + u.toInt\n" +
+                "  }\n" +
+                "}\n" +
+                "let DoubleFloatContainer = { BiContainer:[double, float] }\n" +
+                "var container = new DoubleFloatContainer:[1.2, 3.4.toFloat]\n" +
+                "var res = container.calc:[]\n" +
+                "}")
+            .execute();
+        assertEquals(4, mem.getInt(0));
+    }
+
+    @Test
+    public void builtInTypesToSelf() {
+        RuntimeMemory mem = new InterpreterBuilder()
+            .compile("{\n" +
+                "var a0 = 1.toInt\n" +
+                "var a1 = 100000000000000.toLong\n" +
+                "var a3 = 2.4.toFloat.toFloat\n" +
+                "var a4 = 4.8.toDouble\n" +
+                "var a5 = ('abc'.toString:[])\n" +
+                "}")
+            .execute();
+        assertEquals(1, mem.getInt(0));
+        assertEquals(100000000000000L, mem.getLong(0));
+        assertEquals(2.4, mem.getFloat(0), 0.0000001);
+        assertEquals(4.8, mem.getDouble(0), 0.0000001);
+        assertEquals("abc", mem.getRef(0));
+    }
+
+    @Test
     public void pass() {
         new InterpreterBuilder()
             .addTypes(new StdTypes())

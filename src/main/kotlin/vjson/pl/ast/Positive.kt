@@ -19,6 +19,12 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class Positive(val expr: Expr) : Expr() {
+  override fun copy(): Positive {
+    val ret = Positive(expr.copy())
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val exprType = expr.check(ctx)

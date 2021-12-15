@@ -28,6 +28,10 @@ interface NumericTypeInstance : PrimitiveTypeInstance {
 object IntType : NumericTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
+      "toInt" -> object : ExecutableField(name, ctx.getType(Type("int")), MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+        }
+      }
       "toLong" -> object : ExecutableField(name, ctx.getType(Type("long")), MemPos(0, 0), false) {
         override fun execute(ctx: ActionContext, values: ValueHolder) {
           values.longValue = values.intValue.toLong()
@@ -64,6 +68,10 @@ object LongType : NumericTypeInstance {
       "toInt" -> object : ExecutableField(name, ctx.getType(Type("int")), MemPos(0, 0), false) {
         override fun execute(ctx: ActionContext, values: ValueHolder) {
           values.intValue = values.longValue.toInt()
+        }
+      }
+      "toLong" -> object : ExecutableField(name, ctx.getType(Type("long")), MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
         }
       }
       "toFloat" -> object : ExecutableField("toFloat", ctx.getType(Type("float")), MemPos(0, 0), false) {
@@ -104,6 +112,10 @@ object FloatType : NumericTypeInstance {
           values.longValue = values.floatValue.toLong()
         }
       }
+      "toFloat" -> object : ExecutableField(name, ctx.getType(Type("float")), MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+        }
+      }
       "toDouble" -> object : ExecutableField("toDouble", ctx.getType(Type("double")), MemPos(0, 0), false) {
         override fun execute(ctx: ActionContext, values: ValueHolder) {
           values.doubleValue = values.floatValue.toDouble()
@@ -142,6 +154,10 @@ object DoubleType : NumericTypeInstance {
           values.floatValue = values.doubleValue.toFloat()
         }
       }
+      "toDouble" -> object : ExecutableField(name, ctx.getType(Type("double")), MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+        }
+      }
       "toString" -> Field(
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider),
@@ -176,6 +192,18 @@ object BoolType : PrimitiveTypeInstance {
 }
 
 object StringType : BuiltInTypeInstance {
+  override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
+    return when (name) {
+      "toString" -> Field(
+        "toString",
+        ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider),
+        MemPos(0, 0),
+        false
+      )
+      else -> null
+    }
+  }
+
   override fun toString(): String {
     return "StringType"
   }

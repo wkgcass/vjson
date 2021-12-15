@@ -24,6 +24,12 @@ data class ForLoop(
   val incr: List<Statement>,
   val code: List<Statement>
 ) : LoopStatement() {
+  override fun copy(): ForLoop {
+    val ret = ForLoop(init.map { it.copy() }, condition.copy(), incr.map { it.copy() }, code.map { it.copy() })
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun checkAST(ctx: TypeContext) {
     val forInitCtx = TypeContext(ctx)
     forInitCtx.checkStatements(init)

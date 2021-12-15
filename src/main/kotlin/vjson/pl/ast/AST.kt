@@ -12,13 +12,15 @@
 
 package vjson.pl.ast
 
+import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
-import vjson.cs.LineCol
 import vjson.pl.type.TypeContext
 
 interface AST {
   var lineCol: LineCol
+
+  fun copy(): AST
 
   /* #ifndef KOTLIN_NATIVE {{ */ @Throws(ParserException::class) // }}
   fun checkAST(ctx: TypeContext)

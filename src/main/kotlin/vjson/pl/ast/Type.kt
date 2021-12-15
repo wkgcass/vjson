@@ -16,7 +16,6 @@ import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
 import vjson.pl.type.ArrayTypeInstance
-import vjson.pl.type.MemoryAllocator
 import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
@@ -44,6 +43,12 @@ data class Type(private val name: String) : TypedAST {
     }
   }
 
+  override fun copy(): Type {
+    val ret = Type(name)
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     if (ctx.hasType(this)) {
@@ -54,7 +59,7 @@ data class Type(private val name: String) : TypedAST {
       ctx.addType(this, arrayType)
       return arrayType
     } else {
-      throw IllegalStateException("$this is not array type and is not recorded in type context")
+      throw IllegalStateException("$this is not recorded in type context and is not array type")
     }
   }
 

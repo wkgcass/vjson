@@ -22,6 +22,12 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class IntegerLiteral(val n: JSON.Number<*>) : Expr() {
+  override fun copy(): IntegerLiteral {
+    val ret = IntegerLiteral(n)
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     return if (n is JSON.Long) LongType else IntType

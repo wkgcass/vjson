@@ -339,6 +339,55 @@ public class TestASTGen {
     }
 
     @Test
+    public void templateType() {
+        assertEquals(Collections.singletonList(
+                new TemplateClassDefinition(Collections.singletonList(
+                    new ParamType("E")
+                ), new ClassDefinition("Container", Collections.singletonList(
+                    new Param("_e", new Type("E"))
+                ), Collections.singletonList(
+                    new VariableDefinition("e", new Access("_e"), new Modifiers(ModifierEnum.PUBLIC.getNum()))
+                )))
+            ),
+            gen("{\n" +
+                "template: { E } class Container: { _e: E } do: {\n" +
+                "  public var e = _e\n" +
+                "}\n" +
+                "}"));
+        assertEquals(Collections.singletonList(
+                new TemplateClassDefinition(Arrays.asList(
+                    new ParamType("T"),
+                    new ParamType("U")
+                ), new ClassDefinition("BiContainer", Arrays.asList(
+                    new Param("t", new Type("T")),
+                    new Param("u", new Type("U"))
+                ), Collections.emptyList()))
+            ),
+            gen("{\n" +
+                "template: { T, U } class BiContainer: { t: T, u: U } do: { }\n" +
+                "}"));
+    }
+
+    @Test
+    public void aLet() {
+        assertEquals(Collections.singletonList(
+            new TemplateTypeInstantiation("IntContainer", new Type("Container"), Collections.singletonList(
+                new Type("int")
+            ))
+        ), gen("{\n" +
+            "let IntContainer = { Container:[int] }\n" +
+            "}"));
+        assertEquals(Collections.singletonList(
+            new TemplateTypeInstantiation("IntLongContainer", new Type("BiContainer"), Arrays.asList(
+                new Type("int"),
+                new Type("long")
+            ))
+        ), gen("{\n" +
+            "let IntLongContainer = { BiContainer:[int, long] }\n" +
+            "}"));
+    }
+
+    @Test
     public void pass() {
         System.out.println(gen(TestFeature.TEST_PROG));
     }

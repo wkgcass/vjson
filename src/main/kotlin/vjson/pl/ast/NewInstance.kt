@@ -23,6 +23,12 @@ data class NewInstance(
   val type: Type,
   val args: List<Expr>,
 ) : Expr() {
+  override fun copy(): NewInstance {
+    val ret = NewInstance(type.copy(), args.map { it.copy() })
+    ret.lineCol = lineCol
+    return ret
+  }
+
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
     val typeInstance = type.check(ctx)
@@ -87,6 +93,6 @@ data class NewInstance(
   }
 
   override fun toString(): String {
-    return "new: {$type: $args}"
+    return "new $type:$args"
   }
 }
