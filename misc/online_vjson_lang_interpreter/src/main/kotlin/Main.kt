@@ -7,8 +7,11 @@ import vjson.parser.ObjectParser
 import vjson.pl.*
 import vjson.pl.ast.VariableDefinition
 import vjson.pl.type.*
+import vjson.pl.type.lang.ExtFunctions
+import vjson.pl.type.lang.ExtTypes
 import vjson.pl.type.lang.StdTypes
 import kotlin.js.Date
+import kotlin.random.Random
 
 var outputFunc: (String) -> Unit = {
   println(it)
@@ -34,8 +37,14 @@ fun registerCursorJump(func: (Int, Int) -> Unit) {
 fun run(prog: String, printMem: Boolean) {
   val stdTypes = StdTypes()
   stdTypes.setOutput(outputFunc)
+  val extTypes = ExtTypes(ExtFunctions()
+    .setCurrentTimeMillis { Date.now().toLong() }
+    .setRand { Random.nextDouble() }
+  )
+
   val builder = InterpreterBuilder()
     .addTypes(stdTypes)
+    .addTypes(extTypes)
 
   val startTime = Date.now()
 
@@ -128,8 +137,13 @@ fun eval(_prog: String) {
   val stdTypes = StdTypes()
   stdTypes.setOutput(outputFunc)
 
+  val extTypes = ExtTypes(ExtFunctions()
+    .setCurrentTimeMillis { Date.now().toLong() }
+    .setRand { Random.nextDouble() }
+  )
+
   val interpreter = try {
-    Interpreter(listOf(stdTypes), ast)
+    Interpreter(listOf(stdTypes, extTypes), ast)
   } catch (e: Throwable) {
     printParsingFailedMessage(e, "Compilation failed")
     return
