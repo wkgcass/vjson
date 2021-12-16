@@ -12,6 +12,7 @@
 
 package vjson.pl.type.lang
 
+import vjson.pl.ast.ParamType
 import vjson.pl.ast.Type
 import vjson.pl.inst.*
 import vjson.pl.type.*
@@ -42,6 +43,10 @@ class StdTypes : Types {
     val consoleClass = ConsoleClass()
     ctx.addType(Type("std.Console"), consoleClass)
     ctx.addVariable(Variable("std", stdClass, false, MemPos(0, ctx.getMemoryAllocator().nextRefIndex())))
+    ctx.addType(Type("std.List"), TemplateListType())
+    ctx.addType(Type("std.Set"), TemplateSetType())
+    ctx.addType(Type("std.Map"), TemplateMapType())
+    ctx.addType(Type("std.LinkedHashMap"), TemplateLinkedHashMapType())
     return RuntimeMemoryTotal(offset, intTotal = 1)
   }
 
@@ -75,6 +80,54 @@ class ConsoleClass : TypeInstance {
         return Field("log", type, MemPos(0, 0), false)
       }
       else -> null
+    }
+  }
+}
+
+class TemplateListType : TypeInstance {
+  private val typeParameters = listOf(ParamType("E"))
+  override fun typeParameters(): List<ParamType> {
+    return typeParameters
+  }
+
+  override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
+    return ListType(typeParams[0])
+  }
+}
+
+class TemplateSetType : TypeInstance {
+  private val typeParameters = listOf(ParamType("E"))
+  override fun typeParameters(): List<ParamType> {
+    return typeParameters
+  }
+
+  override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
+    return SetType(typeParams[0])
+  }
+}
+
+class TemplateMapType : TypeInstance {
+  private val typeParameters = listOf(ParamType("K"), ParamType("V"))
+  override fun typeParameters(): List<ParamType> {
+    return typeParameters
+  }
+
+  override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
+    return MapType(typeParams[0], typeParams[1])
+  }
+}
+
+class TemplateLinkedHashMapType : TypeInstance {
+  private val typeParameters = listOf(ParamType("K"), ParamType("V"))
+  override fun typeParameters(): List<ParamType> {
+    return typeParameters
+  }
+
+  override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
+    return object : MapType(typeParams[0], typeParams[1]) {
+      override fun newMap(cap: Int): Map<*, *> {
+        return LinkedHashMap<Any?, Any?>(cap)
+      }
     }
   }
 }

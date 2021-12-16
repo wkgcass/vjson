@@ -29,7 +29,7 @@ data class WhileLoop(
   }
 
   override fun checkAST(ctx: TypeContext) {
-    val conditionType = condition.typeInstance()
+    val conditionType = condition.check(ctx)
     if (conditionType !is BoolType) {
       throw ParserException("$condition ($conditionType) is not a boolean value, cannot be used as `while` loop condition", lineCol)
     }

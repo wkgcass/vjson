@@ -12,48 +12,78 @@
 
 package vjson.pl.type.lang
 
-import vjson.pl.ast.Type
+import vjson.cs.LineCol
+import vjson.pl.inst.*
 import vjson.pl.type.*
 
-class MapType(private val alias: String, private val key: TypeInstance, private val value: TypeInstance) : TypeInstance, PluggableType {
-  private val entryType = Entry()
-  private val keySetType = SetType("$alias.KeySet", key)
-  private val entrySetType = SetType("$alias.EntrySet", entryType)
+open class MapType(private val key: TypeInstance, private val value: TypeInstance) : TypeInstance {
+  companion object {
+    private val MAP_TO_STRING_STACK_INFO = StackInfo("Map", "toString", LineCol.EMPTY)
+  }
 
-  override fun initiate(ctx: TypeContext) {
-    ctx.addType(Type(alias), this)
-    ctx.addType(Type("$alias.Entry"), entryType)
-    keySetType.initiate(ctx)
-    entrySetType.initiate(ctx)
+  private val keySetType = SetType(key)
+
+  private val constructorDescriptor = object : ExecutableConstructorFunctionDescriptor(
+    listOf(ParamInstance(IntType, 0)),
+    VoidType,
+    FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, refTotal = 1))
+  ) {
+    override fun execute(ctx: ActionContext, values: ValueHolder) {
+      ctx.getCurrentMem().setRef(0, newMap(values.intValue))
+    }
+  }
+
+  protected open fun newMap(cap: Int): Map<*, *> {
+    return HashMap<Any?, Any?>()
+  }
+
+  override fun constructor(ctx: TypeContext): FunctionDescriptor {
+    return constructorDescriptor
   }
 
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
-    val type = when (name) {
-      "size" -> IntType
-      "put" -> ctx.getFunctionDescriptorAsInstance(
-        listOf(ParamInstance(key, 0), ParamInstance(value, 1)), BoolType, DummyMemoryAllocatorProvider
-      )
-      "get" -> ctx.getFunctionDescriptorAsInstance(listOf(ParamInstance(key, 0)), value, DummyMemoryAllocatorProvider)
-      "remove" -> ctx.getFunctionDescriptorAsInstance(listOf(ParamInstance(key, 0)), BoolType, DummyMemoryAllocatorProvider)
-      "keySet" -> keySetType
-      "entries" -> entrySetType
+    if (name == "put" || name == "get" || name == "remove") {
+      return generatedForMap0(key, value, ctx, name)
+    }
+    return when (name) {
+      "size" -> object : ExecutableField(name, IntType, MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val obj = values.refValue as ActionContext
+          val map = obj.getCurrentMem().getRef(0) as Map<*, *>
+          values.intValue = map.size
+        }
+      }
+      "keySet" -> object : ExecutableField(name, keySetType, MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val obj = values.refValue as ActionContext
+          val map = obj.getCurrentMem().getRef(0) as Map<*, *>
+          val newObj = ActionContext(RuntimeMemoryTotal(refTotal = 1), parent = null)
+          newObj.getCurrentMem().setRef(0, map.keys)
+          values.refValue = newObj
+        }
+      }
+      "toString" -> object : ExecutableField(
+        name,
+        ctx.getFunctionDescriptorAsInstance(listOf(), StringType, DummyMemoryAllocatorProvider),
+        MemPos(0, 0),
+        false
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val obj = values.refValue as ActionContext
+          val map = obj.getCurrentMem().getRef(0) as Map<*, *>
+          values.refValue = object : Instruction() {
+            override val stackInfo = MAP_TO_STRING_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.refValue = map.toString()
+            }
+          }
+        }
+      }
       else -> null
-    } ?: return null
-    return Field(name, type, MemPos(0, 0), false)
-  }
-
-  private inner class Entry : TypeInstance {
-    override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
-      val type = when (name) {
-        "key" -> key
-        "value" -> value
-        else -> null
-      } ?: return null
-      return Field(name, type, MemPos(0, 0), false)
     }
   }
 
   override fun toString(): String {
-    return "$alias (Map<$key, $value>)"
+    return "Map<$key, $value>"
   }
 }

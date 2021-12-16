@@ -57,11 +57,24 @@ data class NewInstance(
   }
 
   override fun generateInstruction(): Instruction {
-    val classType = this.type.typeInstance() as ClassTypeInstance
+    val typeInstance = this.type.typeInstance()
+    val cons = typeInstance.constructor(ctx)!!
+
+    if (cons is ExecutableConstructorFunctionDescriptor) {
+      return object : Instruction() {
+        override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
+        override fun execute0(ctx: ActionContext, values: ValueHolder) {
+          val newCtx = ActionContext(cons.mem.memoryAllocator().getTotal(), null)
+          cons.execute(newCtx, values)
+          values.refValue = newCtx
+        }
+      }
+    }
+
+    val classType = typeInstance as ClassTypeInstance
     val cls = classType.cls
     val memDepth = cls.getMemDepth()
-    val total = cls.memoryAllocator().getTotal()
-    val cons = classType.constructor(ctx)
+    val total = cons.mem.memoryAllocator().getTotal()
 
     val args = this.args.map { it.generateInstruction() }
     val code = cls.code.map { it.generateInstruction() }

@@ -14,8 +14,12 @@ package vjson.pl.type.lang
 
 import vjson.pl.type.TypeInstance
 
-class SetType(private val alias: String, private val element: TypeInstance) : CollectionType(alias, element) {
+open class SetType(private val element: TypeInstance) : CollectionType(element) {
+  override fun newCollection(initialCap: Int): Collection<*> {
+    return HashSet<Any?>(initialCap)
+  }
+
   override fun toString(): String {
-    return "$alias (Set<$element>)"
+    return "Set<$element>"
   }
 }

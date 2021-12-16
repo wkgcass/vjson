@@ -12,8 +12,39 @@
 
 package vjson.pl.type
 
-data class FunctionDescriptor(val params: List<ParamInstance>, val returnType: TypeInstance, val mem: MemoryAllocatorProvider) {
+import vjson.pl.inst.ActionContext
+import vjson.pl.inst.ValueHolder
+
+open class FunctionDescriptor(val params: List<ParamInstance>, val returnType: TypeInstance, val mem: MemoryAllocatorProvider) {
   override fun toString(): String {
     return "(${params.joinToString()}): $returnType"
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as FunctionDescriptor
+
+    if (params != other.params) return false
+    if (returnType != other.returnType) return false
+    if (mem != other.mem) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = params.hashCode()
+    result = 31 * result + returnType.hashCode()
+    result = 31 * result + mem.hashCode()
+    return result
+  }
+}
+
+abstract class ExecutableConstructorFunctionDescriptor(
+  params: List<ParamInstance>,
+  returnType: TypeInstance,
+  mem: MemoryAllocatorProvider
+) : FunctionDescriptor(params, returnType, mem) {
+  abstract fun execute(ctx: ActionContext, values: ValueHolder)
 }
