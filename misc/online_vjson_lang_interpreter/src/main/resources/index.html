@@ -12,9 +12,11 @@
         <div class="custom-select" style="width:200px; float: left">
             <select>
                 <option>Fibonacci</option>
+                <option>Pi</option>
                 <option>HelloWorld</option>
                 <option>Syntax</option>
                 <option>BuiltInTypes</option>
+                <option>Collections</option>
             </select>
         </div>
         <div style="float: right;">
@@ -23,7 +25,9 @@
     </div>
     <div id="console" class="mono" style="line-height: 24px;"></div>
     <div id="buttons">
-        <button id="run-btn" class="button-31" style="width: 80px; margin-left: 1px; font-weight: bold; font-size: 16px">Run</button>
+        <button id="run-btn" class="button-31"
+                style="width: 80px; margin-left: 1px; font-weight: bold; font-size: 16px">Run
+        </button>
         <button id="clear-btn" class="button-31" style="width: 120px">Clear Output</button>
         <button id="eval-btn" class="button-31" style="width: 80px">Evaluate</button>
         <button id="json-btn" class="button-31" style="width: 200px;">Print JSON Representation</button>
@@ -47,10 +51,10 @@
 <script>
     var PROG_HELLO = "{\n" +
         "std.console.log: [('Hello vjson-lang')]\n" +
-        "}\n"
+        "}\n";
     var PROG_FIB = "{\n" +
         "function fib: { n: int } int: {\n" +
-        "    var cache = { new int[n+1] }\n" +
+        "    var cache = new int[n+1]\n" +
         "    function fib0: { a: int } int: {\n" +
         "        if: cache[a] == 0; then: {\n" +
         "            if: a == 1; then: { cache[a] = 1 }\n" +
@@ -63,7 +67,20 @@
         "}\n" +
         "var n = 10\n" +
         "std.console.log: [(n + 'th element of the Fibonacci sequence is ' + fib:[n])]\n" +
-        "}\n"
+        "}\n";
+    var PROG_PI = "{\n" +
+        "var Pi = 0.0\n" +
+        "for: [{var i = 1}; i < 1000000; i += 1] do: {\n" +
+        "    if: i % 2 == 0; then: {\n" +
+        "        Pi = Pi - 1.0 / (2 * i - 1).toDouble\n" +
+        "    } else: {\n" +
+        "        Pi = Pi + 1.0 / (2 * i - 1).toDouble\n" +
+        "    }\n" +
+        "}\n" +
+        "Pi = Pi * 4.toDouble\n" +
+        "std.console.log:[('Pi: ' + Pi)]\n" +
+        "}\n" +
+        "// This program may take a while to run\n";
     var PROG_SYNTAX = "{ // vjson-lang starts with `{`\n" +
         "// variable definition\n" +
         "var variableName = 1\n" +
@@ -105,6 +122,7 @@
         "class Person: {name: string, age: int} do: {\n" +
         "  public var publicField = 1\n" +
         "  private var privateField = 2\n" +
+        "  const var constField = 3\n" +
         "  // variables directly inside class are considered private by default\n" +
         "  var alsoPrivateField = 3\n" +
         "  // functions directly inside class are considered public by default\n" +
@@ -114,9 +132,24 @@
         "  private function privateFunc: {} void: { }\n" +
         "}\n" +
         "// objects\n" +
-        "var alice = {new Person:[('alice'), 24]}\n" +
-        "var bob = {new Person:[('bob'), 25]}\n" +
+        "var alice = new Person:[('alice'), 24]\n" +
+        "var bob = new Person:[('bob'), 25]\n" +
         "alice.talkTo:[bob]\n" +
+        "\n" +
+        "// template class definition\n" +
+        "template: { T, U } class PlusToInt:{ t: T, u: U } do: {\n" +
+        "  function plus:{} int: {\n" +
+        "    return: t.toInt + u.toInt\n" +
+        "  }\n" +
+        "}\n" +
+        "// concrete types\n" +
+        "let IntLongPlusToInt = { PlusToInt:[ int, long ] }\n" +
+        "let IntLongPlusToInt2 = { PlusToInt:[ int, long ] }\n" +
+        "// IntLongPlusToInt and IntLongPlusToInt2 are the same type\n" +
+        "// variables of these types can be passed to each other\n" +
+        "\n" +
+        "var plusObj = new IntLongPlusToInt:[1, 2.toLong]\n" +
+        "std.console.log:[('plusObj.plus result is ' + plusObj.plus:[])]\n" +
         "\n" +
         "// loops\n" +
         "// for loop\n" +
@@ -137,7 +170,7 @@
         "}\n" +
         "// the `;` can be omitted if `do` is on a new line\n" +
         "std.console.log:[ ('sum of 1 until 10 is ' + sum) ]\n" +
-        "} // vjson-lang program ends with `}`\n"
+        "} // vjson-lang program ends with `}`\n";
     var PROG_BUILTIN = "{\n" +
         "var intVar = 1\n" +
         "var longVar = 10000000000\n" +
@@ -172,7 +205,7 @@
         "    return: ('MyType(a=' + a + ', b=' + b + ')')\n" +
         "  }\n" +
         "}\n" +
-        "var myInstance = {new MyType:[1, 1.2]}\n" +
+        "var myInstance = new MyType:[1, 1.2]\n" +
         "\n" +
         "// print them\n" +
         "std.console.log: [(\n" +
@@ -190,14 +223,53 @@
         "  '\\ntoString = ' + toString +\n" +
         "  '\\nstringPlusInt = ' + stringPlusInt +\n" +
         "  '\\nintPlusString = ' + intPlusString +\n" +
-        "  '\\nmyInstance = ' + myInstance\n" +
+        "  '\\nmyInstance = ' + myInstance" +
         ")]\n" +
+        "}\n";
+    var PROG_COLLECTIONS = "{\n" +
+        "// List, Set and Map\n" +
+        "let StringList = { std.List:[ string ] }\n" +
+        "let IntSet = { std.Set:[ int ] }\n" +
+        "// std.LinkedHashSet is also available\n" +
+        "let StringIntMap = { std.LinkedHashMap:[ string, int ] }\n" +
+        "// std.Map is also available\n" +
+        "\n" +
+        "var list = new StringList:[16] // initial capacity\n" +
+        "var set = new IntSet:[16]\n" +
+        "var map = new StringIntMap:[16]\n" +
+        "list.add:[('hello')]\n" +
+        "list.add:[('world')]\n" +
+        "std.console.log:[('list = ' + list)]\n" +
+        "\n" +
+        "set.add:[1]\n" +
+        "set.add:[2]\n" +
+        "set.add:[1] // will not add into the set\n" +
+        "            // and will return false\n" +
+        "std.console.log:[('set = ' + set)]\n" +
+        "\n" +
+        "map.put:[('alice'), 1]\n" +
+        "map.put:[('bob'), 2]\n" +
+        "map.put:[('eve'), 3]\n" +
+        "std.console.log:[('map = ' + map)]\n" +
+        "\n" +
+        "// Iterator\n" +
+        "let StringIterator = { std.Iterator:[ string ] }\n" +
+        "function printIterator: {ite: StringIterator} void: {\n" +
+        "  while: ite.hasNext; do: {\n" +
+        "    std.console.log:[ite.next + '']\n" +
+        "  }\n" +
+        "}\n" +
+        "// pass iterators into the function\n" +
+        "printIterator:[list.iterator]\n" +
+        "printIterator:[map.keySet.iterator]\n" +
         "}\n";
     var progs = {
         'Fibonacci': PROG_FIB,
+        'Pi': PROG_PI,
         'HelloWorld': PROG_HELLO,
         'Syntax': PROG_SYNTAX,
-        'BuiltInTypes': PROG_BUILTIN
+        'BuiltInTypes': PROG_BUILTIN,
+        'Collections': PROG_COLLECTIONS,
     };
 
     var editor = ace.edit("editor");

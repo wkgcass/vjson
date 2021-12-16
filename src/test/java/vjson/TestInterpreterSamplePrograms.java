@@ -55,6 +55,7 @@ public class TestInterpreterSamplePrograms {
             "class Person: {name: string, age: int} do: {\n" +
             "  public var publicField = 1\n" +
             "  private var privateField = 2\n" +
+            "  const var constField = 3\n" +
             "  // variables directly inside class are considered private by default\n" +
             "  var alsoPrivateField = 3\n" +
             "  // functions directly inside class are considered public by default\n" +
@@ -64,9 +65,24 @@ public class TestInterpreterSamplePrograms {
             "  private function privateFunc: {} void: { }\n" +
             "}\n" +
             "// objects\n" +
-            "var alice = {new Person:[('alice'), 24]}\n" +
-            "var bob = {new Person:[('bob'), 25]}\n" +
+            "var alice = new Person:[('alice'), 24]\n" +
+            "var bob = new Person:[('bob'), 25]\n" +
             "alice.talkTo:[bob]\n" +
+            "\n" +
+            "// template class definition\n" +
+            "template: { T, U } class PlusToInt:{ t: T, u: U } do: {\n" +
+            "  function plus:{} int: {\n" +
+            "    return: t.toInt + u.toInt\n" +
+            "  }\n" +
+            "}\n" +
+            "// concrete types\n" +
+            "let IntLongPlusToInt = { PlusToInt:[ int, long ] }\n" +
+            "let IntLongPlusToInt2 = { PlusToInt:[ int, long ] }\n" +
+            "// IntLongPlusToInt and IntLongPlusToInt2 are the same type\n" +
+            "// variables of these types can be passed to each other\n" +
+            "\n" +
+            "var plusObj = new IntLongPlusToInt:[1, 2.toLong]\n" +
+            "std.console.log:[('plusObj.plus result is ' + plusObj.plus:[])]\n" +
             "\n" +
             "// loops\n" +
             "// for loop\n" +
@@ -100,6 +116,7 @@ public class TestInterpreterSamplePrograms {
         interpreter.execute();
         assertEquals(Arrays.asList(
             "Hi bob, I'm alice",
+            "plusObj.plus result is 3",
             "sum of 1 to 10 is 55",
             "sum of 1 until 10 is 45"
         ), output);
@@ -141,7 +158,7 @@ public class TestInterpreterSamplePrograms {
             "    return: ('MyType(a=' + a + ', b=' + b + ')')\n" +
             "  }\n" +
             "}\n" +
-            "var myInstance = {new MyType:[1, 1.2]}\n" +
+            "var myInstance = new MyType:[1, 1.2]\n" +
             "\n" +
             "// print them\n" +
             "std.console.log: [(\n" +
@@ -159,7 +176,7 @@ public class TestInterpreterSamplePrograms {
             "  '\\ntoString = ' + toString +\n" +
             "  '\\nstringPlusInt = ' + stringPlusInt +\n" +
             "  '\\nintPlusString = ' + intPlusString +\n" +
-            "  '\\nmyInstance = ' + myInstance\n" +
+            "  '\\nmyInstance = ' + myInstance" +
             ")]\n" +
             "}\n";
         StdTypes std = new StdTypes();
@@ -187,5 +204,91 @@ public class TestInterpreterSamplePrograms {
             "stringPlusInt = 1\n" +
             "intPlusString = 1\n" +
             "myInstance = MyType(a=1, b=1.2)", output[0]);
+    }
+
+    @Test
+    public void pi() {
+        String prog = "{\n" +
+            "var Pi = 0.0\n" +
+            "for: [{var i = 1}; i < 1000000; i += 1] do: {\n" +
+            "    if: i % 2 == 0; then: {\n" +
+            "        Pi = Pi - 1.0 / (2 * i - 1).toDouble\n" +
+            "    } else: {\n" +
+            "        Pi = Pi + 1.0 / (2 * i - 1).toDouble\n" +
+            "    }\n" +
+            "}\n" +
+            "Pi = Pi * 4.toDouble\n" +
+            "std.console.log:[('Pi: ' + Pi)]\n" +
+            "}\n" +
+            "// This program may take a while to run\n";
+        StdTypes std = new StdTypes();
+        String[] output = new String[1];
+        std.setOutput(s -> {
+            output[0] = s;
+            return null;
+        });
+        Interpreter interpreter = new InterpreterBuilder()
+            .addTypes(std)
+            .compile(prog);
+        interpreter.execute();
+        assertEquals("Pi: 3.1415936535907742", output[0]);
+    }
+
+    @Test
+    public void collections() {
+        String prog = "{\n" +
+            "// List, Set and Map\n" +
+            "let StringList = { std.List:[ string ] }\n" +
+            "let IntSet = { std.Set:[ int ] }\n" +
+            "// std.LinkedHashSet is also available\n" +
+            "let StringIntMap = { std.LinkedHashMap:[ string, int ] }\n" +
+            "// std.Map is also available\n" +
+            "\n" +
+            "var list = new StringList:[16] // initial capacity\n" +
+            "var set = new IntSet:[16]\n" +
+            "var map = new StringIntMap:[16]\n" +
+            "list.add:[('hello')]\n" +
+            "list.add:[('world')]\n" +
+            "std.console.log:[('list = ' + list)]\n" +
+            "\n" +
+            "set.add:[1]\n" +
+            "set.add:[2]\n" +
+            "set.add:[1] // will not add into the set\n" +
+            "            // and will return false\n" +
+            "std.console.log:[('set = ' + set)]\n" +
+            "\n" +
+            "map.put:[('alice'), 1]\n" +
+            "map.put:[('bob'), 2]\n" +
+            "map.put:[('eve'), 3]\n" +
+            "std.console.log:[('map = ' + map)]\n" +
+            "\n" +
+            "// Iterator\n" +
+            "let StringIterator = { std.Iterator:[ string ] }\n" +
+            "function printIterator: {ite: StringIterator} void: {\n" +
+            "  while: ite.hasNext; do: {\n" +
+            "    std.console.log:[ite.next + '']\n" +
+            "  }\n" +
+            "}\n" +
+            "// pass iterators into the function\n" +
+            "printIterator:[list.iterator]\n" +
+            "printIterator:[map.keySet.iterator]\n" +
+            "}\n";
+        StdTypes std = new StdTypes();
+        List<String> output = new ArrayList<>();
+        std.setOutput(s -> {
+            output.add(s);
+            return null;
+        });
+        Interpreter interpreter = new InterpreterBuilder()
+            .addTypes(std)
+            .compile(prog);
+        interpreter.execute();
+        assertEquals(Arrays.asList(
+            "list = [hello, world]",
+            "set = [1, 2]",
+            "map = {alice=1, bob=2, eve=3}",
+            "hello", "world",
+            "alice", "bob", "eve"
+        ), output);
     }
 }
