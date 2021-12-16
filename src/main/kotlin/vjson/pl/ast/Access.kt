@@ -16,7 +16,6 @@ import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.inst.*
 import vjson.pl.type.*
-import vjson.pl.type.lang.BuiltInTypes
 
 data class Access
 /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
@@ -129,8 +128,6 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
       val field = fromType.field(ctx, name, ctx.getContextType())
       val getFieldInst = if (field is ExecutableField) {
         ExecutableFieldInstruction(field, ctx.stackInfo(lineCol))
-      } else if (fromType is BuiltInTypeInstance) {
-        BuiltInTypes.getField(fromType, name)
       } else when (field!!.type) {
         is IntType -> GetFieldInt(field.memPos.index, ctx.stackInfo(lineCol))
         is LongType -> GetFieldLong(field.memPos.index, ctx.stackInfo(lineCol))

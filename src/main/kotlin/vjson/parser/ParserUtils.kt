@@ -320,7 +320,7 @@ object ParserUtils {
             } else {
               cs.skip(cursor)
               throw JsonParseException(
-                "unexpected char code=${c.code}, expecting ${symbolStack.peek()}" +
+                "unexpected char code=${c.code}, expecting $last" +
                   (if (beginLineCol.isEmpty()) "" else ", reading noQuotesString starting from $beginLineCol"),
                 cs.lineCol()
               )

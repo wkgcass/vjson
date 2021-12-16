@@ -6,11 +6,14 @@ import vjson.pl.Interpreter;
 import vjson.pl.InterpreterBuilder;
 import vjson.pl.inst.ActionContext;
 import vjson.pl.inst.RuntimeMemory;
+import vjson.pl.type.lang.ExtFunctions;
+import vjson.pl.type.lang.ExtTypes;
 import vjson.pl.type.lang.StdTypes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.*;
 
@@ -583,9 +586,12 @@ public class TestInterpreter {
                 "let " + Type + "Set = { std.LinkedHashSet:[ " + type + " ] }\n" +
                 "var set = new " + Type + "Set:[16]\n" +
                 "set.add:[" + first + "]\n" +
+                "std.console.log:[('contains1=' + set.contains:[" + first + "])]\n" +
                 "set.add:[" + second + "]\n" +
+                "std.console.log:[('contains2=' + set.contains:[" + second + "])]\n" +
                 "set.add:[" + third + "]\n" +
                 "set.remove:[(" + second + ")]\n" +
+                "std.console.log:[('contains3=' + set.contains:[" + second + "])]\n" +
                 "var res = set.toString:[]\n" +
                 "var size = set.size\n" +
                 "var ite = set.iterator\n" +
@@ -609,7 +615,12 @@ public class TestInterpreter {
             assertEquals(2, mem.getInt(1));
             assertEquals(2, mem.intLen());
 
-            String output = outputFirst + "\n" + outputThird + "\n";
+            String output = "" +
+                "contains1=true\n" +
+                "contains2=true\n" +
+                "contains3=false\n" +
+                outputFirst + "\n" +
+                outputThird + "\n";
             assertEquals(output, pair.getSecond());
         }
     }
@@ -621,12 +632,15 @@ public class TestInterpreter {
             "var set = new BoolSet:[16]\n" +
             "set.add:[true]\n" +
             "std.console.log:[set+'']\n" +
+            "std.console.log:[('contains1=' + set.contains:[true])]\n" +
             "set.add:[false]\n" +
             "std.console.log:[set+'']\n" +
+            "std.console.log:[('contains2=' + set.contains:[false])]\n" +
             "set.add:[true]\n" +
             "std.console.log:[set+'']\n" +
             "set.remove:[true]\n" +
             "std.console.log:[set+'']\n" +
+            "std.console.log:[('contains3=' + set.contains:[true])]\n" +
             "var res = set.toString:[]\n" +
             "var size = set.size\n" +
             "var ite = set.iterator\n" +
@@ -647,9 +661,12 @@ public class TestInterpreter {
         String output = pair.getSecond();
         assertEquals("" +
             "[true]\n" +
+            "contains1=true\n" +
             "[true, false]\n" +
+            "contains2=true\n" +
             "[true, false]\n" +
             "[false]\n" +
+            "contains3=false\n" +
             "false\n" +
             "", output);
     }
@@ -746,14 +763,19 @@ public class TestInterpreter {
                 "var list = new " + Type + "List:[16]\n" +
                 "list.add:[" + first + "]\n" +
                 "std.console.log:[list+'']\n" +
+                "std.console.log:[('contains1=' + list.contains:[" + first + "])]\n" +
+                "std.console.log:[('indexOf1=' + list.indexOf:[" + first + "])]" +
                 "list.add:[" + second + "]\n" +
                 "std.console.log:[list+'']\n" +
+                "std.console.log:[('contains2=' + list.contains:[" + second + "])]\n" +
+                "std.console.log:[('indexOf2=' + list.indexOf:[" + second + "])]" +
                 "list.insert:[1," + third + "]\n" +
                 "std.console.log:[list+'']\n" +
                 "list.set:[0," + fourth + "]\n" +
                 "std.console.log:[list+'']\n" +
                 "list.removeAt:[2]\n" +
                 "std.console.log:[list+'']\n" +
+                "std.console.log:[('contains3=' + list.contains:[" + second + "])]\n" +
                 "var res = list.toString:[]\n" +
                 "var ls0 = list.get:[0]\n" +
                 "}";
@@ -796,12 +818,44 @@ public class TestInterpreter {
             // output
             String output = "" +
                 "[" + outputFirst + "]\n" +
+                "contains1=true\n" +
+                "indexOf1=0\n" +
                 "[" + outputFirst + ", " + outputSecond + "]\n" +
+                "contains2=true\n" +
+                "indexOf2=1\n" +
                 "[" + outputFirst + ", " + outputThird + ", " + outputSecond + "]\n" +
                 "[" + outputFourth + ", " + outputThird + ", " + outputSecond + "]\n" +
-                "[" + outputFourth + ", " + outputThird + "]\n";
+                "[" + outputFourth + ", " + outputThird + "]\n" +
+                (type.equals("bool") ? "contains3=true\n" : "contains3=false\n");
             assertEquals(output, pair.getSecond());
         }
+    }
+
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
+    @Test
+    public void sublist() {
+        String prog = "{\n" +
+            "let IntList = { std.List:[ int ] }\n" +
+            "var ls = new IntList:[16]\n" +
+            "ls.add:[100]\n" +
+            "ls.add:[200]\n" +
+            "ls.add:[300]\n" +
+            "ls.add:[400]\n" +
+            "ls.add:[500]\n" +
+            "var sub1 = ls.subList:[1,4]\n" +
+            "var sub2 = ls.subList:[2,5]\n" +
+            "}";
+        Pair<RuntimeMemory, String> pair = executeWithStdTypes(prog);
+        RuntimeMemory mem = pair.getFirst();
+        ActionContext lsObj = (ActionContext) mem.getRef(1);
+        List<Integer> ls = (List<Integer>) lsObj.getCurrentMem().getRef(0);
+        assertEquals(Arrays.asList(100, 200, 300, 400, 500), ls);
+        ActionContext sub1Obj = (ActionContext) mem.getRef(2);
+        List<Integer> sub1 = (List<Integer>) sub1Obj.getCurrentMem().getRef(0);
+        assertEquals(Arrays.asList(200, 300, 400), sub1);
+        ActionContext sub2Obj = (ActionContext) mem.getRef(3);
+        List<Integer> sub2 = (List<Integer>) sub2Obj.getCurrentMem().getRef(0);
+        assertEquals(Arrays.asList(300, 400, 500), sub2);
     }
 
     private static class MapCaseData {
@@ -891,9 +945,11 @@ public class TestInterpreter {
                     "map.put:[" + keyType.firstKey + ", " + valueType.firstValue + "]\n" +
                     "std.console.log:[map.toString:[] + '']\n" +
                     "std.console.log:[map.keySet.toString:[] + '']\n" +
+                    "std.console.log:[('contains1=' + map.containsKey:[" + keyType.firstKey + "])]" +
                     "map.put:[" + keyType.secondKey + ", " + valueType.secondValue + "]\n" +
                     "std.console.log:[map.toString:[] + '']\n" +
                     "std.console.log:[map.keySet.toString:[] + '']\n" +
+                    "std.console.log:[('contains2=' + map.containsKey:[" + keyType.secondKey + "])]" +
                     "map.put:[" + keyType.thirdKey + ", " + valueType.thirdValue + "]\n" +
                     "std.console.log:[map.toString:[] + '']\n" +
                     "std.console.log:[map.keySet.toString:[] + '']\n" +
@@ -903,6 +959,7 @@ public class TestInterpreter {
                     "var removeRes = map.remove:[" + keyType.secondKey + "]\n" +
                     "std.console.log:[map.toString:[] + '']\n" +
                     "std.console.log:[map.keySet.toString:[] + '']\n" +
+                    "std.console.log:[('contains3=' + map.containsKey:[" + keyType.secondKey + "])]" +
                     "var getRes = map.get:[" + keyType.thirdKey + "]\n" +
                     "}");
                 RuntimeMemory mem = pair.getFirst();
@@ -941,14 +998,17 @@ public class TestInterpreter {
                 assertEquals("" +
                     "{" + keyType.outputFirstKey + "=" + valueType.outputFirstValue + "}\n" +
                     "[" + keyType.outputFirstKey + "]\n" +
+                    "contains1=true\n" +
                     "{" + keyType.outputFirstKey + "=" + valueType.outputFirstValue + ", " + keyType.outputSecondKey + "=" + valueType.outputSecondValue + "}\n" +
                     "[" + keyType.outputFirstKey + ", " + keyType.outputSecondKey + "]\n" +
+                    "contains2=true\n" +
                     "{" + keyType.outputFirstKey + "=" + valueType.outputFirstValue + ", " + keyType.outputSecondKey + "=" + valueType.outputSecondValue + ", " + keyType.outputThirdKey + "=" + valueType.outputThirdValue + "}\n" +
                     "[" + keyType.outputFirstKey + ", " + keyType.outputSecondKey + ", " + keyType.outputThirdKey + "]\n" +
                     "{" + keyType.outputFirstKey + "=" + valueType.outputFirstValue + ", " + keyType.outputSecondKey + "=" + valueType.outputSecondValue2 + ", " + keyType.outputThirdKey + "=" + valueType.outputThirdValue + "}\n" +
                     "[" + keyType.outputFirstKey + ", " + keyType.outputSecondKey + ", " + keyType.outputThirdKey + "]\n" +
                     "{" + keyType.outputFirstKey + "=" + valueType.outputFirstValue + ", " + keyType.outputThirdKey + "=" + valueType.outputThirdValue + "}\n" +
                     "[" + keyType.outputFirstKey + ", " + keyType.outputThirdKey + "]\n" +
+                    "contains3=false\n" +
                     "", output);
             }
         }
@@ -963,15 +1023,18 @@ public class TestInterpreter {
                 "map.put:[true" + ", " + valueType.firstValue + "]\n" +
                 "std.console.log:[map.toString:[] + '']\n" +
                 "std.console.log:[map.keySet.toString:[] + '']\n" +
+                "std.console.log:[('contains1=' + map.containsKey:[true])]\n" +
                 "map.put:[false" + ", " + valueType.secondValue + "]\n" +
                 "std.console.log:[map.toString:[] + '']\n" +
                 "std.console.log:[map.keySet.toString:[] + '']\n" +
+                "std.console.log:[('contains2=' + map.containsKey:[false])]\n" +
                 "var putRes = map.put:[false" + ", " + valueType.secondValue2 + "]\n" +
                 "std.console.log:[map.toString:[] + '']\n" +
                 "std.console.log:[map.keySet.toString:[] + '']\n" +
                 "var removeRes = map.remove:[false]\n" +
                 "std.console.log:[map.toString:[] + '']\n" +
                 "std.console.log:[map.keySet.toString:[] + '']\n" +
+                "std.console.log:[('contains3=' + map.containsKey:[false])]\n" +
                 "var getRes = map.get:[true]\n" +
                 "}");
             RuntimeMemory mem = pair.getFirst();
@@ -1010,14 +1073,97 @@ public class TestInterpreter {
             assertEquals("" +
                 "{true=" + valueType.outputFirstValue + "}\n" +
                 "[true]\n" +
+                "contains1=true\n" +
                 "{true=" + valueType.outputFirstValue + ", false=" + valueType.outputSecondValue + "}\n" +
                 "[true, false]\n" +
+                "contains2=true\n" +
                 "{true=" + valueType.outputFirstValue + ", false=" + valueType.outputSecondValue2 + "}\n" +
                 "[true, false]\n" +
                 "{true=" + valueType.outputFirstValue + "}\n" +
                 "[true]\n" +
+                "contains3=false\n" +
                 "", output);
         }
+    }
+
+    @Test
+    public void stringFunctions() {
+        String prog = "{\n" +
+            "var raw = (\"  hello world \")\n" +
+            "var indexOf = raw.indexOf:[(\"hello\")]\n" +
+            "var substring = raw.substring:[2, 7]\n" +
+            "var trim = raw.trim:[]\n" +
+            "var startsWith = raw.startsWith:[(\"  hello \")]\n" +
+            "var endsWith = raw.endsWith:[(\"world \")]\n" +
+            "var contains = raw.contains:[(\"hello world\")]\n" +
+            "var startsWithFalse = raw.startsWith:[(\"xxx\")]\n" +
+            "var endsWithFalse = raw.endsWith:[(\"xxx\")]\n" +
+            "var containsFalse = raw.contains:[(\"xxx\")]\n" +
+            "}";
+        Interpreter interpreter = new InterpreterBuilder().compile(prog);
+        RuntimeMemory mem = interpreter.execute();
+        assertEquals("  hello world ", mem.getRef(0));
+        assertEquals("hello", mem.getRef(1));
+        assertEquals("hello world", mem.getRef(2));
+        assertEquals(3, mem.refLen());
+        assertEquals(2, mem.getInt(0));
+        assertEquals(1, mem.intLen());
+        assertTrue(mem.getBool(0));
+        assertTrue(mem.getBool(1));
+        assertTrue(mem.getBool(2));
+        assertFalse(mem.getBool(3));
+        assertFalse(mem.getBool(4));
+        assertFalse(mem.getBool(5));
+        assertEquals(6, mem.boolLen());
+    }
+
+    @Test
+    public void stringParse() {
+        String prog = "{\n" +
+            "var aInt = (\"123\".toInt)\n" +
+            "var aLong = (\"1234567890123456789\".toLong)\n" +
+            "var aFloat = (\"123.4\".toFloat)\n" +
+            "var aDouble = (\"123.4\".toDouble)\n" +
+            "var aBool = (\"true\".toBool)\n" +
+            "var aBoolFalse = (\"false\".toBool)\n" +
+            "}";
+        Interpreter interpreter = new InterpreterBuilder().compile(prog);
+        RuntimeMemory mem = interpreter.execute();
+        assertEquals(123, mem.getInt(0));
+        assertEquals(1, mem.intLen());
+        assertEquals(1234567890123456789L, mem.getLong(0));
+        assertEquals(1, mem.longLen());
+        assertEquals(123.4f, mem.getFloat(0), 0.0000001);
+        assertEquals(1, mem.floatLen());
+        assertEquals(123.4, mem.getDouble(0), 0.000000001);
+        assertEquals(1, mem.doubleLen());
+        assertTrue(mem.getBool(0));
+        assertFalse(mem.getBool(1));
+        assertEquals(2, mem.boolLen());
+    }
+
+    @Test
+    public void ext() {
+        String prog = "{\n" +
+            "var rnd = ext.rand:[]\n" +
+            "var time = ext.currentTimeMillis\n" +
+            "}";
+        Interpreter interpreter = new InterpreterBuilder()
+            .addTypes(new StdTypes())
+            .addTypes(new ExtTypes(new ExtFunctions()
+                .setCurrentTimeMillis(System::currentTimeMillis)
+                .setRand(() -> ThreadLocalRandom.current().nextDouble())
+            ))
+            .compile(prog);
+        long timeS = System.currentTimeMillis();
+        RuntimeMemory mem = interpreter.execute();
+        long timeX = System.currentTimeMillis();
+        assertTrue(mem.getLong(0) >= timeS);
+        assertTrue(mem.getLong(0) <= timeX);
+        assertEquals(1, mem.longLen());
+        assertTrue(mem.getDouble(0) > 0); // it's rare to be 0
+        assertTrue(mem.getDouble(0) < 1);
+        assertEquals(1, mem.doubleLen());
     }
 
     @Test

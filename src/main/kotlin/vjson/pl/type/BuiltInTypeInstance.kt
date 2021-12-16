@@ -12,9 +12,9 @@
 
 package vjson.pl.type
 
+import vjson.cs.LineCol
 import vjson.pl.ast.Type
-import vjson.pl.inst.ActionContext
-import vjson.pl.inst.ValueHolder
+import vjson.pl.inst.*
 
 interface BuiltInTypeInstance : TypeInstance {
 }
@@ -47,12 +47,22 @@ object IntType : NumericTypeInstance {
           values.doubleValue = values.intValue.toDouble()
         }
       }
-      "toString" -> Field(
+      "toString" -> object : ExecutableField(
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider),
         MemPos(0, 0),
         false
-      )
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val n = values.intValue
+          values.refValue = object : Instruction() {
+            override val stackInfo = INT_TO_STRING_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.refValue = n.toString()
+            }
+          }
+        }
+      }
       else -> null
     }
   }
@@ -84,12 +94,22 @@ object LongType : NumericTypeInstance {
           values.doubleValue = values.longValue.toDouble()
         }
       }
-      "toString" -> Field(
+      "toString" -> object : ExecutableField(
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider),
         MemPos(0, 0),
         false
-      )
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val n = values.longValue
+          values.refValue = object : Instruction() {
+            override val stackInfo = LONG_TO_STRING_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.refValue = n.toString()
+            }
+          }
+        }
+      }
       else -> null
     }
   }
@@ -121,12 +141,22 @@ object FloatType : NumericTypeInstance {
           values.doubleValue = values.floatValue.toDouble()
         }
       }
-      "toString" -> Field(
+      "toString" -> object : ExecutableField(
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider),
         MemPos(0, 0),
         false
-      )
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val n = values.floatValue
+          values.refValue = object : Instruction() {
+            override val stackInfo = FLOAT_TO_STRING_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.refValue = n.toString()
+            }
+          }
+        }
+      }
       else -> null
     }
   }
@@ -158,12 +188,22 @@ object DoubleType : NumericTypeInstance {
         override fun execute(ctx: ActionContext, values: ValueHolder) {
         }
       }
-      "toString" -> Field(
+      "toString" -> object : ExecutableField(
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider),
         MemPos(0, 0),
         false
-      )
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val n = values.doubleValue
+          values.refValue = object : Instruction() {
+            override val stackInfo = DOUBLE_TO_STRING_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.refValue = n.toString()
+            }
+          }
+        }
+      }
       else -> null
     }
   }
@@ -176,12 +216,22 @@ object DoubleType : NumericTypeInstance {
 object BoolType : PrimitiveTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
-      "toString" -> Field(
+      "toString" -> object : ExecutableField(
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider),
         MemPos(0, 0),
         false
-      )
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val n = values.boolValue
+          values.refValue = object : Instruction() {
+            override val stackInfo = BOOL_TO_STRING_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.refValue = n.toString()
+            }
+          }
+        }
+      }
       else -> null
     }
   }
@@ -194,12 +244,164 @@ object BoolType : PrimitiveTypeInstance {
 object StringType : BuiltInTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
-      "toString" -> Field(
+      "toInt" -> object : ExecutableField(name, IntType, MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.intValue = str.toInt()
+        }
+      }
+      "toLong" -> object : ExecutableField(name, LongType, MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.longValue = str.toLong()
+        }
+      }
+      "toFloat" -> object : ExecutableField(name, FloatType, MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.floatValue = str.toFloat()
+        }
+      }
+      "toDouble" -> object : ExecutableField(name, DoubleType, MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.doubleValue = str.toDouble()
+        }
+      }
+      "toBool" -> object : ExecutableField(name, BoolType, MemPos(0, 0), false) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.boolValue = str.toBoolean()
+        }
+      }
+      "toString" -> object : ExecutableField(
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider),
         MemPos(0, 0),
         false
-      )
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val n = values.refValue
+          values.refValue = object : Instruction() {
+            override val stackInfo = STRING_TO_STRING_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.refValue = n
+            }
+          }
+        }
+      }
+      "indexOf" -> object : ExecutableField(
+        name,
+        ctx.getFunctionDescriptorAsInstance(
+          listOf(ParamInstance(StringType, 0)), IntType,
+          FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
+        ),
+        MemPos(0, 0),
+        false
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.refValue = object : Instruction() {
+            override val stackInfo = STRING_INDEX_OF_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.intValue = str.indexOf(ctx.getCurrentMem().getRef(0) as String)
+            }
+          }
+        }
+      }
+      "substring" -> object : ExecutableField(
+        name,
+        ctx.getFunctionDescriptorAsInstance(
+          listOf(ParamInstance(IntType, 0), ParamInstance(IntType, 1)),
+          StringType,
+          FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 2))
+        ),
+        MemPos(0, 0),
+        false
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.refValue = object : Instruction() {
+            override val stackInfo = STRING_SUBSTRING_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.refValue = str.substring(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getInt(1))
+            }
+          }
+        }
+      }
+      "trim" -> object : ExecutableField(
+        name,
+        ctx.getFunctionDescriptorAsInstance(listOf(), StringType, DummyMemoryAllocatorProvider),
+        MemPos(0, 0),
+        false
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.refValue = object : Instruction() {
+            override val stackInfo = STRING_TRIM_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.refValue = str.trim()
+            }
+          }
+        }
+      }
+      "startsWith" -> object : ExecutableField(
+        name,
+        ctx.getFunctionDescriptorAsInstance(
+          listOf(ParamInstance(StringType, 0)), BoolType,
+          FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
+        ),
+        MemPos(0, 0),
+        false
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.refValue = object : Instruction() {
+            override val stackInfo = STRING_STARTS_WITH_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.boolValue = str.startsWith(ctx.getCurrentMem().getRef(0) as String)
+            }
+          }
+        }
+      }
+      "endsWith" -> object : ExecutableField(
+        name,
+        ctx.getFunctionDescriptorAsInstance(
+          listOf(ParamInstance(StringType, 0)), BoolType,
+          FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
+        ),
+        MemPos(0, 0),
+        false
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.refValue = object : Instruction() {
+            override val stackInfo = STRING_ENDS_WITH_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.boolValue = str.endsWith(ctx.getCurrentMem().getRef(0) as String)
+            }
+          }
+        }
+      }
+      "contains" -> object : ExecutableField(
+        name,
+        ctx.getFunctionDescriptorAsInstance(
+          listOf(ParamInstance(StringType, 0)), BoolType,
+          FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
+        ),
+        MemPos(0, 0),
+        false
+      ) {
+        override fun execute(ctx: ActionContext, values: ValueHolder) {
+          val str = values.refValue as String
+          values.refValue = object : Instruction() {
+            override val stackInfo = STRING_CONTAINS_STACK_INFO
+            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              values.boolValue = str.contains(ctx.getCurrentMem().getRef(0) as String)
+            }
+          }
+        }
+      }
       else -> null
     }
   }
@@ -208,3 +410,16 @@ object StringType : BuiltInTypeInstance {
     return "StringType"
   }
 }
+
+internal val INT_TO_STRING_STACK_INFO = StackInfo("int", "toString", LineCol.EMPTY)
+internal val LONG_TO_STRING_STACK_INFO = StackInfo("long", "toString", LineCol.EMPTY)
+internal val FLOAT_TO_STRING_STACK_INFO = StackInfo("float", "toString", LineCol.EMPTY)
+internal val DOUBLE_TO_STRING_STACK_INFO = StackInfo("double", "toString", LineCol.EMPTY)
+internal val BOOL_TO_STRING_STACK_INFO = StackInfo("bool", "toString", LineCol.EMPTY)
+internal val STRING_TO_STRING_STACK_INFO = StackInfo("string", "toString", LineCol.EMPTY)
+internal val STRING_INDEX_OF_STACK_INFO = StackInfo("string", "indexOf", LineCol.EMPTY)
+internal val STRING_SUBSTRING_STACK_INFO = StackInfo("string", "substring", LineCol.EMPTY)
+internal val STRING_TRIM_STACK_INFO = StackInfo("string", "trim", LineCol.EMPTY)
+internal val STRING_STARTS_WITH_STACK_INFO = StackInfo("string", "startsWith", LineCol.EMPTY)
+internal val STRING_ENDS_WITH_STACK_INFO = StackInfo("string", "endsWith", LineCol.EMPTY)
+internal val STRING_CONTAINS_STACK_INFO = StackInfo("string", "contains", LineCol.EMPTY)

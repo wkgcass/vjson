@@ -12,12 +12,17 @@
 
 package vjson.pl.type.lang
 
+import vjson.cs.LineCol
 import vjson.pl.ast.ParamType
 import vjson.pl.ast.Type
 import vjson.pl.inst.*
 import vjson.pl.type.*
 
 class StdTypes : Types {
+  companion object {
+    private val CONSOLE_LOG_STACK_INFO = StackInfo("std.Console", "log", LineCol.EMPTY)
+  }
+
   private val stdObject = ActionContext(RuntimeMemoryTotal(refTotal = 1), null)
   private val consoleObject = ActionContext(RuntimeMemoryTotal(refTotal = 1), null)
 
@@ -25,7 +30,8 @@ class StdTypes : Types {
 
   init {
     stdObject.getCurrentMem().setRef(0, consoleObject)
-    consoleObject.getCurrentMem().setRef(0, object : PrebuiltStackInfoInstruction("std.Console", "log") {
+    consoleObject.getCurrentMem().setRef(0, object : Instruction() {
+      override val stackInfo = CONSOLE_LOG_STACK_INFO
       override fun execute0(ctx: ActionContext, values: ValueHolder) {
         val outputFunc = this@StdTypes.outputFunc
         val str = ctx.getCurrentMem().getRef(0)
@@ -55,7 +61,7 @@ class StdTypes : Types {
       Type("std.LinkedHashMap"),
       TemplateLinkedHashMapType(templateKeySetType = linkedHashSetType, templateKeySetIteratorType = iteratorType)
     )
-    return RuntimeMemoryTotal(offset, intTotal = 1)
+    return RuntimeMemoryTotal(offset, refTotal = 1)
   }
 
   override fun initiateValues(ctx: ActionContext, offset: RuntimeMemoryTotal, values: RuntimeMemory?) {

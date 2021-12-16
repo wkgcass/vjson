@@ -24,6 +24,7 @@ open class MapType(
 ) : TypeInstance {
   companion object {
     private val MAP_TO_STRING_STACK_INFO = StackInfo("Map", "toString", LineCol.EMPTY)
+    private val MAP_CONTAINS_KEY_STACK_INFO = StackInfo("Map", "containsKey", LineCol.EMPTY)
   }
 
   private val keySetType = SetType(templateKeySetType, keySetIteratorType, key)
@@ -65,6 +66,116 @@ open class MapType(
           val newObj = ActionContext(RuntimeMemoryTotal(refTotal = 1), parent = null)
           newObj.getCurrentMem().setRef(0, map.keys)
           values.refValue = newObj
+        }
+      }
+      "containsKey" -> when (key) {
+        IntType -> object : ExecutableField(
+          name,
+          ctx.getFunctionDescriptorAsInstance(
+            listOf(ParamInstance(IntType, 0)), BoolType,
+            FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
+          ), MemPos(0, 0), false
+        ) {
+          override fun execute(ctx: ActionContext, values: ValueHolder) {
+            val obj = values.refValue as ActionContext
+            @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Int, *>
+            values.refValue = object : Instruction() {
+              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+              override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                values.boolValue = map.containsKey(ctx.getCurrentMem().getInt(0))
+              }
+            }
+          }
+        }
+        LongType -> object : ExecutableField(
+          name,
+          ctx.getFunctionDescriptorAsInstance(
+            listOf(ParamInstance(LongType, 0)), BoolType,
+            FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
+          ), MemPos(0, 0), false
+        ) {
+          override fun execute(ctx: ActionContext, values: ValueHolder) {
+            val obj = values.refValue as ActionContext
+            @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Long, *>
+            values.refValue = object : Instruction() {
+              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+              override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                values.boolValue = map.containsKey(ctx.getCurrentMem().getLong(0))
+              }
+            }
+          }
+        }
+        FloatType -> object : ExecutableField(
+          name,
+          ctx.getFunctionDescriptorAsInstance(
+            listOf(ParamInstance(FloatType, 0)), BoolType,
+            FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
+          ), MemPos(0, 0), false
+        ) {
+          override fun execute(ctx: ActionContext, values: ValueHolder) {
+            val obj = values.refValue as ActionContext
+            @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Float, *>
+            values.refValue = object : Instruction() {
+              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+              override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                values.boolValue = map.containsKey(ctx.getCurrentMem().getFloat(0))
+              }
+            }
+          }
+        }
+        DoubleType -> object : ExecutableField(
+          name,
+          ctx.getFunctionDescriptorAsInstance(
+            listOf(ParamInstance(DoubleType, 0)), BoolType,
+            FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
+          ), MemPos(0, 0), false
+        ) {
+          override fun execute(ctx: ActionContext, values: ValueHolder) {
+            val obj = values.refValue as ActionContext
+            @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Double, *>
+            values.refValue = object : Instruction() {
+              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+              override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                values.boolValue = map.containsKey(ctx.getCurrentMem().getDouble(0))
+              }
+            }
+          }
+        }
+        BoolType -> object : ExecutableField(
+          name,
+          ctx.getFunctionDescriptorAsInstance(
+            listOf(ParamInstance(BoolType, 0)), BoolType,
+            FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
+          ), MemPos(0, 0), false
+        ) {
+          override fun execute(ctx: ActionContext, values: ValueHolder) {
+            val obj = values.refValue as ActionContext
+            @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Boolean, *>
+            values.refValue = object : Instruction() {
+              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+              override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                values.boolValue = map.containsKey(ctx.getCurrentMem().getBool(0))
+              }
+            }
+          }
+        }
+        else -> object : ExecutableField(
+          name,
+          ctx.getFunctionDescriptorAsInstance(
+            listOf(ParamInstance(key, 0)), BoolType,
+            FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
+          ), MemPos(0, 0), false
+        ) {
+          override fun execute(ctx: ActionContext, values: ValueHolder) {
+            val obj = values.refValue as ActionContext
+            @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Any?, *>
+            values.refValue = object : Instruction() {
+              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+              override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                values.boolValue = map.containsKey(ctx.getCurrentMem().getRef(0))
+              }
+            }
+          }
         }
       }
       "toString" -> object : ExecutableField(
