@@ -14,10 +14,9 @@ package vjson.pl.ast
 
 import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
-import vjson.pl.type.NullType
-import vjson.pl.type.PrimitiveTypeInstance
 import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
+import vjson.pl.type.TypeUtils
 
 data class Assignment(
   val variable: AssignableExpr,
@@ -33,10 +32,7 @@ data class Assignment(
     this.ctx = ctx
     val variableType = variable.check(ctx)
     val valueType = value.check(ctx)
-    if (variableType != valueType) {
-      if (valueType is NullType && variableType !is PrimitiveTypeInstance) {
-        return variableType
-      }
+    if (!TypeUtils.assignableFrom(variableType, valueType)) {
       throw ParserException("$this: cannot assign $valueType to $variableType, type mismatch", lineCol)
     }
     if (!variable.isModifiable()) {

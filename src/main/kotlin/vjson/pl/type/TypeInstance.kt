@@ -33,4 +33,7 @@ interface TypeInstance {
   fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
     throw ParserException("unsupported")
   }
+
+  fun templateType(): TypeInstance? = null
+  fun templateTypeParams(): List<TypeInstance>? = null
 }

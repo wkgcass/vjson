@@ -16,12 +16,17 @@ import vjson.cs.LineCol
 import vjson.pl.inst.*
 import vjson.pl.type.*
 
-open class MapType(private val key: TypeInstance, private val value: TypeInstance) : TypeInstance {
+open class MapType(
+  private val templateType: TypeInstance,
+  templateKeySetType: TypeInstance,
+  keySetIteratorType: IteratorType,
+  private val key: TypeInstance, private val value: TypeInstance
+) : TypeInstance {
   companion object {
     private val MAP_TO_STRING_STACK_INFO = StackInfo("Map", "toString", LineCol.EMPTY)
   }
 
-  private val keySetType = SetType(key)
+  private val keySetType = SetType(templateKeySetType, keySetIteratorType, key)
 
   private val constructorDescriptor = object : ExecutableConstructorFunctionDescriptor(
     listOf(ParamInstance(IntType, 0)),
@@ -81,6 +86,14 @@ open class MapType(private val key: TypeInstance, private val value: TypeInstanc
       }
       else -> null
     }
+  }
+
+  override fun templateType(): TypeInstance {
+    return templateType
+  }
+
+  override fun templateTypeParams(): List<TypeInstance>? {
+    return listOf(key, value)
   }
 
   override fun toString(): String {

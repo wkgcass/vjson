@@ -43,10 +43,18 @@ class StdTypes : Types {
     val consoleClass = ConsoleClass()
     ctx.addType(Type("std.Console"), consoleClass)
     ctx.addVariable(Variable("std", stdClass, false, MemPos(0, ctx.getMemoryAllocator().nextRefIndex())))
-    ctx.addType(Type("std.List"), TemplateListType())
-    ctx.addType(Type("std.Set"), TemplateSetType())
-    ctx.addType(Type("std.Map"), TemplateMapType())
-    ctx.addType(Type("std.LinkedHashMap"), TemplateLinkedHashMapType())
+    val iteratorType = TemplateIteratorType()
+    ctx.addType(Type("std.Iterator"), iteratorType)
+    ctx.addType(Type("std.List"), TemplateListType(iteratorTemplateType = iteratorType))
+    val setType = TemplateSetType(iteratorTemplateType = iteratorType)
+    ctx.addType(Type("std.Set"), setType)
+    val linkedHashSetType = TemplateLinkedHashSetType(iteratorTemplateType = iteratorType)
+    ctx.addType(Type("std.LinkedHashSet"), linkedHashSetType)
+    ctx.addType(Type("std.Map"), TemplateMapType(templateKeySetType = setType, templateKeySetIteratorType = iteratorType))
+    ctx.addType(
+      Type("std.LinkedHashMap"),
+      TemplateLinkedHashMapType(templateKeySetType = linkedHashSetType, templateKeySetIteratorType = iteratorType)
+    )
     return RuntimeMemoryTotal(offset, intTotal = 1)
   }
 
@@ -84,47 +92,84 @@ class ConsoleClass : TypeInstance {
   }
 }
 
-class TemplateListType : TypeInstance {
+class TemplateIteratorType : TypeInstance {
   private val typeParameters = listOf(ParamType("E"))
   override fun typeParameters(): List<ParamType> {
     return typeParameters
   }
 
   override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
-    return ListType(typeParams[0])
+    return IteratorType(templateType = this, typeParams[0])
   }
 }
 
-class TemplateSetType : TypeInstance {
+class TemplateListType(private val iteratorTemplateType: TypeInstance) : TypeInstance {
   private val typeParameters = listOf(ParamType("E"))
   override fun typeParameters(): List<ParamType> {
     return typeParameters
   }
 
   override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
-    return SetType(typeParams[0])
+    return ListType(this, IteratorType(iteratorTemplateType, typeParams[0]), typeParams[0])
   }
 }
 
-class TemplateMapType : TypeInstance {
+class TemplateSetType(private val iteratorTemplateType: TypeInstance) : TypeInstance {
+  private val typeParameters = listOf(ParamType("E"))
+  override fun typeParameters(): List<ParamType> {
+    return typeParameters
+  }
+
+  override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
+    return SetType(this, IteratorType(iteratorTemplateType, typeParams[0]), typeParams[0])
+  }
+}
+
+class TemplateLinkedHashSetType(private val iteratorTemplateType: TypeInstance) : TypeInstance {
+  private val typeParameters = listOf(ParamType("E"))
+  override fun typeParameters(): List<ParamType> {
+    return typeParameters
+  }
+
+  override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
+    return object : SetType(this@TemplateLinkedHashSetType, IteratorType(iteratorTemplateType, typeParams[0]), typeParams[0]) {
+      override fun newCollection(initialCap: Int): Collection<*> {
+        return LinkedHashSet<Any?>()
+      }
+    }
+  }
+}
+
+class TemplateMapType(private val templateKeySetType: TypeInstance, private val templateKeySetIteratorType: TypeInstance) : TypeInstance {
   private val typeParameters = listOf(ParamType("K"), ParamType("V"))
   override fun typeParameters(): List<ParamType> {
     return typeParameters
   }
 
   override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
-    return MapType(typeParams[0], typeParams[1])
+    return MapType(
+      templateType = this,
+      templateKeySetType,
+      keySetIteratorType = IteratorType(templateKeySetIteratorType, typeParams[0]),
+      typeParams[0], typeParams[1]
+    )
   }
 }
 
-class TemplateLinkedHashMapType : TypeInstance {
+class TemplateLinkedHashMapType(private val templateKeySetType: TypeInstance, private val templateKeySetIteratorType: TypeInstance) :
+  TypeInstance {
   private val typeParameters = listOf(ParamType("K"), ParamType("V"))
   override fun typeParameters(): List<ParamType> {
     return typeParameters
   }
 
   override fun concrete(ctx: TypeContext, typeParams: List<TypeInstance>): TypeInstance {
-    return object : MapType(typeParams[0], typeParams[1]) {
+    return object : MapType(
+      templateType = this@TemplateLinkedHashMapType,
+      templateKeySetType,
+      keySetIteratorType = IteratorType(templateKeySetIteratorType, typeParams[0]),
+      typeParams[0], typeParams[1]
+    ) {
       override fun newMap(cap: Int): Map<*, *> {
         return LinkedHashMap<Any?, Any?>(cap)
       }

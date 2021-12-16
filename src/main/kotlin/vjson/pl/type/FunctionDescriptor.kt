@@ -22,9 +22,7 @@ open class FunctionDescriptor(val params: List<ParamInstance>, val returnType: T
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-
-    other as FunctionDescriptor
+    if (other !is FunctionDescriptor) return false
 
     if (params != other.params) return false
     if (returnType != other.returnType) return false

@@ -59,7 +59,7 @@ data class Type(private val name: String) : TypedAST {
       ctx.addType(this, arrayType)
       return arrayType
     } else {
-      throw IllegalStateException("$this is not recorded in type context and is not array type")
+      throw ParserException("$this is not recorded in type context and is not array type", lineCol)
     }
   }
 

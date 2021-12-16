@@ -10,20 +10,25 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package vjson.pl.type.lang
+package vjson.pl.type
 
-import vjson.pl.type.TypeInstance
-
-open class SetType(
-  templateType: TypeInstance,
-  iteratorType: IteratorType,
-  elementType: TypeInstance
-) : CollectionType(templateType, iteratorType, elementType) {
-  override fun newCollection(initialCap: Int): Collection<*> {
-    return HashSet<Any?>(initialCap)
-  }
-
-  override fun toString(): String {
-    return "Set<$elementType>"
+object TypeUtils {
+  fun assignableFrom(parent: TypeInstance, child: TypeInstance): Boolean {
+    if (parent == child) return true
+    if (parent !is PrimitiveTypeInstance && child is NullType) return true
+    if (parent.templateType() != null && child.templateType() != null) {
+      if (parent.templateType() != child.templateType()) {
+        return false
+      }
+      val parentParams = parent.templateTypeParams()!!
+      val childParams = child.templateTypeParams()!!
+      for (i in parentParams.indices) {
+        if (!assignableFrom(parentParams[i], childParams[i])) {
+          return false
+        }
+      }
+      return true
+    }
+    return false
   }
 }

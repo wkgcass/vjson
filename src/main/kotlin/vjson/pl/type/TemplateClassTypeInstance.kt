@@ -28,7 +28,10 @@ class TemplateClassTypeInstance(val tmpl: TemplateClassDefinition) : TypeInstanc
       newCtx.addType(Type(ast.paramTypes[i].name), typeParams[i])
     }
     ast.classDef.checkAST(newCtx)
-    return newCtx.getType(Type(ast.classDef.name))
+    val clsTypeInstance = newCtx.getType(Type(ast.classDef.name)) as ClassTypeInstance
+    clsTypeInstance._templateType = this
+    clsTypeInstance._templateTypeParams = typeParams
+    return clsTypeInstance
   }
 
   override fun toString(): String {

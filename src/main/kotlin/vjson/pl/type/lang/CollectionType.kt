@@ -16,14 +16,16 @@ import vjson.cs.LineCol
 import vjson.pl.inst.*
 import vjson.pl.type.*
 
-abstract class CollectionType(protected val elementType: TypeInstance) : TypeInstance {
+abstract class CollectionType(
+  private val templateType: TypeInstance,
+  private val iteratorType: IteratorType,
+  protected val elementType: TypeInstance
+) : TypeInstance {
   companion object {
     private val COLL_ADD_STACK_INFO = StackInfo("Collection", "add", LineCol.EMPTY)
     private val COLL_REMOVE_STACK_INFO = StackInfo("Collection", "remove", LineCol.EMPTY)
     private val COLL_TO_STRING_STACK_INFO = StackInfo("Collection", "toString", LineCol.EMPTY)
   }
-
-  private val iteratorType = IteratorType()
 
   protected abstract fun newCollection(initialCap: Int): Collection<*>
 
@@ -256,69 +258,11 @@ abstract class CollectionType(protected val elementType: TypeInstance) : TypeIns
     }
   }
 
-  private inner class IteratorType : TypeInstance {
-    override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
-      val mem = MemPos(0, 0)
-      return when (name) {
-        "hasNext" -> object : ExecutableField(name, BoolType, mem, false) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
-            val obj = values.refValue as ActionContext
-            val ite = obj.getCurrentMem().getRef(0) as Iterator<Any?>
-            values.boolValue = ite.hasNext()
-          }
-        }
-        "next" -> when (elementType) {
-          IntType -> object : ExecutableField(name, elementType, mem, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
-              val obj = values.refValue as ActionContext
-              @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Int>
-              val nx = ite.next()
-              values.intValue = nx
-            }
-          }
-          LongType -> object : ExecutableField(name, elementType, mem, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
-              val obj = values.refValue as ActionContext
-              @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Long>
-              val nx = ite.next()
-              values.longValue = nx
-            }
-          }
-          FloatType -> object : ExecutableField(name, elementType, mem, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
-              val obj = values.refValue as ActionContext
-              @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Float>
-              val nx = ite.next()
-              values.floatValue = nx
-            }
-          }
-          DoubleType -> object : ExecutableField(name, elementType, mem, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
-              val obj = values.refValue as ActionContext
-              @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Double>
-              val nx = ite.next()
-              values.doubleValue = nx
-            }
-          }
-          BoolType -> object : ExecutableField(name, elementType, mem, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
-              val obj = values.refValue as ActionContext
-              @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Boolean>
-              val nx = ite.next()
-              values.boolValue = nx
-            }
-          }
-          else -> object : ExecutableField(name, elementType, mem, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
-              val obj = values.refValue as ActionContext
-              @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Any?>
-              val nx = ite.next()
-              values.refValue = nx
-            }
-          }
-        }
-        else -> null
-      }
-    }
+  override fun templateType(): TypeInstance {
+    return templateType
+  }
+
+  override fun templateTypeParams(): List<TypeInstance>? {
+    return listOf(elementType)
   }
 }

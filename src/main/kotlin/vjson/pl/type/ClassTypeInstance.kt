@@ -19,6 +19,8 @@ class ClassTypeInstance(val cls: ClassDefinition) : TypeInstance {
   private val constructorFields: MutableMap<String, Param> = HashMap()
   private val fields: MutableMap<String, VariableDefinition> = HashMap()
   private val functions: MutableMap<String, FunctionDefinition> = HashMap()
+  var _templateType: TemplateClassTypeInstance? = null
+  var _templateTypeParams: List<TypeInstance>? = null
 
   init {
     constructorParams = cls.params
@@ -67,6 +69,14 @@ class ClassTypeInstance(val cls: ClassDefinition) : TypeInstance {
       }
     }
     return null
+  }
+
+  override fun templateType(): TypeInstance? {
+    return _templateType
+  }
+
+  override fun templateTypeParams(): List<TypeInstance>? {
+    return _templateTypeParams
   }
 
   override fun toString(): String {

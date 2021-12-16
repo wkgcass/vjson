@@ -40,7 +40,7 @@ data class FunctionInvocation(
     for (idx in args.indices) {
       val argType = args[idx].check(ctx)
       val paramType = func.params[idx]
-      if (argType != paramType.type) {
+      if (!TypeUtils.assignableFrom(paramType.type, argType)) {
         throw ParserException(
           "$this: unable to invoke $target with $args, args[$idx] $argType does not match params[$idx] $paramType",
           lineCol

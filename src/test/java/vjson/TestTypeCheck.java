@@ -40,6 +40,10 @@ public class TestTypeCheck {
     }
 
     private List<Statement> ast(String prog) {
+        return ast(prog, false);
+    }
+
+    private List<Statement> ast(String prog, boolean useStd) {
         int[] idx = {0};
         if (!prog.startsWith("{")) {
             prog = "{\n" +
@@ -55,6 +59,10 @@ public class TestTypeCheck {
 
         MemoryAllocator globalMem = new MemoryAllocator();
         TypeContext ctx = new TypeContext(globalMem);
+        if (useStd) {
+            StdTypes std = new StdTypes();
+            std.initiateType(ctx, new RuntimeMemoryTotal());
+        }
         ctx.checkStatements(stmts);
         return stmts;
     }
@@ -191,6 +199,45 @@ public class TestTypeCheck {
         assertEquals(LongType.INSTANCE, type.getCls().getParams().get(1).typeInstance());
         assertEquals(IntType.INSTANCE, ((VariableDefinition) type.getCls().getCode().get(0)).getValue().typeInstance());
         assertEquals(LongType.INSTANCE, ((VariableDefinition) type.getCls().getCode().get(1)).getValue().typeInstance());
+    }
+
+    @Test
+    public void templateInstancesCheck() {
+        // should pass type check
+        ast("{\n" +
+            "template: { T, U } class BiContainer: { _t: T, _u: U } do: {\n" +
+            "  public var t = _t\n" +
+            "  public var u = _u\n" +
+            "}\n" +
+            "let IntLongContainer = { BiContainer:[ int, long ] }\n" +
+            "let IntLong2Container = { BiContainer:[ int, long ] }\n" +
+            "let IntLong3Container = { BiContainer:[ int, long ] }\n" +
+            "var c = new IntLongContainer:[1, 2.toLong]\n" +
+            "c = new IntLong2Container:[1, 2.toLong]\n" +
+            "function x: {container: IntLong3Container} void: {\n" +
+            "}\n" +
+            "x:[c]\n" +
+            "}");
+    }
+
+    @Test
+    public void templateCompare() {
+        // should pass type check
+        ast("{\n" +
+                "let IntList = { std.List:[int] }\n" +
+                "let IntSet = { std.Set:[int] }\n" +
+                "let IntLongMap = { std.Map:[int, long] }\n" +
+                "let IntIterator = { std.Iterator:[int] }\n" +
+                "function takeIte:{ite: IntIterator} void: {}\n" +
+                "\n" +
+                "var ls = new IntList:[16]\n" +
+                "var set = new IntSet:[16]\n" +
+                "var map = new IntLongMap:[16]\n" +
+                "takeIte:[ls.iterator]\n" +
+                "takeIte:[set.iterator]\n" +
+                "takeIte:[map.keySet.iterator]\n" +
+                "}",
+            true);
     }
 
     @Test

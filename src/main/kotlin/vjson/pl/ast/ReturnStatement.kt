@@ -16,6 +16,7 @@ import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
 import vjson.pl.inst.ReturnInst
 import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeUtils
 import vjson.pl.type.VoidType
 
 data class ReturnStatement(val expr: Expr? = null) : Statement() {
@@ -42,7 +43,7 @@ data class ReturnStatement(val expr: Expr? = null) : Statement() {
         throw ParserException("function ${func.name} returns $returnType, but the `return` statement does not have a value", lineCol)
       }
     } else {
-      if (returnType != exprType) {
+      if (!TypeUtils.assignableFrom(returnType, exprType)) {
         throw ParserException("function ${func.name} returns $returnType, but the `return` statement returns $exprType", lineCol)
       }
     }

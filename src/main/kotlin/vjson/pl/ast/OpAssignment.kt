@@ -34,7 +34,7 @@ data class OpAssignment(
     }
     val variableType = variable.check(ctx)
     val valueType = value.check(ctx)
-    if (variableType != valueType) {
+    if (!TypeUtils.assignableFrom(variableType, valueType)) {
       throw ParserException("$this: cannot calculate and assign $valueType to $variableType, type mismatch", lineCol)
     }
     if (valueType !is NumericTypeInstance) {

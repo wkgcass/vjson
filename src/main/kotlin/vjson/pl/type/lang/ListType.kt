@@ -16,7 +16,11 @@ import vjson.cs.LineCol
 import vjson.pl.inst.*
 import vjson.pl.type.*
 
-open class ListType(elementType: TypeInstance) : CollectionType(elementType) {
+open class ListType(
+  templateType: TypeInstance,
+  iteratorType: IteratorType,
+  elementType: TypeInstance
+) : CollectionType(templateType, iteratorType, elementType) {
   companion object {
     private val LIST_REMOVE_AT_STACK_INFO = StackInfo("List", "removeAt", LineCol.EMPTY)
     private val LIST_GET_STACK_INFO = StackInfo("List", "get", LineCol.EMPTY)
