@@ -20,5 +20,5 @@ open class Field(val name: String, val type: TypeInstance, val memPos: MemPos, v
 
 abstract class ExecutableField(name: String, type: TypeInstance, memPos: MemPos, modifiable: Boolean = false) :
   Field(name, type, memPos, modifiable) {
-  abstract fun execute(ctx: ActionContext, values: ValueHolder)
+  abstract suspend fun execute(ctx: ActionContext, values: ValueHolder)
 }

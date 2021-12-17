@@ -12,6 +12,7 @@
 
 package vjson.pl
 
+/* #ifndef KOTLIN_NATIVE {{*/import kotlinx.coroutines.runBlocking/*}}*/
 import vjson.pl.ast.Statement
 import vjson.pl.inst.*
 import vjson.pl.type.MemoryAllocator
@@ -41,7 +42,15 @@ class Interpreter(private val types: List<Types>, private val ast: List<Statemen
     valueForTypes.remove(t)
   }
 
-  fun execute(): RuntimeMemory {
+  // #ifndef KOTLIN_NATIVE {{
+  fun executeBlock(): RuntimeMemory {
+    return runBlocking {
+      execute()
+    }
+  }
+  // }}
+
+  suspend fun execute(): RuntimeMemory {
     val actionContext = ActionContext(typeContext.getMemoryAllocator().getTotal(), null)
     for (i in types.indices) {
       val t = types[i]

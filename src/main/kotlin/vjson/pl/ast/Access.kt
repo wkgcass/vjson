@@ -106,7 +106,7 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
       }
       object : Instruction() {
         override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
-        override fun execute0(ctx: ActionContext, values: ValueHolder) {
+        override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
           fromInst.execute(ctx, values)
           val objCtx = values.refValue as ActionContext
           setField.execute(objCtx, values)

@@ -22,7 +22,7 @@ data class CompositeInstruction(
   @Suppress("UNCHECKED_CAST")
   constructor(vararg instructions: Instruction) : this(instructions.asList())
 
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     for (inst in instructions) {
       inst.execute(ctx, values)
     }
@@ -33,14 +33,14 @@ class ExecutableFieldInstruction(
   private val field: ExecutableField,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     field.execute(ctx, values)
   }
 }
 
 class NoOp : Instruction() {
   override val stackInfo: StackInfo = StackInfo.EMPTY
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
   }
 }
 
@@ -48,14 +48,14 @@ data class ReturnInst(
   private val returnValueInst: Instruction?,
 ) : Instruction() {
   override val stackInfo: StackInfo = StackInfo.EMPTY
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     returnValueInst?.execute(ctx, values)
     ctx.returnImmediately = true
   }
 }
 
 class LiteralNull(override val stackInfo: StackInfo) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.refValue = null
   }
 }
@@ -65,7 +65,7 @@ class StringConcat(
   val b: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     a.execute(ctx, values)
     val aStr = values.refValue as String
     b.execute(ctx, values)
@@ -80,9 +80,9 @@ class FunctionInstance(
   private val func: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  var ctxBuilder: ((ActionContext) -> ActionContext)? = null
+  var ctxBuilder: (suspend (ActionContext) -> ActionContext)? = null
 
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     val capturedContext = if (self == null) {
       ctx.getContext(funcMemDepth)
     } else {
@@ -100,7 +100,7 @@ data class LogicNotInstruction(
   private val expr: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     expr.execute(ctx, values)
     values.boolValue = !values.boolValue
   }
@@ -110,7 +110,7 @@ data class BreakInstruction(
   private val level: Int
 ) : Instruction() {
   override val stackInfo: StackInfo = StackInfo.EMPTY
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     ctx.breakImmediately = level
   }
 }
@@ -119,7 +119,7 @@ data class ContinueInstruction(
   private val level: Int
 ) : Instruction() {
   override val stackInfo: StackInfo = StackInfo.EMPTY
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     ctx.continueImmediately = level
   }
 }
@@ -136,7 +136,7 @@ data class IfInstruction(
   private val ifCodeInst: List<Instruction>,
   private val elseCodeInst: List<Instruction>,
 ) : FlowControlInstruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     conditionInst.execute(ctx, values)
     if (values.boolValue) {
       for (stmt in ifCodeInst) {
@@ -163,7 +163,7 @@ data class ForLoopInstruction(
   private val incrInst: List<Instruction>,
   private val codeInst: List<Instruction>,
 ) : FlowControlInstruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     if (needReturn(ctx)) {
       return
     }
@@ -212,7 +212,7 @@ data class WhileLoopInstruction(
   private val conditionInst: Instruction,
   private val codeInst: List<Instruction>,
 ) : FlowControlInstruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     while (true) {
       conditionInst.execute(ctx, values)
       if (!values.boolValue) {

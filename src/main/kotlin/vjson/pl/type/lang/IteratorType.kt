@@ -24,7 +24,7 @@ class IteratorType(
     val mem = MemPos(0, 0)
     return when (name) {
       "hasNext" -> object : ExecutableField(name, BoolType, mem, false) {
-        override fun execute(ctx: ActionContext, values: ValueHolder) {
+        override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val obj = values.refValue as ActionContext
           val ite = obj.getCurrentMem().getRef(0) as Iterator<Any?>
           values.boolValue = ite.hasNext()
@@ -32,7 +32,7 @@ class IteratorType(
       }
       "next" -> when (elementType) {
         IntType -> object : ExecutableField(name, elementType, mem, false) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
+          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Int>
             val nx = ite.next()
@@ -40,7 +40,7 @@ class IteratorType(
           }
         }
         LongType -> object : ExecutableField(name, elementType, mem, false) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
+          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Long>
             val nx = ite.next()
@@ -48,7 +48,7 @@ class IteratorType(
           }
         }
         FloatType -> object : ExecutableField(name, elementType, mem, false) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
+          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Float>
             val nx = ite.next()
@@ -56,7 +56,7 @@ class IteratorType(
           }
         }
         DoubleType -> object : ExecutableField(name, elementType, mem, false) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
+          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Double>
             val nx = ite.next()
@@ -64,7 +64,7 @@ class IteratorType(
           }
         }
         BoolType -> object : ExecutableField(name, elementType, mem, false) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
+          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Boolean>
             val nx = ite.next()
@@ -72,7 +72,7 @@ class IteratorType(
           }
         }
         else -> object : ExecutableField(name, elementType, mem, false) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
+          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val ite = obj.getCurrentMem().getRef(0) as Iterator<Any?>
             val nx = ite.next()

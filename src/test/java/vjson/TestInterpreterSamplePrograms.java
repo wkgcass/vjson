@@ -113,7 +113,7 @@ public class TestInterpreterSamplePrograms {
         Interpreter interpreter = new InterpreterBuilder()
             .addTypes(std)
             .compile(prog);
-        interpreter.execute();
+        interpreter.executeBlock();
         assertEquals(Arrays.asList(
             "Hi bob, I'm alice",
             "plusObj.plus result is 3",
@@ -188,7 +188,7 @@ public class TestInterpreterSamplePrograms {
         Interpreter interpreter = new InterpreterBuilder()
             .addTypes(std)
             .compile(prog);
-        interpreter.execute();
+        interpreter.executeBlock();
         assertEquals("intVar = 1\n" +
             "longVar = 10000000000\n" +
             "doubleVar = 0.8\n" +
@@ -230,7 +230,7 @@ public class TestInterpreterSamplePrograms {
         Interpreter interpreter = new InterpreterBuilder()
             .addTypes(std)
             .compile(prog);
-        interpreter.execute();
+        interpreter.executeBlock();
         assertEquals("Pi: 3.1415936535907742", output[0]);
     }
 
@@ -282,7 +282,7 @@ public class TestInterpreterSamplePrograms {
         Interpreter interpreter = new InterpreterBuilder()
             .addTypes(std)
             .compile(prog);
-        interpreter.execute();
+        interpreter.executeBlock();
         assertEquals(Arrays.asList(
             "list = [hello, world]",
             "set = [1, 2]",

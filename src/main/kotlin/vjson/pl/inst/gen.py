@@ -31,7 +31,7 @@ data class Literal{{Type}}(
   val value: {{KtType}},
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.{{type}}Value = value
   }
 }
@@ -47,7 +47,7 @@ data class Get{{Type}}(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.{{type}}Value = ctx.getMem(depth).get{{Type}}(index)
   }
 }
@@ -62,7 +62,7 @@ data class GetField{{Type}}(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
     values.{{type}}Value = mem.getCurrentMem().get{{Type}}(index)
   }
@@ -79,7 +79,7 @@ data class GetIndex{{Type}}(
   val index: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
     val arrayValue = values.refValue as {{ArrayType}}
     index.execute(ctx, values)
@@ -100,7 +100,7 @@ data class Set{{Type}}(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     ctx.getMem(depth).set{{Type}}(index, values.{{type}}Value)
   }
@@ -118,7 +118,7 @@ data class SetIndex{{Type}}(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val value = values.{{type}}Value
     array.execute(ctx, values)
@@ -140,7 +140,7 @@ data class SetField{{Type}}(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val mem = values.refValue as ActionContext
     mem.getCurrentMem().set{{Type}}(index, values.{{type}}Value)
@@ -158,7 +158,7 @@ data class {{Op}}{{Type}}(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.{{type}}Value
     right.execute(ctx, values)
@@ -249,7 +249,7 @@ data class Negative{{Type}}(
   private val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     values.{{type}}Value = -values.{{type}}Value
   }
@@ -265,7 +265,7 @@ data class NewArray{{Type}}(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
     values.refValue = {{ArrayType}}(values.intValue)
   }
@@ -281,7 +281,7 @@ data class NewArray{{Type}}(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
     values.refValue = Array<Any?>(values.intValue) { null }
   }

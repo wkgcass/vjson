@@ -4,7 +4,7 @@ data class LiteralInt(
   val value: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.intValue = value
   }
 }
@@ -13,7 +13,7 @@ data class LiteralLong(
   val value: Long,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.longValue = value
   }
 }
@@ -22,7 +22,7 @@ data class LiteralFloat(
   val value: Float,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.floatValue = value
   }
 }
@@ -31,7 +31,7 @@ data class LiteralDouble(
   val value: Double,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.doubleValue = value
   }
 }
@@ -40,7 +40,7 @@ data class LiteralBool(
   val value: Boolean,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.boolValue = value
   }
 }
@@ -49,7 +49,7 @@ data class LiteralRef(
   val value: Any?,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.refValue = value
   }
 }
@@ -59,7 +59,7 @@ data class GetInt(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.intValue = ctx.getMem(depth).getInt(index)
   }
 }
@@ -69,7 +69,7 @@ data class GetLong(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.longValue = ctx.getMem(depth).getLong(index)
   }
 }
@@ -79,7 +79,7 @@ data class GetFloat(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.floatValue = ctx.getMem(depth).getFloat(index)
   }
 }
@@ -89,7 +89,7 @@ data class GetDouble(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.doubleValue = ctx.getMem(depth).getDouble(index)
   }
 }
@@ -99,7 +99,7 @@ data class GetBool(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.boolValue = ctx.getMem(depth).getBool(index)
   }
 }
@@ -109,7 +109,7 @@ data class GetRef(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.refValue = ctx.getMem(depth).getRef(index)
   }
 }
@@ -118,7 +118,7 @@ data class GetFieldInt(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
     values.intValue = mem.getCurrentMem().getInt(index)
   }
@@ -128,7 +128,7 @@ data class GetFieldLong(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
     values.longValue = mem.getCurrentMem().getLong(index)
   }
@@ -138,7 +138,7 @@ data class GetFieldFloat(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
     values.floatValue = mem.getCurrentMem().getFloat(index)
   }
@@ -148,7 +148,7 @@ data class GetFieldDouble(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
     values.doubleValue = mem.getCurrentMem().getDouble(index)
   }
@@ -158,7 +158,7 @@ data class GetFieldBool(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
     values.boolValue = mem.getCurrentMem().getBool(index)
   }
@@ -168,7 +168,7 @@ data class GetFieldRef(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     val mem = values.refValue as ActionContext
     values.refValue = mem.getCurrentMem().getRef(index)
   }
@@ -179,7 +179,7 @@ data class GetIndexInt(
   val index: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
     val arrayValue = values.refValue as IntArray
     index.execute(ctx, values)
@@ -193,7 +193,7 @@ data class GetIndexLong(
   val index: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
     val arrayValue = values.refValue as LongArray
     index.execute(ctx, values)
@@ -207,7 +207,7 @@ data class GetIndexFloat(
   val index: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
     val arrayValue = values.refValue as FloatArray
     index.execute(ctx, values)
@@ -221,7 +221,7 @@ data class GetIndexDouble(
   val index: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
     val arrayValue = values.refValue as DoubleArray
     index.execute(ctx, values)
@@ -235,7 +235,7 @@ data class GetIndexBool(
   val index: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
     val arrayValue = values.refValue as BooleanArray
     index.execute(ctx, values)
@@ -249,7 +249,7 @@ data class GetIndexRef(
   val index: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     array.execute(ctx, values)
     val arrayValue = values.refValue as Array<Any?>
     index.execute(ctx, values)
@@ -264,7 +264,7 @@ data class SetInt(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     ctx.getMem(depth).setInt(index, values.intValue)
   }
@@ -276,7 +276,7 @@ data class SetLong(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     ctx.getMem(depth).setLong(index, values.longValue)
   }
@@ -288,7 +288,7 @@ data class SetFloat(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     ctx.getMem(depth).setFloat(index, values.floatValue)
   }
@@ -300,7 +300,7 @@ data class SetDouble(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     ctx.getMem(depth).setDouble(index, values.doubleValue)
   }
@@ -312,7 +312,7 @@ data class SetBool(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     ctx.getMem(depth).setBool(index, values.boolValue)
   }
@@ -324,7 +324,7 @@ data class SetRef(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     ctx.getMem(depth).setRef(index, values.refValue)
   }
@@ -336,7 +336,7 @@ data class SetIndexInt(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val value = values.intValue
     array.execute(ctx, values)
@@ -353,7 +353,7 @@ data class SetIndexLong(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val value = values.longValue
     array.execute(ctx, values)
@@ -370,7 +370,7 @@ data class SetIndexFloat(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val value = values.floatValue
     array.execute(ctx, values)
@@ -387,7 +387,7 @@ data class SetIndexDouble(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val value = values.doubleValue
     array.execute(ctx, values)
@@ -404,7 +404,7 @@ data class SetIndexBool(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val value = values.boolValue
     array.execute(ctx, values)
@@ -421,7 +421,7 @@ data class SetIndexRef(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val value = values.refValue
     array.execute(ctx, values)
@@ -437,7 +437,7 @@ data class SetFieldInt(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val mem = values.refValue as ActionContext
     mem.getCurrentMem().setInt(index, values.intValue)
@@ -449,7 +449,7 @@ data class SetFieldLong(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val mem = values.refValue as ActionContext
     mem.getCurrentMem().setLong(index, values.longValue)
@@ -461,7 +461,7 @@ data class SetFieldFloat(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val mem = values.refValue as ActionContext
     mem.getCurrentMem().setFloat(index, values.floatValue)
@@ -473,7 +473,7 @@ data class SetFieldDouble(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val mem = values.refValue as ActionContext
     mem.getCurrentMem().setDouble(index, values.doubleValue)
@@ -485,7 +485,7 @@ data class SetFieldBool(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val mem = values.refValue as ActionContext
     mem.getCurrentMem().setBool(index, values.boolValue)
@@ -497,7 +497,7 @@ data class SetFieldRef(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     val mem = values.refValue as ActionContext
     mem.getCurrentMem().setRef(index, values.refValue)
@@ -509,7 +509,7 @@ data class PlusInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -523,7 +523,7 @@ data class PlusLong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -537,7 +537,7 @@ data class PlusFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -551,7 +551,7 @@ data class PlusDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -565,7 +565,7 @@ data class MinusInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -579,7 +579,7 @@ data class MinusLong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -593,7 +593,7 @@ data class MinusFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -607,7 +607,7 @@ data class MinusDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -621,7 +621,7 @@ data class MultiplyInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -635,7 +635,7 @@ data class MultiplyLong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -649,7 +649,7 @@ data class MultiplyFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -663,7 +663,7 @@ data class MultiplyDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -677,7 +677,7 @@ data class DivideInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -691,7 +691,7 @@ data class DivideLong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -705,7 +705,7 @@ data class DivideFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -719,7 +719,7 @@ data class DivideDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -733,7 +733,7 @@ data class ModInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -747,7 +747,7 @@ data class ModLong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -761,7 +761,7 @@ data class CmpGTInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -775,7 +775,7 @@ data class CmpGTLong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -789,7 +789,7 @@ data class CmpGTFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -803,7 +803,7 @@ data class CmpGTDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -817,7 +817,7 @@ data class CmpGEInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -831,7 +831,7 @@ data class CmpGELong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -845,7 +845,7 @@ data class CmpGEFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -859,7 +859,7 @@ data class CmpGEDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -873,7 +873,7 @@ data class CmpLTInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -887,7 +887,7 @@ data class CmpLTLong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -901,7 +901,7 @@ data class CmpLTFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -915,7 +915,7 @@ data class CmpLTDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -929,7 +929,7 @@ data class CmpLEInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -943,7 +943,7 @@ data class CmpLELong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -957,7 +957,7 @@ data class CmpLEFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -971,7 +971,7 @@ data class CmpLEDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -985,7 +985,7 @@ data class LogicAndBool(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.boolValue
     right.execute(ctx, values)
@@ -999,7 +999,7 @@ data class LogicOrBool(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.boolValue
     right.execute(ctx, values)
@@ -1013,7 +1013,7 @@ data class CmpNEInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -1027,7 +1027,7 @@ data class CmpNELong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -1041,7 +1041,7 @@ data class CmpNEFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -1055,7 +1055,7 @@ data class CmpNEDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -1069,7 +1069,7 @@ data class CmpNEBool(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.boolValue
     right.execute(ctx, values)
@@ -1083,7 +1083,7 @@ data class CmpNERef(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.refValue
     right.execute(ctx, values)
@@ -1097,7 +1097,7 @@ data class CmpEQInt(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.intValue
     right.execute(ctx, values)
@@ -1111,7 +1111,7 @@ data class CmpEQLong(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.longValue
     right.execute(ctx, values)
@@ -1125,7 +1125,7 @@ data class CmpEQFloat(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.floatValue
     right.execute(ctx, values)
@@ -1139,7 +1139,7 @@ data class CmpEQDouble(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.doubleValue
     right.execute(ctx, values)
@@ -1153,7 +1153,7 @@ data class CmpEQBool(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.boolValue
     right.execute(ctx, values)
@@ -1167,7 +1167,7 @@ data class CmpEQRef(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     left.execute(ctx, values)
     val leftValue = values.refValue
     right.execute(ctx, values)
@@ -1180,7 +1180,7 @@ data class NegativeInt(
   private val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     values.intValue = -values.intValue
   }
@@ -1190,7 +1190,7 @@ data class NegativeLong(
   private val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     values.longValue = -values.longValue
   }
@@ -1200,7 +1200,7 @@ data class NegativeFloat(
   private val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     values.floatValue = -values.floatValue
   }
@@ -1210,7 +1210,7 @@ data class NegativeDouble(
   private val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     valueInst.execute(ctx, values)
     values.doubleValue = -values.doubleValue
   }
@@ -1220,7 +1220,7 @@ data class NewArrayInt(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
     values.refValue = IntArray(values.intValue)
   }
@@ -1230,7 +1230,7 @@ data class NewArrayLong(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
     values.refValue = LongArray(values.intValue)
   }
@@ -1240,7 +1240,7 @@ data class NewArrayFloat(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
     values.refValue = FloatArray(values.intValue)
   }
@@ -1250,7 +1250,7 @@ data class NewArrayDouble(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
     values.refValue = DoubleArray(values.intValue)
   }
@@ -1260,7 +1260,7 @@ data class NewArrayBool(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
     values.refValue = BooleanArray(values.intValue)
   }
@@ -1270,7 +1270,7 @@ data class NewArrayRef(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override fun execute0(ctx: ActionContext, values: ValueHolder) {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     lenInst.execute(ctx, values)
     values.refValue = Array<Any?>(values.intValue) { null }
   }

@@ -22,32 +22,32 @@ class ArrayTypeInstance(private val elementType: TypeInstance) : TypeInstance {
   }
 
   private val intArrayLengthField = object : ExecutableField("length", IntType, MemPos(0, 0), false) {
-    override fun execute(ctx: ActionContext, values: ValueHolder) {
+    override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
       values.intValue = (values.refValue as IntArray).size
     }
   }
   private val longArrayLengthField = object : ExecutableField("length", IntType, MemPos(0, 0), false) {
-    override fun execute(ctx: ActionContext, values: ValueHolder) {
+    override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
       values.intValue = (values.refValue as LongArray).size
     }
   }
   private val floatArrayLengthField = object : ExecutableField("length", IntType, MemPos(0, 0), false) {
-    override fun execute(ctx: ActionContext, values: ValueHolder) {
+    override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
       values.intValue = (values.refValue as FloatArray).size
     }
   }
   private val doubleArrayLengthField = object : ExecutableField("length", IntType, MemPos(0, 0), false) {
-    override fun execute(ctx: ActionContext, values: ValueHolder) {
+    override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
       values.intValue = (values.refValue as DoubleArray).size
     }
   }
   private val boolArrayLengthField = object : ExecutableField("length", IntType, MemPos(0, 0), false) {
-    override fun execute(ctx: ActionContext, values: ValueHolder) {
+    override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
       values.intValue = (values.refValue as BooleanArray).size
     }
   }
   private val refArrayLengthField = object : ExecutableField("length", IntType, MemPos(0, 0), false) {
-    override fun execute(ctx: ActionContext, values: ValueHolder) {
+    override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
       values.intValue = (values.refValue as Array<*>).size
     }
   }

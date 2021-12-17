@@ -32,7 +32,7 @@ class StdTypes : Types {
     stdObject.getCurrentMem().setRef(0, consoleObject)
     consoleObject.getCurrentMem().setRef(0, object : Instruction() {
       override val stackInfo = CONSOLE_LOG_STACK_INFO
-      override fun execute0(ctx: ActionContext, values: ValueHolder) {
+      override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
         val outputFunc = this@StdTypes.outputFunc
         val str = ctx.getCurrentMem().getRef(0)
         if (outputFunc == null)

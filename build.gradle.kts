@@ -62,6 +62,7 @@ repositories {
 
 dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 
   testImplementation(group = "junit", name = "junit", version = "4.12")
   testImplementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.9.9.3")
@@ -133,7 +134,13 @@ publishing {
       }
       val releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
       val snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-      url = uri(if (loadVersion().contains("-DEV")) { snapshotsRepoUrl } else { releasesRepoUrl })
+      url = uri(
+        if (loadVersion().contains("-DEV")) {
+          snapshotsRepoUrl
+        } else {
+          releasesRepoUrl
+        }
+      )
     }
   }
 }

@@ -18,18 +18,28 @@ import vjson.pl.inst.*
 import vjson.pl.type.*
 
 class ExtFunctions {
-  var currentTimeMillis: () -> Long = { 0L }
+  var currentTimeMillis: suspend () -> Long = { 0L }
     private set
-  var rand: () -> Double = { 0.0 }
+  var rand: suspend () -> Double = { 0.0 }
     private set
 
-  fun setCurrentTimeMillis(f: () -> Long): ExtFunctions {
+  fun setCurrentTimeMillis(f: suspend () -> Long): ExtFunctions {
     this.currentTimeMillis = f
     return this
   }
 
-  fun setRand(f: () -> Double): ExtFunctions {
+  fun setCurrentTimeMillisBlock(f: () -> Long): ExtFunctions {
+    this.currentTimeMillis = { f() }
+    return this
+  }
+
+  fun setRand(f: suspend () -> Double): ExtFunctions {
     this.rand = f
+    return this
+  }
+
+  fun setRandBlock(f: () -> Double): ExtFunctions {
+    this.rand = { f() }
     return this
   }
 }
@@ -56,7 +66,7 @@ class ExtTypes(private val funcs: ExtFunctions) : Types {
     override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
       return when (name) {
         "currentTimeMillis" -> object : ExecutableField(name, LongType, MemPos(0, 0), false) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
+          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             values.longValue = funcs.currentTimeMillis()
           }
         }
@@ -66,10 +76,10 @@ class ExtTypes(private val funcs: ExtFunctions) : Types {
           MemPos(0, 0),
           false
         ) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
+          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             values.refValue = object : Instruction() {
               override val stackInfo = RAND_STACK_INFO
-              override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 values.doubleValue = funcs.rand()
               }
             }

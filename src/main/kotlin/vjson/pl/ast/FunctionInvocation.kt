@@ -68,7 +68,7 @@ data class FunctionInvocation(
       val funcInst = func.target.generateInstruction()
       return object : Instruction() {
         override val stackInfo: StackInfo = ctx.stackInfo(func.lineCol)
-        override fun execute0(ctx: ActionContext, values: ValueHolder) {
+        override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
           if (funcInst is FunctionInstance) {
             funcInst.ctxBuilder = { buildContext(ctx, it, values, funcDesc, args) }
             funcInst.execute(ctx, values)
@@ -82,7 +82,7 @@ data class FunctionInvocation(
       }
     }
 
-    private fun buildContext(
+    private suspend fun buildContext(
       callerCtx: ActionContext,
       ctx: ActionContext,
       values: ValueHolder,

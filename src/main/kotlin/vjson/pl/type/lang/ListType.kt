@@ -47,12 +47,12 @@ open class ListType(
           )
         )
         object : ExecutableField(name, type, memPos, false) {
-          override fun execute(ctx: ActionContext, values: ValueHolder) {
+          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             val coll = obj.getCurrentMem().getRef(0) as MutableList<*>
             values.refValue = object : Instruction() {
               override val stackInfo = LIST_REMOVE_AT_STACK_INFO
-              override fun execute0(ctx: ActionContext, values: ValueHolder) {
+              override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 coll.removeAt(ctx.getCurrentMem().getInt(0))
               }
             }
@@ -67,12 +67,12 @@ open class ListType(
         )
         when (elementType) {
           IntType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Int>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_GET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val x = coll[ctx.getCurrentMem().getInt(0)]
                   values.intValue = x
                 }
@@ -80,12 +80,12 @@ open class ListType(
             }
           }
           LongType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Long>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_GET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val x = coll[ctx.getCurrentMem().getInt(0)]
                   values.longValue = x
                 }
@@ -93,12 +93,12 @@ open class ListType(
             }
           }
           FloatType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Float>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_GET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val x = coll[ctx.getCurrentMem().getInt(0)]
                   values.floatValue = x
                 }
@@ -106,12 +106,12 @@ open class ListType(
             }
           }
           DoubleType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Double>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_GET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val x = coll[ctx.getCurrentMem().getInt(0)]
                   values.doubleValue = x
                 }
@@ -119,12 +119,12 @@ open class ListType(
             }
           }
           BoolType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Boolean>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_GET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val x = coll[ctx.getCurrentMem().getInt(0)]
                   values.boolValue = x
                 }
@@ -132,12 +132,12 @@ open class ListType(
             }
           }
           else -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Any?>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_GET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val x = coll[ctx.getCurrentMem().getInt(0)]
                   values.refValue = x
                 }
@@ -150,12 +150,12 @@ open class ListType(
         val type = typeForInsertOrSet(ctx)
         when (elementType) {
           IntType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Int>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_SET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll[idx] = ctx.getCurrentMem().getInt(1)
                 }
@@ -163,12 +163,12 @@ open class ListType(
             }
           }
           LongType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Long>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_SET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll[idx] = ctx.getCurrentMem().getLong(0)
                 }
@@ -176,12 +176,12 @@ open class ListType(
             }
           }
           FloatType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Float>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_SET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll[idx] = ctx.getCurrentMem().getFloat(0)
                 }
@@ -189,12 +189,12 @@ open class ListType(
             }
           }
           DoubleType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Double>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_SET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll[idx] = ctx.getCurrentMem().getDouble(0)
                 }
@@ -202,12 +202,12 @@ open class ListType(
             }
           }
           BoolType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Boolean>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_SET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll[idx] = ctx.getCurrentMem().getBool(0)
                 }
@@ -215,12 +215,12 @@ open class ListType(
             }
           }
           else -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Any?>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_SET_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll[idx] = ctx.getCurrentMem().getRef(0)
                 }
@@ -233,12 +233,12 @@ open class ListType(
         val type = typeForInsertOrSet(ctx)
         when (elementType) {
           IntType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Int>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INSERT_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll.add(idx, ctx.getCurrentMem().getInt(1))
                 }
@@ -246,12 +246,12 @@ open class ListType(
             }
           }
           LongType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Long>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INSERT_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll.add(idx, ctx.getCurrentMem().getLong(0))
                 }
@@ -259,12 +259,12 @@ open class ListType(
             }
           }
           FloatType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Float>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INSERT_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll.add(idx, ctx.getCurrentMem().getFloat(0))
                 }
@@ -272,12 +272,12 @@ open class ListType(
             }
           }
           DoubleType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Double>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INSERT_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll.add(idx, ctx.getCurrentMem().getDouble(0))
                 }
@@ -285,12 +285,12 @@ open class ListType(
             }
           }
           BoolType -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Boolean>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INSERT_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll.add(idx, ctx.getCurrentMem().getBool(0))
                 }
@@ -298,12 +298,12 @@ open class ListType(
             }
           }
           else -> object : ExecutableField(name, type, memPos, false) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Any?>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INSERT_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   val idx = ctx.getCurrentMem().getInt(0)
                   coll.add(idx, ctx.getCurrentMem().getRef(0))
                 }
@@ -319,72 +319,72 @@ open class ListType(
         )
         when (elementType) {
           IntType -> object : ExecutableField(name, type, memPos) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Int>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INDEX_OF_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.intValue = coll.indexOf(ctx.getCurrentMem().getInt(0))
                 }
               }
             }
           }
           LongType -> object : ExecutableField(name, type, memPos) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Long>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INDEX_OF_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.intValue = coll.indexOf(ctx.getCurrentMem().getLong(0))
                 }
               }
             }
           }
           FloatType -> object : ExecutableField(name, type, memPos) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Float>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INDEX_OF_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.intValue = coll.indexOf(ctx.getCurrentMem().getFloat(0))
                 }
               }
             }
           }
           DoubleType -> object : ExecutableField(name, type, memPos) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Double>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INDEX_OF_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.intValue = coll.indexOf(ctx.getCurrentMem().getDouble(0))
                 }
               }
             }
           }
           BoolType -> object : ExecutableField(name, type, memPos) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Boolean>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INDEX_OF_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.intValue = coll.indexOf(ctx.getCurrentMem().getBool(0))
                 }
               }
             }
           }
           else -> object : ExecutableField(name, type, memPos) {
-            override fun execute(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Any?>
               values.refValue = object : Instruction() {
                 override val stackInfo = LIST_INDEX_OF_STACK_INFO
-                override fun execute0(ctx: ActionContext, values: ValueHolder) {
+                override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.intValue = coll.indexOf(ctx.getCurrentMem().getRef(0))
                 }
               }
@@ -400,12 +400,12 @@ open class ListType(
         ),
         memPos, false
       ) {
-        override fun execute(ctx: ActionContext, values: ValueHolder) {
+        override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val obj = values.refValue as ActionContext
           @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Any?>
           values.refValue = object : Instruction() {
             override val stackInfo = LIST_SUB_LIST_STACK_INFO
-            override fun execute0(ctx: ActionContext, values: ValueHolder) {
+            override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               val subLs = coll.subList(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getInt(1))
               val newObj = ActionContext(RuntimeMemoryTotal(refTotal = 1), null)
               newObj.getCurrentMem().setRef(0, subLs)

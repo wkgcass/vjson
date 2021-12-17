@@ -15,7 +15,7 @@ package vjson.pl.inst
 abstract class Instruction {
   abstract val stackInfo: StackInfo
 
-  fun execute(ctx: ActionContext, values: ValueHolder) {
+  suspend fun execute(ctx: ActionContext, values: ValueHolder) {
     if (ctx.returnImmediately) {
       return
     }
@@ -35,5 +35,5 @@ abstract class Instruction {
     }
   }
 
-  protected abstract fun execute0(ctx: ActionContext, values: ValueHolder)
+  protected abstract suspend fun execute0(ctx: ActionContext, values: ValueHolder)
 }

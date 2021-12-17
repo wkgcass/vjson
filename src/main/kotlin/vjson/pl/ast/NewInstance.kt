@@ -63,7 +63,7 @@ data class NewInstance(
     if (cons is ExecutableConstructorFunctionDescriptor) {
       return object : Instruction() {
         override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
-        override fun execute0(ctx: ActionContext, values: ValueHolder) {
+        override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
           val newCtx = ActionContext(cons.mem.memoryAllocator().getTotal(), null)
           cons.execute(newCtx, values)
           values.refValue = newCtx
@@ -81,7 +81,7 @@ data class NewInstance(
 
     return object : Instruction() {
       override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
-      override fun execute0(ctx: ActionContext, values: ValueHolder) {
+      override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
         val newCtx = ActionContext(total, ctx.getContext(memDepth))
         for (i in args.indices) {
           val param = cons.params[i]
