@@ -103,6 +103,50 @@ public class TestInterpreterSamplePrograms {
             "}\n" +
             "// the `;` can be omitted if `do` is on a new line\n" +
             "std.console.log:[ ('sum of 1 until 10 is ' + sum) ]\n" +
+            "\n" +
+            "// executable variables/fields\n" +
+            "class Counter: {} do: {\n" +
+            "  var n = 0\n" +
+            "  private function incr: {} int: {\n" +
+            "    return: n += 1\n" +
+            "  }\n" +
+            "  // use `executable` modifier and a zero-param function\n" +
+            "  // to define an executable variable/field\n" +
+            "  executable public var next = incr\n" +
+            "}\n" +
+            "var counter = new Counter:[]\n" +
+            "var cnt1 = counter.next\n" +
+            "var cnt2 = counter.next\n" +
+            "var cnt3 = counter.next\n" +
+            "std.console.log:[(\n" +
+            "  'cnt1 = ' + cnt1 +\n" +
+            "  ', cnt2 = ' + cnt2 +\n" +
+            "  ', cnt3 = ' + cnt3\n" +
+            ")]\n" +
+            "\n" +
+            "// exception and error handling\n" +
+            "function badFunction:{msg: string} void: {\n" +
+            "  throw: msg // can also be null or error object\n" +
+            "}\n" +
+            "function catchFunction:{} void: {\n" +
+            "  badFunction:[('bad function call')]\n" +
+            "  // use if: err != null to catch errors\n" +
+            "  // the following statement will catch all errors in current\n" +
+            "  // code block before the error handler\n" +
+            "  if: err != null; then: {\n" +
+            "    // a variable {err: error} is automatically defined\n" +
+            "    // and can be used in the error handling code\n" +
+            "    std.console.log:[('caught exception: ' + err.message)]\n" +
+            "  }\n" +
+            "\n" +
+            "  badFunction:[('the second bad function call')]\n" +
+            "  // the following statement will catch all errors after the last error handler\n" +
+            "  // and before this error handler\n" +
+            "  if: err != null; then: {\n" +
+            "    std.console.log:[('caught second exception: ' + err.message)]\n" +
+            "  }\n" +
+            "}\n" +
+            "catchFunction:[]\n" +
             "} // vjson-lang program ends with `}`\n";
         StdTypes std = new StdTypes();
         List<String> output = new ArrayList<>();
@@ -118,7 +162,10 @@ public class TestInterpreterSamplePrograms {
             "Hi bob, I'm alice",
             "plusObj.plus result is 3",
             "sum of 1 to 10 is 55",
-            "sum of 1 until 10 is 45"
+            "sum of 1 until 10 is 45",
+            "cnt1 = 1, cnt2 = 2, cnt3 = 3",
+            "caught exception: bad function call",
+            "caught second exception: the second bad function call"
         ), output);
     }
 
