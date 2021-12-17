@@ -79,8 +79,7 @@ open class MapType(
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Int, *>
-            values.refValue = object : Instruction() {
-              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
               override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 values.boolValue = map.containsKey(ctx.getCurrentMem().getInt(0))
               }
@@ -97,8 +96,7 @@ open class MapType(
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Long, *>
-            values.refValue = object : Instruction() {
-              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
               override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 values.boolValue = map.containsKey(ctx.getCurrentMem().getLong(0))
               }
@@ -115,8 +113,7 @@ open class MapType(
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Float, *>
-            values.refValue = object : Instruction() {
-              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
               override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 values.boolValue = map.containsKey(ctx.getCurrentMem().getFloat(0))
               }
@@ -133,8 +130,7 @@ open class MapType(
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Double, *>
-            values.refValue = object : Instruction() {
-              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
               override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 values.boolValue = map.containsKey(ctx.getCurrentMem().getDouble(0))
               }
@@ -151,8 +147,7 @@ open class MapType(
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Boolean, *>
-            values.refValue = object : Instruction() {
-              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
               override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 values.boolValue = map.containsKey(ctx.getCurrentMem().getBool(0))
               }
@@ -169,8 +164,7 @@ open class MapType(
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Any?, *>
-            values.refValue = object : Instruction() {
-              override val stackInfo = MAP_CONTAINS_KEY_STACK_INFO
+            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
               override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 values.boolValue = map.containsKey(ctx.getCurrentMem().getRef(0))
               }
@@ -187,8 +181,7 @@ open class MapType(
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val obj = values.refValue as ActionContext
           val map = obj.getCurrentMem().getRef(0) as Map<*, *>
-          values.refValue = object : Instruction() {
-            override val stackInfo = MAP_TO_STRING_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(MAP_TO_STRING_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.refValue = map.toString()
             }

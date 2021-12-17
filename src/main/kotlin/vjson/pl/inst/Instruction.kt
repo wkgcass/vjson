@@ -14,6 +14,7 @@ package vjson.pl.inst
 
 abstract class Instruction {
   abstract val stackInfo: StackInfo
+  protected var recordStackInfo = false
 
   suspend fun execute(ctx: ActionContext, values: ValueHolder) {
     if (ctx.returnImmediately) {
@@ -22,7 +23,9 @@ abstract class Instruction {
     try {
       execute0(ctx, values)
     } catch (e: InstructionException) {
-      e.stackTrace.add(stackInfo)
+      if (recordStackInfo) {
+        e.stackTrace.add(stackInfo)
+      }
       throw e
     } catch (e: Throwable) {
       val msg = e.message
@@ -36,4 +39,10 @@ abstract class Instruction {
   }
 
   protected abstract suspend fun execute0(ctx: ActionContext, values: ValueHolder)
+}
+
+abstract class InstructionWithStackInfo(override val stackInfo: StackInfo) : Instruction() {
+  init {
+    recordStackInfo = true
+  }
 }

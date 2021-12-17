@@ -31,8 +31,8 @@ data class CompositeInstruction(
 
 class ExecutableFieldInstruction(
   private val field: ExecutableField,
-  override val stackInfo: StackInfo
-) : Instruction() {
+  stackInfo: StackInfo
+) : InstructionWithStackInfo(stackInfo) {
   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     field.execute(ctx, values)
   }

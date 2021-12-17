@@ -77,8 +77,7 @@ class ExtTypes(private val funcs: ExtFunctions) : Types {
           false
         ) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-            values.refValue = object : Instruction() {
-              override val stackInfo = RAND_STACK_INFO
+            values.refValue = object : InstructionWithStackInfo(RAND_STACK_INFO) {
               override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 values.doubleValue = funcs.rand()
               }

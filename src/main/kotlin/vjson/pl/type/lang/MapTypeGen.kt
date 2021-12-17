@@ -26,8 +26,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.put(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getInt(1)) ?: 0
                   }
@@ -44,8 +43,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.put(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getLong(0)) ?: 0L
                   }
@@ -62,8 +60,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.put(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getFloat(0)) ?: 0f
                   }
@@ -80,8 +77,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.put(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getDouble(0)) ?: 0.0
                   }
@@ -98,8 +94,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.put(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getBool(0)) ?: false
                   }
@@ -116,8 +111,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.put(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getRef(0)) ?: null
                   }
@@ -136,8 +130,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.put(ctx.getCurrentMem().getLong(0), ctx.getCurrentMem().getInt(0)) ?: 0
                   }
@@ -154,8 +147,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.put(ctx.getCurrentMem().getLong(0), ctx.getCurrentMem().getLong(1)) ?: 0L
                   }
@@ -172,8 +164,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.put(ctx.getCurrentMem().getLong(0), ctx.getCurrentMem().getFloat(0)) ?: 0f
                   }
@@ -190,8 +181,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.put(ctx.getCurrentMem().getLong(0), ctx.getCurrentMem().getDouble(0)) ?: 0.0
                   }
@@ -208,8 +198,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.put(ctx.getCurrentMem().getLong(0), ctx.getCurrentMem().getBool(0)) ?: false
                   }
@@ -226,8 +215,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.put(ctx.getCurrentMem().getLong(0), ctx.getCurrentMem().getRef(0)) ?: null
                   }
@@ -246,8 +234,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.put(ctx.getCurrentMem().getFloat(0), ctx.getCurrentMem().getInt(0)) ?: 0
                   }
@@ -264,8 +251,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.put(ctx.getCurrentMem().getFloat(0), ctx.getCurrentMem().getLong(0)) ?: 0L
                   }
@@ -282,8 +268,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.put(ctx.getCurrentMem().getFloat(0), ctx.getCurrentMem().getFloat(1)) ?: 0f
                   }
@@ -300,8 +285,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.put(ctx.getCurrentMem().getFloat(0), ctx.getCurrentMem().getDouble(0)) ?: 0.0
                   }
@@ -318,8 +302,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.put(ctx.getCurrentMem().getFloat(0), ctx.getCurrentMem().getBool(0)) ?: false
                   }
@@ -336,8 +319,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.put(ctx.getCurrentMem().getFloat(0), ctx.getCurrentMem().getRef(0)) ?: null
                   }
@@ -356,8 +338,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.put(ctx.getCurrentMem().getDouble(0), ctx.getCurrentMem().getInt(0)) ?: 0
                   }
@@ -374,8 +355,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.put(ctx.getCurrentMem().getDouble(0), ctx.getCurrentMem().getLong(0)) ?: 0L
                   }
@@ -392,8 +372,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.put(ctx.getCurrentMem().getDouble(0), ctx.getCurrentMem().getFloat(0)) ?: 0f
                   }
@@ -410,8 +389,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.put(ctx.getCurrentMem().getDouble(0), ctx.getCurrentMem().getDouble(1)) ?: 0.0
                   }
@@ -428,8 +406,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.put(ctx.getCurrentMem().getDouble(0), ctx.getCurrentMem().getBool(0)) ?: false
                   }
@@ -446,8 +423,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.put(ctx.getCurrentMem().getDouble(0), ctx.getCurrentMem().getRef(0)) ?: null
                   }
@@ -466,8 +442,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.put(ctx.getCurrentMem().getBool(0), ctx.getCurrentMem().getInt(0)) ?: 0
                   }
@@ -484,8 +459,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.put(ctx.getCurrentMem().getBool(0), ctx.getCurrentMem().getLong(0)) ?: 0L
                   }
@@ -502,8 +476,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.put(ctx.getCurrentMem().getBool(0), ctx.getCurrentMem().getFloat(0)) ?: 0f
                   }
@@ -520,8 +493,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.put(ctx.getCurrentMem().getBool(0), ctx.getCurrentMem().getDouble(0)) ?: 0.0
                   }
@@ -538,8 +510,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.put(ctx.getCurrentMem().getBool(0), ctx.getCurrentMem().getBool(1)) ?: false
                   }
@@ -556,8 +527,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.put(ctx.getCurrentMem().getBool(0), ctx.getCurrentMem().getRef(0)) ?: null
                   }
@@ -576,8 +546,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.put(ctx.getCurrentMem().getRef(0), ctx.getCurrentMem().getInt(0)) ?: 0
                   }
@@ -594,8 +563,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.put(ctx.getCurrentMem().getRef(0), ctx.getCurrentMem().getLong(0)) ?: 0L
                   }
@@ -612,8 +580,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.put(ctx.getCurrentMem().getRef(0), ctx.getCurrentMem().getFloat(0)) ?: 0f
                   }
@@ -630,8 +597,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.put(ctx.getCurrentMem().getRef(0), ctx.getCurrentMem().getDouble(0)) ?: 0.0
                   }
@@ -648,8 +614,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.put(ctx.getCurrentMem().getRef(0), ctx.getCurrentMem().getBool(0)) ?: false
                   }
@@ -666,8 +631,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_PUT_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.put(ctx.getCurrentMem().getRef(0), ctx.getCurrentMem().getRef(1)) ?: null
                   }
@@ -690,8 +654,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map[ctx.getCurrentMem().getInt(0)] ?: 0
                   }
@@ -708,8 +671,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map[ctx.getCurrentMem().getInt(0)] ?: 0L
                   }
@@ -726,8 +688,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map[ctx.getCurrentMem().getInt(0)] ?: 0f
                   }
@@ -744,8 +705,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map[ctx.getCurrentMem().getInt(0)] ?: 0.0
                   }
@@ -762,8 +722,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map[ctx.getCurrentMem().getInt(0)] ?: false
                   }
@@ -780,8 +739,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map[ctx.getCurrentMem().getInt(0)] ?: null
                   }
@@ -800,8 +758,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map[ctx.getCurrentMem().getLong(0)] ?: 0
                   }
@@ -818,8 +775,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map[ctx.getCurrentMem().getLong(0)] ?: 0L
                   }
@@ -836,8 +792,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map[ctx.getCurrentMem().getLong(0)] ?: 0f
                   }
@@ -854,8 +809,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map[ctx.getCurrentMem().getLong(0)] ?: 0.0
                   }
@@ -872,8 +826,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map[ctx.getCurrentMem().getLong(0)] ?: false
                   }
@@ -890,8 +843,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map[ctx.getCurrentMem().getLong(0)] ?: null
                   }
@@ -910,8 +862,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map[ctx.getCurrentMem().getFloat(0)] ?: 0
                   }
@@ -928,8 +879,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map[ctx.getCurrentMem().getFloat(0)] ?: 0L
                   }
@@ -946,8 +896,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map[ctx.getCurrentMem().getFloat(0)] ?: 0f
                   }
@@ -964,8 +913,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map[ctx.getCurrentMem().getFloat(0)] ?: 0.0
                   }
@@ -982,8 +930,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map[ctx.getCurrentMem().getFloat(0)] ?: false
                   }
@@ -1000,8 +947,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map[ctx.getCurrentMem().getFloat(0)] ?: null
                   }
@@ -1020,8 +966,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map[ctx.getCurrentMem().getDouble(0)] ?: 0
                   }
@@ -1038,8 +983,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map[ctx.getCurrentMem().getDouble(0)] ?: 0L
                   }
@@ -1056,8 +1000,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map[ctx.getCurrentMem().getDouble(0)] ?: 0f
                   }
@@ -1074,8 +1017,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map[ctx.getCurrentMem().getDouble(0)] ?: 0.0
                   }
@@ -1092,8 +1034,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map[ctx.getCurrentMem().getDouble(0)] ?: false
                   }
@@ -1110,8 +1051,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map[ctx.getCurrentMem().getDouble(0)] ?: null
                   }
@@ -1130,8 +1070,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map[ctx.getCurrentMem().getBool(0)] ?: 0
                   }
@@ -1148,8 +1087,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map[ctx.getCurrentMem().getBool(0)] ?: 0L
                   }
@@ -1166,8 +1104,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map[ctx.getCurrentMem().getBool(0)] ?: 0f
                   }
@@ -1184,8 +1121,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map[ctx.getCurrentMem().getBool(0)] ?: 0.0
                   }
@@ -1202,8 +1138,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map[ctx.getCurrentMem().getBool(0)] ?: false
                   }
@@ -1220,8 +1155,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map[ctx.getCurrentMem().getBool(0)] ?: null
                   }
@@ -1240,8 +1174,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map[ctx.getCurrentMem().getRef(0)] ?: 0
                   }
@@ -1258,8 +1191,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map[ctx.getCurrentMem().getRef(0)] ?: 0L
                   }
@@ -1276,8 +1208,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map[ctx.getCurrentMem().getRef(0)] ?: 0f
                   }
@@ -1294,8 +1225,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map[ctx.getCurrentMem().getRef(0)] ?: 0.0
                   }
@@ -1312,8 +1242,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map[ctx.getCurrentMem().getRef(0)] ?: false
                   }
@@ -1330,8 +1259,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_GET_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map[ctx.getCurrentMem().getRef(0)] ?: null
                   }
@@ -1354,8 +1282,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.remove(ctx.getCurrentMem().getInt(0)) ?: 0
                   }
@@ -1372,8 +1299,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.remove(ctx.getCurrentMem().getInt(0)) ?: 0L
                   }
@@ -1390,8 +1316,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.remove(ctx.getCurrentMem().getInt(0)) ?: 0f
                   }
@@ -1408,8 +1333,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.remove(ctx.getCurrentMem().getInt(0)) ?: 0.0
                   }
@@ -1426,8 +1350,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.remove(ctx.getCurrentMem().getInt(0)) ?: false
                   }
@@ -1444,8 +1367,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.remove(ctx.getCurrentMem().getInt(0)) ?: null
                   }
@@ -1464,8 +1386,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.remove(ctx.getCurrentMem().getLong(0)) ?: 0
                   }
@@ -1482,8 +1403,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.remove(ctx.getCurrentMem().getLong(0)) ?: 0L
                   }
@@ -1500,8 +1420,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.remove(ctx.getCurrentMem().getLong(0)) ?: 0f
                   }
@@ -1518,8 +1437,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.remove(ctx.getCurrentMem().getLong(0)) ?: 0.0
                   }
@@ -1536,8 +1454,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.remove(ctx.getCurrentMem().getLong(0)) ?: false
                   }
@@ -1554,8 +1471,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.remove(ctx.getCurrentMem().getLong(0)) ?: null
                   }
@@ -1574,8 +1490,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.remove(ctx.getCurrentMem().getFloat(0)) ?: 0
                   }
@@ -1592,8 +1507,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.remove(ctx.getCurrentMem().getFloat(0)) ?: 0L
                   }
@@ -1610,8 +1524,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.remove(ctx.getCurrentMem().getFloat(0)) ?: 0f
                   }
@@ -1628,8 +1541,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.remove(ctx.getCurrentMem().getFloat(0)) ?: 0.0
                   }
@@ -1646,8 +1558,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.remove(ctx.getCurrentMem().getFloat(0)) ?: false
                   }
@@ -1664,8 +1575,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.remove(ctx.getCurrentMem().getFloat(0)) ?: null
                   }
@@ -1684,8 +1594,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.remove(ctx.getCurrentMem().getDouble(0)) ?: 0
                   }
@@ -1702,8 +1611,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.remove(ctx.getCurrentMem().getDouble(0)) ?: 0L
                   }
@@ -1720,8 +1628,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.remove(ctx.getCurrentMem().getDouble(0)) ?: 0f
                   }
@@ -1738,8 +1645,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.remove(ctx.getCurrentMem().getDouble(0)) ?: 0.0
                   }
@@ -1756,8 +1662,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.remove(ctx.getCurrentMem().getDouble(0)) ?: false
                   }
@@ -1774,8 +1679,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.remove(ctx.getCurrentMem().getDouble(0)) ?: null
                   }
@@ -1794,8 +1698,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.remove(ctx.getCurrentMem().getBool(0)) ?: 0
                   }
@@ -1812,8 +1715,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.remove(ctx.getCurrentMem().getBool(0)) ?: 0L
                   }
@@ -1830,8 +1732,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.remove(ctx.getCurrentMem().getBool(0)) ?: 0f
                   }
@@ -1848,8 +1749,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.remove(ctx.getCurrentMem().getBool(0)) ?: 0.0
                   }
@@ -1866,8 +1766,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.remove(ctx.getCurrentMem().getBool(0)) ?: false
                   }
@@ -1884,8 +1783,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.remove(ctx.getCurrentMem().getBool(0)) ?: null
                   }
@@ -1904,8 +1802,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Int>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.intValue = map.remove(ctx.getCurrentMem().getRef(0)) ?: 0
                   }
@@ -1922,8 +1819,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Long>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.longValue = map.remove(ctx.getCurrentMem().getRef(0)) ?: 0L
                   }
@@ -1940,8 +1836,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Float>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.floatValue = map.remove(ctx.getCurrentMem().getRef(0)) ?: 0f
                   }
@@ -1958,8 +1853,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Double>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.doubleValue = map.remove(ctx.getCurrentMem().getRef(0)) ?: 0.0
                   }
@@ -1976,8 +1870,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Boolean>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.boolValue = map.remove(ctx.getCurrentMem().getRef(0)) ?: false
                   }
@@ -1994,8 +1887,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Any?>
-                values.refValue = object : Instruction() {
-                  override val stackInfo = MAP_REMOVE_STACK_INFO
+                values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
                   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                     values.refValue = map.remove(ctx.getCurrentMem().getRef(0)) ?: null
                   }

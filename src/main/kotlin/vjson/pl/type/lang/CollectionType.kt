@@ -77,8 +77,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Int>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_ADD_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_ADD_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.add(ctx.getCurrentMem().getInt(0))
                 }
@@ -89,8 +88,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Long>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_ADD_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_ADD_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.add(ctx.getCurrentMem().getLong(0))
                 }
@@ -101,8 +99,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Float>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_ADD_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_ADD_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.add(ctx.getCurrentMem().getFloat(0))
                 }
@@ -113,8 +110,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Double>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_ADD_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_ADD_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.add(ctx.getCurrentMem().getDouble(0))
                 }
@@ -125,8 +121,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Boolean>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_ADD_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_ADD_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.add(ctx.getCurrentMem().getBool(0))
                 }
@@ -137,8 +132,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Any?>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_ADD_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_ADD_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.add(ctx.getCurrentMem().getRef(0))
                 }
@@ -158,8 +152,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Int>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.remove(ctx.getCurrentMem().getInt(0))
                 }
@@ -170,8 +163,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Long>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.remove(ctx.getCurrentMem().getLong(0))
                 }
@@ -182,8 +174,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Float>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.remove(ctx.getCurrentMem().getFloat(0))
                 }
@@ -194,8 +185,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Double>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.remove(ctx.getCurrentMem().getDouble(0))
                 }
@@ -206,8 +196,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Boolean>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.remove(ctx.getCurrentMem().getBool(0))
                 }
@@ -218,8 +207,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Any?>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.remove(ctx.getCurrentMem().getRef(0))
                 }
@@ -239,8 +227,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Int>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.contains(ctx.getCurrentMem().getInt(0))
                 }
@@ -251,8 +238,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Long>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.contains(ctx.getCurrentMem().getLong(0))
                 }
@@ -263,8 +249,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Float>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.contains(ctx.getCurrentMem().getFloat(0))
                 }
@@ -275,8 +260,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Double>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.contains(ctx.getCurrentMem().getDouble(0))
                 }
@@ -287,8 +271,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Boolean>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.contains(ctx.getCurrentMem().getBool(0))
                 }
@@ -299,8 +282,7 @@ abstract class CollectionType(
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Any?>
-              values.refValue = object : Instruction() {
-                override val stackInfo = COLL_REMOVE_STACK_INFO
+              values.refValue = object : InstructionWithStackInfo(COLL_REMOVE_STACK_INFO) {
                 override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                   values.boolValue = coll.contains(ctx.getCurrentMem().getRef(0))
                 }
@@ -326,8 +308,7 @@ abstract class CollectionType(
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             val coll = obj.getCurrentMem().getRef(0) as MutableCollection<*>
-            values.refValue = object : Instruction() {
-              override val stackInfo = COLL_TO_STRING_STACK_INFO
+            values.refValue = object : InstructionWithStackInfo(COLL_TO_STRING_STACK_INFO) {
               override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
                 values.refValue = coll.toString()
               }

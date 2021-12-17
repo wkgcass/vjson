@@ -55,8 +55,7 @@ object IntType : NumericTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val n = values.intValue
-          values.refValue = object : Instruction() {
-            override val stackInfo = INT_TO_STRING_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(INT_TO_STRING_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.refValue = n.toString()
             }
@@ -102,8 +101,7 @@ object LongType : NumericTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val n = values.longValue
-          values.refValue = object : Instruction() {
-            override val stackInfo = LONG_TO_STRING_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(LONG_TO_STRING_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.refValue = n.toString()
             }
@@ -149,8 +147,7 @@ object FloatType : NumericTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val n = values.floatValue
-          values.refValue = object : Instruction() {
-            override val stackInfo = FLOAT_TO_STRING_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(FLOAT_TO_STRING_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.refValue = n.toString()
             }
@@ -196,8 +193,7 @@ object DoubleType : NumericTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val n = values.doubleValue
-          values.refValue = object : Instruction() {
-            override val stackInfo = DOUBLE_TO_STRING_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(DOUBLE_TO_STRING_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.refValue = n.toString()
             }
@@ -224,8 +220,7 @@ object BoolType : PrimitiveTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val n = values.boolValue
-          values.refValue = object : Instruction() {
-            override val stackInfo = BOOL_TO_STRING_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(BOOL_TO_STRING_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.refValue = n.toString()
             }
@@ -282,8 +277,7 @@ object StringType : BuiltInTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val n = values.refValue
-          values.refValue = object : Instruction() {
-            override val stackInfo = STRING_TO_STRING_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(STRING_TO_STRING_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.refValue = n
             }
@@ -301,8 +295,7 @@ object StringType : BuiltInTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val str = values.refValue as String
-          values.refValue = object : Instruction() {
-            override val stackInfo = STRING_INDEX_OF_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(STRING_INDEX_OF_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.intValue = str.indexOf(ctx.getCurrentMem().getRef(0) as String)
             }
@@ -321,8 +314,7 @@ object StringType : BuiltInTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val str = values.refValue as String
-          values.refValue = object : Instruction() {
-            override val stackInfo = STRING_SUBSTRING_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(STRING_SUBSTRING_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.refValue = str.substring(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getInt(1))
             }
@@ -337,8 +329,7 @@ object StringType : BuiltInTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val str = values.refValue as String
-          values.refValue = object : Instruction() {
-            override val stackInfo = STRING_TRIM_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(STRING_TRIM_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.refValue = str.trim()
             }
@@ -356,8 +347,7 @@ object StringType : BuiltInTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val str = values.refValue as String
-          values.refValue = object : Instruction() {
-            override val stackInfo = STRING_STARTS_WITH_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(STRING_STARTS_WITH_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.boolValue = str.startsWith(ctx.getCurrentMem().getRef(0) as String)
             }
@@ -375,8 +365,7 @@ object StringType : BuiltInTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val str = values.refValue as String
-          values.refValue = object : Instruction() {
-            override val stackInfo = STRING_ENDS_WITH_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(STRING_ENDS_WITH_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.boolValue = str.endsWith(ctx.getCurrentMem().getRef(0) as String)
             }
@@ -394,8 +383,7 @@ object StringType : BuiltInTypeInstance {
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val str = values.refValue as String
-          values.refValue = object : Instruction() {
-            override val stackInfo = STRING_CONTAINS_STACK_INFO
+          values.refValue = object : InstructionWithStackInfo(STRING_CONTAINS_STACK_INFO) {
             override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
               values.boolValue = str.contains(ctx.getCurrentMem().getRef(0) as String)
             }

@@ -15,7 +15,7 @@ package vjson.pl.ast
 import vjson.ex.ParserException
 import vjson.pl.inst.ActionContext
 import vjson.pl.inst.Instruction
-import vjson.pl.inst.StackInfo
+import vjson.pl.inst.InstructionWithStackInfo
 import vjson.pl.inst.ValueHolder
 import vjson.pl.type.*
 
@@ -61,8 +61,7 @@ data class NewInstance(
     val cons = typeInstance.constructor(ctx)!!
 
     if (cons is ExecutableConstructorFunctionDescriptor) {
-      return object : Instruction() {
-        override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
+      return object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
         override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
           val newCtx = ActionContext(cons.mem.memoryAllocator().getTotal(), null)
           cons.execute(newCtx, values)
@@ -79,8 +78,7 @@ data class NewInstance(
     val args = this.args.map { it.generateInstruction() }
     val code = cls.code.map { it.generateInstruction() }
 
-    return object : Instruction() {
-      override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
+    return object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
       override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
         val newCtx = ActionContext(total, ctx.getContext(memDepth))
         for (i in args.indices) {

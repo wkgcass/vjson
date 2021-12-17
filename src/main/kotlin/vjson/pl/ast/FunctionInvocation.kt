@@ -66,8 +66,7 @@ data class FunctionInvocation(
     fun buildFunctionInvocationInstruction(ctx: TypeContext, func: FunctionInvocation, args: List<Instruction>): Instruction {
       val funcDesc = func.target.typeInstance().functionDescriptor(ctx)!!
       val funcInst = func.target.generateInstruction()
-      return object : Instruction() {
-        override val stackInfo: StackInfo = ctx.stackInfo(func.lineCol)
+      return object : InstructionWithStackInfo(ctx.stackInfo(func.lineCol)) {
         override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
           if (funcInst is FunctionInstance) {
             funcInst.ctxBuilder = { buildContext(ctx, it, values, funcDesc, args) }

@@ -236,8 +236,7 @@ data class BinOp(
       variableType.cls.getMemDepth()
     } else 0
 
-    return object : Instruction() {
-      override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
+    return object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
       override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
         if (getFuncInst is FunctionInstance) {
           getFuncInst.ctxBuilder = { ActionContext(total, it) }
