@@ -52,8 +52,9 @@
     color: /*#fff*/ #bbc1ce;
     cursor: pointer;
     display: inline-block;
-    /* font-family: "Farfetch Basis","Helvetica Neue",Arial,sans-serif;
-    font-size: 16px;
+    /* font-family: "Farfetch Basis","Helvetica Neue",Arial,sans-serif; */
+    font-size: 11px;
+    /*
     font-weight: 700;
     line-height: 1.5;
     max-width: none;

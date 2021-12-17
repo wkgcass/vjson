@@ -12,7 +12,6 @@
         <div class="custom-select" style="width:200px; float: left">
             <select>
                 <option>Fibonacci</option>
-                <option>Pi</option>
                 <option>HelloWorld</option>
                 <option>Syntax</option>
                 <option>BuiltInTypes</option>
@@ -68,19 +67,6 @@
         "var n = 10\n" +
         "std.console.log: [(n + 'th element of the Fibonacci sequence is ' + fib:[n])]\n" +
         "}\n";
-    var PROG_PI = "{\n" +
-        "var Pi = 0.0\n" +
-        "for: [{var i = 1}; i < 1000000; i += 1] do: {\n" +
-        "    if: i % 2 == 0; then: {\n" +
-        "        Pi = Pi - 1.0 / (2 * i - 1).toDouble\n" +
-        "    } else: {\n" +
-        "        Pi = Pi + 1.0 / (2 * i - 1).toDouble\n" +
-        "    }\n" +
-        "}\n" +
-        "Pi = Pi * 4.toDouble\n" +
-        "std.console.log:[('Pi: ' + Pi)]\n" +
-        "}\n" +
-        "// This program may take a while to run\n";
     var PROG_SYNTAX = "{ // vjson-lang starts with `{`\n" +
         "// variable definition\n" +
         "var variableName = 1\n" +
@@ -309,7 +295,6 @@
         "}\n";
     var progs = {
         'Fibonacci': PROG_FIB,
-        'Pi': PROG_PI,
         'HelloWorld': PROG_HELLO,
         'Syntax': PROG_SYNTAX,
         'BuiltInTypes': PROG_BUILTIN,
