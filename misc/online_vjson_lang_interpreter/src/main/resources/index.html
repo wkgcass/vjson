@@ -346,6 +346,10 @@
     aceConsole.setReadOnly(true);
     aceConsole.getSession().setValue("\n");
 
+    aceConsole.getSession().on('change', () => {
+        aceConsole.renderer.scrollToLine(Number.POSITIVE_INFINITY);
+    });
+
     online_vjson_lang_interpreter.registerOutput(function (line) {
         var newLines = aceConsole.getSession().getValue() + line + '\n';
         aceConsole.getSession().setValue(newLines);
