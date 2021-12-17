@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js") version "1.5.10"
+    kotlin("js") version "1.5.30"
 }
 
 group = "io.vproxy"
@@ -26,4 +26,9 @@ rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.N
 
 rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class.java) {
     rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().versions.webpackDevServer.version = "4.0.0-rc.0"
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-js:1.5.30")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 }
