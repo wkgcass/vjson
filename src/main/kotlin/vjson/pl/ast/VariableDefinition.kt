@@ -32,7 +32,7 @@ data class VariableDefinition(
 
   override fun checkAST(ctx: TypeContext) {
     this.ctx = ctx
-    if (ctx.hasVariable(name)) {
+    if (ctx.hasVariableInThisContext(name)) {
       throw ParserException("variable $name is already defined", lineCol)
     }
     if (modifiers.isExecutable()) {
