@@ -46,7 +46,7 @@ open class ListType(
             RuntimeMemoryTotal(intTotal = 1)
           )
         )
-        object : ExecutableField(name, type, memPos, false) {
+        object : ExecutableField(name, type, memPos) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             val coll = obj.getCurrentMem().getRef(0) as MutableList<*>
@@ -65,7 +65,7 @@ open class ListType(
           )
         )
         when (elementType) {
-          IntType -> object : ExecutableField(name, type, memPos, false) {
+          IntType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Int>
@@ -77,7 +77,7 @@ open class ListType(
               }
             }
           }
-          LongType -> object : ExecutableField(name, type, memPos, false) {
+          LongType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Long>
@@ -89,7 +89,7 @@ open class ListType(
               }
             }
           }
-          FloatType -> object : ExecutableField(name, type, memPos, false) {
+          FloatType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Float>
@@ -101,7 +101,7 @@ open class ListType(
               }
             }
           }
-          DoubleType -> object : ExecutableField(name, type, memPos, false) {
+          DoubleType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Double>
@@ -113,7 +113,7 @@ open class ListType(
               }
             }
           }
-          BoolType -> object : ExecutableField(name, type, memPos, false) {
+          BoolType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Boolean>
@@ -125,7 +125,7 @@ open class ListType(
               }
             }
           }
-          else -> object : ExecutableField(name, type, memPos, false) {
+          else -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Any?>
@@ -142,7 +142,7 @@ open class ListType(
       "set" -> {
         val type = typeForInsertOrSet(ctx)
         when (elementType) {
-          IntType -> object : ExecutableField(name, type, memPos, false) {
+          IntType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Int>
@@ -154,7 +154,7 @@ open class ListType(
               }
             }
           }
-          LongType -> object : ExecutableField(name, type, memPos, false) {
+          LongType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Long>
@@ -166,7 +166,7 @@ open class ListType(
               }
             }
           }
-          FloatType -> object : ExecutableField(name, type, memPos, false) {
+          FloatType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Float>
@@ -178,7 +178,7 @@ open class ListType(
               }
             }
           }
-          DoubleType -> object : ExecutableField(name, type, memPos, false) {
+          DoubleType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Double>
@@ -190,7 +190,7 @@ open class ListType(
               }
             }
           }
-          BoolType -> object : ExecutableField(name, type, memPos, false) {
+          BoolType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Boolean>
@@ -202,7 +202,7 @@ open class ListType(
               }
             }
           }
-          else -> object : ExecutableField(name, type, memPos, false) {
+          else -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Any?>
@@ -219,7 +219,7 @@ open class ListType(
       "insert" -> {
         val type = typeForInsertOrSet(ctx)
         when (elementType) {
-          IntType -> object : ExecutableField(name, type, memPos, false) {
+          IntType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Int>
@@ -231,7 +231,7 @@ open class ListType(
               }
             }
           }
-          LongType -> object : ExecutableField(name, type, memPos, false) {
+          LongType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Long>
@@ -243,7 +243,7 @@ open class ListType(
               }
             }
           }
-          FloatType -> object : ExecutableField(name, type, memPos, false) {
+          FloatType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Float>
@@ -255,7 +255,7 @@ open class ListType(
               }
             }
           }
-          DoubleType -> object : ExecutableField(name, type, memPos, false) {
+          DoubleType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Double>
@@ -267,7 +267,7 @@ open class ListType(
               }
             }
           }
-          BoolType -> object : ExecutableField(name, type, memPos, false) {
+          BoolType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Boolean>
@@ -279,7 +279,7 @@ open class ListType(
               }
             }
           }
-          else -> object : ExecutableField(name, type, memPos, false) {
+          else -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableList<Any?>
@@ -373,7 +373,7 @@ open class ListType(
           listOf(ParamInstance(IntType, 0), ParamInstance(IntType, 1)), this,
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 2))
         ),
-        memPos, false
+        memPos
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val obj = values.refValue as ActionContext

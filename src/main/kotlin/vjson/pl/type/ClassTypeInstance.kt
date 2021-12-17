@@ -49,13 +49,27 @@ class ClassTypeInstance(val cls: ClassDefinition) : TypeInstance {
     if (accessFrom == this) {
       val consField = constructorFields[name]
       if (consField != null) {
-        return Field(consField.name, consField.typeInstance(), MemPos(cls.getMemDepth() + 1, consField.memIndex), true)
+        return Field(
+          consField.name, consField.typeInstance(), MemPos(cls.getMemDepth() + 1, consField.memIndex),
+          modifiable = true, executor = null
+        )
       }
     }
     val field = fields[name]
     if (field != null) {
       if (field.modifiers.isPublic() || accessFrom == this) {
-        return Field(name, field.value.typeInstance(), field.getMemPos(), !field.modifiers.isConst())
+        if (field.modifiers.isExecutable()) {
+          return Field(
+            name, field.typeInstance(), field.getMemPos(),
+            !field.modifiers.isConst() && !field.modifiers.isExecutable(),
+            Pair(field.value.typeInstance().functionDescriptor(field.getCtx())!!, field.value.generateInstruction())
+          )
+        } else {
+          return Field(
+            name, field.typeInstance(), field.getMemPos(),
+            !field.modifiers.isConst() && !field.modifiers.isExecutable(), null
+          )
+        }
       } else {
         return null
       }
@@ -63,7 +77,7 @@ class ClassTypeInstance(val cls: ClassDefinition) : TypeInstance {
     val func = functions[name]
     if (func != null) {
       if (!func.modifiers.isPrivate() || accessFrom == this) {
-        return Field(name, FunctionDescriptorTypeInstance(func.descriptor(ctx)), func.getMemPos(), false)
+        return Field(name, FunctionDescriptorTypeInstance(func.descriptor(ctx)), func.getMemPos(), modifiable = false, executor = null)
       } else {
         return null
       }

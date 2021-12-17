@@ -59,7 +59,7 @@ abstract class CollectionType(
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     val memPos = MemPos(0, 0)
     return when (name) {
-      "size" -> object : ExecutableField(name, IntType, memPos, false) {
+      "size" -> object : ExecutableField(name, IntType, memPos) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val obj = values.refValue as ActionContext
           val coll = obj.getCurrentMem().getRef(0) as Collection<*>
@@ -73,7 +73,7 @@ abstract class CollectionType(
           memoryAllocatorForSingleElementTypeFunction()
         )
         when (elementType) {
-          IntType -> object : ExecutableField(name, type, memPos, false) {
+          IntType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Int>
@@ -84,7 +84,7 @@ abstract class CollectionType(
               }
             }
           }
-          LongType -> object : ExecutableField(name, type, memPos, false) {
+          LongType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Long>
@@ -95,7 +95,7 @@ abstract class CollectionType(
               }
             }
           }
-          FloatType -> object : ExecutableField(name, type, memPos, false) {
+          FloatType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Float>
@@ -106,7 +106,7 @@ abstract class CollectionType(
               }
             }
           }
-          DoubleType -> object : ExecutableField(name, type, memPos, false) {
+          DoubleType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Double>
@@ -117,7 +117,7 @@ abstract class CollectionType(
               }
             }
           }
-          BoolType -> object : ExecutableField(name, type, memPos, false) {
+          BoolType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Boolean>
@@ -128,7 +128,7 @@ abstract class CollectionType(
               }
             }
           }
-          else -> object : ExecutableField(name, type, memPos, false) {
+          else -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Any?>
@@ -148,7 +148,7 @@ abstract class CollectionType(
           memoryAllocatorForSingleElementTypeFunction()
         )
         when (elementType) {
-          IntType -> object : ExecutableField(name, type, memPos, false) {
+          IntType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Int>
@@ -159,7 +159,7 @@ abstract class CollectionType(
               }
             }
           }
-          LongType -> object : ExecutableField(name, type, memPos, false) {
+          LongType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Long>
@@ -170,7 +170,7 @@ abstract class CollectionType(
               }
             }
           }
-          FloatType -> object : ExecutableField(name, type, memPos, false) {
+          FloatType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Float>
@@ -181,7 +181,7 @@ abstract class CollectionType(
               }
             }
           }
-          DoubleType -> object : ExecutableField(name, type, memPos, false) {
+          DoubleType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Double>
@@ -192,7 +192,7 @@ abstract class CollectionType(
               }
             }
           }
-          BoolType -> object : ExecutableField(name, type, memPos, false) {
+          BoolType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Boolean>
@@ -203,7 +203,7 @@ abstract class CollectionType(
               }
             }
           }
-          else -> object : ExecutableField(name, type, memPos, false) {
+          else -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Any?>
@@ -223,7 +223,7 @@ abstract class CollectionType(
           memoryAllocatorForSingleElementTypeFunction()
         )
         when (elementType) {
-          IntType -> object : ExecutableField(name, type, memPos, false) {
+          IntType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Int>
@@ -234,7 +234,7 @@ abstract class CollectionType(
               }
             }
           }
-          LongType -> object : ExecutableField(name, type, memPos, false) {
+          LongType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Long>
@@ -245,7 +245,7 @@ abstract class CollectionType(
               }
             }
           }
-          FloatType -> object : ExecutableField(name, type, memPos, false) {
+          FloatType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Float>
@@ -256,7 +256,7 @@ abstract class CollectionType(
               }
             }
           }
-          DoubleType -> object : ExecutableField(name, type, memPos, false) {
+          DoubleType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Double>
@@ -267,7 +267,7 @@ abstract class CollectionType(
               }
             }
           }
-          BoolType -> object : ExecutableField(name, type, memPos, false) {
+          BoolType -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Boolean>
@@ -278,7 +278,7 @@ abstract class CollectionType(
               }
             }
           }
-          else -> object : ExecutableField(name, type, memPos, false) {
+          else -> object : ExecutableField(name, type, memPos) {
             override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
               val obj = values.refValue as ActionContext
               @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Any?>
@@ -291,7 +291,7 @@ abstract class CollectionType(
           }
         }
       }
-      "iterator" -> object : ExecutableField(name, iteratorType, memPos, false) {
+      "iterator" -> object : ExecutableField(name, iteratorType, memPos) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val obj = values.refValue as ActionContext
           val coll = obj.getCurrentMem().getRef(0) as MutableCollection<*>
@@ -304,7 +304,7 @@ abstract class CollectionType(
       }
       "toString" -> {
         val type = ctx.getFunctionDescriptorAsInstance(listOf(), StringType, DummyMemoryAllocatorProvider)
-        object : ExecutableField(name, type, memPos, false) {
+        object : ExecutableField(name, type, memPos) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
             val coll = obj.getCurrentMem().getRef(0) as MutableCollection<*>

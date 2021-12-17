@@ -12,7 +12,15 @@
 
 package vjson.pl.type
 
-data class Variable(val name: String, val type: TypeInstance, val modifiable: Boolean, val memPos: MemPos) {
+import vjson.pl.inst.Instruction
+
+data class Variable(
+  val name: String,
+  val type: TypeInstance,
+  val modifiable: Boolean,
+  val executor: Pair<FunctionDescriptor, Instruction>?,
+  val memPos: MemPos
+) {
   override fun toString(): String {
     return "(var $name: $type)"
   }

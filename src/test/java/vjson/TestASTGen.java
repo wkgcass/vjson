@@ -314,11 +314,13 @@ public class TestASTGen {
         assertEquals(Arrays.asList(
             new VariableDefinition("a", new IntegerLiteral(new SimpleInteger(1)), new Modifiers(ModifierEnum.PUBLIC.getNum())),
             new FunctionDefinition("x", Collections.emptyList(), new Type("void"), Collections.emptyList(), new Modifiers(ModifierEnum.PRIVATE.getNum())),
-            new VariableDefinition("b", new IntegerLiteral(new SimpleInteger(2)), new Modifiers(ModifierEnum.PUBLIC.getNum() | ModifierEnum.CONST.getNum()))
+            new VariableDefinition("b", new IntegerLiteral(new SimpleInteger(2)), new Modifiers(ModifierEnum.PUBLIC.getNum() | ModifierEnum.CONST.getNum())),
+            new VariableDefinition("c", new IntegerLiteral(new SimpleInteger(3)), new Modifiers(ModifierEnum.EXECUTABLE.getNum()))
         ), gen("{" +
             "public var a: 1\n" +
             "private function x: {} void: {}\n" +
-            "public const var b: 2" +
+            "public const var b: 2\n" +
+            "executable var c = 3\n" +
             "}"));
     }
 

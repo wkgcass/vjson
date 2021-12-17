@@ -1167,6 +1167,72 @@ public class TestInterpreter {
     }
 
     @Test
+    public void executableVariable() {
+        String prog = "{\n" +
+            "var i = 0\n" +
+            "function incr: {} int: {\n" +
+            "  return: i += 1\n" +
+            "}\n" +
+            "executable var x = incr\n" +
+            "executable var r = ext.rand\n" +
+            "var y = x\n" +
+            "var z = x\n" +
+            "var m = r\n" +
+            "var n = r\n" +
+            "}";
+        Interpreter interpreter = new InterpreterBuilder()
+            .addTypes(new ExtTypes(new ExtFunctions()
+                .setRandBlock(() -> ThreadLocalRandom.current().nextDouble())))
+            .compile(prog);
+        RuntimeMemory mem = interpreter.executeBlock();
+        assertEquals(3, mem.intLen());
+        assertEquals(2, mem.getInt(0));
+        assertEquals(1, mem.getInt(1));
+        assertEquals(2, mem.getInt(2));
+
+        assertEquals(2, mem.doubleLen());
+        assertNotEquals(0.0, mem.getDouble(0));
+        assertNotEquals(0.0, mem.getDouble(1));
+        assertTrue(mem.getDouble(0) < 1);
+        assertTrue(mem.getDouble(1) < 1);
+        assertNotEquals(mem.getDouble(0), mem.getDouble(1));
+    }
+
+    @Test
+    public void executableField() {
+        String prog = "{\n" +
+            "class Test: {} do: {\n" +
+            "  var i = 0\n" +
+            "  private function incr: {} int: {\n" +
+            "    return: i += 1\n" +
+            "  }\n" +
+            "  public executable var x = incr\n" +
+            "\n" +
+            "  public executable var r = ext.rand\n" +
+            "}\n" +
+            "var test = new Test:[]\n" +
+            "var y = test.x\n" +
+            "var z = test.x\n" +
+            "var m = test.r\n" +
+            "var n = test.r\n" +
+            "}";
+        Interpreter interpreter = new InterpreterBuilder()
+            .addTypes(new ExtTypes(new ExtFunctions().setRandBlock(() -> ThreadLocalRandom.current().nextDouble())))
+            .compile(prog);
+        RuntimeMemory mem = interpreter.executeBlock();
+        assertEquals(2, mem.intLen());
+        assertEquals(1, mem.getInt(0));
+        assertEquals(2, mem.getInt(1));
+
+        assertEquals(2, mem.doubleLen());
+        assertNotEquals(0.0, mem.getDouble(0));
+        assertNotEquals(0.0, mem.getDouble(1));
+        assertTrue(mem.getDouble(0) < 1);
+        assertTrue(mem.getDouble(1) < 1);
+        assertNotEquals(mem.getDouble(0), mem.getDouble(1));
+    }
+
+    @Test
     public void pass() {
         new InterpreterBuilder()
             .addTypes(new StdTypes())

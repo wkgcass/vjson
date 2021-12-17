@@ -42,7 +42,13 @@ data class ClassDefinition(
     for (param in params) {
       val paramType = param.check(ctx)
       param.memIndex = memoryAllocator.nextIndexFor(paramType)
-      codeCtx.addVariable(Variable(param.name, paramType, true, MemPos(codeCtx.getMemoryDepth(), param.memIndex)))
+      codeCtx.addVariable(
+        Variable(
+          param.name, paramType,
+          modifiable = true, executor = null,
+          memPos = MemPos(codeCtx.getMemoryDepth(), param.memIndex)
+        )
+      )
     }
     codeCtx.checkStatements(code)
   }

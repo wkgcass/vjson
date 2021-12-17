@@ -33,7 +33,7 @@ val type = ctx.getFunctionDescriptorAsInstance(
   listOf(ParamInstance({{KeyType}}, 0), ParamInstance({{ValueType}}, {{valueIndex}})), {{ValueType}},
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{memoryTotal}}))
 )
-object : ExecutableField(name, type, memPos, false) {
+object : ExecutableField(name, type, memPos) {
   override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
     val obj = values.refValue as ActionContext
     @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<{{KtKeyType}}, {{KtValueType}}>
@@ -55,7 +55,7 @@ val type = ctx.getFunctionDescriptorAsInstance(
   listOf(ParamInstance({{KeyType}}, 0)), {{ValueType}},
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{keyType}}Total = 1))
 )
-object : ExecutableField(name, type, memPos, false) {
+object : ExecutableField(name, type, memPos) {
   override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
     val obj = values.refValue as ActionContext
     @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<{{KtKeyType}}, {{KtValueType}}>
@@ -77,7 +77,7 @@ val type = ctx.getFunctionDescriptorAsInstance(
   listOf(ParamInstance({{KeyType}}, 0)), {{ValueType}},
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{keyType}}Total = 1))
 )
-object : ExecutableField(name, type, memPos, false) {
+object : ExecutableField(name, type, memPos) {
   override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
     val obj = values.refValue as ActionContext
     @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<{{KtKeyType}}, {{KtValueType}}>

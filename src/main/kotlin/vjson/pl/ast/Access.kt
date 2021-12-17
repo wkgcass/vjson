@@ -63,7 +63,10 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
   override fun generateInstruction(): Instruction {
     return if (from == null) {
       val variable = ctx.getVariable(name)
-      when (typeInstance()) {
+      if (variable.executor != null) {
+        val func = variable.executor
+        FunctionInvocation.invokeFunction(ctx, func.first, func.second, listOf(), lineCol)
+      } else when (typeInstance()) {
         is IntType -> GetInt(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
         is LongType -> GetLong(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
         is FloatType -> GetFloat(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
@@ -78,7 +81,31 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
         }
       }
     } else {
-      buildGetFieldInstruction(ctx, from.generateInstruction(), from.typeInstance(), name, lineCol)
+      val fromType = from.typeInstance()
+      val fieldType = fromType.field(ctx, name, ctx.getContextType())!!
+      if (fieldType.executor != null) {
+        val fromInst = from.generateInstruction()
+        val func = fieldType.executor
+        val funcDesc = func.first
+        val funcInst = func.second
+        object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
+          override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
+            fromInst.execute(ctx, values)
+            val objectCtx = values.refValue as ActionContext
+            if (funcInst is FunctionInstance) {
+              funcInst.ctxBuilder = { FunctionInvocation.buildContext(objectCtx, it, values, funcDesc, listOf()) }
+              funcInst.execute(objectCtx, values)
+            } else {
+              funcInst.execute(objectCtx, values)
+              val funcValue = values.refValue as Instruction
+              val newCtx = FunctionInvocation.buildContext(objectCtx, objectCtx, values, funcDesc, listOf())
+              funcValue.execute(newCtx, values)
+            }
+          }
+        }
+      } else {
+        buildGetFieldInstruction(ctx, from.generateInstruction(), from.typeInstance(), name, lineCol)
+      }
     }
   }
 

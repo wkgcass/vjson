@@ -12,6 +12,7 @@
 
 package vjson.pl.ast
 
+import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.inst.*
 import vjson.pl.type.*
@@ -66,7 +67,12 @@ data class FunctionInvocation(
     fun buildFunctionInvocationInstruction(ctx: TypeContext, func: FunctionInvocation, args: List<Instruction>): Instruction {
       val funcDesc = func.target.typeInstance().functionDescriptor(ctx)!!
       val funcInst = func.target.generateInstruction()
-      return object : InstructionWithStackInfo(ctx.stackInfo(func.lineCol)) {
+      return invokeFunction(ctx, funcDesc, funcInst, args, func.lineCol)
+    }
+
+    fun invokeFunction(ctx: TypeContext, funcDesc: FunctionDescriptor, funcInst: Instruction, args: List<Instruction>, lineCol: LineCol):
+      Instruction {
+      return object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
         override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
           if (funcInst is FunctionInstance) {
             funcInst.ctxBuilder = { buildContext(ctx, it, values, funcDesc, args) }
@@ -81,7 +87,7 @@ data class FunctionInvocation(
       }
     }
 
-    private suspend fun buildContext(
+    suspend fun buildContext(
       callerCtx: ActionContext,
       ctx: ActionContext,
       values: ValueHolder,

@@ -13,12 +13,19 @@
 package vjson.pl.type
 
 import vjson.pl.inst.ActionContext
+import vjson.pl.inst.Instruction
 import vjson.pl.inst.ValueHolder
 
-open class Field(val name: String, val type: TypeInstance, val memPos: MemPos, val modifiable: Boolean = false) {
+open class Field(
+  val name: String,
+  val type: TypeInstance,
+  val memPos: MemPos,
+  val modifiable: Boolean,
+  val executor: Pair<FunctionDescriptor, Instruction>?
+) {
 }
 
-abstract class ExecutableField(name: String, type: TypeInstance, memPos: MemPos, modifiable: Boolean = false) :
-  Field(name, type, memPos, modifiable) {
+abstract class ExecutableField(name: String, type: TypeInstance, memPos: MemPos) :
+  Field(name, type, memPos, modifiable = false, executor = null) {
   abstract suspend fun execute(ctx: ActionContext, values: ValueHolder)
 }

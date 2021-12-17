@@ -52,14 +52,14 @@ open class MapType(
       return generatedForMap0(key, value, ctx, name)
     }
     return when (name) {
-      "size" -> object : ExecutableField(name, IntType, MemPos(0, 0), false) {
+      "size" -> object : ExecutableField(name, IntType, MemPos(0, 0)) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val obj = values.refValue as ActionContext
           val map = obj.getCurrentMem().getRef(0) as Map<*, *>
           values.intValue = map.size
         }
       }
-      "keySet" -> object : ExecutableField(name, keySetType, MemPos(0, 0), false) {
+      "keySet" -> object : ExecutableField(name, keySetType, MemPos(0, 0)) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val obj = values.refValue as ActionContext
           val map = obj.getCurrentMem().getRef(0) as Map<*, *>
@@ -74,7 +74,7 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(IntType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
-          ), MemPos(0, 0), false
+          ), MemPos(0, 0)
         ) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
@@ -91,7 +91,7 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(LongType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
-          ), MemPos(0, 0), false
+          ), MemPos(0, 0)
         ) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
@@ -108,7 +108,7 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(FloatType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
-          ), MemPos(0, 0), false
+          ), MemPos(0, 0)
         ) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
@@ -125,7 +125,7 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(DoubleType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
-          ), MemPos(0, 0), false
+          ), MemPos(0, 0)
         ) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
@@ -142,7 +142,7 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(BoolType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
-          ), MemPos(0, 0), false
+          ), MemPos(0, 0)
         ) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
@@ -159,7 +159,7 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(key, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
-          ), MemPos(0, 0), false
+          ), MemPos(0, 0)
         ) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             val obj = values.refValue as ActionContext
@@ -175,8 +175,7 @@ open class MapType(
       "toString" -> object : ExecutableField(
         name,
         ctx.getFunctionDescriptorAsInstance(listOf(), StringType, DummyMemoryAllocatorProvider),
-        MemPos(0, 0),
-        false
+        MemPos(0, 0)
       ) {
         override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
           val obj = values.refValue as ActionContext

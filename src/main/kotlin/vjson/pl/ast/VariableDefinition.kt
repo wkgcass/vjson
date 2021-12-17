@@ -35,12 +35,42 @@ data class VariableDefinition(
     if (ctx.hasVariable(name)) {
       throw ParserException("variable $name is already defined", lineCol)
     }
-    val valueType = value.check(ctx)
-    if (valueType is NullType) {
-      throw ParserException("$this: cannot determine type for $value", lineCol)
+    if (modifiers.isExecutable()) {
+      if (value !is Access) {
+        throw ParserException("unexpected value $value for executable variable $name, expecting a function")
+      }
+      val valueFuncType = value.check(ctx)
+      val func = valueFuncType.functionDescriptor(ctx)
+        ?: throw ParserException("unexpected value $value ($valueFuncType) for executable variable $name, not a function")
+      if (func.params.isNotEmpty()) {
+        throw ParserException("unexpected value $value ($valueFuncType) for executable variable $name, expecting a no-argument function")
+      }
+      if (func.returnType is VoidType) {
+        throw ParserException("unexpected value $value ($valueFuncType) for executable variable $name, expecting a function with return value")
+      }
+      val valueType = func.returnType
+      ctx.addVariable(
+        Variable(
+          name, valueType,
+          modifiable = false,
+          executor = Pair(func, value.generateInstruction()),
+          MemPos(ctx.getMemoryDepth(), -1)
+        )
+      )
+    } else {
+      val valueType = value.check(ctx)
+      if (valueType is NullType) {
+        throw ParserException("$this: cannot determine type for $value", lineCol)
+      }
+      variableIndex = ctx.getMemoryAllocator().nextIndexFor(valueType)
+      ctx.addVariable(
+        Variable(
+          name, valueType,
+          modifiable = !modifiers.isConst(), executor = null,
+          MemPos(ctx.getMemoryDepth(), variableIndex)
+        )
+      )
     }
-    variableIndex = ctx.getMemoryAllocator().nextIndexFor(valueType)
-    ctx.addVariable(Variable(name, valueType, !modifiers.isConst(), MemPos(ctx.getMemoryDepth(), variableIndex)))
   }
 
   override fun functionTerminationCheck(): Boolean {
@@ -48,6 +78,9 @@ data class VariableDefinition(
   }
 
   override fun generateInstruction(): Instruction {
+    if (modifiers.isExecutable()) {
+      return NoOp()
+    }
     val valueInst = value.generateInstruction()
     return when (value.typeInstance()) {
       is IntType -> SetInt(ctx!!.getMemoryDepth(), variableIndex, valueInst, ctx!!.stackInfo(lineCol))
@@ -65,5 +98,17 @@ data class VariableDefinition(
 
   override fun toString(): String {
     return modifiers.toStringWithSpace() + "var $name: ($value)"
+  }
+
+  fun typeInstance(): TypeInstance {
+    if (modifiers.isExecutable()) {
+      return value.typeInstance().functionDescriptor(ctx!!)!!.returnType
+    } else {
+      return value.typeInstance()
+    }
+  }
+
+  fun getCtx(): TypeContext {
+    return ctx!!
   }
 }

@@ -47,7 +47,7 @@ class StdTypes : Types {
     ctx.addType(Type("std"), stdClass)
     val consoleClass = ConsoleClass()
     ctx.addType(Type("std.Console"), consoleClass)
-    ctx.addVariable(Variable("std", stdClass, false, MemPos(0, ctx.getMemoryAllocator().nextRefIndex())))
+    ctx.addVariable(Variable("std", stdClass, modifiable = false, executor = null, MemPos(0, ctx.getMemoryAllocator().nextRefIndex())))
     val iteratorType = TemplateIteratorType()
     ctx.addType(Type("std.Iterator"), iteratorType)
     ctx.addType(Type("std.List"), TemplateListType(iteratorTemplateType = iteratorType))
@@ -75,7 +75,7 @@ class StdTypes : Types {
 class StdClass : TypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
-      "console" -> Field("console", ctx.getType(Type("std.Console")), MemPos(0, 0), false)
+      "console" -> Field("console", ctx.getType(Type("std.Console")), MemPos(0, 0), false, null)
       else -> null
     }
   }
@@ -90,7 +90,7 @@ class ConsoleClass : TypeInstance {
             listOf(ParamInstance(ctx.getType(Type("string")), 0)), ctx.getType(Type("void")),
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
           )
-        return Field("log", type, MemPos(0, 0), false)
+        return Field("log", type, MemPos(0, 0), false, null)
       }
       else -> null
     }

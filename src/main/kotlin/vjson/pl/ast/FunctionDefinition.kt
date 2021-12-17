@@ -46,12 +46,18 @@ data class FunctionDefinition(
       val paramType = p.check(codeCtx)
       p.memIndex = memoryAllocator.nextIndexFor(paramType)
       paramTypes.add(ParamInstance(paramType, p.memIndex))
-      codeCtx.addVariable(Variable(p.name, paramType, true, MemPos(codeCtx.getMemoryDepth(), p.memIndex)))
+      codeCtx.addVariable(Variable(p.name, paramType, modifiable = true, executor = null, MemPos(codeCtx.getMemoryDepth(), p.memIndex)))
     }
     val returnTypeInstance = returnType.check(codeCtx)
     val funcType = ctx.getFunctionDescriptor(paramTypes, returnTypeInstance, this)
     variableIndex = ctx.getMemoryAllocator().nextRefIndex()
-    ctx.addVariable(Variable(name, FunctionDescriptorTypeInstance(funcType), false, MemPos(ctx.getMemoryDepth(), variableIndex)))
+    ctx.addVariable(
+      Variable(
+        name, FunctionDescriptorTypeInstance(funcType),
+        modifiable = false, executor = null,
+        MemPos(ctx.getMemoryDepth(), variableIndex)
+      )
+    )
 
     codeCtx.checkStatements(code)
 

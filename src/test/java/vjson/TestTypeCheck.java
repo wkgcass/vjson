@@ -5,10 +5,7 @@ import org.junit.Test;
 import vjson.parser.ObjectParser;
 import vjson.pl.ASTGen;
 import vjson.pl.InterpreterBuilder;
-import vjson.pl.ast.Access;
-import vjson.pl.ast.Expr;
-import vjson.pl.ast.Statement;
-import vjson.pl.ast.VariableDefinition;
+import vjson.pl.ast.*;
 import vjson.pl.inst.RuntimeMemoryTotal;
 import vjson.pl.type.*;
 import vjson.pl.type.lang.StdTypes;
@@ -25,7 +22,7 @@ public class TestTypeCheck {
     public void access() {
         MemoryAllocator globalMem = new MemoryAllocator();
         TypeContext ctx = new TypeContext(globalMem);
-        ctx.addVariable(new Variable("a", IntType.INSTANCE, true, new MemPos(0, 0)));
+        ctx.addVariable(new Variable("a", IntType.INSTANCE, true, null, new MemPos(0, 0)));
 
         Access access = new Access("a");
         access.check(ctx);
@@ -238,6 +235,41 @@ public class TestTypeCheck {
                 "takeIte:[map.keySet.iterator]\n" +
                 "}",
             true);
+    }
+
+    @Test
+    public void executableVariable() {
+        List<Statement> stmts = ast("{\n" +
+            "var incr = 0\n" +
+            "function runIncr:{} int: {\n" +
+            "  incr = incr + 1\n" +
+            "  return: incr\n" +
+            "}\n" +
+            "executable var x = runIncr\n" +
+            "var y = x\n" +
+            "class Test: {} do: {\n" +
+            "  public executable var field = runIncr\n" +
+            "}\n" +
+            "var z = new Test:[].field\n" +
+            "}");
+        assertTrue(stmts.get(0) instanceof VariableDefinition);
+        assertTrue(stmts.get(1) instanceof FunctionDefinition);
+        assertTrue(stmts.get(2) instanceof VariableDefinition);
+        assertTrue(stmts.get(3) instanceof VariableDefinition);
+        assertTrue(stmts.get(4) instanceof ClassDefinition);
+        assertTrue(stmts.get(5) instanceof VariableDefinition);
+
+        VariableDefinition x = (VariableDefinition) stmts.get(2);
+        assertEquals(IntType.INSTANCE, x.typeInstance());
+        assertTrue(x.getValue().typeInstance() instanceof FunctionDescriptorTypeInstance);
+
+        VariableDefinition y = (VariableDefinition) stmts.get(3);
+        assertEquals(IntType.INSTANCE, y.typeInstance());
+        assertEquals(IntType.INSTANCE, y.getValue().typeInstance());
+
+        VariableDefinition z = (VariableDefinition) stmts.get(5);
+        assertEquals(IntType.INSTANCE, z.typeInstance());
+        assertEquals(IntType.INSTANCE, z.getValue().typeInstance());
     }
 
     @Test

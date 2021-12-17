@@ -54,7 +54,7 @@ class ExtTypes(private val funcs: ExtFunctions) : Types {
   override fun initiateType(ctx: TypeContext, offset: RuntimeMemoryTotal): RuntimeMemoryTotal {
     val extClass = ExtClass()
     ctx.addType(Type("ext"), extClass)
-    ctx.addVariable(Variable("ext", extClass, false, MemPos(0, ctx.getMemoryAllocator().nextRefIndex())))
+    ctx.addVariable(Variable("ext", extClass, modifiable = false, executor = null, MemPos(0, ctx.getMemoryAllocator().nextRefIndex())))
     return RuntimeMemoryTotal(refTotal = 1)
   }
 
@@ -65,7 +65,7 @@ class ExtTypes(private val funcs: ExtFunctions) : Types {
   inner class ExtClass : TypeInstance {
     override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
       return when (name) {
-        "currentTimeMillis" -> object : ExecutableField(name, LongType, MemPos(0, 0), false) {
+        "currentTimeMillis" -> object : ExecutableField(name, LongType, MemPos(0, 0)) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             values.longValue = funcs.currentTimeMillis()
           }
@@ -73,8 +73,7 @@ class ExtTypes(private val funcs: ExtFunctions) : Types {
         "rand" -> object : ExecutableField(
           name,
           ctx.getFunctionDescriptorAsInstance(listOf(), DoubleType, DummyMemoryAllocatorProvider),
-          MemPos(0, 0),
-          false
+          MemPos(0, 0)
         ) {
           override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
             values.refValue = object : InstructionWithStackInfo(RAND_STACK_INFO) {

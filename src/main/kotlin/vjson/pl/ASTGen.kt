@@ -29,6 +29,7 @@ class ASTGen(_prog: JSON.Object) {
         "public" -> modifier(entry, ModifierEnum.PUBLIC)
         "private" -> modifier(entry, ModifierEnum.PRIVATE)
         "const" -> modifier(entry, ModifierEnum.CONST)
+        "executable" -> modifier(entry, ModifierEnum.EXECUTABLE)
         "function" -> function(entry)
         "var" -> aVar(entry)
         "new" -> aNew(entry)

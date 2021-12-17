@@ -22,7 +22,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0), ParamInstance(IntType, 1)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 2))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Int>
@@ -39,7 +39,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0), ParamInstance(LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Long>
@@ -56,7 +56,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0), ParamInstance(FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Float>
@@ -73,7 +73,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0), ParamInstance(DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Double>
@@ -90,7 +90,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0), ParamInstance(BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Boolean>
@@ -107,7 +107,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0), ParamInstance(value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Any?>
@@ -126,7 +126,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0), ParamInstance(IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Int>
@@ -143,7 +143,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0), ParamInstance(LongType, 1)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 2))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Long>
@@ -160,7 +160,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0), ParamInstance(FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Float>
@@ -177,7 +177,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0), ParamInstance(DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Double>
@@ -194,7 +194,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0), ParamInstance(BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Boolean>
@@ -211,7 +211,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0), ParamInstance(value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Any?>
@@ -230,7 +230,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0), ParamInstance(IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Int>
@@ -247,7 +247,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0), ParamInstance(LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Long>
@@ -264,7 +264,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0), ParamInstance(FloatType, 1)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 2))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Float>
@@ -281,7 +281,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0), ParamInstance(DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Double>
@@ -298,7 +298,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0), ParamInstance(BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Boolean>
@@ -315,7 +315,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0), ParamInstance(value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Any?>
@@ -334,7 +334,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0), ParamInstance(IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Int>
@@ -351,7 +351,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0), ParamInstance(LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Long>
@@ -368,7 +368,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0), ParamInstance(FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Float>
@@ -385,7 +385,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0), ParamInstance(DoubleType, 1)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 2))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Double>
@@ -402,7 +402,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0), ParamInstance(BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Boolean>
@@ -419,7 +419,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0), ParamInstance(value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Any?>
@@ -438,7 +438,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0), ParamInstance(IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Int>
@@ -455,7 +455,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0), ParamInstance(LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Long>
@@ -472,7 +472,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0), ParamInstance(FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Float>
@@ -489,7 +489,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0), ParamInstance(DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Double>
@@ -506,7 +506,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0), ParamInstance(BoolType, 1)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 2))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Boolean>
@@ -523,7 +523,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0), ParamInstance(value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Any?>
@@ -542,7 +542,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0), ParamInstance(IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Int>
@@ -559,7 +559,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0), ParamInstance(LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Long>
@@ -576,7 +576,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0), ParamInstance(FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Float>
@@ -593,7 +593,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0), ParamInstance(DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Double>
@@ -610,7 +610,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0), ParamInstance(BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Boolean>
@@ -627,7 +627,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0), ParamInstance(value, 1)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 2))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Any?>
@@ -650,7 +650,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Int>
@@ -667,7 +667,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Long>
@@ -684,7 +684,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Float>
@@ -701,7 +701,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Double>
@@ -718,7 +718,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Boolean>
@@ -735,7 +735,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Any?>
@@ -754,7 +754,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Int>
@@ -771,7 +771,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Long>
@@ -788,7 +788,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Float>
@@ -805,7 +805,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Double>
@@ -822,7 +822,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Boolean>
@@ -839,7 +839,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Any?>
@@ -858,7 +858,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Int>
@@ -875,7 +875,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Long>
@@ -892,7 +892,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Float>
@@ -909,7 +909,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Double>
@@ -926,7 +926,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Boolean>
@@ -943,7 +943,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Any?>
@@ -962,7 +962,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Int>
@@ -979,7 +979,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Long>
@@ -996,7 +996,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Float>
@@ -1013,7 +1013,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Double>
@@ -1030,7 +1030,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Boolean>
@@ -1047,7 +1047,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Any?>
@@ -1066,7 +1066,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Int>
@@ -1083,7 +1083,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Long>
@@ -1100,7 +1100,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Float>
@@ -1117,7 +1117,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Double>
@@ -1134,7 +1134,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Boolean>
@@ -1151,7 +1151,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Any?>
@@ -1170,7 +1170,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Int>
@@ -1187,7 +1187,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Long>
@@ -1204,7 +1204,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Float>
@@ -1221,7 +1221,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Double>
@@ -1238,7 +1238,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Boolean>
@@ -1255,7 +1255,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Any?>
@@ -1278,7 +1278,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Int>
@@ -1295,7 +1295,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Long>
@@ -1312,7 +1312,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Float>
@@ -1329,7 +1329,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Double>
@@ -1346,7 +1346,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Boolean>
@@ -1363,7 +1363,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(IntType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Int, Any?>
@@ -1382,7 +1382,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Int>
@@ -1399,7 +1399,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Long>
@@ -1416,7 +1416,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Float>
@@ -1433,7 +1433,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Double>
@@ -1450,7 +1450,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Boolean>
@@ -1467,7 +1467,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(LongType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Long, Any?>
@@ -1486,7 +1486,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Int>
@@ -1503,7 +1503,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Long>
@@ -1520,7 +1520,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Float>
@@ -1537,7 +1537,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Double>
@@ -1554,7 +1554,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Boolean>
@@ -1571,7 +1571,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(FloatType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Float, Any?>
@@ -1590,7 +1590,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Int>
@@ -1607,7 +1607,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Long>
@@ -1624,7 +1624,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Float>
@@ -1641,7 +1641,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Double>
@@ -1658,7 +1658,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Boolean>
@@ -1675,7 +1675,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(DoubleType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Double, Any?>
@@ -1694,7 +1694,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Int>
@@ -1711,7 +1711,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Long>
@@ -1728,7 +1728,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Float>
@@ -1745,7 +1745,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Double>
@@ -1762,7 +1762,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Boolean>
@@ -1779,7 +1779,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(BoolType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Boolean, Any?>
@@ -1798,7 +1798,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Int>
@@ -1815,7 +1815,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Long>
@@ -1832,7 +1832,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Float>
@@ -1849,7 +1849,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Double>
@@ -1866,7 +1866,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Boolean>
@@ -1883,7 +1883,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
               listOf(ParamInstance(key, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
-            object : ExecutableField(name, type, memPos, false) {
+            object : ExecutableField(name, type, memPos) {
               override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
                 val obj = values.refValue as ActionContext
                 @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<Any?, Any?>

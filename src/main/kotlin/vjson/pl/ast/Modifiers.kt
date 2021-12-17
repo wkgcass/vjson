@@ -25,6 +25,10 @@ data class Modifiers(var modifiers: Int) {
     return modifiers.and(ModifierEnum.CONST.num) != 0
   }
 
+  fun isExecutable(): Boolean {
+    return modifiers.and(ModifierEnum.EXECUTABLE.num) != 0
+  }
+
   override fun toString(): String {
     val sb = StringBuilder()
     if (isPublic()) {
@@ -42,6 +46,12 @@ data class Modifiers(var modifiers: Int) {
       }
       sb.append("const")
     }
+    if (isExecutable()) {
+      if (sb.isNotEmpty()) {
+        sb.append(" ")
+      }
+      sb.append("executable")
+    }
     return sb.toString()
   }
 
@@ -54,7 +64,8 @@ data class Modifiers(var modifiers: Int) {
 enum class ModifierEnum(val str: String, val num: Int) {
   PUBLIC("public", 0x00000001),
   PRIVATE("private", 0x00000002),
-  CONST("const", 0x00000010),
+  CONST("const", 0x00000004),
+  EXECUTABLE("executable", 0x00000008),
   ;
 
   override fun toString(): String {
@@ -63,7 +74,7 @@ enum class ModifierEnum(val str: String, val num: Int) {
 
   companion object {
     fun isModifier(key: String): Boolean {
-      return key == "public" || key == "private" || key == "const"
+      return key == "public" || key == "private" || key == "const" || key == "executable"
     }
   }
 }
