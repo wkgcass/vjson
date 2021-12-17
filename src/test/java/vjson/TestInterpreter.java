@@ -1233,6 +1233,87 @@ public class TestInterpreter {
     }
 
     @Test
+    public void errorHandling() {
+        String prog = "{\n" +
+            "function parseInt: {s: string} int: {\n" +
+            "  var n = s.toInt\n" +
+            "  if: err != null; then: {\n" +
+            "    std.console.log:[err.message]\n" +
+            "    n = 1234\n" +
+            "  }\n" +
+            "  return: n\n" +
+            "}\n" +
+            "var x = parseInt:[('10')]\n" +
+            "var y = parseInt:[('a')]\n" +
+            "}";
+        Pair<RuntimeMemory, String> pair = executeWithStdTypes(prog);
+        RuntimeMemory mem = pair.getFirst();
+        assertEquals(2, mem.intLen());
+        assertEquals(10, mem.getInt(0));
+        assertEquals(1234, mem.getInt(1));
+
+        String output = pair.getSecond();
+        assertEquals("For input string: \"a\"\n", output);
+    }
+
+    @Test
+    public void aThrow() {
+        String prog = "{\n" +
+            "function stack4: {} void: {\n" +
+            "  throw: ('surprise')\n" +
+            "}\n" +
+            "function stack3: {} void: {\n" +
+            "  stack4:[]\n" +
+            "}\n" +
+            "function stack2: {} void: {\n" +
+            "  stack3:[]\n" +
+            "}\n" +
+            "function stack1: {} void: {\n" +
+            "  stack2:[]\n" +
+            "}\n" +
+            "stack1:[]\n" +
+            "var msg = { null: string }" +
+            "if: err != null; then: {\n" +
+            "  msg = err.message\n" +
+            "}\n" +
+            "}";
+        Interpreter interpreter = new InterpreterBuilder()
+            .compile(prog);
+        RuntimeMemory mem = interpreter.executeBlock();
+        assertEquals(5, mem.refLen());
+        assertEquals("surprise", mem.getRef(4));
+
+        prog = "{\n" +
+            "function stack4: {} void: {\n" +
+            "  throw: ('surprise')\n" +
+            "}\n" +
+            "function stack3: {} void: {\n" +
+            "  stack4:[]\n" +
+            "}\n" +
+            "function stack2: {} void: {\n" +
+            "  stack3:[]\n" +
+            "}\n" +
+            "function stack1: {} void: {\n" +
+            "  stack2:[]\n" +
+            "}\n" +
+            "stack1:[]\n" +
+            "}";
+        interpreter = new InterpreterBuilder()
+            .compile(prog, "test.vjson");
+        try {
+            interpreter.executeBlock();
+            fail();
+        } catch (Exception e) {
+            assertEquals("surprise\n" +
+                "  stack4 at test.vjson(3:3)\n" +
+                "  stack3 at test.vjson(6:3)\n" +
+                "  stack2 at test.vjson(9:3)\n" +
+                "  stack1 at test.vjson(12:3)\n" +
+                "  <no info> at test.vjson(14:1)", e.getMessage());
+        }
+    }
+
+    @Test
     public void pass() {
         new InterpreterBuilder()
             .addTypes(new StdTypes())

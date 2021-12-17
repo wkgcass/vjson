@@ -54,6 +54,31 @@ data class ReturnInst(
   }
 }
 
+data class ThrowInst(
+  private val errMsgInst: Instruction?,
+  override val stackInfo: StackInfo
+) : Instruction() {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
+    if (errMsgInst == null) {
+      throw Exception()
+    }
+    errMsgInst.execute(ctx, values)
+    val res = values.refValue
+    if (res is String) {
+      throw Exception(res)
+    } else {
+      throw res as Exception
+    }
+  }
+}
+
+class GetLastError : Instruction() {
+  override val stackInfo = StackInfo.EMPTY
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
+    values.refValue = values.errorValue
+  }
+}
+
 class LiteralNull(override val stackInfo: StackInfo) : Instruction() {
   override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
     values.refValue = null
@@ -151,6 +176,37 @@ data class IfInstruction(
         if (needReturn(ctx)) {
           return
         }
+      }
+    }
+  }
+}
+
+data class ErrorHandlingInstruction(
+  private val tryInst: List<Instruction>,
+  private val errorCodeInst: List<Instruction>,
+  private val elseCodeInst: List<Instruction>
+) : FlowControlInstruction() {
+  override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
+    try {
+      for (stmt in tryInst) {
+        stmt.execute(ctx, values)
+        if (needReturn(ctx)) {
+          return
+        }
+      }
+    } catch (e: Throwable) {
+      for (stmt in errorCodeInst) {
+        values.errorValue = e // set this value in the loop to prevent it from being overwritten
+        stmt.execute(ctx, values)
+        if (needReturn(ctx)) {
+          return
+        }
+      }
+    }
+    for (stmt in elseCodeInst) {
+      stmt.execute(ctx, values)
+      if (needReturn(ctx)) {
+        return
       }
     }
   }

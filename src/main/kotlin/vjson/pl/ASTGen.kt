@@ -20,8 +20,8 @@ import vjson.util.CastUtils.cast
 
 class ASTGen(_prog: JSON.Object) {
   private val prog = _prog.entryList().listIterator()
+  private val result = ArrayList<Statement>()
   fun parse(): List<Statement> {
-    val ls = ArrayList<Statement>()
     while (prog.hasNext()) {
       val entry = prog.next()
       val stmt = when (entry.key) {
@@ -39,14 +39,15 @@ class ASTGen(_prog: JSON.Object) {
         "break" -> aBreak(entry)
         "continue" -> aContinue(entry)
         "return" -> aReturn(entry)
+        "throw" -> aThrow(entry)
         "template" -> template(entry)
         "let" -> aLet(entry)
         else -> exprKey(entry)
       }
       stmt.lineCol = entry.lineCol
-      ls.add(stmt)
+      result.add(stmt)
     }
-    return ls
+    return result
   }
 
   /**
@@ -314,8 +315,12 @@ class ASTGen(_prog: JSON.Object) {
     return WhileLoop(astCond, code)
   }
 
-  private fun aIf(entry: JSON.ObjectEntry): IfStatement {
+  private fun aIf(entry: JSON.ObjectEntry): Statement {
     val astCond = expr(entry.value)
+    val isErrorHandling = (
+      astCond == BinOp(BinOpType.CMP_NE, Access("err"), NullLiteral()) ||
+        astCond == BinOp(BinOpType.CMP_NE, NullLiteral(), Access("err")))
+
     if (!prog.hasNext()) {
       throw ParserException("unexpected end of object, expecting content for `if`", entry.lineCol)
     }
@@ -329,7 +334,7 @@ class ASTGen(_prog: JSON.Object) {
     val ifCode = ASTGen(nextEntry.value).parse()
 
     if (!prog.hasNext()) {
-      return IfStatement(astCond, ifCode, listOf())
+      return checkAndGenerateErrorHandling(isErrorHandling, IfStatement(astCond, ifCode, listOf()))
     }
     val nextNextEntry = prog.next()
     if (nextNextEntry.key == "else") {
@@ -345,16 +350,19 @@ class ASTGen(_prog: JSON.Object) {
           val nextNextNextEntry = prog.next()
           if (nextNextNextEntry.key != "if") {
             throw ParserException(
-              "unexpected token $nextNextNextEntry, found `else: null`, but not following another `if`",
+              "unexpected token $nextNextNextEntry, found `else: null`, but not following another `if`, you need to use `else: {...}` for else block ",
               nextNextNextEntry.lineCol
             )
+          }
+          if (isErrorHandling) {
+            throw ParserException("unexpected else-if block, error handling can only have `else` block", nextNextEntry.lineCol)
           }
           val nextIf = aIf(nextNextNextEntry)
           return IfStatement(astCond, ifCode, listOf(nextIf))
         }
         is JSON.Object -> {
           val elseCode = ASTGen(nextNextEntry.value).parse()
-          return IfStatement(astCond, ifCode, elseCode)
+          return checkAndGenerateErrorHandling(isErrorHandling, IfStatement(astCond, ifCode, elseCode))
         }
         else -> throw ParserException(
           "unexpected token ${nextNextEntry.value}, expecting code block for `else`",
@@ -364,8 +372,30 @@ class ASTGen(_prog: JSON.Object) {
     } else {
       // not if statement
       prog.previous()
-      return IfStatement(astCond, ifCode, listOf())
+      return checkAndGenerateErrorHandling(isErrorHandling, IfStatement(astCond, ifCode, listOf()))
     }
+  }
+
+  private fun checkAndGenerateErrorHandling(isErrorHandling: Boolean, aIf: IfStatement): Statement {
+    if (!isErrorHandling) {
+      return aIf
+    }
+    var lastErrorHandlingIndex = -1
+    for ((idx, stmt) in result.withIndex()) {
+      if (stmt is ErrorHandlingStatement) {
+        lastErrorHandlingIndex = idx
+      }
+    }
+    val ls: ArrayList<Statement>
+    if (result.isEmpty()) {
+      ls = ArrayList()
+    } else {
+      ls = ArrayList(result.subList(lastErrorHandlingIndex + 1, result.size))
+      val foo = ArrayList(result.subList(0, lastErrorHandlingIndex + 1))
+      result.clear()
+      result.addAll(foo)
+    }
+    return ErrorHandlingStatement(ls, aIf.ifCode, aIf.elseCode)
   }
 
   private fun aBreak(entry: JSON.ObjectEntry): BreakStatement {
@@ -387,6 +417,14 @@ class ASTGen(_prog: JSON.Object) {
       ReturnStatement()
     } else {
       ReturnStatement(expr(entry.value))
+    }
+  }
+
+  private fun aThrow(entry: JSON.ObjectEntry): ThrowStatement {
+    return if (entry.value is JSON.Null) {
+      ThrowStatement()
+    } else {
+      ThrowStatement(expr(entry.value))
     }
   }
 

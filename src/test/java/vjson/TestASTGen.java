@@ -390,6 +390,43 @@ public class TestASTGen {
     }
 
     @Test
+    public void errorHandling() {
+        assertEquals(Arrays.asList(
+            new ErrorHandlingStatement(Arrays.asList(
+                new VariableDefinition("a", new IntegerLiteral(new SimpleInteger(1)), new Modifiers(0)),
+                new VariableDefinition("b", new IntegerLiteral(new SimpleInteger(2)), new Modifiers(0))
+            ),
+                Collections.singletonList(
+                    new ThrowStatement(new StringLiteral("hello"))
+                ),
+                Collections.singletonList(
+                    new Assignment(new Access("b"), new IntegerLiteral(new SimpleInteger(4)))
+                )),
+            new ErrorHandlingStatement(Arrays.asList(
+                new VariableDefinition("c", new IntegerLiteral(new SimpleInteger(5)), new Modifiers(0)),
+                new VariableDefinition("d", new IntegerLiteral(new SimpleInteger(6)), new Modifiers(0))
+            ),
+                Collections.singletonList(
+                    new Assignment(new Access("c"), new IntegerLiteral(new SimpleInteger(7)))
+                ),
+                Collections.emptyList())
+        ), gen("{\n" +
+            "var a = 1\n" +
+            "var b = 2\n" +
+            "if: err != null; then: {\n" +
+            "  throw: ('hello')\n" +
+            "} else: {\n" +
+            "  b = 4\n" +
+            "}\n" +
+            "var c = 5\n" +
+            "var d = 6\n" +
+            "if: err != null; then: {\n" +
+            "  c = 7\n" +
+            "}\n" +
+            "}"));
+    }
+
+    @Test
     public void pass() {
         System.out.println(gen(TestFeature.TEST_PROG));
     }

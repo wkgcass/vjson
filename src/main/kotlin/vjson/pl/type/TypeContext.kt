@@ -215,6 +215,7 @@ class TypeContext {
       rootContext.addType(Type("string"), StringType)
       rootContext.addType(Type("bool"), BoolType)
       rootContext.addType(Type("void"), VoidType)
+      rootContext.addType(Type("error"), ErrorType)
     }
   }
 }

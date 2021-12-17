@@ -72,7 +72,9 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
         is FloatType -> GetFloat(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
         is DoubleType -> GetDouble(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
         is BoolType -> GetBool(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
-        else -> {
+        else -> if (typeInstance() is ErrorType && name == "err") {
+          GetLastError()
+        } else {
           val inst = GetRef(variable.memPos.depth, variable.memPos.index, ctx.stackInfo(lineCol))
           if (variable.type.functionDescriptor(ctx) != null) {
             return FunctionInstance(null, variable.memPos.depth, inst, ctx.stackInfo(lineCol))

@@ -13,62 +13,48 @@
 package vjson.pl.ast
 
 import vjson.ex.ParserException
-import vjson.pl.inst.IfInstruction
 import vjson.pl.inst.Instruction
-import vjson.pl.type.BoolType
+import vjson.pl.inst.ThrowInst
+import vjson.pl.type.ErrorType
+import vjson.pl.type.NullType
+import vjson.pl.type.StringType
 import vjson.pl.type.TypeContext
 
-data class IfStatement(
-  val condition: Expr,
-  val ifCode: List<Statement>,
-  val elseCode: List<Statement>
-) : Statement() {
-  override fun copy(): IfStatement {
-    val ret = IfStatement(condition.copy(), ifCode.map { it.copy() }, elseCode.map { it.copy() })
+data class ThrowStatement(val errMsgExpr: Expr? = null) : Statement() {
+  private var ctx: TypeContext? = null
+
+  override fun copy(): Statement {
+    val ret = ThrowStatement(errMsgExpr?.copy())
     ret.lineCol = lineCol
     return ret
   }
 
   override fun checkAST(ctx: TypeContext) {
-    val conditionType = condition.check(ctx)
-    if (conditionType !is BoolType) {
-      throw ParserException("$this: type of condition ($conditionType) is not bool", lineCol)
-    }
-    val ifCtx = TypeContext(ctx)
-    ifCtx.checkStatements(ifCode)
-    val elseCtx = TypeContext(ctx)
-    elseCtx.checkStatements(elseCode)
-  }
-
-  @Suppress("DuplicatedCode")
-  override fun functionTerminationCheck(): Boolean {
-    var ifCodeTerminate = false
-    for (stmt in ifCode) {
-      if (stmt.functionTerminationCheck()) {
-        ifCodeTerminate = true
-        break
+    this.ctx = ctx
+    if (errMsgExpr != null) {
+      val type = errMsgExpr.check(ctx)
+      if (type !is StringType && type !is NullType && type !is ErrorType) {
+        throw ParserException(
+          "$this: throw statement expects string or null or error object, but got $errMsgExpr ($type)",
+          lineCol
+        )
       }
     }
-    if (!ifCodeTerminate) return false
-
-    var elseCodeTerminate = false
-    for (stmt in elseCode) {
-      if (stmt.functionTerminationCheck()) {
-        elseCodeTerminate = true
-        break
-      }
-    }
-    return elseCodeTerminate
   }
 
   override fun generateInstruction(): Instruction {
-    val conditionInst = condition.generateInstruction()
-    val ifCodeInst = ifCode.map { it.generateInstruction() }
-    val elseCodeInst = elseCode.map { it.generateInstruction() }
-    return IfInstruction(conditionInst, ifCodeInst, elseCodeInst)
+    return ThrowInst(errMsgExpr?.generateInstruction(), ctx!!.stackInfo(lineCol))
+  }
+
+  override fun functionTerminationCheck(): Boolean {
+    return true
   }
 
   override fun toString(): String {
-    return "if: $condition then: $ifCode else: $elseCode"
+    return if (errMsgExpr == null) {
+      "throw"
+    } else {
+      "throw: $errMsgExpr"
+    }
   }
 }

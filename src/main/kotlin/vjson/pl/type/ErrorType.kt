@@ -10,15 +10,25 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package vjson.pl.inst
+package vjson.pl.type
 
-class ValueHolder {
-  var intValue: Int = 0
-  var longValue: Long = 0
-  var floatValue: Float = 0.0f
-  var doubleValue: Double = 0.0
-  var boolValue: Boolean = false
-  var refValue: Any? = null
+import vjson.pl.inst.ActionContext
+import vjson.pl.inst.ValueHolder
 
-  var errorValue: Throwable? = null
+object ErrorType : BuiltInTypeInstance {
+  override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
+    return when (name) {
+      "message" -> object : ExecutableField(name, StringType, MemPos(0, 0)) {
+        override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
+          val err = values.refValue as Throwable
+          values.refValue = err.message
+        }
+      }
+      else -> null
+    }
+  }
+
+  override fun toString(): String {
+    return "ErrorType"
+  }
 }

@@ -13,43 +13,53 @@
 package vjson.pl.ast
 
 import vjson.ex.ParserException
-import vjson.pl.inst.IfInstruction
+import vjson.pl.inst.ErrorHandlingInstruction
 import vjson.pl.inst.Instruction
-import vjson.pl.type.BoolType
+import vjson.pl.type.ErrorType
+import vjson.pl.type.MemPos
 import vjson.pl.type.TypeContext
+import vjson.pl.type.Variable
 
-data class IfStatement(
-  val condition: Expr,
-  val ifCode: List<Statement>,
+data class ErrorHandlingStatement(
+  val tryCode: List<Statement>,
+  val errorCode: List<Statement>,
   val elseCode: List<Statement>
 ) : Statement() {
-  override fun copy(): IfStatement {
-    val ret = IfStatement(condition.copy(), ifCode.map { it.copy() }, elseCode.map { it.copy() })
+  override fun copy(): ErrorHandlingStatement {
+    val ret = ErrorHandlingStatement(tryCode.map { it.copy() }, errorCode.map { it.copy() }, elseCode.map { it.copy() })
     ret.lineCol = lineCol
     return ret
   }
 
   override fun checkAST(ctx: TypeContext) {
-    val conditionType = condition.check(ctx)
-    if (conditionType !is BoolType) {
-      throw ParserException("$this: type of condition ($conditionType) is not bool", lineCol)
-    }
-    val ifCtx = TypeContext(ctx)
-    ifCtx.checkStatements(ifCode)
+    ctx.checkStatements(tryCode)
+    val errorCtx = TypeContext(ctx)
+    errorCtx.addVariable(Variable("err", ErrorType, false, null, MemPos(0, 0)))
+    errorCtx.checkStatements(errorCode)
     val elseCtx = TypeContext(ctx)
     elseCtx.checkStatements(elseCode)
+
+    var tryCodeTerminate = false
+    for (stmt in tryCode) {
+      if (stmt.functionTerminationCheck()) {
+        tryCodeTerminate = true
+      }
+    }
+    if (tryCodeTerminate && elseCode.isNotEmpty()) {
+      throw ParserException("$this: the code to be handled already terminates the function, no `else` should appear")
+    }
   }
 
   @Suppress("DuplicatedCode")
   override fun functionTerminationCheck(): Boolean {
-    var ifCodeTerminate = false
-    for (stmt in ifCode) {
+    var errorCodeTerminate = false
+    for (stmt in errorCode) {
       if (stmt.functionTerminationCheck()) {
-        ifCodeTerminate = true
+        errorCodeTerminate = true
         break
       }
     }
-    if (!ifCodeTerminate) return false
+    if (!errorCodeTerminate) return false
 
     var elseCodeTerminate = false
     for (stmt in elseCode) {
@@ -62,13 +72,13 @@ data class IfStatement(
   }
 
   override fun generateInstruction(): Instruction {
-    val conditionInst = condition.generateInstruction()
-    val ifCodeInst = ifCode.map { it.generateInstruction() }
+    val tryInst = tryCode.map { it.generateInstruction() }
+    val errorCodeInst = errorCode.map { it.generateInstruction() }
     val elseCodeInst = elseCode.map { it.generateInstruction() }
-    return IfInstruction(conditionInst, ifCodeInst, elseCodeInst)
+    return ErrorHandlingInstruction(tryInst, errorCodeInst, elseCodeInst)
   }
 
   override fun toString(): String {
-    return "if: $condition then: $ifCode else: $elseCode"
+    return "ErrorHandling : $tryCode if: err != nil; then: $errorCode else: $elseCode"
   }
 }

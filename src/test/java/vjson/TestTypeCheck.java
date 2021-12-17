@@ -273,6 +273,24 @@ public class TestTypeCheck {
     }
 
     @Test
+    public void errorHandling() {
+        List<Statement> stmts = ast("{\n" +
+            "if: err != null; then: {\n" +
+            "  var x = err\n" +
+            "  var msg = x.message\n" +
+            "}\n" +
+            "}");
+        assertEquals(1, stmts.size());
+        ErrorHandlingStatement errorHandling = (ErrorHandlingStatement) stmts.get(0);
+        assertEquals(2, errorHandling.getErrorCode().size());
+        VariableDefinition x = (VariableDefinition) errorHandling.getErrorCode().get(0);
+        VariableDefinition msg = (VariableDefinition) errorHandling.getErrorCode().get(1);
+
+        assertEquals(ErrorType.INSTANCE, x.typeInstance());
+        assertEquals(StringType.INSTANCE, msg.typeInstance());
+    }
+
+    @Test
     public void pass() {
         //noinspection ConstantConditions
         ASTGen gen = new ASTGen(new ObjectParser(InterpreterBuilder.Companion.interpreterOptions())
