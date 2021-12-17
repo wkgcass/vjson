@@ -50,11 +50,15 @@ data class BreakStatement(val flag: String? = null) : Statement() {
     return false
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return if (flag == null) {
       "break"
     } else {
       "break: $flag"
     }
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

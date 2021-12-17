@@ -108,15 +108,21 @@ data class FunctionDefinition(
     return MemPos(ctx!!.getMemoryDepth(), variableIndex)
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     val sb = StringBuilder()
     sb.append(modifiers.toStringWithSpace())
     sb.append("function ").append(name).append(":")
-    sb.append(params.joinToString(prefix = " { ", postfix = " } "))
+    sb.append(params.joinToString(", ", prefix = " { ", postfix = " } "))
     sb.append(returnType)
-    sb.append(": { ")
-    sb.append(code.joinToString())
-    sb.append(" }")
+    sb.append(": {\n")
+    for (stmt in code) {
+      sb.append(" ".repeat(indent + 2)).append(stmt.toString(indent + 2)).append("\n")
+    }
+    sb.append(" ".repeat(indent)).append("}")
     return sb.toString()
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

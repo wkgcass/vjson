@@ -44,7 +44,11 @@ data class NullLiteral(val type: Type? = null) : Expr() {
     return LiteralNull(ctx.stackInfo(lineCol))
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return if (type == null) "null" else "{null: $type}"
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

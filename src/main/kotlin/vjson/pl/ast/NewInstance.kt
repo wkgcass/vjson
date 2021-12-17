@@ -103,7 +103,11 @@ data class NewInstance(
     }
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return "new $type:$args"
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

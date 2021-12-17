@@ -69,13 +69,19 @@ data class ClassDefinition(
     return memDepth
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     val sb = StringBuilder()
-    sb.append("class ").append(name)
-    sb.append(params.joinToString(prefix = " { ", postfix = " } "))
-    sb.append("do: { ")
-    sb.append(code.joinToString())
-    sb.append(" }")
+    sb.append("class ").append(name).append(":")
+    sb.append(params.joinToString(", ", prefix = " { ", postfix = " } "))
+    sb.append("do: {\n")
+    for (stmt in code) {
+      sb.append(" ".repeat(indent + 2)).append(stmt.toString(indent + 2)).append("\n")
+    }
+    sb.append(" ".repeat(indent)).append("}")
     return sb.toString()
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

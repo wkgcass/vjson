@@ -96,8 +96,12 @@ data class VariableDefinition(
     return MemPos(ctx!!.getMemoryDepth(), variableIndex)
   }
 
+  override fun toString(indent: Int): String {
+    return modifiers.toStringWithSpace() + "var $name = $value"
+  }
+
   override fun toString(): String {
-    return modifiers.toStringWithSpace() + "var $name: ($value)"
+    return toString(0)
   }
 
   fun typeInstance(): TypeInstance {

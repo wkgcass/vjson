@@ -50,11 +50,15 @@ data class ThrowStatement(val errMsgExpr: Expr? = null) : Statement() {
     return true
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return if (errMsgExpr == null) {
       "throw"
     } else {
       "throw: $errMsgExpr"
     }
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

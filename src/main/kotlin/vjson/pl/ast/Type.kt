@@ -71,7 +71,11 @@ data class Type(private val name: String) : TypedAST {
     throw UnsupportedOperationException()
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return name
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

@@ -50,7 +50,17 @@ data class WhileLoop(
     return WhileLoopInstruction(conditionInst, codeInst)
   }
 
+  override fun toString(indent: Int): String {
+    val sb = StringBuilder()
+    sb.append("while: ").append(condition).append("; do: {\n")
+    for (stmt in code) {
+      sb.append(" ".repeat(indent + 2)).append(stmt.toString(indent + 2)).append("\n")
+    }
+    sb.append(" ".repeat(indent)).append("}")
+    return sb.toString()
+  }
+
   override fun toString(): String {
-    return "while: $condition do: $code"
+    return toString(0)
   }
 }

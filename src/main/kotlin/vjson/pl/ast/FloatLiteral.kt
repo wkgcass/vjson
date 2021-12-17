@@ -39,7 +39,11 @@ data class FloatLiteral(val n: JSON.Double) : Expr() {
     return LiteralDouble(n.doubleValue(), ctx.stackInfo(lineCol))
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return "" + n.stringify()
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

@@ -17,7 +17,6 @@ import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
 import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
-import vjson.simple.SimpleString
 
 data class Param(
   val name: String,
@@ -49,7 +48,11 @@ data class Param(
 
   internal var memIndex: Int = -1
 
+  override fun toString(indent: Int): String {
+    return "$name: $type"
+  }
+
   override fun toString(): String {
-    return name + ": " + SimpleString(type.toString()).stringify()
+    return toString(0)
   }
 }

@@ -50,18 +50,13 @@ data class TemplateClassDefinition(
     return ctx!!
   }
 
-  override fun toString(): String {
-    val sb = StringBuilder("template:{ ")
-    var isFirst = true
-    for (p in paramTypes) {
-      if (isFirst) {
-        isFirst = false
-      } else {
-        sb.append(", ")
-      }
-      sb.append(p.name)
-    }
-    sb.append(" } ").append(classDef)
+  override fun toString(indent: Int): String {
+    val sb = StringBuilder("template:").append(paramTypes.joinToString(", ", prefix = " { ", postfix = " } "))
+    sb.append(classDef.toString(indent))
     return sb.toString()
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

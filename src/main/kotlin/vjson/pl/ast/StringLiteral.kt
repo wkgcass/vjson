@@ -39,9 +39,12 @@ data class StringLiteral(val str: String) : Expr() {
     return LiteralRef(str, ctx.stackInfo(lineCol))
   }
 
+  override fun toString(indent: Int): String {
+    val s = SimpleString(str).stringify()
+    return "($s)"
+  }
+
   override fun toString(): String {
-    var s = SimpleString(str).stringify()
-    s = s.substring(1, s.length - 1)
-    return "\"'$s'\""
+    return toString(0)
   }
 }

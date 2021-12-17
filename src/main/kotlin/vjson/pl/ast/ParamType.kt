@@ -22,4 +22,8 @@ data class ParamType(val name: String) {
     ret.lineCol = lineCol
     return ret
   }
+
+  override fun toString(): String {
+    return name
+  }
 }

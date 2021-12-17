@@ -62,7 +62,44 @@ data class ForLoop(
     return this.isInfiniteLoop ?: return true
   }
 
+  @Suppress("DuplicatedCode")
+  override fun toString(indent: Int): String {
+    val sb = StringBuilder()
+    var newLinePrinted = false
+    sb.append("for: [ ")
+    for ((idx, stmt) in init.withIndex()) {
+      if (idx != 0) {
+        sb.append(" ".repeat(indent + 2))
+      }
+      sb.append(stmt.toString(indent + 2))
+      if (idx != init.size - 1) {
+        newLinePrinted = true
+        sb.append("\n")
+      }
+    }
+    sb.append(" ; ").append(condition.toString(indent + 2)).append(" ; ")
+    for ((idx, stmt) in incr.withIndex()) {
+      if (idx != 0) {
+        sb.append(" ".repeat(indent + 2))
+      }
+      sb.append(stmt.toString(indent + 2))
+      if (idx != incr.size - 1) {
+        newLinePrinted = true
+        sb.append("\n")
+      }
+    }
+    if (newLinePrinted) {
+      sb.append(" ".repeat(indent))
+    }
+    sb.append(" ] do: {\n")
+    for (stmt in code) {
+      sb.append(" ".repeat(indent + 2)).append(stmt.toString(indent + 2)).append("\n")
+    }
+    sb.append(" ".repeat(indent)).append("}")
+    return sb.toString()
+  }
+
   override fun toString(): String {
-    return "for: [ $init, $condition, $incr] do: $code"
+    return toString(0)
   }
 }

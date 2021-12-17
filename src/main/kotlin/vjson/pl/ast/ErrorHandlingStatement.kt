@@ -78,7 +78,26 @@ data class ErrorHandlingStatement(
     return ErrorHandlingInstruction(tryInst, errorCodeInst, elseCodeInst)
   }
 
+  override fun toString(indent: Int): String {
+    val sb = StringBuilder()
+    sb.append("/* Error Handling Begin */\n")
+    for (stmt in tryCode) {
+      sb.append(" ".repeat(indent)).append(stmt.toString(indent)).append("\n")
+    }
+    sb.append(" ".repeat(indent)).append("/* Error Handling End */\n")
+    sb.append(" ".repeat(indent)).append("if: err != nil; then: {\n")
+    for (stmt in errorCode) {
+      sb.append(" ".repeat(indent + 2)).append(stmt.toString(indent + 2)).append("\n")
+    }
+    sb.append(" ".repeat(indent)).append("} else: {\n")
+    for (stmt in elseCode) {
+      sb.append(" ".repeat(indent + 2)).append(stmt.toString(indent + 2)).append("\n")
+    }
+    sb.append(" ".repeat(indent)).append("}")
+    return sb.toString()
+  }
+
   override fun toString(): String {
-    return "ErrorHandling : $tryCode if: err != nil; then: $errorCode else: $elseCode"
+    return toString(0)
   }
 }

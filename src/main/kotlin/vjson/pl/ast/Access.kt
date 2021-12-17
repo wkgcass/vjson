@@ -144,12 +144,16 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
     }
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return if (from == null) {
       name
     } else {
       "$from.$name"
     }
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 
   companion object {

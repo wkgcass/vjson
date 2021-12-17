@@ -50,7 +50,11 @@ data class Assignment(
     return variable.generateSetInstruction(valueInst)
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return "($variable = $value)"
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

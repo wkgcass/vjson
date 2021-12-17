@@ -68,7 +68,21 @@ data class IfStatement(
     return IfInstruction(conditionInst, ifCodeInst, elseCodeInst)
   }
 
+  override fun toString(indent: Int): String {
+    val sb = StringBuilder()
+    sb.append("if: $condition; then: {\n")
+    for (stmt in ifCode) {
+      sb.append(" ".repeat(indent + 2)).append(stmt.toString(indent + 2)).append("\n")
+    }
+    sb.append(" ".repeat(indent)).append("} else: {\n")
+    for (stmt in elseCode) {
+      sb.append(" ".repeat(indent + 2)).append(stmt.toString(indent + 2)).append("\n")
+    }
+    sb.append(" ".repeat(indent)).append("}")
+    return sb.toString()
+  }
+
   override fun toString(): String {
-    return "if: $condition then: $ifCode else: $elseCode"
+    return toString(0)
   }
 }

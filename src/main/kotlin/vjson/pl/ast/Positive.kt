@@ -42,7 +42,11 @@ data class Positive(val expr: Expr) : Expr() {
     return expr.generateInstruction()
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return "+$expr"
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

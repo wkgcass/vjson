@@ -45,7 +45,11 @@ data class IntegerLiteral(val n: JSON.Number<*>) : Expr() {
     }
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return "" + n.stringify()
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

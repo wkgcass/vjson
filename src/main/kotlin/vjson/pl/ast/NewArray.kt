@@ -54,10 +54,14 @@ data class NewArray(
     }
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     val typeStr = type.toString()
     val bracketLeft = typeStr.indexOf("[")
     val bracketRight = typeStr.indexOf("]", bracketLeft + 1)
     return "new ${typeStr.substring(0, bracketLeft + 1)}$len${typeStr.substring(bracketRight)}"
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

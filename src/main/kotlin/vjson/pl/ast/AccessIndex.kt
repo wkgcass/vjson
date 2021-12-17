@@ -67,7 +67,11 @@ data class AccessIndex(val from: Expr, val index: Expr) : AssignableExpr() {
     }
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return "$from[$index]"
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

@@ -57,7 +57,11 @@ data class TemplateTypeInstantiation(val typeName: String, val templateType: Typ
     return NoOp()
   }
 
+  override fun toString(indent: Int): String {
+    return "let $typeName = { $templateType:" + typeParams.joinToString(", ", prefix = "[", postfix = "]") + " }"
+  }
+
   override fun toString(): String {
-    return "let $typeName = { $templateType:[" + typeParams.joinToString(", ") + "] }"
+    return toString(0)
   }
 }

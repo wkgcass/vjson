@@ -59,8 +59,12 @@ data class FunctionInvocation(
     return buildFunctionInvocationInstruction(ctx, this, args.map { it.generateInstruction() })
   }
 
+  override fun toString(indent: Int): String {
+    return "($target:$args)"
+  }
+
   override fun toString(): String {
-    return "($target: $args)"
+    return toString(0)
   }
 
   companion object {

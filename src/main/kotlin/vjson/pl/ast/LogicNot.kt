@@ -43,7 +43,11 @@ data class LogicNot(val expr: Expr) : Expr() {
     return LogicNotInstruction(expr.generateInstruction(), ctx.stackInfo(lineCol))
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return "!$expr"
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

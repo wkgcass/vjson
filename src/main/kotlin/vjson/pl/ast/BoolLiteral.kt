@@ -38,7 +38,11 @@ data class BoolLiteral(val b: Boolean) : Expr() {
     return LiteralBool(b, ctx.stackInfo(lineCol))
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return "" + b
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }

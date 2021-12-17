@@ -26,4 +26,6 @@ interface AST {
   fun checkAST(ctx: TypeContext)
 
   fun generateInstruction(): Instruction
+
+  fun toString(indent: Int): String
 }

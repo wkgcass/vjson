@@ -57,11 +57,15 @@ data class ReturnStatement(val expr: Expr? = null) : Statement() {
     return true
   }
 
-  override fun toString(): String {
+  override fun toString(indent: Int): String {
     return if (expr == null) {
       "return"
     } else {
       "return: $expr"
     }
+  }
+
+  override fun toString(): String {
+    return toString(0)
   }
 }
