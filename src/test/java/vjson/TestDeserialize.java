@@ -218,4 +218,32 @@ public class TestDeserialize {
         assertTrue(lsn.completed());
         assertEquals(Arrays.asList(1, 2), lsn.get());
     }
+
+    @Test
+    public void deserializeWithNotRegisteredFields() {
+        class A {
+            public String a;
+            public List<String> b;
+            public int c;
+        }
+        class Container {
+            public List<A> list;
+        }
+        Rule<A> ruleA = new ObjectRule<>(A::new)
+            .put("a", (o, v) -> o.a = v, StringRule.get())
+            .put("c", (o, v) -> o.c = v, IntRule.get());
+        Rule<Container> ruleContainer = new ObjectRule<>(Container::new)
+            .put("list", (o, v) -> o.list = v, new ArrayRule<>(() -> new ArrayList<A>(), ArrayList::add, ruleA));
+        Container c = JSON.deserialize("{\"list\":" +
+            "[" +
+            "{\"a\":\"xxx\",\"c\":1,\"b\":[" +
+            "\"zzz\",1,1.0,1e2,true,false,null,[1],{\"x\":\"y\"}" +
+            "]}," +
+            "{\"a\":\"yyy\"}" +
+            "]" +
+            "}", ruleContainer);
+        assertEquals("xxx", c.list.get(0).a);
+        assertEquals(1, c.list.get(0).c);
+        assertEquals("yyy", c.list.get(1).a);
+    }
 }
