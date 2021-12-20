@@ -37,6 +37,18 @@ class ParserOptions {
     fun ensureNotModifiedByOutside(opts: ParserOptions): ParserOptions {
       return if (isDefaultOptions(opts)) opts else ParserOptions(opts)
     }
+
+    /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+    fun allFeatures(): ParserOptions = ParserOptions()
+      .setStringSingleQuotes(true)
+      .setKeyNoQuotes(true)
+      .setKeyNoQuotesAnyChar(true)
+      .setAllowSkippingCommas(true)
+      .setAllowObjectEntryWithoutValue(true)
+      .setAllowOmittingColonBeforeBraces(true)
+      .setEqualAsColon(true)
+      .setSemicolonAsComma(true)
+      .setStringValueNoQuotes(true)
   }
 
   var bufLen: Int
@@ -61,6 +73,8 @@ class ParserOptions {
     private set
   var isAllowObjectEntryWithoutValue: Boolean
     private set
+  var isAllowOmittingColonBeforeBraces: Boolean
+    private set
   var isEqualAsColon: Boolean
     private set
   var isSemicolonAsComma: Boolean
@@ -81,6 +95,7 @@ class ParserOptions {
     isNullArraysAndObjects = false
     isAllowSkippingCommas = false
     isAllowObjectEntryWithoutValue = false
+    isAllowOmittingColonBeforeBraces = false
     isEqualAsColon = false
     isSemicolonAsComma = false
     isStringValueNoQuotes = false
@@ -99,6 +114,7 @@ class ParserOptions {
     isNullArraysAndObjects = opts.isNullArraysAndObjects
     isAllowSkippingCommas = opts.isAllowSkippingCommas
     isAllowObjectEntryWithoutValue = opts.isAllowObjectEntryWithoutValue
+    isAllowOmittingColonBeforeBraces = opts.isAllowOmittingColonBeforeBraces
     isEqualAsColon = opts.isEqualAsColon
     isSemicolonAsComma = opts.isSemicolonAsComma
     isStringValueNoQuotes = opts.isStringValueNoQuotes
@@ -165,6 +181,11 @@ class ParserOptions {
 
   fun setAllowObjectEntryWithoutValue(allowObjectEntryWithoutValue: Boolean): ParserOptions {
     isAllowObjectEntryWithoutValue = allowObjectEntryWithoutValue
+    return this
+  }
+
+  fun setAllowOmittingColonBeforeBraces(allowOmittingColonBeforeBraces: Boolean): ParserOptions {
+    isAllowOmittingColonBeforeBraces = allowOmittingColonBeforeBraces
     return this
   }
 

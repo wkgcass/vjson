@@ -150,6 +150,25 @@ public class TestFeature {
     }
 
     @Test
+    public void allowOmittingColonBeforeBraces() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions()
+            .setAllowOmittingColonBeforeBraces(true));
+        assertEquals(new ObjectBuilder()
+            .putObject("a", o -> o.put("b", "c"))
+            .build(), parser.last("{\"a\" {\"b\":\"c\"}}"));
+    }
+
+    @Test
+    public void allowOmittingColonBeforeBracesAndKeyNoQuotes() throws Exception {
+        ObjectParser parser = new ObjectParser(new ParserOptions()
+            .setAllowOmittingColonBeforeBraces(true)
+            .setKeyNoQuotes(true));
+        assertEquals(new ObjectBuilder()
+            .putObject("a", o -> o.put("b", "c"))
+            .build(), parser.last("{a {b:\"c\"}}"));
+    }
+
+    @Test
     public void equalAsColon() throws Exception {
         ObjectParser parser = new ObjectParser(new ParserOptions().setEqualAsColon(true));
         assertEquals(new SimpleObject(new AppendableMap<>()
@@ -240,6 +259,7 @@ public class TestFeature {
             .setKeyNoQuotesAnyChar(true)
             .setAllowSkippingCommas(true)
             .setAllowObjectEntryWithoutValue(true)
+            .setAllowOmittingColonBeforeBraces(true)
             .setEqualAsColon(true)
             .setSemicolonAsComma(true)
             .setStringValueNoQuotes(true));
@@ -256,8 +276,8 @@ public class TestFeature {
                 )
                 .build(),
             parser.last("{\n" +
-                "  function a: {x: \"int\", y: \"string\"} void: {\n" +
-                "    while: b.c > 1; do: {\n" +
+                "  function a: {x: \"int\", y: \"string\"} void {\n" +
+                "    while: b.c > 1; do {\n" +
                 "      break\n" +
                 "    }\n" +
                 "  }\n" +
@@ -265,14 +285,14 @@ public class TestFeature {
     }
 
     public static final String TEST_PROG = "{\n" +
-        "function printPrimes: { searchRange: int } void: {\n" +
+        "function printPrimes { searchRange: int } void {\n" +
         "  var notPrime = { new (bool[searchRange + 1]) }\n" +
-        "  for: [ { var i = 2 }; i <= searchRange; i += 1] do: {\n" +
-        "    if: !notPrime[i]; then: {\n" +
+        "  for: [ { var i = 2 }; i <= searchRange; i += 1] do {\n" +
+        "    if: !notPrime[i]; then {\n" +
         "      var j = 2\n" +
-        "      while: true; do: {\n" +
+        "      while: true; do {\n" +
         "        var n = i * j\n" +
-        "        if: n > searchRange, then: {\n" +
+        "        if: n > searchRange; then {\n" +
         "          break\n" +
         "        }\n" +
         "        notPrime[n] = true\n" +
@@ -281,8 +301,8 @@ public class TestFeature {
         "    }\n" +
         "  }\n" +
         "  std.console.log: [ ('primes:') ]\n" +
-        "  for: [ { var i = 2 }; i < notPrime.length; i += 1] do: {\n" +
-        "    if: !notPrime[i]; then: {\n" +
+        "  for: [ { var i = 2 }; i < notPrime.length; i += 1] do {\n" +
+        "    if: !notPrime[i]; then {\n" +
         "      std.console.log: [ ('' + i) ]\n" +
         "    }\n" +
         "  }\n" +
@@ -292,15 +312,7 @@ public class TestFeature {
 
     @Test
     public void pass() throws Exception {
-        ObjectParser parser = new ObjectParser(new ParserOptions()
-            .setStringSingleQuotes(true)
-            .setKeyNoQuotes(true)
-            .setKeyNoQuotesAnyChar(true)
-            .setAllowSkippingCommas(true)
-            .setAllowObjectEntryWithoutValue(true)
-            .setEqualAsColon(true)
-            .setSemicolonAsComma(true)
-            .setStringValueNoQuotes(true));
+        ObjectParser parser = new ObjectParser(ParserOptions.allFeatures());
         JSON.Object obj = parser.last(TEST_PROG);
         System.out.println(obj);
     }

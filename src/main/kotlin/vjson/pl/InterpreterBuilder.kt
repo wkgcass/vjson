@@ -30,6 +30,7 @@ class InterpreterBuilder {
       .setKeyNoQuotesAnyChar(true)
       .setAllowSkippingCommas(true)
       .setAllowObjectEntryWithoutValue(true)
+      .setAllowOmittingColonBeforeBraces(true)
       .setEqualAsColon(true)
       .setSemicolonAsComma(true)
       .setStringValueNoQuotes(true)

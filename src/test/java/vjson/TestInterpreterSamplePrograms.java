@@ -19,11 +19,11 @@ public class TestInterpreterSamplePrograms {
             "var variableName = 1\n" +
             "\n" +
             "// function definition\n" +
-            "function max:{a: int, b: int, c: int} int: {\n" +
+            "function max {a: int, b: int, c: int} int {\n" +
             "  // if statement\n" +
-            "  if: a >= b && a >= c; then: { return: a }\n" +
-            "  else if: b >= a && b >= c; then: { return: b }\n" +
-            "  else: { return: c }\n" +
+            "  if: a >= b && a >= c; then { return: a }\n" +
+            "  else if: b >= a && b >= c; then { return: b }\n" +
+            "  else { return: c }\n" +
             "  // the `;` can be omitted if `then` is on a new line\n" +
             "}\n" +
             "\n" +
@@ -52,17 +52,17 @@ public class TestInterpreterSamplePrograms {
             "nullVariable = null\n" +
             "\n" +
             "// class definition\n" +
-            "class Person: {name: string, age: int} do: {\n" +
+            "class Person {name: string, age: int} do {\n" +
             "  public var publicField = 1\n" +
             "  private var privateField = 2\n" +
             "  const var constField = 3\n" +
             "  // variables directly inside class are considered private by default\n" +
             "  var alsoPrivateField = 3\n" +
             "  // functions directly inside class are considered public by default\n" +
-            "  function talkTo: {person: Person} void: {\n" +
+            "  function talkTo {person: Person} void {\n" +
             "    std.console.log:[ (\"Hi \" + person.name + \", I\\'m \" + name) ]\n" +
             "  }\n" +
-            "  private function privateFunc: {} void: { }\n" +
+            "  private function privateFunc {} void { }\n" +
             "}\n" +
             "// objects\n" +
             "var alice = new Person:[('alice'), 24]\n" +
@@ -70,8 +70,8 @@ public class TestInterpreterSamplePrograms {
             "alice.talkTo:[bob]\n" +
             "\n" +
             "// template class definition\n" +
-            "template: { T, U } class PlusToInt:{ t: T, u: U } do: {\n" +
-            "  function plus:{} int: {\n" +
+            "template { T, U } class PlusToInt { t: T, u: U } do {\n" +
+            "  function plus {} int {\n" +
             "    return: t.toInt + u.toInt\n" +
             "  }\n" +
             "}\n" +
@@ -87,17 +87,17 @@ public class TestInterpreterSamplePrograms {
             "// loops\n" +
             "// for loop\n" +
             "var sum = 0\n" +
-            "for: [{ var i = 1 }; i <= 10; i += 1] do: {\n" +
+            "for: [{ var i = 1 }; i <= 10; i += 1] do {\n" +
             "  sum = sum + i\n" +
             "}\n" +
             "std.console.log:[ ('sum of 1 to 10 is ' + sum) ]\n" +
             "// while loop\n" +
             "sum = 0\n" +
             "var n = 1\n" +
-            "while: true; do: {\n" +
+            "while: true; do {\n" +
             "  sum = sum + n\n" +
             "  n = n + 1\n" +
-            "  if: n >= 10; then: {\n" +
+            "  if: n >= 10; then {\n" +
             "    break\n" +
             "  }\n" +
             "}\n" +
@@ -105,9 +105,9 @@ public class TestInterpreterSamplePrograms {
             "std.console.log:[ ('sum of 1 until 10 is ' + sum) ]\n" +
             "\n" +
             "// executable variables/fields\n" +
-            "class Counter: {} do: {\n" +
+            "class Counter {} do {\n" +
             "  var n = 0\n" +
-            "  private function incr: {} int: {\n" +
+            "  private function incr {} int {\n" +
             "    return: n += 1\n" +
             "  }\n" +
             "  // use `executable` modifier and a zero-param function\n" +
@@ -125,15 +125,15 @@ public class TestInterpreterSamplePrograms {
             ")]\n" +
             "\n" +
             "// exception and error handling\n" +
-            "function badFunction:{msg: string} void: {\n" +
+            "function badFunction {msg: string} void {\n" +
             "  throw: msg // can also be null or error object\n" +
             "}\n" +
-            "function catchFunction:{} void: {\n" +
+            "function catchFunction {} void {\n" +
             "  badFunction:[('bad function call')]\n" +
             "  // use if: err != null to catch errors\n" +
             "  // the following statement will catch all errors in current\n" +
             "  // code block before the error handler\n" +
-            "  if: err != null; then: {\n" +
+            "  if: err != null; then {\n" +
             "    // a variable {err: error} is automatically defined\n" +
             "    // and can be used in the error handling code\n" +
             "    std.console.log:[('caught exception: ' + err.message)]\n" +
@@ -142,7 +142,7 @@ public class TestInterpreterSamplePrograms {
             "  badFunction:[('the second bad function call')]\n" +
             "  // the following statement will catch all errors after the last error handler\n" +
             "  // and before this error handler\n" +
-            "  if: err != null; then: {\n" +
+            "  if: err != null; then {\n" +
             "    std.console.log:[('caught second exception: ' + err.message)]\n" +
             "  }\n" +
             "}\n" +
@@ -200,8 +200,8 @@ public class TestInterpreterSamplePrograms {
             " */\n" +
             "var stringPlusInt = ('' + intVar)\n" +
             "var intPlusString = intVar + ''\n" +
-            "class MyType: {a: int, b: double} do: {\n" +
-            "  function toString:{} string: {\n" +
+            "class MyType {a: int, b: double} do {\n" +
+            "  function toString {} string {\n" +
             "    return: ('MyType(a=' + a + ', b=' + b + ')')\n" +
             "  }\n" +
             "}\n" +
@@ -257,10 +257,10 @@ public class TestInterpreterSamplePrograms {
     public void pi() {
         String prog = "{\n" +
             "var Pi = 0.0\n" +
-            "for: [{var i = 1}; i < 1000000; i += 1] do: {\n" +
-            "    if: i % 2 == 0; then: {\n" +
+            "for: [{var i = 1}; i < 1000000; i += 1] do {\n" +
+            "    if: i % 2 == 0; then {\n" +
             "        Pi = Pi - 1.0 / (2 * i - 1).toDouble\n" +
-            "    } else: {\n" +
+            "    } else {\n" +
             "        Pi = Pi + 1.0 / (2 * i - 1).toDouble\n" +
             "    }\n" +
             "}\n" +
@@ -311,8 +311,8 @@ public class TestInterpreterSamplePrograms {
             "\n" +
             "// Iterator\n" +
             "let StringIterator = { std.Iterator:[ string ] }\n" +
-            "function printIterator: {ite: StringIterator} void: {\n" +
-            "  while: ite.hasNext; do: {\n" +
+            "function printIterator {ite: StringIterator} void {\n" +
+            "  while: ite.hasNext; do {\n" +
             "    std.console.log:[ite.next + '']\n" +
             "  }\n" +
             "}\n" +

@@ -195,6 +195,8 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
           if (!isColon(c) && opts.isAllowObjectEntryWithoutValue) {
             fillEntryWithoutValue(cs)
             state = 4
+          } else if (!isColon(c) && opts.isAllowOmittingColonBeforeBraces && c == '{') {
+            state = 3
           } else if (!isColon(c)) {
             err = "invalid key-value separator for json object, expecting `:`, but got $c"
             throw ParserUtils.err(cs, opts, err)
@@ -275,11 +277,24 @@ class ObjectParser /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
         cs.skipBlank()
         if (cs.hasNext()) {
           val peek = cs.peekNext()
-          if (isColon(peek) || opts.isAllowObjectEntryWithoutValue) {
+          if (isColon(peek)) {
             state = 2
           } else {
-            err = "invalid character after json object key without quotes: $peek"
-            throw ParserUtils.err(cs, opts, err)
+            var ok = false
+            if (opts.isAllowOmittingColonBeforeBraces) {
+              if (peek == '{') {
+                state = 3
+                ok = true
+              }
+            }
+            if (!ok && opts.isAllowObjectEntryWithoutValue) {
+              state = 2
+              ok = true
+            }
+            if (!ok) {
+              err = "invalid character after json object key without quotes: $peek"
+              throw ParserUtils.err(cs, opts, err)
+            }
           }
         }
       }
