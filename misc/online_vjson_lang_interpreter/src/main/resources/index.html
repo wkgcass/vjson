@@ -190,6 +190,8 @@
         "    // a variable {err: error} is automatically defined\n" +
         "    // and can be used in the error handling code\n" +
         "    std.console.log:[('caught exception: ' + err.message)]\n" +
+        "    // also you can print stacktrace:\n" +
+        "    std.console.log:[err.formatException]\n" +
         "  }\n" +
         "\n" +
         "  badFunction:[('the second bad function call')]\n" +

@@ -137,6 +137,8 @@ public class TestInterpreterSamplePrograms {
             "    // a variable {err: error} is automatically defined\n" +
             "    // and can be used in the error handling code\n" +
             "    std.console.log:[('caught exception: ' + err.message)]\n" +
+            "    // also you can print stacktrace:\n" +
+            "    std.console.log:[err.formatException]\n" +
             "  }\n" +
             "\n" +
             "  badFunction:[('the second bad function call')]\n" +
@@ -165,6 +167,10 @@ public class TestInterpreterSamplePrograms {
             "sum of 1 until 10 is 45",
             "cnt1 = 1, cnt2 = 2, cnt3 = 3",
             "caught exception: bad function call",
+            "bad function call\n" +
+                "  badFunction at (113:3)\n" +
+                "  catchFunction at (116:3)\n" +
+                "  <no info> at (135:1)",
             "caught second exception: the second bad function call"
         ), output);
     }
