@@ -7,7 +7,6 @@ import vjson.deserializer.rule.ObjectRule
 import vjson.deserializer.rule.StringRule
 import vjson.util.ArrayBuilder
 import java.util.*
-import kotlin.collections.ArrayList
 
 data class Shop(val name: String, val goods: List<Good>)
 class ShopBuilder {

@@ -15,7 +15,6 @@ import vjson.CharStream
 import vjson.JSON
 import vjson.Parser
 import vjson.cs.LineCol
-import vjson.cs.PeekCharStream
 import vjson.ex.JsonParseException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleString
