@@ -65,20 +65,19 @@ class ExtTypes(private val funcs: ExtFunctions) : Types {
   inner class ExtClass : TypeInstance {
     override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
       return when (name) {
-        "currentTimeMillis" -> object : ExecutableField(name, LongType, MemPos(0, 0)) {
-          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-            values.longValue = funcs.currentTimeMillis()
+        "currentTimeMillis" -> object : ExecutableField(name, LongType) {
+          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+            exec.values.longValue = funcs.currentTimeMillis()
           }
         }
         "rand" -> object : ExecutableField(
           name,
-          ctx.getFunctionDescriptorAsInstance(listOf(), DoubleType, DummyMemoryAllocatorProvider),
-          MemPos(0, 0)
+          ctx.getFunctionDescriptorAsInstance(listOf(), DoubleType, DummyMemoryAllocatorProvider)
         ) {
-          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-            values.refValue = object : InstructionWithStackInfo(RAND_STACK_INFO) {
-              override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-                values.doubleValue = funcs.rand()
+          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+            exec.values.refValue = object : InstructionWithStackInfo(RAND_STACK_INFO) {
+              override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+                exec.values.doubleValue = funcs.rand()
               }
             }
           }

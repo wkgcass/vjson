@@ -13,7 +13,7 @@
 package vjson.pl.type
 
 import vjson.pl.inst.ActionContext
-import vjson.pl.inst.ValueHolder
+import vjson.pl.inst.Execution
 
 open class FunctionDescriptor(val params: List<ParamInstance>, val returnType: TypeInstance, val mem: MemoryAllocatorProvider) {
   override fun toString(): String {
@@ -44,5 +44,5 @@ abstract class ExecutableConstructorFunctionDescriptor(
   returnType: TypeInstance,
   mem: MemoryAllocatorProvider
 ) : FunctionDescriptor(params, returnType, mem) {
-  abstract suspend fun execute(ctx: ActionContext, values: ValueHolder)
+  abstract suspend fun execute(ctx: ActionContext, exec: Execution)
 }

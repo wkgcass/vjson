@@ -57,33 +57,16 @@ class Interpreter(private val types: List<Types>, private val ast: List<Statemen
       t.initiateValues(actionContext, typesOffset[i], valueForTypes[t])
     }
 
-    val valueHolder = ValueHolder()
+    val exec = Execution()
     for (stmt in ast) {
       val inst = stmt.generateInstruction()
       try {
-        inst.execute(actionContext, valueHolder)
+        inst.execute(actionContext, exec)
       } catch (e: InstructionException) {
-        throw formatException(e)
+        throw Exception(e.formatException(), e.cause)
       }
     }
 
     return actionContext.getCurrentMem()
-  }
-
-  private fun formatException(e: InstructionException): Exception {
-    val sb = StringBuilder()
-    if (e.message != null) {
-      sb.append(e.message).append("\n")
-    }
-    var isFirst = true
-    for (info in e.stackTrace) {
-      if (isFirst) {
-        isFirst = false
-      } else {
-        sb.append("\n")
-      }
-      sb.append("  ").append(info)
-    }
-    return Exception(sb.toString(), e.cause)
   }
 }

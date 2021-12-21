@@ -91,17 +91,17 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
         val funcDesc = func.first
         val funcInst = func.second
         object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
-          override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-            fromInst.execute(ctx, values)
-            val objectCtx = values.refValue as ActionContext
+          override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            fromInst.execute(ctx, exec)
+            val objectCtx = exec.values.refValue as ActionContext
             if (funcInst is FunctionInstance) {
-              funcInst.ctxBuilder = { FunctionInvocation.buildContext(objectCtx, it, values, funcDesc, listOf()) }
-              funcInst.execute(objectCtx, values)
+              funcInst.ctxBuilder = { FunctionInvocation.buildContext(objectCtx, it, exec, funcDesc, listOf()) }
+              funcInst.execute(objectCtx, exec)
             } else {
-              funcInst.execute(objectCtx, values)
-              val funcValue = values.refValue as Instruction
-              val newCtx = FunctionInvocation.buildContext(objectCtx, objectCtx, values, funcDesc, listOf())
-              funcValue.execute(newCtx, values)
+              funcInst.execute(objectCtx, exec)
+              val funcValue = exec.values.refValue as Instruction
+              val newCtx = FunctionInvocation.buildContext(objectCtx, objectCtx, exec, funcDesc, listOf())
+              funcValue.execute(newCtx, exec)
             }
           }
         }
@@ -135,10 +135,10 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
       }
       object : Instruction() {
         override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
-        override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-          fromInst.execute(ctx, values)
-          val objCtx = values.refValue as ActionContext
-          setField.execute(objCtx, values)
+        override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+          fromInst.execute(ctx, exec)
+          val objCtx = exec.values.refValue as ActionContext
+          setField.execute(objCtx, exec)
         }
       }
     }

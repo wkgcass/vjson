@@ -1259,7 +1259,10 @@ public class TestInterpreter {
     @Test
     public void aThrow() {
         String prog = "{\n" +
+            "function stack5: {} void: {\n" +
+            "}\n" +
             "function stack4: {} void: {\n" +
+            "  stack5:[]\n" +
             "  throw: ('surprise')\n" +
             "}\n" +
             "function stack3: {} void: {\n" +
@@ -1272,19 +1275,30 @@ public class TestInterpreter {
             "  stack2:[]\n" +
             "}\n" +
             "stack1:[]\n" +
-            "var msg = { null: string }" +
+            "var msg = { null: string }\n" +
+            "var format = { null: string }\n" +
             "if: err != null; then: {\n" +
             "  msg = err.message\n" +
+            "  format = err.formatException\n" +
             "}\n" +
             "}";
         Interpreter interpreter = new InterpreterBuilder()
             .compile(prog);
         RuntimeMemory mem = interpreter.executeBlock();
-        assertEquals(5, mem.refLen());
-        assertEquals("surprise", mem.getRef(4));
+        assertEquals(7, mem.refLen());
+        assertEquals("surprise", mem.getRef(5));
+        assertEquals("surprise\n" +
+            "  stack4 at (6:3)\n" +
+            "  stack3 at (9:3)\n" +
+            "  stack2 at (12:3)\n" +
+            "  stack1 at (15:3)\n" +
+            "  <no info> at (17:1)", mem.getRef(6));
 
         prog = "{\n" +
+            "function stack5: {} void: {\n" +
+            "}\n" +
             "function stack4: {} void: {\n" +
+            "  stack5:[]\n" +
             "  throw: ('surprise')\n" +
             "}\n" +
             "function stack3: {} void: {\n" +
@@ -1305,11 +1319,11 @@ public class TestInterpreter {
             fail();
         } catch (Exception e) {
             assertEquals("surprise\n" +
-                "  stack4 at test.vjson(3:3)\n" +
-                "  stack3 at test.vjson(6:3)\n" +
-                "  stack2 at test.vjson(9:3)\n" +
-                "  stack1 at test.vjson(12:3)\n" +
-                "  <no info> at test.vjson(14:1)", e.getMessage());
+                "  stack4 at test.vjson(6:3)\n" +
+                "  stack3 at test.vjson(9:3)\n" +
+                "  stack2 at test.vjson(12:3)\n" +
+                "  stack1 at test.vjson(15:3)\n" +
+                "  <no info> at test.vjson(17:1)", e.getMessage());
         }
     }
 

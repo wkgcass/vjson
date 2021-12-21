@@ -34,8 +34,8 @@ open class MapType(
     VoidType,
     FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, refTotal = 1))
   ) {
-    override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-      ctx.getCurrentMem().setRef(0, newMap(values.intValue))
+    override suspend fun execute(ctx: ActionContext, exec: Execution) {
+      ctx.getCurrentMem().setRef(0, newMap(exec.values.intValue))
     }
   }
 
@@ -52,20 +52,20 @@ open class MapType(
       return generatedForMap0(key, value, ctx, name)
     }
     return when (name) {
-      "size" -> object : ExecutableField(name, IntType, MemPos(0, 0)) {
-        override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-          val obj = values.refValue as ActionContext
+      "size" -> object : ExecutableField(name, IntType) {
+        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+          val obj = exec.values.refValue as ActionContext
           val map = obj.getCurrentMem().getRef(0) as Map<*, *>
-          values.intValue = map.size
+          exec.values.intValue = map.size
         }
       }
-      "keySet" -> object : ExecutableField(name, keySetType, MemPos(0, 0)) {
-        override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-          val obj = values.refValue as ActionContext
+      "keySet" -> object : ExecutableField(name, keySetType) {
+        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+          val obj = exec.values.refValue as ActionContext
           val map = obj.getCurrentMem().getRef(0) as Map<*, *>
           val newObj = ActionContext(RuntimeMemoryTotal(refTotal = 1), parent = null)
           newObj.getCurrentMem().setRef(0, map.keys)
-          values.refValue = newObj
+          exec.values.refValue = newObj
         }
       }
       "containsKey" -> when (key) {
@@ -74,14 +74,14 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(IntType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
-          ), MemPos(0, 0)
+          )
         ) {
-          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-            val obj = values.refValue as ActionContext
+          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+            val obj = exec.values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Int, *>
-            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
-              override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-                values.boolValue = map.containsKey(ctx.getCurrentMem().getInt(0))
+            exec.values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
+              override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+                exec.values.boolValue = map.containsKey(ctx.getCurrentMem().getInt(0))
               }
             }
           }
@@ -91,14 +91,14 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(LongType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
-          ), MemPos(0, 0)
+          )
         ) {
-          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-            val obj = values.refValue as ActionContext
+          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+            val obj = exec.values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Long, *>
-            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
-              override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-                values.boolValue = map.containsKey(ctx.getCurrentMem().getLong(0))
+            exec.values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
+              override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+                exec.values.boolValue = map.containsKey(ctx.getCurrentMem().getLong(0))
               }
             }
           }
@@ -108,14 +108,14 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(FloatType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
-          ), MemPos(0, 0)
+          )
         ) {
-          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-            val obj = values.refValue as ActionContext
+          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+            val obj = exec.values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Float, *>
-            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
-              override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-                values.boolValue = map.containsKey(ctx.getCurrentMem().getFloat(0))
+            exec.values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
+              override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+                exec.values.boolValue = map.containsKey(ctx.getCurrentMem().getFloat(0))
               }
             }
           }
@@ -125,14 +125,14 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(DoubleType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
-          ), MemPos(0, 0)
+          )
         ) {
-          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-            val obj = values.refValue as ActionContext
+          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+            val obj = exec.values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Double, *>
-            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
-              override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-                values.boolValue = map.containsKey(ctx.getCurrentMem().getDouble(0))
+            exec.values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
+              override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+                exec.values.boolValue = map.containsKey(ctx.getCurrentMem().getDouble(0))
               }
             }
           }
@@ -142,14 +142,14 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(BoolType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
-          ), MemPos(0, 0)
+          )
         ) {
-          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-            val obj = values.refValue as ActionContext
+          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+            val obj = exec.values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Boolean, *>
-            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
-              override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-                values.boolValue = map.containsKey(ctx.getCurrentMem().getBool(0))
+            exec.values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
+              override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+                exec.values.boolValue = map.containsKey(ctx.getCurrentMem().getBool(0))
               }
             }
           }
@@ -159,14 +159,14 @@ open class MapType(
           ctx.getFunctionDescriptorAsInstance(
             listOf(ParamInstance(key, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
-          ), MemPos(0, 0)
+          )
         ) {
-          override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-            val obj = values.refValue as ActionContext
+          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+            val obj = exec.values.refValue as ActionContext
             @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as Map<Any?, *>
-            values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
-              override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-                values.boolValue = map.containsKey(ctx.getCurrentMem().getRef(0))
+            exec.values.refValue = object : InstructionWithStackInfo(MAP_CONTAINS_KEY_STACK_INFO) {
+              override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+                exec.values.boolValue = map.containsKey(ctx.getCurrentMem().getRef(0))
               }
             }
           }
@@ -174,15 +174,14 @@ open class MapType(
       }
       "toString" -> object : ExecutableField(
         name,
-        ctx.getFunctionDescriptorAsInstance(listOf(), StringType, DummyMemoryAllocatorProvider),
-        MemPos(0, 0)
+        ctx.getFunctionDescriptorAsInstance(listOf(), StringType, DummyMemoryAllocatorProvider)
       ) {
-        override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-          val obj = values.refValue as ActionContext
+        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+          val obj = exec.values.refValue as ActionContext
           val map = obj.getCurrentMem().getRef(0) as Map<*, *>
-          values.refValue = object : InstructionWithStackInfo(MAP_TO_STRING_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-              values.refValue = map.toString()
+          exec.values.refValue = object : InstructionWithStackInfo(MAP_TO_STRING_STACK_INFO) {
+            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+              exec.values.refValue = map.toString()
             }
           }
         }

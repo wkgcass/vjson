@@ -77,15 +77,15 @@ data class FunctionInvocation(
     fun invokeFunction(ctx: TypeContext, funcDesc: FunctionDescriptor, funcInst: Instruction, args: List<Instruction>, lineCol: LineCol):
       Instruction {
       return object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
-        override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
+        override suspend fun execute0(ctx: ActionContext, exec: Execution) {
           if (funcInst is FunctionInstance) {
-            funcInst.ctxBuilder = { buildContext(ctx, it, values, funcDesc, args) }
-            funcInst.execute(ctx, values)
+            funcInst.ctxBuilder = { buildContext(ctx, it, exec, funcDesc, args) }
+            funcInst.execute(ctx, exec)
           } else {
-            funcInst.execute(ctx, values)
-            val funcValue = values.refValue as Instruction
-            val newCtx = buildContext(ctx, ctx, values, funcDesc, args)
-            funcValue.execute(newCtx, values)
+            funcInst.execute(ctx, exec)
+            val funcValue = exec.values.refValue as Instruction
+            val newCtx = buildContext(ctx, ctx, exec, funcDesc, args)
+            funcValue.execute(newCtx, exec)
           }
         }
       }
@@ -94,7 +94,7 @@ data class FunctionInvocation(
     suspend fun buildContext(
       callerCtx: ActionContext,
       ctx: ActionContext,
-      values: ValueHolder,
+      exec: Execution,
       funcDesc: FunctionDescriptor,
       args: List<Instruction>
     ): ActionContext {
@@ -102,15 +102,15 @@ data class FunctionInvocation(
       val newMem = newCtx.getCurrentMem()
 
       for (i in args.indices) {
-        args[i].execute(callerCtx, values)
+        args[i].execute(callerCtx, exec)
         val param = funcDesc.params[i]
         when (param.type) {
-          is IntType -> newMem.setInt(param.memIndex, values.intValue)
-          is LongType -> newMem.setLong(param.memIndex, values.longValue)
-          is FloatType -> newMem.setFloat(param.memIndex, values.floatValue)
-          is DoubleType -> newMem.setDouble(param.memIndex, values.doubleValue)
-          is BoolType -> newMem.setBool(param.memIndex, values.boolValue)
-          else -> newMem.setRef(param.memIndex, values.refValue)
+          is IntType -> newMem.setInt(param.memIndex, exec.values.intValue)
+          is LongType -> newMem.setLong(param.memIndex, exec.values.longValue)
+          is FloatType -> newMem.setFloat(param.memIndex, exec.values.floatValue)
+          is DoubleType -> newMem.setDouble(param.memIndex, exec.values.doubleValue)
+          is BoolType -> newMem.setBool(param.memIndex, exec.values.boolValue)
+          else -> newMem.setRef(param.memIndex, exec.values.refValue)
         }
       }
 

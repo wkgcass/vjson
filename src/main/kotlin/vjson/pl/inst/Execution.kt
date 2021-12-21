@@ -12,31 +12,7 @@
 
 package vjson.pl.inst
 
-class InstructionException : Exception {
-  val stackTrace: List<StackInfo>
-
-  constructor(msg: String, stackTrace: List<StackInfo>, cause: Throwable?) : super(msg, cause) {
-    this.stackTrace = stackTrace
-  }
-
-  constructor(stackTrace: List<StackInfo>, cause: Throwable?) : super(cause) {
-    this.stackTrace = stackTrace
-  }
-
-  fun formatException(): String {
-    val sb = StringBuilder()
-    if (this.message != null) {
-      sb.append(this.message).append("\n")
-    }
-    var isFirst = true
-    for (info in this.stackTrace.reversed()) {
-      if (isFirst) {
-        isFirst = false
-      } else {
-        sb.append("\n")
-      }
-      sb.append("  ").append(info)
-    }
-    return sb.toString()
-  }
+class Execution {
+  val stackTrace: MutableList<StackInfo> = ArrayList()
+  val values = ValueHolder()
 }

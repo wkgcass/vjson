@@ -13,15 +13,26 @@
 package vjson.pl.type
 
 import vjson.pl.inst.ActionContext
-import vjson.pl.inst.ValueHolder
+import vjson.pl.inst.Execution
+import vjson.pl.inst.InstructionException
 
 object ErrorType : BuiltInTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
-      "message" -> object : ExecutableField(name, StringType, MemPos(0, 0)) {
-        override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-          val err = values.refValue as Throwable
-          values.refValue = err.message
+      "message" -> object : ExecutableField(name, StringType) {
+        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+          val err = exec.values.refValue as Throwable
+          exec.values.refValue = err.message
+        }
+      }
+      "formatException" -> object : ExecutableField(name, StringType) {
+        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+          val err = exec.values.refValue as Throwable
+          if (err is InstructionException) {
+            exec.values.refValue = err.formatException()
+          } else {
+            exec.values.refValue = err.message ?: "<error no info>"
+          }
         }
       }
       else -> null

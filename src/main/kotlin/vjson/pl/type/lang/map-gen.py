@@ -33,13 +33,13 @@ val type = ctx.getFunctionDescriptorAsInstance(
   listOf(ParamInstance({{KeyType}}, 0), ParamInstance({{ValueType}}, {{valueIndex}})), {{ValueType}},
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{memoryTotal}}))
 )
-object : ExecutableField(name, type, memPos) {
-  override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-    val obj = values.refValue as ActionContext
+object : ExecutableField(name, type) {
+  override suspend fun execute(ctx: ActionContext, exec: Execution) {
+    val obj = exec.values.refValue as ActionContext
     @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<{{KtKeyType}}, {{KtValueType}}>
-    values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
-      override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-        values.{{valueType}}Value = map.put(ctx.getCurrentMem().get{{Key}}(0), ctx.getCurrentMem().get{{Value}}({{valueIndex}})) ?: {{value}}
+    exec.values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
+      override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+        exec.values.{{valueType}}Value = map.put(ctx.getCurrentMem().get{{Key}}(0), ctx.getCurrentMem().get{{Value}}({{valueIndex}})) ?: {{value}}
       }
     }
   }
@@ -55,13 +55,13 @@ val type = ctx.getFunctionDescriptorAsInstance(
   listOf(ParamInstance({{KeyType}}, 0)), {{ValueType}},
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{keyType}}Total = 1))
 )
-object : ExecutableField(name, type, memPos) {
-  override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-    val obj = values.refValue as ActionContext
+object : ExecutableField(name, type) {
+  override suspend fun execute(ctx: ActionContext, exec: Execution) {
+    val obj = exec.values.refValue as ActionContext
     @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<{{KtKeyType}}, {{KtValueType}}>
-    values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
-      override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-        values.{{valueType}}Value = map[ctx.getCurrentMem().get{{Key}}(0)] ?: {{value}}
+    exec.values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
+      override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+        exec.values.{{valueType}}Value = map[ctx.getCurrentMem().get{{Key}}(0)] ?: {{value}}
       }
     }
   }
@@ -77,13 +77,13 @@ val type = ctx.getFunctionDescriptorAsInstance(
   listOf(ParamInstance({{KeyType}}, 0)), {{ValueType}},
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{keyType}}Total = 1))
 )
-object : ExecutableField(name, type, memPos) {
-  override suspend fun execute(ctx: ActionContext, values: ValueHolder) {
-    val obj = values.refValue as ActionContext
+object : ExecutableField(name, type) {
+  override suspend fun execute(ctx: ActionContext, exec: Execution) {
+    val obj = exec.values.refValue as ActionContext
     @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<{{KtKeyType}}, {{KtValueType}}>
-    values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
-      override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
-        values.{{valueType}}Value = map.remove(ctx.getCurrentMem().get{{Key}}(0)) ?: {{value}}
+    exec.values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
+      override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+        exec.values.{{valueType}}Value = map.remove(ctx.getCurrentMem().get{{Key}}(0)) ?: {{value}}
       }
     }
   }
@@ -140,7 +140,6 @@ allTypes = [tInt, tLong, tFloat, tDouble, tBool, tRef]
 
 result += '// ----- BEGIN -----\n'
 result += 'internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeContext, name: String): Field {\n' # 1
-result += '  val memPos = MemPos(0, 0)\n'
 result += '  return when (name) {\n' # 2
 for template in templates:
     result += '    "' + template['name'] + '" -> {\n' # 3

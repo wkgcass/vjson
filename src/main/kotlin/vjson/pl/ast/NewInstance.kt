@@ -14,9 +14,9 @@ package vjson.pl.ast
 
 import vjson.ex.ParserException
 import vjson.pl.inst.ActionContext
+import vjson.pl.inst.Execution
 import vjson.pl.inst.Instruction
 import vjson.pl.inst.InstructionWithStackInfo
-import vjson.pl.inst.ValueHolder
 import vjson.pl.type.*
 
 data class NewInstance(
@@ -62,10 +62,10 @@ data class NewInstance(
 
     if (cons is ExecutableConstructorFunctionDescriptor) {
       return object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
-        override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
+        override suspend fun execute0(ctx: ActionContext, exec: Execution) {
           val newCtx = ActionContext(cons.mem.memoryAllocator().getTotal(), null)
-          cons.execute(newCtx, values)
-          values.refValue = newCtx
+          cons.execute(newCtx, exec)
+          exec.values.refValue = newCtx
         }
       }
     }
@@ -79,26 +79,26 @@ data class NewInstance(
     val code = cls.code.map { it.generateInstruction() }
 
     return object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
-      override suspend fun execute0(ctx: ActionContext, values: ValueHolder) {
+      override suspend fun execute0(ctx: ActionContext, exec: Execution) {
         val newCtx = ActionContext(total, ctx.getContext(memDepth))
         for (i in args.indices) {
           val param = cons.params[i]
-          args[i].execute(ctx, values)
+          args[i].execute(ctx, exec)
           when (param.type) {
-            is IntType -> newCtx.getCurrentMem().setInt(param.memIndex, values.intValue)
-            is LongType -> newCtx.getCurrentMem().setLong(param.memIndex, values.longValue)
-            is FloatType -> newCtx.getCurrentMem().setFloat(param.memIndex, values.floatValue)
-            is DoubleType -> newCtx.getCurrentMem().setDouble(param.memIndex, values.doubleValue)
-            is BoolType -> newCtx.getCurrentMem().setBool(param.memIndex, values.boolValue)
-            else -> newCtx.getCurrentMem().setRef(param.memIndex, values.refValue)
+            is IntType -> newCtx.getCurrentMem().setInt(param.memIndex, exec.values.intValue)
+            is LongType -> newCtx.getCurrentMem().setLong(param.memIndex, exec.values.longValue)
+            is FloatType -> newCtx.getCurrentMem().setFloat(param.memIndex, exec.values.floatValue)
+            is DoubleType -> newCtx.getCurrentMem().setDouble(param.memIndex, exec.values.doubleValue)
+            is BoolType -> newCtx.getCurrentMem().setBool(param.memIndex, exec.values.boolValue)
+            else -> newCtx.getCurrentMem().setRef(param.memIndex, exec.values.refValue)
           }
         }
 
         for (c in code) {
-          c.execute(newCtx, values)
+          c.execute(newCtx, exec)
         }
 
-        values.refValue = newCtx
+        exec.values.refValue = newCtx
       }
     }
   }
