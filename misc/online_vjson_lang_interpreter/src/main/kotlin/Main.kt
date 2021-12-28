@@ -186,6 +186,7 @@ fun eval(_prog: String) {
         LongType -> mem.getLong(index).toString()
         FloatType -> mem.getFloat(index).toString()
         DoubleType -> mem.getDouble(index).toString()
+        BoolType -> mem.getBool(index).toString()
         else -> mem.getRef(index).toString()
       }
     )
