@@ -1,5 +1,3 @@
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import vjson.CharStream
 import vjson.cs.LineCol
 import vjson.cs.LineColCharStream
@@ -58,24 +56,20 @@ fun run(prog: String, printMem: Boolean) {
   }
 
   val compileFinishTime = Date.now()
+  val mem = try {
+    interpreter.execute()
+  } catch (e: Throwable) {
+    outputFunc("Runtime failure")
+    outputFunc(e.message ?: "")
+    return
+  }
 
-  @Suppress("EXPERIMENTAL_API_USAGE")
-  GlobalScope.launch {
-    val mem = try {
-      interpreter.execute()
-    } catch (e: Throwable) {
-      outputFunc("Runtime failure")
-      outputFunc(e.message ?: "")
-      return@launch
-    }
+  val executeFinishTime = Date.now()
 
-    val executeFinishTime = Date.now()
+  outputFunc("### compile time: ${compileFinishTime - startTime}ms, execute time: ${executeFinishTime - compileFinishTime}ms ###")
 
-    outputFunc("### compile time: ${compileFinishTime - startTime}ms, execute time: ${executeFinishTime - compileFinishTime}ms ###")
-
-    if (printMem) {
-      outputFunc(mem.toString())
-    }
+  if (printMem) {
+    outputFunc(mem.toString())
   }
 }
 
@@ -156,41 +150,38 @@ fun eval(_prog: String) {
 
   val compileFinishTime = Date.now()
 
-  @Suppress("EXPERIMENTAL_API_USAGE")
-  GlobalScope.launch {
-    val mem = try {
-      interpreter.execute()
-    } catch (e: Throwable) {
-      outputFunc("Runtime failure")
-      outputFunc(e.message ?: "")
-      return@launch
-    }
-
-    val executeFinishTime = Date.now()
-
-    outputFunc("### compile time: ${compileFinishTime - startTime}ms, execute time: ${executeFinishTime - compileFinishTime}ms ###")
-
-    if (lastVarDef == null) {
-      outputFunc("### Last statement is not expression nor variable definition ###")
-      return@launch
-    }
-    if (lastVarDef.value.typeInstance() !is BuiltInTypeInstance) {
-      outputFunc("### Type of the last statement is not a built-in type ###")
-      outputFunc("### you may need to add .toString:[] in order to print the value ###")
-      return@launch
-    }
-    val index = lastVarDef.getMemPos().index
-    outputFunc(
-      when (lastVarDef.value.typeInstance()) {
-        IntType -> mem.getInt(index).toString()
-        LongType -> mem.getLong(index).toString()
-        FloatType -> mem.getFloat(index).toString()
-        DoubleType -> mem.getDouble(index).toString()
-        BoolType -> mem.getBool(index).toString()
-        else -> mem.getRef(index).toString()
-      }
-    )
+  val mem = try {
+    interpreter.execute()
+  } catch (e: Throwable) {
+    outputFunc("Runtime failure")
+    outputFunc(e.message ?: "")
+    return
   }
+
+  val executeFinishTime = Date.now()
+
+  outputFunc("### compile time: ${compileFinishTime - startTime}ms, execute time: ${executeFinishTime - compileFinishTime}ms ###")
+
+  if (lastVarDef == null) {
+    outputFunc("### Last statement is not expression nor variable definition ###")
+    return
+  }
+  if (lastVarDef.value.typeInstance() !is BuiltInTypeInstance) {
+    outputFunc("### Type of the last statement is not a built-in type ###")
+    outputFunc("### you may need to add .toString:[] in order to print the value ###")
+    return
+  }
+  val index = lastVarDef.getMemPos().index
+  outputFunc(
+    when (lastVarDef.value.typeInstance()) {
+      IntType -> mem.getInt(index).toString()
+      LongType -> mem.getLong(index).toString()
+      FloatType -> mem.getFloat(index).toString()
+      DoubleType -> mem.getDouble(index).toString()
+      BoolType -> mem.getBool(index).toString()
+      else -> mem.getRef(index).toString()
+    }
+  )
 }
 
 fun printParsingFailedMessage(e: Throwable, msg: String = "Parsing failed") {

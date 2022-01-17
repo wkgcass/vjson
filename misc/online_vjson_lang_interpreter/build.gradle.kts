@@ -30,5 +30,4 @@ rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJ
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-js:1.5.30")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 }
