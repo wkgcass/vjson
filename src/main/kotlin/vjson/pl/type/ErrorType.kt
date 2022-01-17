@@ -20,13 +20,13 @@ object ErrorType : BuiltInTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
       "message" -> object : ExecutableField(name, StringType) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val err = exec.values.refValue as Throwable
           exec.values.refValue = err.message
         }
       }
       "formatException" -> object : ExecutableField(name, StringType) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val err = exec.values.refValue as Throwable
           if (err is InstructionException) {
             exec.values.refValue = err.formatException()

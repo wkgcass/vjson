@@ -29,21 +29,21 @@ object IntType : NumericTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
       "toInt" -> object : ExecutableField(name, ctx.getType(Type("int"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
         }
       }
       "toLong" -> object : ExecutableField(name, ctx.getType(Type("long"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.longValue = exec.values.intValue.toLong()
         }
       }
       "toFloat" -> object : ExecutableField("toFloat", ctx.getType(Type("float"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.floatValue = exec.values.intValue.toFloat()
         }
       }
       "toDouble" -> object : ExecutableField(name, ctx.getType(Type("double"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.doubleValue = exec.values.intValue.toDouble()
         }
       }
@@ -51,10 +51,10 @@ object IntType : NumericTypeInstance {
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider)
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val n = exec.values.intValue
           exec.values.refValue = object : InstructionWithStackInfo(INT_TO_STRING_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.refValue = n.toString()
             }
           }
@@ -73,21 +73,21 @@ object LongType : NumericTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
       "toInt" -> object : ExecutableField(name, ctx.getType(Type("int"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.intValue = exec.values.longValue.toInt()
         }
       }
       "toLong" -> object : ExecutableField(name, ctx.getType(Type("long"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
         }
       }
       "toFloat" -> object : ExecutableField("toFloat", ctx.getType(Type("float"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.floatValue = exec.values.longValue.toFloat()
         }
       }
       "toDouble" -> object : ExecutableField(name, ctx.getType(Type("double"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.doubleValue = exec.values.longValue.toDouble()
         }
       }
@@ -95,10 +95,10 @@ object LongType : NumericTypeInstance {
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider)
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val n = exec.values.longValue
           exec.values.refValue = object : InstructionWithStackInfo(LONG_TO_STRING_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.refValue = n.toString()
             }
           }
@@ -117,21 +117,21 @@ object FloatType : NumericTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
       "toInt" -> object : ExecutableField("toInt", ctx.getType(Type("int"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.intValue = exec.values.floatValue.toInt()
         }
       }
       "toLong" -> object : ExecutableField("toLong", ctx.getType(Type("long"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.longValue = exec.values.floatValue.toLong()
         }
       }
       "toFloat" -> object : ExecutableField(name, ctx.getType(Type("float"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
         }
       }
       "toDouble" -> object : ExecutableField("toDouble", ctx.getType(Type("double"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.doubleValue = exec.values.floatValue.toDouble()
         }
       }
@@ -139,10 +139,10 @@ object FloatType : NumericTypeInstance {
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider)
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val n = exec.values.floatValue
           exec.values.refValue = object : InstructionWithStackInfo(FLOAT_TO_STRING_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.refValue = n.toString()
             }
           }
@@ -161,32 +161,32 @@ object DoubleType : NumericTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
       "toInt" -> object : ExecutableField("toInt", ctx.getType(Type("int"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.intValue = exec.values.doubleValue.toInt()
         }
       }
       "toLong" -> object : ExecutableField("toLong", ctx.getType(Type("long"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.longValue = exec.values.doubleValue.toLong()
         }
       }
       "toFloat" -> object : ExecutableField("toFloat", ctx.getType(Type("float"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           exec.values.floatValue = exec.values.doubleValue.toFloat()
         }
       }
       "toDouble" -> object : ExecutableField(name, ctx.getType(Type("double"))) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
         }
       }
       "toString" -> object : ExecutableField(
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider)
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val n = exec.values.doubleValue
           exec.values.refValue = object : InstructionWithStackInfo(DOUBLE_TO_STRING_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.refValue = n.toString()
             }
           }
@@ -208,10 +208,10 @@ object BoolType : PrimitiveTypeInstance {
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider)
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val n = exec.values.boolValue
           exec.values.refValue = object : InstructionWithStackInfo(BOOL_TO_STRING_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.refValue = n.toString()
             }
           }
@@ -230,31 +230,31 @@ object StringType : BuiltInTypeInstance {
   override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
     return when (name) {
       "toInt" -> object : ExecutableField(name, IntType) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.intValue = str.toInt()
         }
       }
       "toLong" -> object : ExecutableField(name, LongType) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.longValue = str.toLong()
         }
       }
       "toFloat" -> object : ExecutableField(name, FloatType) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.floatValue = str.toFloat()
         }
       }
       "toDouble" -> object : ExecutableField(name, DoubleType) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.doubleValue = str.toDouble()
         }
       }
       "toBool" -> object : ExecutableField(name, BoolType) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.boolValue = str.toBoolean()
         }
@@ -263,10 +263,10 @@ object StringType : BuiltInTypeInstance {
         "toString",
         ctx.getFunctionDescriptorAsInstance(listOf(), ctx.getType(Type("string")), DummyMemoryAllocatorProvider)
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val n = exec.values.refValue
           exec.values.refValue = object : InstructionWithStackInfo(STRING_TO_STRING_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.refValue = n
             }
           }
@@ -279,10 +279,10 @@ object StringType : BuiltInTypeInstance {
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
         )
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.refValue = object : InstructionWithStackInfo(STRING_INDEX_OF_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.intValue = str.indexOf(ctx.getCurrentMem().getRef(0) as String)
             }
           }
@@ -296,10 +296,10 @@ object StringType : BuiltInTypeInstance {
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 2))
         )
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.refValue = object : InstructionWithStackInfo(STRING_SUBSTRING_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.refValue = str.substring(ctx.getCurrentMem().getInt(0), ctx.getCurrentMem().getInt(1))
             }
           }
@@ -309,10 +309,10 @@ object StringType : BuiltInTypeInstance {
         name,
         ctx.getFunctionDescriptorAsInstance(listOf(), StringType, DummyMemoryAllocatorProvider)
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.refValue = object : InstructionWithStackInfo(STRING_TRIM_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.refValue = str.trim()
             }
           }
@@ -325,10 +325,10 @@ object StringType : BuiltInTypeInstance {
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
         )
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.refValue = object : InstructionWithStackInfo(STRING_STARTS_WITH_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.boolValue = str.startsWith(ctx.getCurrentMem().getRef(0) as String)
             }
           }
@@ -341,10 +341,10 @@ object StringType : BuiltInTypeInstance {
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
         )
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.refValue = object : InstructionWithStackInfo(STRING_ENDS_WITH_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.boolValue = str.endsWith(ctx.getCurrentMem().getRef(0) as String)
             }
           }
@@ -357,10 +357,10 @@ object StringType : BuiltInTypeInstance {
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
         )
       ) {
-        override suspend fun execute(ctx: ActionContext, exec: Execution) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
           val str = exec.values.refValue as String
           exec.values.refValue = object : InstructionWithStackInfo(STRING_CONTAINS_STACK_INFO) {
-            override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+            override fun execute0(ctx: ActionContext, exec: Execution) {
               exec.values.boolValue = str.contains(ctx.getCurrentMem().getRef(0) as String)
             }
           }

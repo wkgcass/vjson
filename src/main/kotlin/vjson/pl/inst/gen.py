@@ -31,7 +31,7 @@ data class Literal{{Type}}(
   val value: {{KtType}},
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     exec.values.{{type}}Value = value
   }
 }
@@ -47,7 +47,7 @@ data class Get{{Type}}(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     exec.values.{{type}}Value = ctx.getMem(depth).get{{Type}}(index)
   }
 }
@@ -62,7 +62,7 @@ data class GetField{{Type}}(
   val index: Int,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     val mem = exec.values.refValue as ActionContext
     exec.values.{{type}}Value = mem.getCurrentMem().get{{Type}}(index)
   }
@@ -79,7 +79,7 @@ data class GetIndex{{Type}}(
   val index: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     array.execute(ctx, exec)
     val arrayValue = exec.values.refValue as {{ArrayType}}
     index.execute(ctx, exec)
@@ -100,7 +100,7 @@ data class Set{{Type}}(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     valueInst.execute(ctx, exec)
     ctx.getMem(depth).set{{Type}}(index, exec.values.{{type}}Value)
   }
@@ -118,7 +118,7 @@ data class SetIndex{{Type}}(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     valueInst.execute(ctx, exec)
     val value = exec.values.{{type}}Value
     array.execute(ctx, exec)
@@ -140,7 +140,7 @@ data class SetField{{Type}}(
   val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     valueInst.execute(ctx, exec)
     val mem = exec.values.refValue as ActionContext
     mem.getCurrentMem().set{{Type}}(index, exec.values.{{type}}Value)
@@ -158,7 +158,7 @@ data class {{Op}}{{Type}}(
   val right: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     left.execute(ctx, exec)
     val leftValue = exec.values.{{type}}Value
     right.execute(ctx, exec)
@@ -249,7 +249,7 @@ data class Negative{{Type}}(
   private val valueInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     valueInst.execute(ctx, exec)
     exec.values.{{type}}Value = -exec.values.{{type}}Value
   }
@@ -265,7 +265,7 @@ data class NewArray{{Type}}(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     lenInst.execute(ctx, exec)
     exec.values.refValue = {{ArrayType}}(exec.values.intValue)
   }
@@ -281,7 +281,7 @@ data class NewArray{{Type}}(
   val lenInst: Instruction,
   override val stackInfo: StackInfo
 ) : Instruction() {
-  override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+  override fun execute0(ctx: ActionContext, exec: Execution) {
     lenInst.execute(ctx, exec)
     exec.values.refValue = Array<Any?>(exec.values.intValue) { null }
   }

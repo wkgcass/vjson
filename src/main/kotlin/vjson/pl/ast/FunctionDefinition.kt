@@ -81,7 +81,7 @@ data class FunctionDefinition(
     val composite = CompositeInstruction(ins)
     return object : Instruction() {
       override val stackInfo: StackInfo = ctx!!.stackInfo(lineCol)
-      override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+      override fun execute0(ctx: ActionContext, exec: Execution) {
         ctx.getMem(memDepth).setRef(variableIndex, composite)
       }
     }

@@ -27,5 +27,5 @@ open class Field(
 
 abstract class ExecutableField(name: String, type: TypeInstance) :
   Field(name, type, MemPos(0, 0), modifiable = false, executor = null) {
-  abstract suspend fun execute(ctx: ActionContext, exec: Execution)
+  abstract fun execute(ctx: ActionContext, exec: Execution)
 }

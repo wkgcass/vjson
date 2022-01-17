@@ -237,7 +237,7 @@ data class BinOp(
     } else 0
 
     return object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
-      override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+      override fun execute0(ctx: ActionContext, exec: Execution) {
         if (getFuncInst is FunctionInstance) {
           getFuncInst.ctxBuilder = { ActionContext(total, it) }
           getFuncInst.execute(ctx, exec)

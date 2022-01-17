@@ -44,5 +44,5 @@ abstract class ExecutableConstructorFunctionDescriptor(
   returnType: TypeInstance,
   mem: MemoryAllocatorProvider
 ) : FunctionDescriptor(params, returnType, mem) {
-  abstract suspend fun execute(ctx: ActionContext, exec: Execution)
+  abstract fun execute(ctx: ActionContext, exec: Execution)
 }

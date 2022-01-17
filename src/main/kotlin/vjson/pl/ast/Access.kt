@@ -91,7 +91,7 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
         val funcDesc = func.first
         val funcInst = func.second
         object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
-          override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+          override fun execute0(ctx: ActionContext, exec: Execution) {
             fromInst.execute(ctx, exec)
             val objectCtx = exec.values.refValue as ActionContext
             if (funcInst is FunctionInstance) {
@@ -135,7 +135,7 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
       }
       object : Instruction() {
         override val stackInfo: StackInfo = ctx.stackInfo(lineCol)
-        override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+        override fun execute0(ctx: ActionContext, exec: Execution) {
           fromInst.execute(ctx, exec)
           val objCtx = exec.values.refValue as ActionContext
           setField.execute(objCtx, exec)

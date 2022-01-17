@@ -18,12 +18,12 @@ import vjson.pl.inst.*
 import vjson.pl.type.*
 
 class ExtFunctions {
-  var currentTimeMillis: suspend () -> Long = { 0L }
+  var currentTimeMillis: () -> Long = { 0L }
     private set
-  var rand: suspend () -> Double = { 0.0 }
+  var rand: () -> Double = { 0.0 }
     private set
 
-  fun setCurrentTimeMillis(f: suspend () -> Long): ExtFunctions {
+  fun setCurrentTimeMillis(f: () -> Long): ExtFunctions {
     this.currentTimeMillis = f
     return this
   }
@@ -33,7 +33,7 @@ class ExtFunctions {
     return this
   }
 
-  fun setRand(f: suspend () -> Double): ExtFunctions {
+  fun setRand(f: () -> Double): ExtFunctions {
     this.rand = f
     return this
   }
@@ -66,7 +66,7 @@ class ExtTypes(private val funcs: ExtFunctions) : Types {
     override fun field(ctx: TypeContext, name: String, accessFrom: TypeInstance?): Field? {
       return when (name) {
         "currentTimeMillis" -> object : ExecutableField(name, LongType) {
-          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+          override fun execute(ctx: ActionContext, exec: Execution) {
             exec.values.longValue = funcs.currentTimeMillis()
           }
         }
@@ -74,9 +74,9 @@ class ExtTypes(private val funcs: ExtFunctions) : Types {
           name,
           ctx.getFunctionDescriptorAsInstance(listOf(), DoubleType, DummyMemoryAllocatorProvider)
         ) {
-          override suspend fun execute(ctx: ActionContext, exec: Execution) {
+          override fun execute(ctx: ActionContext, exec: Execution) {
             exec.values.refValue = object : InstructionWithStackInfo(RAND_STACK_INFO) {
-              override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+              override fun execute0(ctx: ActionContext, exec: Execution) {
                 exec.values.doubleValue = funcs.rand()
               }
             }

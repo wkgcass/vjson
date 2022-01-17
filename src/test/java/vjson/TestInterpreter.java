@@ -33,7 +33,7 @@ public class TestInterpreter {
                 "var h = \"'a'\"\n" +
                 "h = 'null'\n" +
                 "}")
-            .executeBlock();
+            .execute();
 
         assertEquals(5520, mem.getInt(0));
         assertEquals(16560, mem.getInt(1));
@@ -56,7 +56,7 @@ public class TestInterpreter {
                 "var a = 1\n" +
                 "var b = 'a'\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(1, mem.getInt(0));
         assertEquals(1, mem.getInt(1));
         assertEquals(2, mem.intLen());
@@ -74,7 +74,7 @@ public class TestInterpreter {
                 "a.a = 123\n" +
                 "var c = 'a.a'\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(1, mem.getInt(0));
         assertEquals(123, mem.getInt(1));
         assertEquals(2, mem.intLen());
@@ -88,7 +88,7 @@ public class TestInterpreter {
                 "'a[0]' = 1\n" +
                 "var b = 'a[0]'\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(1, mem.getInt(0));
         assertEquals(1, mem.intLen());
     }
@@ -111,7 +111,7 @@ public class TestInterpreter {
                 "var l = 'h || i'\n" +
                 "var m = '100 % 7'\n" +
                 "}");
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         assertEquals(4, mem.getInt(0));
         assertEquals(8, mem.getInt(1));
         assertEquals(-1, mem.getInt(2));
@@ -140,7 +140,7 @@ public class TestInterpreter {
                 "var e = (null != 'a')\n" +
                 "var f = (null != null)\n" +
                 "}");
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         assertFalse(mem.getBool(0));
         assertFalse(mem.getBool(1));
         assertTrue(mem.getBool(2));
@@ -160,7 +160,7 @@ public class TestInterpreter {
                 "var d = '-4'\n" +
                 "var e = '5 + -4'\n" +
                 "}");
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         assertFalse(mem.getBool(0));
         assertTrue(mem.getBool(1));
         assertEquals(2, mem.boolLen());
@@ -180,7 +180,7 @@ public class TestInterpreter {
                 "var x = 'a[0]'\n" +
                 "var y = 'a[1]'\n" +
                 "}")
-            .executeBlock();
+            .execute();
         int[] a = (int[]) mem.getRef(0);
         assertEquals(1, mem.refLen());
         assertNotNull(a);
@@ -207,7 +207,7 @@ public class TestInterpreter {
                 "var x = 'a[0][0]'\n" +
                 "var y = 'a[1][1]'\n" +
                 "}")
-            .executeBlock();
+            .execute();
         Object[] a = (Object[]) mem.getRef(0);
         assertEquals(1, mem.refLen());
         assertNotNull(a);
@@ -236,7 +236,7 @@ public class TestInterpreter {
                 "var x = 'a[0]'\n" +
                 "var y = 'a[1]'\n" +
                 "}")
-            .executeBlock();
+            .execute();
         Object[] a = (Object[]) mem.getRef(0);
         assertNotNull(a);
         assertEquals(10, a.length);
@@ -265,7 +265,7 @@ public class TestInterpreter {
                 "var x = 'a[0].a'\n" +
                 "var y = 'a[1].a'\n" +
                 "}")
-            .executeBlock();
+            .execute();
         Object[] a = (Object[]) mem.getRef(0);
         assertNotNull(a);
         assertEquals(10, a.length);
@@ -292,7 +292,7 @@ public class TestInterpreter {
                 "}\n" +
                 "test:[]\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(112233, mem.getInt(0));
     }
 
@@ -306,7 +306,7 @@ public class TestInterpreter {
                 "}\n" +
                 "new Test:[]\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(112233, mem.getInt(0));
     }
 
@@ -323,7 +323,7 @@ public class TestInterpreter {
                 "var t = {new Test:[]}\n" +
                 "t.test:[]\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(112233, mem.getInt(0));
     }
 
@@ -340,7 +340,7 @@ public class TestInterpreter {
                 "var a = {get1:[]}\n" +
                 "var b = {get2:[]}\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(1, mem.getInt(0));
         assertEquals(2, mem.getInt(1));
     }
@@ -363,7 +363,7 @@ public class TestInterpreter {
                 "}\n" +
                 "var result = fib:[10]\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(55, mem.getInt(0));
     }
 
@@ -387,7 +387,7 @@ public class TestInterpreter {
                 "var pass = {check:[60]}\n" +
                 "var fail = {check:[59]}\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals("excellent", mem.getRef(1));
         assertEquals("good", mem.getRef(2));
         assertEquals("pass", mem.getRef(3));
@@ -403,7 +403,7 @@ public class TestInterpreter {
                 "  sum = 'sum + n'\n" +
                 "}\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(55, mem.getInt(0));
     }
 
@@ -419,7 +419,7 @@ public class TestInterpreter {
                 "  sum = 'sum + n'\n" +
                 "}\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(55, mem.getInt(0));
     }
 
@@ -435,7 +435,7 @@ public class TestInterpreter {
                 "  sum = 'sum + n'\n" +
                 "}\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(50, mem.getInt(0));
     }
 
@@ -453,7 +453,7 @@ public class TestInterpreter {
                 "  }\n" +
                 "}\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(55, mem.getInt(0));
     }
 
@@ -461,7 +461,7 @@ public class TestInterpreter {
     public void newAsExpr() {
         RuntimeMemory mem = new InterpreterBuilder()
             .compile("{var a = new int[3].length}")
-            .executeBlock();
+            .execute();
         assertEquals(3, mem.getInt(0));
         mem = new InterpreterBuilder()
             .compile("{\n" +
@@ -472,7 +472,7 @@ public class TestInterpreter {
                 "}\n" +
                 "var a = new A:[1, 'a'].toString:[]\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals("A(x=1, y=a)", mem.getRef(0));
     }
 
@@ -489,7 +489,7 @@ public class TestInterpreter {
                 "var container = new DoubleFloatContainer:[1.2, 3.4.toFloat]\n" +
                 "var res = container.calc:[]\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(4, mem.getInt(0));
     }
 
@@ -503,7 +503,7 @@ public class TestInterpreter {
                 "var a4 = 4.8.toDouble\n" +
                 "var a5 = ('abc'.toString:[])\n" +
                 "}")
-            .executeBlock();
+            .execute();
         assertEquals(1, mem.getInt(0));
         assertEquals(100000000000000L, mem.getLong(0));
         assertEquals(2.4, mem.getFloat(0), 0.0000001);
@@ -521,7 +521,7 @@ public class TestInterpreter {
         Interpreter interpreter = new InterpreterBuilder()
             .addTypes(stdTypes)
             .compile(prog);
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         return new Pair<>(mem, sb.toString());
     }
 
@@ -1101,7 +1101,7 @@ public class TestInterpreter {
             "var containsFalse = raw.contains:[(\"xxx\")]\n" +
             "}";
         Interpreter interpreter = new InterpreterBuilder().compile(prog);
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         assertEquals("  hello world ", mem.getRef(0));
         assertEquals("hello", mem.getRef(1));
         assertEquals("hello world", mem.getRef(2));
@@ -1128,7 +1128,7 @@ public class TestInterpreter {
             "var aBoolFalse = (\"false\".toBool)\n" +
             "}";
         Interpreter interpreter = new InterpreterBuilder().compile(prog);
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         assertEquals(123, mem.getInt(0));
         assertEquals(1, mem.intLen());
         assertEquals(1234567890123456789L, mem.getLong(0));
@@ -1156,7 +1156,7 @@ public class TestInterpreter {
             ))
             .compile(prog);
         long timeS = System.currentTimeMillis();
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         long timeX = System.currentTimeMillis();
         assertTrue(mem.getLong(0) >= timeS);
         assertTrue(mem.getLong(0) <= timeX);
@@ -1184,7 +1184,7 @@ public class TestInterpreter {
             .addTypes(new ExtTypes(new ExtFunctions()
                 .setRandBlock(() -> ThreadLocalRandom.current().nextDouble())))
             .compile(prog);
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         assertEquals(3, mem.intLen());
         assertEquals(2, mem.getInt(0));
         assertEquals(1, mem.getInt(1));
@@ -1219,7 +1219,7 @@ public class TestInterpreter {
         Interpreter interpreter = new InterpreterBuilder()
             .addTypes(new ExtTypes(new ExtFunctions().setRandBlock(() -> ThreadLocalRandom.current().nextDouble())))
             .compile(prog);
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         assertEquals(2, mem.intLen());
         assertEquals(1, mem.getInt(0));
         assertEquals(2, mem.getInt(1));
@@ -1284,7 +1284,7 @@ public class TestInterpreter {
             "}";
         Interpreter interpreter = new InterpreterBuilder()
             .compile(prog);
-        RuntimeMemory mem = interpreter.executeBlock();
+        RuntimeMemory mem = interpreter.execute();
         assertEquals(7, mem.refLen());
         assertEquals("surprise", mem.getRef(5));
         assertEquals("surprise\n" +
@@ -1315,7 +1315,7 @@ public class TestInterpreter {
         interpreter = new InterpreterBuilder()
             .compile(prog, "test.vjson");
         try {
-            interpreter.executeBlock();
+            interpreter.execute();
             fail();
         } catch (Exception e) {
             assertEquals("surprise\n" +
@@ -1332,6 +1332,6 @@ public class TestInterpreter {
         new InterpreterBuilder()
             .addTypes(new StdTypes())
             .compile(TestFeature.TEST_PROG)
-            .executeBlock();
+            .execute();
     }
 }

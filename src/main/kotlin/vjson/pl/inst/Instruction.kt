@@ -16,7 +16,7 @@ abstract class Instruction {
   abstract val stackInfo: StackInfo
   protected var recordStackInfo = false
 
-  suspend fun execute(ctx: ActionContext, exec: Execution) {
+  fun execute(ctx: ActionContext, exec: Execution) {
     if (ctx.returnImmediately) {
       return
     }
@@ -47,7 +47,7 @@ abstract class Instruction {
     }
   }
 
-  protected abstract suspend fun execute0(ctx: ActionContext, exec: Execution)
+  protected abstract fun execute0(ctx: ActionContext, exec: Execution)
 }
 
 abstract class InstructionWithStackInfo(override val stackInfo: StackInfo) : Instruction() {

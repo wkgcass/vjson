@@ -34,11 +34,11 @@ val type = ctx.getFunctionDescriptorAsInstance(
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{memoryTotal}}))
 )
 object : ExecutableField(name, type) {
-  override suspend fun execute(ctx: ActionContext, exec: Execution) {
+  override fun execute(ctx: ActionContext, exec: Execution) {
     val obj = exec.values.refValue as ActionContext
     @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<{{KtKeyType}}, {{KtValueType}}>
     exec.values.refValue = object : InstructionWithStackInfo(MAP_PUT_STACK_INFO) {
-      override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+      override fun execute0(ctx: ActionContext, exec: Execution) {
         exec.values.{{valueType}}Value = map.put(ctx.getCurrentMem().get{{Key}}(0), ctx.getCurrentMem().get{{Value}}({{valueIndex}})) ?: {{value}}
       }
     }
@@ -56,11 +56,11 @@ val type = ctx.getFunctionDescriptorAsInstance(
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{keyType}}Total = 1))
 )
 object : ExecutableField(name, type) {
-  override suspend fun execute(ctx: ActionContext, exec: Execution) {
+  override fun execute(ctx: ActionContext, exec: Execution) {
     val obj = exec.values.refValue as ActionContext
     @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<{{KtKeyType}}, {{KtValueType}}>
     exec.values.refValue = object : InstructionWithStackInfo(MAP_GET_STACK_INFO) {
-      override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+      override fun execute0(ctx: ActionContext, exec: Execution) {
         exec.values.{{valueType}}Value = map[ctx.getCurrentMem().get{{Key}}(0)] ?: {{value}}
       }
     }
@@ -78,11 +78,11 @@ val type = ctx.getFunctionDescriptorAsInstance(
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{keyType}}Total = 1))
 )
 object : ExecutableField(name, type) {
-  override suspend fun execute(ctx: ActionContext, exec: Execution) {
+  override fun execute(ctx: ActionContext, exec: Execution) {
     val obj = exec.values.refValue as ActionContext
     @Suppress("UNCHECKED_CAST") val map = obj.getCurrentMem().getRef(0) as MutableMap<{{KtKeyType}}, {{KtValueType}}>
     exec.values.refValue = object : InstructionWithStackInfo(MAP_REMOVE_STACK_INFO) {
-      override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+      override fun execute0(ctx: ActionContext, exec: Execution) {
         exec.values.{{valueType}}Value = map.remove(ctx.getCurrentMem().get{{Key}}(0)) ?: {{value}}
       }
     }

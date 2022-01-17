@@ -22,32 +22,32 @@ class ArrayTypeInstance(private val elementType: TypeInstance) : TypeInstance {
   }
 
   private val intArrayLengthField = object : ExecutableField("length", IntType) {
-    override suspend fun execute(ctx: ActionContext, exec: Execution) {
+    override fun execute(ctx: ActionContext, exec: Execution) {
       exec.values.intValue = (exec.values.refValue as IntArray).size
     }
   }
   private val longArrayLengthField = object : ExecutableField("length", IntType) {
-    override suspend fun execute(ctx: ActionContext, exec: Execution) {
+    override fun execute(ctx: ActionContext, exec: Execution) {
       exec.values.intValue = (exec.values.refValue as LongArray).size
     }
   }
   private val floatArrayLengthField = object : ExecutableField("length", IntType) {
-    override suspend fun execute(ctx: ActionContext, exec: Execution) {
+    override fun execute(ctx: ActionContext, exec: Execution) {
       exec.values.intValue = (exec.values.refValue as FloatArray).size
     }
   }
   private val doubleArrayLengthField = object : ExecutableField("length", IntType) {
-    override suspend fun execute(ctx: ActionContext, exec: Execution) {
+    override fun execute(ctx: ActionContext, exec: Execution) {
       exec.values.intValue = (exec.values.refValue as DoubleArray).size
     }
   }
   private val boolArrayLengthField = object : ExecutableField("length", IntType) {
-    override suspend fun execute(ctx: ActionContext, exec: Execution) {
+    override fun execute(ctx: ActionContext, exec: Execution) {
       exec.values.intValue = (exec.values.refValue as BooleanArray).size
     }
   }
   private val refArrayLengthField = object : ExecutableField("length", IntType) {
-    override suspend fun execute(ctx: ActionContext, exec: Execution) {
+    override fun execute(ctx: ActionContext, exec: Execution) {
       exec.values.intValue = (exec.values.refValue as Array<*>).size
     }
   }

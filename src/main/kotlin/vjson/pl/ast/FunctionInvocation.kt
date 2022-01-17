@@ -77,7 +77,7 @@ data class FunctionInvocation(
     fun invokeFunction(ctx: TypeContext, funcDesc: FunctionDescriptor, funcInst: Instruction, args: List<Instruction>, lineCol: LineCol):
       Instruction {
       return object : InstructionWithStackInfo(ctx.stackInfo(lineCol)) {
-        override suspend fun execute0(ctx: ActionContext, exec: Execution) {
+        override fun execute0(ctx: ActionContext, exec: Execution) {
           if (funcInst is FunctionInstance) {
             funcInst.ctxBuilder = { buildContext(ctx, it, exec, funcDesc, args) }
             funcInst.execute(ctx, exec)
@@ -91,7 +91,7 @@ data class FunctionInvocation(
       }
     }
 
-    suspend fun buildContext(
+    fun buildContext(
       callerCtx: ActionContext,
       ctx: ActionContext,
       exec: Execution,
