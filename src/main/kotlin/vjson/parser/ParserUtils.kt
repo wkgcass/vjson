@@ -68,7 +68,7 @@ object ParserUtils {
     if (opts.isEnd) {
       cs.skipBlank()
       if (cs.hasNext()) {
-        val err = "input stream contain extra characters other than $type"
+        val err = "input stream contains extra characters other than $type"
         opts.listener.onError(err)
         throw JsonParseException(err, cs.lineCol())
       }

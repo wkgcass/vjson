@@ -245,7 +245,7 @@ public class TestFeature {
                 .last("hello(xyz)world\nabc\n)def");
             fail();
         } catch (JsonParseException e) {
-            assertEquals("input stream contain extra characters other than string", e.getMessage());
+            assertEquals("input stream contains extra characters other than string", e.getMessage());
         }
         assertEquals(new SimpleString("hello(xyz\")\"world\nabc\n)def"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
             .last("hello(xyz\")\"world\nabc\n)def"));

@@ -25,4 +25,14 @@ public class TestIssues {
                 .build(),
             parser.last("{for: [ { var i = 2 }; i <= searchRange, i += 1 ]}"));
     }
+
+    @Test
+    public void case2() {
+        ObjectParser parser = new ObjectParser(ParserOptions.allFeatures());
+        System.out.println(parser.last("{\n" +
+            "  location '~ \\\\.php$' {\n" +
+            "    fastcgi_pass = 127.0.0.1:1025\n" +
+            "  }\n" +
+            "}\n"));
+    }
 }

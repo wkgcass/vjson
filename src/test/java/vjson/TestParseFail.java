@@ -103,7 +103,7 @@ public class TestParseFail {
             p.last("1");
             p.feed("2");
         });
-        parseFail("input stream contain extra characters other than number", () -> new NumberParser().last("3.14e+1+"));
+        parseFail("input stream contains extra characters other than number", () -> new NumberParser().last("3.14e+1+"));
     }
 
     @Test
