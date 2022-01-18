@@ -506,8 +506,30 @@ class ASTGen(_prog: JSON.Object) {
     return TemplateTypeInstantiation(typeName, Type(paramTypeName), typeParams)
   }
 
-  private fun exprKey(entry: JSON.ObjectEntry): Expr {
-    val tokenizer = ExprTokenizer(entry.key, entry.lineCol.inner())
+  private fun exprKey(_entry: JSON.ObjectEntry): Expr {
+    var entry = _entry
+    var binOp: BinOpType? = null
+    var key = entry.key
+    if (key.endsWith("+") || key.endsWith("-") || key.endsWith("*") || key.endsWith("/") || key.endsWith("%")) {
+      binOp = when (key.last()) {
+        '+' -> BinOpType.PLUS; '-' -> BinOpType.MINUS; '*' -> BinOpType.MULTIPLY; '/' -> BinOpType.DIVIDE; else -> BinOpType.MOD
+      }
+      key = key.substring(0, key.length - 1)
+    } else if (entry.value is JSON.Null) {
+      // check this kind of statement: a += 1
+      if (prog.hasNext()) {
+        val nxt = prog.next()
+        if (nxt.key == "+" || nxt.key == "-" || nxt.key == "*" || nxt.key == "/" || nxt.key == "%") {
+          binOp = when (nxt.key) {
+            "+" -> BinOpType.PLUS; "-" -> BinOpType.MINUS; "*" -> BinOpType.MULTIPLY; "/" -> BinOpType.DIVIDE; else -> BinOpType.MOD
+          }
+          entry = nxt
+        } else {
+          prog.previous() // rollback
+        }
+      }
+    }
+    val tokenizer = ExprTokenizer(key, entry.lineCol.inner())
     val parser = ExprParser(tokenizer)
     val expr = parser.parse()
     if (tokenizer.peek() != null) {
@@ -517,17 +539,27 @@ class ASTGen(_prog: JSON.Object) {
       )
     }
     return if (entry.value is JSON.Array) {
-      callFunction(expr, entry.value)
+      if (binOp != null) {
+        throw ParserException("unexpected token ${entry.value}, cannot be used with $binOp", entry.value.lineCol())
+      }
+      callFunction(expr, cast(entry.value))
     } else if (expr is NullLiteral) {
       if (entry.value !is JSON.String) {
         throw ParserException("unexpected token ${entry.value}, expecting type for the `null` literal", entry.value.lineCol())
       }
-      NullLiteral(Type(entry.value.toJavaObject()))
+      if (binOp != null) {
+        throw ParserException("unexpected token ${entry.key}, unexpected token $binOp", entry.lineCol)
+      }
+      NullLiteral(Type(cast(entry.value.toJavaObject())))
     } else {
       if (expr !is AssignableExpr) {
         throw ParserException("unable to assign value to $expr", expr.lineCol)
       }
-      Assignment(expr, expr(entry.value))
+      if (binOp != null) {
+        OpAssignment(binOp, expr, expr(entry.value))
+      } else {
+        Assignment(expr, expr(entry.value))
+      }
     }
   }
 

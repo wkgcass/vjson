@@ -427,6 +427,38 @@ public class TestASTGen {
     }
 
     @Test
+    public void binOpAssignmentInASTGen() {
+        assertEquals(Arrays.asList(
+                new OpAssignment(BinOpType.PLUS, new Access("a"), new IntegerLiteral(new SimpleInteger(1))),
+                new OpAssignment(BinOpType.MINUS, new Access("b"), new IntegerLiteral(new SimpleInteger(2))),
+                new OpAssignment(BinOpType.MULTIPLY, new Access("c"), new IntegerLiteral(new SimpleInteger(3))),
+                new OpAssignment(BinOpType.DIVIDE, new Access("d"), new IntegerLiteral(new SimpleInteger(4))),
+                new OpAssignment(BinOpType.MOD, new Access("e"), new IntegerLiteral(new SimpleInteger(5))),
+                new OpAssignment(BinOpType.PLUS, new Access("f"), new StringLiteral("x")),
+                new OpAssignment(BinOpType.PLUS, new Access("g"), new IntegerLiteral(new SimpleInteger(6))),
+                new OpAssignment(BinOpType.MINUS, new Access("h"), new IntegerLiteral(new SimpleInteger(7))),
+                new OpAssignment(BinOpType.MULTIPLY, new Access("i"), new IntegerLiteral(new SimpleInteger(8))),
+                new OpAssignment(BinOpType.DIVIDE, new Access("j"), new IntegerLiteral(new SimpleInteger(9))),
+                new OpAssignment(BinOpType.MOD, new Access("k"), new IntegerLiteral(new SimpleInteger(10))),
+                new OpAssignment(BinOpType.PLUS, new Access("l"), new StringLiteral("y"))
+            ),
+            gen("{\n" +
+                "a+= 1\n" +
+                "b-= 2\n" +
+                "c*= 3\n" +
+                "d/= 4\n" +
+                "e%= 5\n" +
+                "f+= (\"x\")\n" +
+                "g += 6\n" +
+                "h -= 7\n" +
+                "i *= 8\n" +
+                "j /= 9\n" +
+                "k %= 10\n" +
+                "l += (\"y\")\n" +
+                "}"));
+    }
+
+    @Test
     public void pass() {
         System.out.println(gen(TestFeature.TEST_PROG));
     }
