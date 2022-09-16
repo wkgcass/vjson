@@ -166,22 +166,7 @@ val checkGit = tasks.create("checkGit", Exec::class) {
     println(output)
     val exitValue = execResult!!.exitValue
     if (exitValue != 0) {
-      throw Exception("bootstrap failed: exit code $exitValue")
-    }
-  }
-}
-
-val bootstrap = tasks.create("bootstrap", Exec::class) {
-  val output = ByteArrayOutputStream()
-  commandLine = listOf("./scripts/bootstrap.sh", loadVersion())
-  standardOutput = output
-  errorOutput = output
-  isIgnoreExitValue = true
-  doLast {
-    println(output)
-    val exitValue = execResult!!.exitValue
-    if (exitValue != 0) {
-      throw Exception("bootstrap failed: exit code $exitValue")
+      throw Exception("check-git failed: exit code $exitValue")
     }
   }
 }
