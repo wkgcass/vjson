@@ -1,6 +1,5 @@
 package vjson;
 
-import kotlin.jvm.internal.Reflection;
 import org.junit.Test;
 import vjson.cs.CharArrayCharStream;
 import vjson.cs.LineCol;
@@ -8,11 +7,9 @@ import vjson.parser.*;
 import vjson.simple.*;
 import vjson.util.AppendableMap;
 import vjson.util.ObjectBuilder;
-import vjson.util.Transformer;
 
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 @SuppressWarnings("RedundantThrows")
@@ -366,23 +363,6 @@ public class TestParamValidationReport {
             array.getDouble(0);
             fail();
         } catch (ClassCastException ignore) {
-        }
-    }
-
-    @Test
-    public void transformer() throws Exception {
-        Transformer tf = new Transformer();
-        tf.removeRule(Reflection.getOrCreateKotlinClass(Boolean.class));
-        try {
-            tf.transform(true);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("unknown input type: kotlin.Boolean", e.getMessage());
-        }
-        try {
-            tf.transform(new AppendableMap<>().append(1, 2));
-        } catch (IllegalArgumentException e) {
-            assertEquals("keys of map should be String", e.getMessage());
         }
     }
 }

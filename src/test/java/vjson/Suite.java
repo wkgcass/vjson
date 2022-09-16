@@ -23,7 +23,6 @@ import vpreprocessor.*;
     TestTextBuilder.class,
     TestToJavaObject.class,
     TestToString.class,
-    TestTransformer.class,
     TestUpdateParser.class,
     TestEncoding.class,
     TestDeserialize.class,
