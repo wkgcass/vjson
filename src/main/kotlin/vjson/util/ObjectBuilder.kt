@@ -14,6 +14,7 @@ package vjson.util
 import vjson.JSON
 import vjson.simple.*
 import vjson.util.functional.`Consumer$`
+import vjson.util.functional.`Supplier$`
 import kotlin.reflect.KClass
 
 class ObjectBuilder {
@@ -30,6 +31,18 @@ class ObjectBuilder {
     }
     map.add(SimpleObjectEntry(key, inst))
     return this
+  }
+
+  fun putNullableInst(key: String, isNull: Boolean, instSupplier: () -> JSON.Instance<*>): ObjectBuilder {
+    if (isNull) {
+      return put(key, null)
+    } else {
+      return putInst(key, instSupplier())
+    }
+  }
+
+  fun putNullableInst(key: String, isNull: Boolean, instSupplier: `Supplier$`<JSON.Instance<*>>): ObjectBuilder {
+    return putNullableInst(key, isNull, instSupplier as () -> JSON.Instance<*>)
   }
 
   fun put(key: String, bool: Boolean): ObjectBuilder {

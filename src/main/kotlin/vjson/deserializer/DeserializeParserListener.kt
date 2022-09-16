@@ -29,7 +29,8 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
   private var lastObject: Any? = null
 
   init {
-    require(!(rule !is ObjectRule<*> && rule !is ArrayRule<*, *> && rule !is TypeRule<*>)) {
+    val real = rule.real()
+    require(!(real !is ObjectRule<*> && real !is ArrayRule<*, *> && real !is TypeRule<*>)) {
       "can only accept ObjectRule or ArrayRule or TypeRule"
     }
     nextRuleStack.push(rule)
@@ -40,7 +41,7 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
       return
     }
 
-    val rule = nextRuleStack.peek()
+    val rule = nextRuleStack.peek().real()
     if (rule is TypeRule<*>) {
       parseStack.push(ParseContext(rule, null))
     } else if (rule !is ObjectRule<*>) {
@@ -86,9 +87,14 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
     }
   }
 
-  private operator fun set(rule: Rule<*>, holder: Any, set: (Any, Any?) -> Unit, value: Any?) {
+  private operator fun set(_rule: Rule<*>, holder: Any, set: (Any, Any?) -> Unit, value: Any?) {
+    val rule = _rule.real()
     if (value == null) {
-      if (rule is NullableStringRule || rule is ArrayRule<*, *> || rule is ObjectRule<*>) {
+      if (_rule is NullableRule) {
+        set(holder, _rule.opIfNull())
+        return
+      }
+      if (rule is ArrayRule<*, *> || rule is ObjectRule<*>) {
         set(holder, null)
         return
       }
@@ -111,7 +117,7 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
         return
       }
     } else if (value is String) {
-      if (rule is StringRule || rule is NullableStringRule) {
+      if (rule is StringRule) {
         set(holder, value)
         return
       }
@@ -189,7 +195,7 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
       return
     }
 
-    val rule = nextRuleStack.peek()
+    val rule = nextRuleStack.peek().real()
     if (rule is NothingRule) {
       skip = 1
       return

@@ -27,6 +27,7 @@ import vpreprocessor.*;
     TestUpdateParser.class,
     TestEncoding.class,
     TestDeserialize.class,
+    TestDeserializeNull.class,
     TestUtil.class,
     TestKNParserCacheHolder.class,
     TestPreprocessorTokenizer.class,

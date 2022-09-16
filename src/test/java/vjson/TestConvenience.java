@@ -6,6 +6,9 @@ import vjson.util.AppendableMap;
 import vjson.util.ArrayBuilder;
 import vjson.util.ObjectBuilder;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 @SuppressWarnings("RedundantThrows")
@@ -24,6 +27,10 @@ public class TestConvenience {
             .putObject("object", o -> o.put("a", 1))
             .putArray("array", a -> a.add(1))
             .putInst("x", new SimpleInteger(1))
+            .putNullableInst("nullable", true, () -> {
+                throw new RuntimeException();
+            })
+            .putNullableInst("notnull", false, () -> new ObjectBuilder().put("a", "b").build())
             .build();
         assertEquals(new SimpleObject(
             new AppendableMap<>()
@@ -37,6 +44,8 @@ public class TestConvenience {
                 .append("object", new SimpleObject(new AppendableMap<>().append("a", new SimpleInteger(1))))
                 .append("array", new SimpleArray(new SimpleInteger(1)))
                 .append("x", new SimpleInteger(1))
+                .append("nullable", new SimpleNull())
+                .append("notnull", new SimpleObject(new AppendableMap<>().append("a", new SimpleString("b"))))
         ), result);
     }
 
@@ -54,6 +63,10 @@ public class TestConvenience {
             .addObject(o -> o.put("a", 1))
             .addArray(a -> a.add(1))
             .addInst(new SimpleInteger(1))
+            .addNullableInst(true, () -> {
+                throw new RuntimeException();
+            })
+            .addNullableInst(false, () -> new SimpleInteger(123))
             .build();
         assertEquals(new SimpleArray(
             new SimpleBool(true),
@@ -65,8 +78,23 @@ public class TestConvenience {
             new SimpleString("a"),
             new SimpleObject(new AppendableMap<>().append("a", new SimpleInteger(1))),
             new SimpleArray(new SimpleInteger(1)),
-            new SimpleInteger(1)
+            new SimpleInteger(1),
+            new SimpleNull(),
+            new SimpleInteger(123)
         ), result);
+    }
+
+    @Test
+    public void arrayBuilderIterable() throws Exception {
+        List<String> ls = Arrays.asList("a", "b", "c", "d");
+        ArrayBuilder ab = new ArrayBuilder();
+        ab.iterable(ls, ArrayBuilder::add);
+        assertEquals(new SimpleArray(
+            new SimpleString("a"),
+            new SimpleString("b"),
+            new SimpleString("c"),
+            new SimpleString("d")
+        ), ab.build());
     }
 
     @Test

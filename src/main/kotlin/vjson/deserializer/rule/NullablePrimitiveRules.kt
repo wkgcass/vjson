@@ -11,9 +11,40 @@
  */
 package vjson.deserializer.rule
 
-object NullableStringRule : BuiltInNullableRule<String>(StringRule, { null }) {
+open class BuiltInNullableRule<V>(rule: Rule<V>, opIfNull: () -> V?) : NullableRule<V>(rule, opIfNull) {
+  override fun toString(): String {
+    return "$rule?"
+  }
+
+  override fun toString(sb: StringBuilder, processedListsOrObjects: MutableSet<Rule<*>>) {
+    sb.append(toString())
+  }
+}
+
+object NullAsFalseBoolRule : BuiltInNullableRule<Boolean>(BoolRule, { false }) {
   /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
-  fun get(): NullableStringRule {
+  fun get(): NullAsFalseBoolRule {
+    return this
+  }
+}
+
+object NullAsZeroDoubleRule : BuiltInNullableRule<Double>(DoubleRule, { 0.0 }) {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun get(): NullAsZeroDoubleRule {
+    return this
+  }
+}
+
+object NullAsZeroIntRule : BuiltInNullableRule<Int>(IntRule, { 0 }) {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun get(): NullAsZeroIntRule {
+    return this
+  }
+}
+
+object NullAsZeroLongRule : BuiltInNullableRule<Long>(LongRule, { 0 }) {
+  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
+  fun get(): NullAsZeroLongRule {
     return this
   }
 }

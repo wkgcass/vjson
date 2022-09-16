@@ -9,11 +9,22 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package vjson.deserializer.rule
+package vjson.util.functional
 
-object NullableStringRule : BuiltInNullableRule<String>(StringRule, { null }) {
-  /*#ifndef KOTLIN_NATIVE {{ */@JvmStatic/*}}*/
-  fun get(): NullableStringRule {
-    return this
+/* #ifdef KOTLIN_JS {{
+interface Func0<R> {
+  fun invoke(): R
+}
+}} */
+
+interface `Supplier$`<T> : /* #ifdef KOTLIN_JS {{ Func0 }} else {{ */Function0/* }} */<T> {
+  fun get(): T
+
+  override
+  /*#ifndef KOTLIN_NATIVE {{ */
+  @Suppress("DEPRECATION")
+  @JvmDefault/*}}*/
+  fun invoke(): T {
+    return get()
   }
 }
