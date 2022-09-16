@@ -31,9 +31,8 @@ object FilePreprocessor {
     extensionMap["java"] = PreprocessorOptions.JAVA
   }
 
-  /* #ifndef KOTLIN_NATIVE {{ */
   @Throws(IOException::class, ParserException::class)
-  @JvmStatic // }}
+  @JvmStatic
   fun process(rootDir: String, params: ProcessParams) {
     val rootDirFile = File(rootDir)
     if (!rootDirFile.isDirectory) {
@@ -42,7 +41,7 @@ object FilePreprocessor {
     process("", rootDirFile, params)
   }
 
-  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IOException::class, ParserException::class) // }}
+  @Throws(IOException::class, ParserException::class)
   private fun process(relativePath: String, dir: File, params: ProcessParams) {
     val ls = dir.listFiles() ?: return
     for (f in ls) {
@@ -55,7 +54,7 @@ object FilePreprocessor {
     }
   }
 
-  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IOException::class, ParserException::class) // }}
+  @Throws(IOException::class, ParserException::class)
   private fun processFile(relativePath: String, file: File, params: ProcessParams) {
     var opts: PreprocessorOptions? = null
     for ((ext, o) in extensionMap) {
@@ -84,7 +83,7 @@ object FilePreprocessor {
     }
   }
 
-  /* #ifndef KOTLIN_NATIVE {{ */ @Throws(IOException::class) // }}
+  @Throws(IOException::class)
   private fun read(file: File): String {
     FileReader(file).use { reader ->
       val cbuf = CharArray(1024)
@@ -99,14 +98,14 @@ object FilePreprocessor {
       return sb.toString()
     }
   }
-
-  // }}
-  // #ifdef COVERAGE {{@lombok.Generated}}
-  // #ifndef KOTLIN_NATIVE {{
-  class ProcessParams constructor(
-    val contextInitializer: (PreprocessorContext) -> Unit,
-    val pathFilter: (String) -> Boolean,
-    val currentFile: (String) -> Unit
-  )
 }
+// }}
+
+// #ifdef COVERAGE {{@lombok.Generated}}
+// #ifndef KOTLIN_NATIVE {{
+class ProcessParams constructor(
+  val contextInitializer: (PreprocessorContext) -> Unit,
+  val pathFilter: (String) -> Boolean,
+  val currentFile: (String) -> Unit
+)
 // }}
