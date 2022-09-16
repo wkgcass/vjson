@@ -70,6 +70,11 @@ public class TestCharArrayCharStream {
         cs.skipBlank();
         assertEquals('e', cs.moveNextAndGet());
         assertEquals('f', cs.moveNextAndGet());
+
+        cs = CharStream.from("/**/");
+        assertTrue(cs.hasNext());
+        cs.skipBlank();
+        assertFalse(cs.hasNext());
     }
 
     @Test

@@ -1,7 +1,9 @@
 package vjson;
 
 import kotlin.jvm.internal.Reflection;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
+import vjson.cs.LineCol;
 import vjson.deserializer.DeserializeParserListener;
 import vjson.deserializer.rule.*;
 import vjson.listener.EmptyParserListener;
@@ -200,8 +202,13 @@ public class TestCorner {
         assertEquals("Long", LongRule.get().toString());
         assertEquals("Double", DoubleRule.get().toString());
         assertEquals("Bool", BoolRule.get().toString());
-        assertEquals("String?", NullableStringRule.get().toString());
         assertEquals("String", StringRule.get().toString());
+
+        assertEquals("Int?", NullAsZeroIntRule.get().toString());
+        assertEquals("Long?", NullAsZeroLongRule.get().toString());
+        assertEquals("Double?", NullAsZeroDoubleRule.get().toString());
+        assertEquals("Bool?", NullAsFalseBoolRule.get().toString());
+        assertEquals("String?", NullableStringRule.get().toString());
 
         TypeRule<Object> typeRule = new TypeRule<>()
             .type("base", TypeRuleBase.baseRule)
@@ -284,6 +291,17 @@ public class TestCorner {
             "self=>Object{...recursive...}," +
             "arr=>Array[...recursive...]" +
             "}" + "]", arrRule.toString());
+
+        NullableRule<Object> nullableRule = new NullableRule<>(objRule);
+        assertEquals("(" + objRule + ")?", nullableRule.toString());
+
+        NothingRule nothingRule = NothingRule.get();
+        assertEquals("Nothing", nothingRule.toString());
+        {
+            StringBuilder sb = new StringBuilder();
+            nothingRule.toString(sb, Collections.emptySet());
+            assertEquals("Nothing", sb.toString());
+        }
     }
 
     @Test
@@ -352,5 +370,44 @@ public class TestCorner {
     public void emptyStringDictionary() throws Exception {
         StringDictionary strDic = new StringDictionary(0);
         assertEquals("", strDic.toString());
+    }
+
+    @Test
+    public void lineColDefaultFunctionOfJSONInstance() throws Exception {
+        JSON.Instance<Object> o = new JSON.Instance<Object>() {
+            public void stringify(@NotNull StringBuilder builder, @NotNull Stringifier sfr) {
+            }
+
+            public String pretty() {
+                return null;
+            }
+
+            public String stringify() {
+                return null;
+            }
+
+            public Object toJavaObject() {
+                return null;
+            }
+        };
+        assertSame(LineCol.Companion.getEMPTY(), o.lineCol());
+    }
+
+    @Test
+    public void charStreamComments() throws Exception {
+        CharStream cs = CharStream.from("/*");
+        assertTrue(cs.hasNext());
+        cs.skipBlank();
+        assertFalse(cs.hasNext());
+
+        cs = CharStream.from("/**");
+        assertTrue(cs.hasNext());
+        cs.skipBlank();
+        assertFalse(cs.hasNext());
+
+        cs = CharStream.from("//");
+        assertTrue(cs.hasNext());
+        cs.skipBlank();
+        assertFalse(cs.hasNext());
     }
 }

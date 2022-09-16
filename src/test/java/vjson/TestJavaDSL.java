@@ -2,7 +2,11 @@ package vjson;
 
 import kotlin.jvm.internal.Reflection;
 import org.junit.Test;
+import vjson.cs.LineCol;
 import vjson.deserializer.rule.*;
+import vjson.simple.SimpleArray;
+import vjson.simple.SimpleInteger;
+import vjson.util.ArrayBuilder;
 import vjson.util.ObjectBuilder;
 
 import java.util.ArrayList;
@@ -275,5 +279,11 @@ public class TestJavaDSL {
         Mmm mmm = new Mmm(1, "2", Arrays.asList(new Bbb(4, "5", 6), new Bbb(7, "8", 9), new Aaa(10, "11"), new Aaa(12, "13")));
         Mmm mmm2 = JSON.deserialize(mmm.toJson().stringify(), mmmBRule);
         assertEquals(mmm.toJson(), mmm2.toJson());
+    }
+
+    @Test
+    public void useSimpleArrayDirectlyWithLineCol() {
+        SimpleArray arr = new SimpleArray(new LineCol("", 0, 0), new SimpleInteger(1), new SimpleInteger(2), new SimpleInteger(3));
+        assertEquals(new ArrayBuilder().add(1).add(2).add(3).build(), arr);
     }
 }

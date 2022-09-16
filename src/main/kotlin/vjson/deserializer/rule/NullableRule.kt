@@ -10,7 +10,9 @@ open class NullableRule<V>(val rule: Rule<V>, val opIfNull: () -> V?) : Rule<V?>
   constructor(rule: Rule<V>) : this(rule, { null })
 
   override fun toString(sb: StringBuilder, processedListsOrObjects: MutableSet<Rule<*>>) {
-    sb.append("(").append(rule.toString(sb, processedListsOrObjects)).append(")?")
+    sb.append("(")
+    rule.toString(sb, processedListsOrObjects)
+    sb.append(")?")
   }
 
   override fun real(): Rule<*> {

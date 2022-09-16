@@ -143,6 +143,7 @@ public class TestVList {
     @Test
     public void removeFirstN() {
         VList<String> ls = new VList<>();
+        assertEquals("[]", ls.toString());
         ls.add("a");
         assertEquals("[a]", ls.toString());
         ls.add("b");

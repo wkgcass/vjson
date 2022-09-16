@@ -86,10 +86,11 @@ public class TestConvenience {
 
     @Test
     public void arrayBuilderIterable() throws Exception {
-        List<String> ls = Arrays.asList("a", "b", "c", "d");
+        List<String> ls = Arrays.asList(null, "a", "b", "c", "d");
         ArrayBuilder ab = new ArrayBuilder();
         ab.iterable(ls, ArrayBuilder::add);
         assertEquals(new SimpleArray(
+            new SimpleNull(),
             new SimpleString("a"),
             new SimpleString("b"),
             new SimpleString("c"),

@@ -85,17 +85,14 @@ class ArrayBuilder {
     return addArray(func as (ArrayBuilder) -> Unit)
   }
 
-  fun <T> iterable(ite: Iterable<T>?, operator: ArrayBuilder.(T) -> Unit): ArrayBuilder {
-    if (ite == null) {
-      return add(null)
-    }
+  fun <T> iterable(ite: Iterable<T>, operator: ArrayBuilder.(T) -> Unit): ArrayBuilder {
     for (e in ite) {
       operator(this, e)
     }
     return this
   }
 
-  fun <T> iterable(ite: Iterable<T>?, operator: `BiConsumer$`<ArrayBuilder, T>): ArrayBuilder {
+  fun <T> iterable(ite: Iterable<T>, operator: `BiConsumer$`<ArrayBuilder, T>): ArrayBuilder {
     return iterable(ite, operator as ArrayBuilder.(T) -> Unit)
   }
 

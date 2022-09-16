@@ -246,4 +246,29 @@ public class TestDeserialize {
         assertEquals(1, c.list.get(0).c);
         assertEquals("yyy", c.list.get(1).a);
     }
+
+    @Test
+    public void deserializeWithNotRegisteredFields2() {
+        String jsonStr = new ObjectBuilder()
+            .putArray("xx", ab -> ab.addObject(ob -> ob
+                .put("a1111111", true)
+                .put("b2222222", 1)
+                .put("c3333333", ((long) Integer.MAX_VALUE) * 3)
+                .put("d4444444", 1.2)
+                .put("e5555555", "eee")
+                .put("f6666666", null)))
+            .build().stringify();
+        Rule<ArrayList<SimpleObjectCase>> listRule = new ArrayRule<>(
+            ArrayList::new, ArrayList::add, SimpleObjectCase.simpleObjectCaseRule
+        );
+        class Holder {
+            List<SimpleObjectCase> ls;
+        }
+        Rule<Holder> holderRule = new ObjectRule<>(Holder::new)
+            .put("ls", (o, v) -> o.ls = v, listRule);
+        DeserializeParserListener<Holder> listener = new DeserializeParserListener<>(holderRule);
+        ParserUtils.buildFrom(CharStream.from(jsonStr), new ParserOptions().setListener(listener));
+        //noinspection ConstantConditions
+        assertNull(listener.get().ls);
+    }
 }

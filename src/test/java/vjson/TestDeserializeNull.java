@@ -19,19 +19,22 @@ public class TestDeserializeNull {
         private int anInt;
         private long aLong;
         private String string;
+        private Object aNull;
 
         static final Rule<A> rule = new ObjectRule<>(A::new)
             .put("aBool", (o, v) -> o.aBool = v, NullAsFalseBoolRule.get())
             .put("aDouble", (o, v) -> o.aDouble = v, NullAsZeroDoubleRule.get())
             .put("anInt", (o, v) -> o.anInt = v, NullAsZeroIntRule.get())
             .put("aLong", (o, v) -> o.aLong = v, NullAsZeroLongRule.get())
-            .put("string", (o, v) -> o.string = v, NullableStringRule.get());
+            .put("string", (o, v) -> o.string = v, NullableStringRule.get())
+            .put("aNull", (o, v) -> o.string = v, new NullableRule<>(StringRule.get()));
         static final Rule<A> customRule = new ObjectRule<>(A::new)
             .put("aBool", (o, v) -> o.aBool = v, new NullableRule<>(BoolRule.get(), () -> true))
             .put("aDouble", (o, v) -> o.aDouble = v, new NullableRule<>(DoubleRule.get(), () -> 1.2))
             .put("anInt", (o, v) -> o.anInt = v, new NullableRule<>(IntRule.get(), () -> 3))
             .put("aLong", (o, v) -> o.aLong = v, new NullableRule<>(LongRule.get(), () -> 4L))
-            .put("string", (o, v) -> o.string = v, new NullableRule<>(StringRule.get(), () -> "abc"));
+            .put("string", (o, v) -> o.string = v, new NullableRule<>(StringRule.get(), () -> "abc"))
+            .put("aNull", (o, v) -> o.string = v, new NullableRule<>(StringRule.get()));
 
         public JSON.Object toJson() {
             return new ObjectBuilder()
@@ -40,6 +43,7 @@ public class TestDeserializeNull {
                 .put("anInt", anInt)
                 .put("aLong", aLong)
                 .put("string", string)
+                .put("aNull", null)
                 .build();
         }
 
@@ -59,7 +63,8 @@ public class TestDeserializeNull {
             if (Double.compare(a.aDouble, aDouble) != 0) return false;
             if (anInt != a.anInt) return false;
             if (aLong != a.aLong) return false;
-            return string != null ? string.equals(a.string) : a.string == null;
+            if (string != null ? !string.equals(a.string) : a.string != null) return false;
+            return aNull != null ? aNull.equals(a.aNull) : a.aNull == null;
         }
 
         @Override
@@ -72,6 +77,7 @@ public class TestDeserializeNull {
             result = 31 * result + anInt;
             result = 31 * result + (int) (aLong ^ (aLong >>> 32));
             result = 31 * result + (string != null ? string.hashCode() : 0);
+            result = 31 * result + (aNull != null ? aNull.hashCode() : 0);
             return result;
         }
     }

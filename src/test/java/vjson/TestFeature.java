@@ -4,10 +4,7 @@ import org.junit.Test;
 import vjson.ex.JsonParseException;
 import vjson.ex.ParserException;
 import vjson.parser.*;
-import vjson.simple.SimpleArray;
-import vjson.simple.SimpleNull;
-import vjson.simple.SimpleObject;
-import vjson.simple.SimpleString;
+import vjson.simple.*;
 import vjson.util.AppendableMap;
 import vjson.util.ArrayBuilder;
 import vjson.util.ObjectBuilder;
@@ -249,6 +246,25 @@ public class TestFeature {
         }
         assertEquals(new SimpleString("hello(xyz\")\"world\nabc\n)def"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
             .last("hello(xyz\")\"world\nabc\n)def"));
+    }
+
+    @Test
+    public void normalParsingWhenSettingStringValueNoQuotes() throws Exception {
+        ParserOptions opts = new ParserOptions()
+            .setStringValueNoQuotes(true)
+            .setStringSingleQuotes(true);
+        assertEquals(new ObjectBuilder().build(), ParserUtils.buildFrom(CharStream.from("{}"), opts));
+        assertEquals(new ArrayBuilder().build(), ParserUtils.buildFrom(CharStream.from("[]"), opts));
+
+        assertEquals(new SimpleString("abc"), ParserUtils.buildFrom(CharStream.from("'abc'"), opts));
+        assertEquals(new SimpleString("abc"), ParserUtils.buildFrom(CharStream.from("\"abc\""), opts));
+        assertEquals(new SimpleString("abc"), ParserUtils.buildFrom(CharStream.from("abc"), opts));
+
+        assertEquals(new SimpleBool(true), ParserUtils.buildFrom(CharStream.from("true"), opts));
+        assertEquals(new SimpleInteger(1), ParserUtils.buildFrom(CharStream.from("1"), opts));
+        assertEquals(new SimpleLong(111111111111111111L), ParserUtils.buildFrom(CharStream.from("111111111111111111"), opts));
+        assertEquals(new SimpleDouble(1.2), ParserUtils.buildFrom(CharStream.from("1.2"), opts));
+        assertEquals(new SimpleNull(), ParserUtils.buildFrom(CharStream.from("null"), opts));
     }
 
     @Test

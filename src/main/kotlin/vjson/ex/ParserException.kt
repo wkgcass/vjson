@@ -14,6 +14,7 @@ package vjson.ex
 
 import vjson.cs.LineCol
 
+// #ifdef COVERAGE {{@lombok.Generated}}
 open class ParserException : RuntimeException {
   var lineCol: LineCol? = null
     private set

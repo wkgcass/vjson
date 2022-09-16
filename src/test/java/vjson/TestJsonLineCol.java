@@ -18,6 +18,23 @@ public class TestJsonLineCol {
     }
 
     @Test
+    public void lineColEqualsHashCode() {
+        assertEquals(0, new LineCol("", 0, 0).hashCode());
+        assertEquals(0, new LineCol("123", 12, 3).hashCode());
+        assertEquals(new LineCol("123", 12, 3), new LineCol("", 0, 0));
+        assertEquals(new LineCol("123", 12, 3), new LineCol("456", 45, 6));
+    }
+
+    @Test
+    public void constructor() {
+        LineCol lineCol = new LineCol("file", 1, 1);
+        LineCol lc2 = new LineCol(lineCol);
+        LineCol lc3 = new LineCol(lineCol, 1);
+        assertLineCol(lineCol, lc2);
+        assertLineCol(new LineCol("file", 1, 2), lc3.inner());
+    }
+
+    @Test
     public void allInOne() {
         JSON.Instance<?> json = ParserUtils.buildFrom(new LineColCharStream(CharStream.from(" {\n" +
                 "  \"a\": \"xx\",\n" +
