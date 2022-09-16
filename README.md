@@ -152,13 +152,10 @@ new ArrayBuilder().add(3.14).addObject(o -> ...).addArray(a -> ...).build(); // 
 // serialize
 new SimpleInteger(1).stringify(); // 1
 new SimpleString("hello\nworld").stringify(); // "hello\nworld"
-Transformer tf = new Transformer();
-tf.transform(javaObject).stringify();
 
 // advanced
 new ObjectParser(new ParserOptions().setListener(...)); // hook points that the parsers will call
 result.stringify(stringBuilder, stringifier); // customize the output format
-tf.addRule(MyBean.class, bean -> ...); // customize transforming rules
 
 // additional features
 new ParserOptions().setStringSingleQuotes(true).setKeyNoQuotes(true);
@@ -227,11 +224,13 @@ ObjectParser     ArrayParser   StringParser     BoolParser      NumberParser    
                                        ^
                                        |
                                        |
-     +----------------+-------------+---------------+----------------+
-     |                |             |               |                |
-     |                |             |               |                |
- ObjectRule       ArrayRule    +----+----+       BoolRule   +--------+--------+
-                               |         |                  |        |        |
-                               |         |                  |        |        |
-                         StringRule NullableStringRule   IntRule  LongRule DoubleRule
+     +----------------+-------------+---------------+----------------+-----------------------------+
+     |                |             |               |                |                             |
+     |                |             |               |                |                             |
+ ObjectRule       ArrayRule     StringRule       BoolRule   +--------+--------+            NullableRule(Rule)
+                                                            |        |        |                    |
+                                                            |        |        |                    |
+                                                         IntRule  LongRule DoubleRule              |
+                                                                                                   |
+                                                      NullAsFalseBoolRule NullAsZeroIntRule NullAsZeroLongRule NullAsZeroDoubleRule NullableStringRule
 ```

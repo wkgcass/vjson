@@ -152,13 +152,10 @@ new ArrayBuilder().add(3.14).addObject(o -> ...).addArray(a -> ...).build(); // 
 // 序列化
 new SimpleInteger(1).stringify(); // 1
 new SimpleString("hello\nworld").stringify(); // "hello\nworld"
-Transformer tf = new Transformer();
-tf.transform(javaObject).stringify();
 
 // 高级用法
 new ObjectParser(new ParserOptions().setListener(...)); // 解析器会调用这些回调点
 result.stringify(stringBuilder, stringifier); // 自定义输出格式
-tf.addRule(MyBean.class, bean -> ...); // 自定义转换规则
 
 // 附加特性
 new ParserOptions().setStringSingleQuotes(true).setKeyNoQuotes(true);
@@ -227,11 +224,13 @@ ObjectParser     ArrayParser   StringParser     BoolParser      NumberParser    
                                        ^
                                        |
                                        |
-     +----------------+-------------+---------------+----------------+
-     |                |             |               |                |
-     |                |             |               |                |
- ObjectRule       ArrayRule    +----+----+       BoolRule   +--------+--------+
-                               |         |                  |        |        |
-                               |         |                  |        |        |
-                         StringRule NullableStringRule   IntRule  LongRule DoubleRule
+     +----------------+-------------+---------------+----------------+-----------------------------+
+     |                |             |               |                |                             |
+     |                |             |               |                |                             |
+ ObjectRule       ArrayRule     StringRule       BoolRule   +--------+--------+            NullableRule(Rule)
+                                                            |        |        |                    |
+                                                            |        |        |                    |
+                                                         IntRule  LongRule DoubleRule              |
+                                                                                                   |
+                                                      NullAsFalseBoolRule NullAsZeroIntRule NullAsZeroLongRule NullAsZeroDoubleRule NullableStringRule
 ```
