@@ -13,9 +13,9 @@ package vjson.util
 
 import vjson.JSON
 import vjson.simple.*
-import vjson.util.functional.`BiConsumer$`
-import vjson.util.functional.`Consumer$`
-import vjson.util.functional.`Supplier$`
+import vjson.util.functional.BiConsumer_
+import vjson.util.functional.Consumer_
+import vjson.util.functional.Supplier_
 
 class ArrayBuilder {
   private val list: MutableList<JSON.Instance<*>> = ArrayList()
@@ -33,7 +33,7 @@ class ArrayBuilder {
     }
   }
 
-  fun addNullableInst(isNull: Boolean, instSupplier: `Supplier$`<JSON.Instance<*>>): ArrayBuilder {
+  fun addNullableInst(isNull: Boolean, instSupplier: Supplier_<JSON.Instance<*>>): ArrayBuilder {
     return addNullableInst(isNull, instSupplier as () -> JSON.Instance<*>)
   }
 
@@ -71,7 +71,7 @@ class ArrayBuilder {
     return addInst(builder.build())
   }
 
-  fun addObject(func: `Consumer$`<ObjectBuilder>): ArrayBuilder {
+  fun addObject(func: Consumer_<ObjectBuilder>): ArrayBuilder {
     return addObject(func as (ObjectBuilder) -> Unit)
   }
 
@@ -81,7 +81,7 @@ class ArrayBuilder {
     return addInst(builder.build())
   }
 
-  fun addArray(func: `Consumer$`<ArrayBuilder>): ArrayBuilder {
+  fun addArray(func: Consumer_<ArrayBuilder>): ArrayBuilder {
     return addArray(func as (ArrayBuilder) -> Unit)
   }
 
@@ -92,7 +92,7 @@ class ArrayBuilder {
     return this
   }
 
-  fun <T> iterable(ite: Iterable<T>, operator: `BiConsumer$`<ArrayBuilder, T>): ArrayBuilder {
+  fun <T> iterable(ite: Iterable<T>, operator: BiConsumer_<ArrayBuilder, T>): ArrayBuilder {
     return iterable(ite, operator as ArrayBuilder.(T) -> Unit)
   }
 

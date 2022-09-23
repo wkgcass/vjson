@@ -13,8 +13,8 @@ package vjson.util
 
 import vjson.JSON
 import vjson.simple.*
-import vjson.util.functional.`Consumer$`
-import vjson.util.functional.`Supplier$`
+import vjson.util.functional.Consumer_
+import vjson.util.functional.Supplier_
 import kotlin.reflect.KClass
 
 class ObjectBuilder {
@@ -41,7 +41,7 @@ class ObjectBuilder {
     }
   }
 
-  fun putNullableInst(key: String, isNull: Boolean, instSupplier: `Supplier$`<JSON.Instance<*>>): ObjectBuilder {
+  fun putNullableInst(key: String, isNull: Boolean, instSupplier: Supplier_<JSON.Instance<*>>): ObjectBuilder {
     return putNullableInst(key, isNull, instSupplier as () -> JSON.Instance<*>)
   }
 
@@ -79,7 +79,7 @@ class ObjectBuilder {
     return putInst(key, builder.build())
   }
 
-  fun putObject(key: String, func: `Consumer$`<ObjectBuilder>): ObjectBuilder {
+  fun putObject(key: String, func: Consumer_<ObjectBuilder>): ObjectBuilder {
     return putObject(key, func as (ObjectBuilder) -> Unit)
   }
 
@@ -89,7 +89,7 @@ class ObjectBuilder {
     return putInst(key, builder.build())
   }
 
-  fun putArray(key: String, func: `Consumer$`<ArrayBuilder>): ObjectBuilder {
+  fun putArray(key: String, func: Consumer_<ArrayBuilder>): ObjectBuilder {
     return putArray(key, func as (ArrayBuilder) -> Unit)
   }
 

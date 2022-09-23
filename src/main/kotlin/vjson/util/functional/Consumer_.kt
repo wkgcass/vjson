@@ -17,7 +17,7 @@ interface Func1<T, R> {
 }
 }} */
 
-interface `Consumer$`<T> : /* #ifdef KOTLIN_JS {{ Func1 }} else {{ */Function1/* }} */<T, Unit> {
+interface Consumer_<T> : /* #ifdef KOTLIN_JS {{ Func1 }} else {{ */Function1/* }} */<T, Unit> {
   fun accept(t: T)
 
   override
