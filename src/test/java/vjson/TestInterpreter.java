@@ -283,6 +283,65 @@ public class TestInterpreter {
     }
 
     @Test
+    public void newWithJson() {
+        RuntimeMemory mem = new InterpreterBuilder()
+            .compile("{\n" +
+                "var basePrice = 0.8\n" +
+                "class Good:{_id: int, _name: string, _price: double} do: {\n" +
+                "  public var id = _id\n" +
+                "  public var name = _name\n" +
+                "  public var price = _price\n" +
+                "}\n" +
+                "class Shop:{_name: string, _goods: Good[]} do: {\n" +
+                "  public var name = _name\n" +
+                "  public var goods = _goods\n" +
+                "}\n" +
+                "var shop = new Shop {\n" +
+                "  name: drf\n" +
+                "  goods: [\n" +
+                "    {\n" +
+                "      id: 1\n" +
+                "      name: water\n" +
+                "      price: ${basePrice * 2.0}\n" +
+                "    }\n" +
+                "    {\n" +
+                "      id: 2\n" +
+                "      name: juice\n" +
+                "      price: ${basePrice * 4.0}\n" +
+                "    }\n" +
+                "    {\n" +
+                "      id: 3\n" +
+                "      name: wine\n" +
+                "      price: ${basePrice * 8.0}\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}\n" +
+                "var shopName = shop.name\n" +
+                "var shopGoods0Id = shop.goods[0].id\n" +
+                "var shopGoods0Name = shop.goods[0].name\n" +
+                "var shopGoods0Price = shop.goods[0].price\n" +
+                "var shopGoods1Id = shop.goods[1].id\n" +
+                "var shopGoods1Name = shop.goods[1].name\n" +
+                "var shopGoods1Price = shop.goods[1].price\n" +
+                "var shopGoods2Id = shop.goods[2].id\n" +
+                "var shopGoods2Name = shop.goods[2].name\n" +
+                "var shopGoods2Price = shop.goods[2].price\n" +
+                "}")
+            .execute();
+        assertEquals(0.8, mem.getDouble(0), 0);
+        assertEquals("drf", mem.getRef(5));
+        assertEquals(1, mem.getInt(0));
+        assertEquals("water", mem.getRef(6));
+        assertEquals(1.6, mem.getDouble(1), 0);
+        assertEquals(2, mem.getInt(1));
+        assertEquals("juice", mem.getRef(7));
+        assertEquals(3.2, mem.getDouble(2), 0);
+        assertEquals(3, mem.getInt(2));
+        assertEquals("wine", mem.getRef(8));
+        assertEquals(6.4, mem.getDouble(3), 0);
+    }
+
+    @Test
     public void functionCall() {
         RuntimeMemory mem = new InterpreterBuilder()
             .compile("{\n" +

@@ -22,8 +22,8 @@ import vjson.pl.type.TypeInstance
 data class Type(private val name: String) : TypedAST {
   override var lineCol: LineCol = LineCol.EMPTY
   private var ctx: TypeContext? = null
-  private val isArray: Boolean
-  private val elementType: Type
+  val isArray: Boolean
+  val elementType: Type
 
   init {
     if (name.contains("[")) {

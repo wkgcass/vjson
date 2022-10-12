@@ -30,7 +30,7 @@ abstract class CollectionType(
   protected abstract fun newCollection(initialCap: Int): Collection<*>
 
   private val constructorDescriptor = object : ExecutableConstructorFunctionDescriptor(
-    listOf(ParamInstance(IntType, 0)),
+    listOf(ParamInstance("size", IntType, 0)),
     VoidType,
     FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, refTotal = 1))
   ) {
@@ -67,7 +67,7 @@ abstract class CollectionType(
       }
       "add" -> {
         val type = ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(elementType, 0)),
+          listOf(ParamInstance("e", elementType, 0)),
           BoolType,
           memoryAllocatorForSingleElementTypeFunction()
         )
@@ -142,7 +142,7 @@ abstract class CollectionType(
       }
       "remove" -> {
         val type = ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(elementType, 0)),
+          listOf(ParamInstance("e", elementType, 0)),
           BoolType,
           memoryAllocatorForSingleElementTypeFunction()
         )
@@ -217,7 +217,7 @@ abstract class CollectionType(
       }
       "contains" -> {
         val type = ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(elementType, 0)),
+          listOf(ParamInstance("e", elementType, 0)),
           BoolType,
           memoryAllocatorForSingleElementTypeFunction()
         )

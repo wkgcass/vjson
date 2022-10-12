@@ -20,6 +20,8 @@ data class NewArray(
   val type: Type,
   val len: Expr,
 ) : Expr() {
+  var arrayTypeInstance: ArrayTypeInstance? = null
+
   override fun copy(): NewArray {
     val ret = NewArray(type.copy(), len.copy())
     ret.lineCol = lineCol
@@ -28,10 +30,14 @@ data class NewArray(
 
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
-    val arrayType = type.check(ctx)
-    if (arrayType !is ArrayTypeInstance) {
-      throw ParserException("$this: $arrayType is not array type", lineCol)
+    if (arrayTypeInstance == null) {
+      val arrayType = type.check(ctx)
+      if (arrayType !is ArrayTypeInstance) {
+        throw ParserException("$this: $arrayType is not array type", lineCol)
+      }
+      arrayTypeInstance = arrayType
     }
+    val arrayType = arrayTypeInstance!!
     val lenType = len.check(ctx)
     if (lenType !is IntType) {
       throw ParserException("$this: typeof $len ($lenType) is not int", lineCol)
@@ -40,11 +46,11 @@ data class NewArray(
   }
 
   override fun typeInstance(): TypeInstance {
-    return type.typeInstance()
+    return arrayTypeInstance!!
   }
 
   override fun generateInstruction(): Instruction {
-    return when (type.typeInstance().elementType(ctx)) {
+    return when (arrayTypeInstance!!.elementType(ctx)) {
       is IntType -> NewArrayInt(len.generateInstruction(), ctx.stackInfo(lineCol))
       is LongType -> NewArrayLong(len.generateInstruction(), ctx.stackInfo(lineCol))
       is FloatType -> NewArrayFloat(len.generateInstruction(), ctx.stackInfo(lineCol))

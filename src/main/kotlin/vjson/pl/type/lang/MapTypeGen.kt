@@ -18,7 +18,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         IntType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0), ParamInstance(IntType, 1)), IntType,
+              listOf(ParamInstance("key", IntType, 0), ParamInstance("value", IntType, 1)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 2))
             )
             object : ExecutableField(name, type) {
@@ -35,7 +35,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0), ParamInstance(LongType, 0)), LongType,
+              listOf(ParamInstance("key", IntType, 0), ParamInstance("value", LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -52,7 +52,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0), ParamInstance(FloatType, 0)), FloatType,
+              listOf(ParamInstance("key", IntType, 0), ParamInstance("value", FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -69,7 +69,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0), ParamInstance(DoubleType, 0)), DoubleType,
+              listOf(ParamInstance("key", IntType, 0), ParamInstance("value", DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -86,7 +86,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0), ParamInstance(BoolType, 0)), BoolType,
+              listOf(ParamInstance("key", IntType, 0), ParamInstance("value", BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -103,7 +103,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0), ParamInstance(value, 0)), value,
+              listOf(ParamInstance("key", IntType, 0), ParamInstance("value", value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -122,7 +122,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         LongType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0), ParamInstance(IntType, 0)), IntType,
+              listOf(ParamInstance("key", LongType, 0), ParamInstance("value", IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -139,7 +139,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0), ParamInstance(LongType, 1)), LongType,
+              listOf(ParamInstance("key", LongType, 0), ParamInstance("value", LongType, 1)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 2))
             )
             object : ExecutableField(name, type) {
@@ -156,7 +156,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0), ParamInstance(FloatType, 0)), FloatType,
+              listOf(ParamInstance("key", LongType, 0), ParamInstance("value", FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -173,7 +173,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0), ParamInstance(DoubleType, 0)), DoubleType,
+              listOf(ParamInstance("key", LongType, 0), ParamInstance("value", DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -190,7 +190,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0), ParamInstance(BoolType, 0)), BoolType,
+              listOf(ParamInstance("key", LongType, 0), ParamInstance("value", BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -207,7 +207,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0), ParamInstance(value, 0)), value,
+              listOf(ParamInstance("key", LongType, 0), ParamInstance("value", value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1, refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -226,7 +226,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         FloatType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0), ParamInstance(IntType, 0)), IntType,
+              listOf(ParamInstance("key", FloatType, 0), ParamInstance("value", IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -243,7 +243,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0), ParamInstance(LongType, 0)), LongType,
+              listOf(ParamInstance("key", FloatType, 0), ParamInstance("value", LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -260,7 +260,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0), ParamInstance(FloatType, 1)), FloatType,
+              listOf(ParamInstance("key", FloatType, 0), ParamInstance("value", FloatType, 1)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 2))
             )
             object : ExecutableField(name, type) {
@@ -277,7 +277,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0), ParamInstance(DoubleType, 0)), DoubleType,
+              listOf(ParamInstance("key", FloatType, 0), ParamInstance("value", DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -294,7 +294,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0), ParamInstance(BoolType, 0)), BoolType,
+              listOf(ParamInstance("key", FloatType, 0), ParamInstance("value", BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -311,7 +311,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0), ParamInstance(value, 0)), value,
+              listOf(ParamInstance("key", FloatType, 0), ParamInstance("value", value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1, refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -330,7 +330,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         DoubleType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0), ParamInstance(IntType, 0)), IntType,
+              listOf(ParamInstance("key", DoubleType, 0), ParamInstance("value", IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -347,7 +347,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0), ParamInstance(LongType, 0)), LongType,
+              listOf(ParamInstance("key", DoubleType, 0), ParamInstance("value", LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -364,7 +364,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0), ParamInstance(FloatType, 0)), FloatType,
+              listOf(ParamInstance("key", DoubleType, 0), ParamInstance("value", FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -381,7 +381,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0), ParamInstance(DoubleType, 1)), DoubleType,
+              listOf(ParamInstance("key", DoubleType, 0), ParamInstance("value", DoubleType, 1)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 2))
             )
             object : ExecutableField(name, type) {
@@ -398,7 +398,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0), ParamInstance(BoolType, 0)), BoolType,
+              listOf(ParamInstance("key", DoubleType, 0), ParamInstance("value", BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -415,7 +415,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0), ParamInstance(value, 0)), value,
+              listOf(ParamInstance("key", DoubleType, 0), ParamInstance("value", value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1, refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -434,7 +434,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         BoolType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0), ParamInstance(IntType, 0)), IntType,
+              listOf(ParamInstance("key", BoolType, 0), ParamInstance("value", IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -451,7 +451,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0), ParamInstance(LongType, 0)), LongType,
+              listOf(ParamInstance("key", BoolType, 0), ParamInstance("value", LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -468,7 +468,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0), ParamInstance(FloatType, 0)), FloatType,
+              listOf(ParamInstance("key", BoolType, 0), ParamInstance("value", FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -485,7 +485,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0), ParamInstance(DoubleType, 0)), DoubleType,
+              listOf(ParamInstance("key", BoolType, 0), ParamInstance("value", DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -502,7 +502,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0), ParamInstance(BoolType, 1)), BoolType,
+              listOf(ParamInstance("key", BoolType, 0), ParamInstance("value", BoolType, 1)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 2))
             )
             object : ExecutableField(name, type) {
@@ -519,7 +519,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0), ParamInstance(value, 0)), value,
+              listOf(ParamInstance("key", BoolType, 0), ParamInstance("value", value, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1, refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -538,7 +538,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         else -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0), ParamInstance(IntType, 0)), IntType,
+              listOf(ParamInstance("key", key, 0), ParamInstance("value", IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -555,7 +555,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0), ParamInstance(LongType, 0)), LongType,
+              listOf(ParamInstance("key", key, 0), ParamInstance("value", LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -572,7 +572,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0), ParamInstance(FloatType, 0)), FloatType,
+              listOf(ParamInstance("key", key, 0), ParamInstance("value", FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -589,7 +589,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0), ParamInstance(DoubleType, 0)), DoubleType,
+              listOf(ParamInstance("key", key, 0), ParamInstance("value", DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -606,7 +606,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0), ParamInstance(BoolType, 0)), BoolType,
+              listOf(ParamInstance("key", key, 0), ParamInstance("value", BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1, boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -623,7 +623,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0), ParamInstance(value, 1)), value,
+              listOf(ParamInstance("key", key, 0), ParamInstance("value", value, 1)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 2))
             )
             object : ExecutableField(name, type) {
@@ -646,7 +646,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         IntType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), IntType,
+              listOf(ParamInstance("key", IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -663,7 +663,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), LongType,
+              listOf(ParamInstance("key", IntType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -680,7 +680,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), FloatType,
+              listOf(ParamInstance("key", IntType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -697,7 +697,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), DoubleType,
+              listOf(ParamInstance("key", IntType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -714,7 +714,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), BoolType,
+              listOf(ParamInstance("key", IntType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -731,7 +731,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), value,
+              listOf(ParamInstance("key", IntType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -750,7 +750,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         LongType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), IntType,
+              listOf(ParamInstance("key", LongType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -767,7 +767,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), LongType,
+              listOf(ParamInstance("key", LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -784,7 +784,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), FloatType,
+              listOf(ParamInstance("key", LongType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -801,7 +801,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), DoubleType,
+              listOf(ParamInstance("key", LongType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -818,7 +818,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), BoolType,
+              listOf(ParamInstance("key", LongType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -835,7 +835,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), value,
+              listOf(ParamInstance("key", LongType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -854,7 +854,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         FloatType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), IntType,
+              listOf(ParamInstance("key", FloatType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -871,7 +871,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), LongType,
+              listOf(ParamInstance("key", FloatType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -888,7 +888,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), FloatType,
+              listOf(ParamInstance("key", FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -905,7 +905,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), DoubleType,
+              listOf(ParamInstance("key", FloatType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -922,7 +922,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), BoolType,
+              listOf(ParamInstance("key", FloatType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -939,7 +939,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), value,
+              listOf(ParamInstance("key", FloatType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -958,7 +958,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         DoubleType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), IntType,
+              listOf(ParamInstance("key", DoubleType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -975,7 +975,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), LongType,
+              listOf(ParamInstance("key", DoubleType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -992,7 +992,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), FloatType,
+              listOf(ParamInstance("key", DoubleType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1009,7 +1009,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), DoubleType,
+              listOf(ParamInstance("key", DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1026,7 +1026,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), BoolType,
+              listOf(ParamInstance("key", DoubleType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1043,7 +1043,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), value,
+              listOf(ParamInstance("key", DoubleType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1062,7 +1062,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         BoolType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), IntType,
+              listOf(ParamInstance("key", BoolType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1079,7 +1079,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), LongType,
+              listOf(ParamInstance("key", BoolType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1096,7 +1096,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), FloatType,
+              listOf(ParamInstance("key", BoolType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1113,7 +1113,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), DoubleType,
+              listOf(ParamInstance("key", BoolType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1130,7 +1130,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), BoolType,
+              listOf(ParamInstance("key", BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1147,7 +1147,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), value,
+              listOf(ParamInstance("key", BoolType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1166,7 +1166,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         else -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), IntType,
+              listOf(ParamInstance("key", key, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1183,7 +1183,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), LongType,
+              listOf(ParamInstance("key", key, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1200,7 +1200,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), FloatType,
+              listOf(ParamInstance("key", key, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1217,7 +1217,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), DoubleType,
+              listOf(ParamInstance("key", key, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1234,7 +1234,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), BoolType,
+              listOf(ParamInstance("key", key, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1251,7 +1251,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), value,
+              listOf(ParamInstance("key", key, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1274,7 +1274,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         IntType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), IntType,
+              listOf(ParamInstance("key", IntType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1291,7 +1291,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), LongType,
+              listOf(ParamInstance("key", IntType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1308,7 +1308,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), FloatType,
+              listOf(ParamInstance("key", IntType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1325,7 +1325,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), DoubleType,
+              listOf(ParamInstance("key", IntType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1342,7 +1342,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), BoolType,
+              listOf(ParamInstance("key", IntType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1359,7 +1359,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(IntType, 0)), value,
+              listOf(ParamInstance("key", IntType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1378,7 +1378,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         LongType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), IntType,
+              listOf(ParamInstance("key", LongType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1395,7 +1395,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), LongType,
+              listOf(ParamInstance("key", LongType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1412,7 +1412,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), FloatType,
+              listOf(ParamInstance("key", LongType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1429,7 +1429,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), DoubleType,
+              listOf(ParamInstance("key", LongType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1446,7 +1446,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), BoolType,
+              listOf(ParamInstance("key", LongType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1463,7 +1463,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(LongType, 0)), value,
+              listOf(ParamInstance("key", LongType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1482,7 +1482,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         FloatType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), IntType,
+              listOf(ParamInstance("key", FloatType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1499,7 +1499,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), LongType,
+              listOf(ParamInstance("key", FloatType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1516,7 +1516,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), FloatType,
+              listOf(ParamInstance("key", FloatType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1533,7 +1533,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), DoubleType,
+              listOf(ParamInstance("key", FloatType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1550,7 +1550,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), BoolType,
+              listOf(ParamInstance("key", FloatType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1567,7 +1567,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(FloatType, 0)), value,
+              listOf(ParamInstance("key", FloatType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1586,7 +1586,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         DoubleType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), IntType,
+              listOf(ParamInstance("key", DoubleType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1603,7 +1603,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), LongType,
+              listOf(ParamInstance("key", DoubleType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1620,7 +1620,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), FloatType,
+              listOf(ParamInstance("key", DoubleType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1637,7 +1637,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), DoubleType,
+              listOf(ParamInstance("key", DoubleType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1654,7 +1654,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), BoolType,
+              listOf(ParamInstance("key", DoubleType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1671,7 +1671,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(DoubleType, 0)), value,
+              listOf(ParamInstance("key", DoubleType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1690,7 +1690,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         BoolType -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), IntType,
+              listOf(ParamInstance("key", BoolType, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1707,7 +1707,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), LongType,
+              listOf(ParamInstance("key", BoolType, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1724,7 +1724,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), FloatType,
+              listOf(ParamInstance("key", BoolType, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1741,7 +1741,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), DoubleType,
+              listOf(ParamInstance("key", BoolType, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1758,7 +1758,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), BoolType,
+              listOf(ParamInstance("key", BoolType, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1775,7 +1775,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(BoolType, 0)), value,
+              listOf(ParamInstance("key", BoolType, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1794,7 +1794,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
         else -> when (value) {
           IntType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), IntType,
+              listOf(ParamInstance("key", key, 0)), IntType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1811,7 +1811,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           LongType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), LongType,
+              listOf(ParamInstance("key", key, 0)), LongType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1828,7 +1828,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           FloatType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), FloatType,
+              listOf(ParamInstance("key", key, 0)), FloatType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1845,7 +1845,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           DoubleType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), DoubleType,
+              listOf(ParamInstance("key", key, 0)), DoubleType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1862,7 +1862,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           BoolType -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), BoolType,
+              listOf(ParamInstance("key", key, 0)), BoolType,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {
@@ -1879,7 +1879,7 @@ internal fun generatedForMap0(key: TypeInstance, value: TypeInstance, ctx: TypeC
           }
           else -> {
             val type = ctx.getFunctionDescriptorAsInstance(
-              listOf(ParamInstance(key, 0)), value,
+              listOf(ParamInstance("key", key, 0)), value,
               FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
             )
             object : ExecutableField(name, type) {

@@ -23,6 +23,8 @@ data class NewInstance(
   val type: Type,
   val args: List<Expr>,
 ) : Expr() {
+  var typeInstance: TypeInstance? = null
+
   override fun copy(): NewInstance {
     val ret = NewInstance(type.copy(), args.map { it.copy() })
     ret.lineCol = lineCol
@@ -30,6 +32,9 @@ data class NewInstance(
   }
 
   override fun check(ctx: TypeContext): TypeInstance {
+    if (typeInstance != null) {
+      return typeInstance!!
+    }
     this.ctx = ctx
     val typeInstance = type.check(ctx)
     val constructor = typeInstance.constructor(ctx) ?: throw ParserException("$this: cannot instantiate $typeInstance", lineCol)
@@ -49,15 +54,16 @@ data class NewInstance(
         )
       }
     }
+    this.typeInstance = typeInstance
     return typeInstance
   }
 
   override fun typeInstance(): TypeInstance {
-    return type.typeInstance()
+    return typeInstance!!
   }
 
   override fun generateInstruction(): Instruction {
-    val typeInstance = this.type.typeInstance()
+    val typeInstance = this.typeInstance()
     val cons = typeInstance.constructor(ctx)!!
 
     if (cons is ExecutableConstructorFunctionDescriptor) {

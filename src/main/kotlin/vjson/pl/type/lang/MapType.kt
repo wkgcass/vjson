@@ -30,7 +30,7 @@ open class MapType(
   private val keySetType = SetType(templateKeySetType, keySetIteratorType, key)
 
   private val constructorDescriptor = object : ExecutableConstructorFunctionDescriptor(
-    listOf(ParamInstance(IntType, 0)),
+    listOf(ParamInstance("size", IntType, 0)),
     VoidType,
     FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, refTotal = 1))
   ) {
@@ -72,7 +72,7 @@ open class MapType(
         IntType -> object : ExecutableField(
           name,
           ctx.getFunctionDescriptorAsInstance(
-            listOf(ParamInstance(IntType, 0)), BoolType,
+            listOf(ParamInstance("key", IntType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1))
           )
         ) {
@@ -89,7 +89,7 @@ open class MapType(
         LongType -> object : ExecutableField(
           name,
           ctx.getFunctionDescriptorAsInstance(
-            listOf(ParamInstance(LongType, 0)), BoolType,
+            listOf(ParamInstance("key", LongType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(longTotal = 1))
           )
         ) {
@@ -106,7 +106,7 @@ open class MapType(
         FloatType -> object : ExecutableField(
           name,
           ctx.getFunctionDescriptorAsInstance(
-            listOf(ParamInstance(FloatType, 0)), BoolType,
+            listOf(ParamInstance("key", FloatType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(floatTotal = 1))
           )
         ) {
@@ -123,7 +123,7 @@ open class MapType(
         DoubleType -> object : ExecutableField(
           name,
           ctx.getFunctionDescriptorAsInstance(
-            listOf(ParamInstance(DoubleType, 0)), BoolType,
+            listOf(ParamInstance("key", DoubleType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(doubleTotal = 1))
           )
         ) {
@@ -140,7 +140,7 @@ open class MapType(
         BoolType -> object : ExecutableField(
           name,
           ctx.getFunctionDescriptorAsInstance(
-            listOf(ParamInstance(BoolType, 0)), BoolType,
+            listOf(ParamInstance("key", BoolType, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(boolTotal = 1))
           )
         ) {
@@ -157,7 +157,7 @@ open class MapType(
         else -> object : ExecutableField(
           name,
           ctx.getFunctionDescriptorAsInstance(
-            listOf(ParamInstance(key, 0)), BoolType,
+            listOf(ParamInstance("key", key, 0)), BoolType,
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
           )
         ) {

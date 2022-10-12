@@ -13,6 +13,7 @@
 package vjson.pl.type
 
 data class ParamInstance(
+  val name: String,
   val type: TypeInstance,
   val memIndex: Int,
 ) {

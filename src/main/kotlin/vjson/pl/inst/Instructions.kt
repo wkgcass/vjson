@@ -25,6 +25,9 @@ data class CompositeInstruction(
   override fun execute0(ctx: ActionContext, exec: Execution) {
     for (inst in instructions) {
       inst.execute(ctx, exec)
+      if (ctx.returnImmediately) {
+        break
+      }
     }
   }
 }

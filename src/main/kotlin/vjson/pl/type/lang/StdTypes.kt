@@ -87,7 +87,7 @@ class ConsoleClass : TypeInstance {
       "log" -> {
         val type =
           ctx.getFunctionDescriptorAsInstance(
-            listOf(ParamInstance(ctx.getType(Type("string")), 0)), ctx.getType(Type("void")),
+            listOf(ParamInstance("msg", ctx.getType(Type("string")), 0)), ctx.getType(Type("void")),
             FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
           )
         return Field("log", type, MemPos(0, 0), false, null)

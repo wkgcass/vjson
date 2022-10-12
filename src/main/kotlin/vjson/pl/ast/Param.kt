@@ -31,7 +31,7 @@ data class Param(
   }
 
   override fun check(ctx: TypeContext): TypeInstance {
-    if (!ctx.hasType(type)) {
+    if (!ctx.hasTypeConsiderArray(type)) {
       throw ParserException("type of parameter $name (${type}) is not defined", lineCol)
     }
     type.check(ctx)

@@ -6,6 +6,7 @@ import vjson.pl.ExprTokenizer;
 import vjson.pl.token.Token;
 import vjson.pl.token.TokenType;
 import vjson.simple.*;
+import vjson.util.ObjectBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -227,5 +228,30 @@ public class TestExprTokenizer {
             new Token(TokenType.COMMA, ",", LineCol.Companion.getEMPTY()),
             new Token(TokenType.STRING, "'abc'", LineCol.Companion.getEMPTY(), new SimpleString("abc"))
         ), token("1+2*3-4/5 !false !true console.log (null) new array[0] a+=1 a-=2 a*=3 a/=4 a>b c<d e>=f g<=h i!=j k==l test1.a&&test2.b test1.c||test2.d : ,'abc'"));
+    }
+
+    @Test
+    public void simpleJson() {
+        ExprTokenizer tokenizer = new ExprTokenizer("a b {x: 1, y: 2} c"
+            , LineCol.Companion.getEMPTY());
+        assertEquals(new Token(TokenType.VAR_NAME, "a", LineCol.Companion.getEMPTY()), tokenizer.next(1));
+        assertEquals(new Token(TokenType.VAR_NAME, "b", LineCol.Companion.getEMPTY()), tokenizer.next(1));
+        assertEquals(new ObjectBuilder()
+            .put("x", 1)
+            .put("y", 2).build(), tokenizer.nextJsonObject());
+        assertEquals(new Token(TokenType.VAR_NAME, "c", LineCol.Companion.getEMPTY()), tokenizer.next(1));
+    }
+
+    @Test
+    public void peekBraceAndGetJson() {
+        ExprTokenizer tokenizer = new ExprTokenizer("a b {x: 1, y: 2} c"
+            , LineCol.Companion.getEMPTY());
+        assertEquals(new Token(TokenType.VAR_NAME, "a", LineCol.Companion.getEMPTY()), tokenizer.next(1));
+        assertEquals(new Token(TokenType.VAR_NAME, "b", LineCol.Companion.getEMPTY()), tokenizer.next(1));
+        assertEquals(new Token(TokenType.LEFT_BRACE, "{", LineCol.Companion.getEMPTY()), tokenizer.peek(1));
+        assertEquals(new ObjectBuilder()
+            .put("x", 1)
+            .put("y", 2).build(), tokenizer.nextJsonObject());
+        assertEquals(new Token(TokenType.VAR_NAME, "c", LineCol.Companion.getEMPTY()), tokenizer.next(1));
     }
 }

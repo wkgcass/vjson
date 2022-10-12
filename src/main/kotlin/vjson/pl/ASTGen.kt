@@ -251,12 +251,75 @@ class ASTGen(_prog: JSON.Object) {
       when (nextEntry.value) {
         is JSON.Null -> NewInstance(Type(typeStr), listOf())
         is JSON.Array -> NewInstance(Type(typeStr), exprArray(nextEntry.value))
+        is JSON.Object -> parseNewInstanceWithJson(nextEntry.value, typeStr, entry.lineCol)
         else -> throw ParserException(
           "unexpected token ${nextEntry.value} for new instance statement, expecting null or array value after key `$typeStr`",
           nextEntry.value.lineCol()
         )
       }
     }
+  }
+
+  private fun parseNewInstanceWithJson(jsonObj: JSON.Object, typeStr: String, lineCol: LineCol): Expr {
+    val expr = NewInstanceWithJson(Type(typeStr), newJsonConvert(jsonObj))
+    expr.lineCol = lineCol
+    return expr
+  }
+
+  private fun newJsonConvert(v: JSON.Instance<*>): Any {
+    return when (v) {
+      is JSON.Integer, is JSON.Long -> {
+        val ret = IntegerLiteral(v as JSON.Number<*>)
+        ret.lineCol = v.lineCol()
+        ret
+      }
+      is JSON.Double -> {
+        val ret = FloatLiteral(v)
+        ret.lineCol = v.lineCol()
+        ret
+      }
+      is JSON.Bool -> {
+        val ret = BoolLiteral(v.booleanValue())
+        ret.lineCol = v.lineCol()
+        ret
+      }
+      is JSON.Null -> {
+        val ret = NullLiteral()
+        ret.lineCol = v.lineCol()
+        ret
+      }
+      is JSON.Object -> newJsonConvert(v)
+      is JSON.Array -> newJsonConvert(v)
+      is JSON.String -> newJsonConvert(v)
+      else -> throw ParserException("unknown json instance $v", v.lineCol())
+    }
+  }
+
+  private fun newJsonConvert(jsonObj: JSON.Object): LinkedHashMap<String, Any> {
+    val map = LinkedHashMap<String, Any>()
+    for (k in jsonObj.keyList()) {
+      val v = jsonObj[k]
+      map[k] = newJsonConvert(v)
+    }
+    return map
+  }
+
+  private fun newJsonConvert(jsonArr: JSON.Array): ArrayList<Any> {
+    val ls = ArrayList<Any>()
+    for (i in 0 until jsonArr.length()) {
+      val e = jsonArr[i]
+      ls.add(newJsonConvert(e))
+    }
+    return ls
+  }
+
+  private fun newJsonConvert(jsonStr: JSON.String): Expr {
+    var str = jsonStr.toJavaObject()
+    if (!str.startsWith("\${") || !str.endsWith("}")) {
+      return StringLiteral(str)
+    }
+    str = str.substring(2, str.length - 1)
+    return exprString(str, jsonStr.lineCol().inner())
   }
 
   private fun aFor(entry: JSON.ObjectEntry): ForLoop {

@@ -291,6 +291,53 @@ public class TestTypeCheck {
     }
 
     @Test
+    public void newWithJson() {
+        List<Statement> stmts = ast("{\n" +
+            "class A:{x: int, y: double} do: {}\n" +
+            "new A {x: 1, y: 2.0}\n" +
+            "}");
+        assertEquals(2, stmts.size());
+        assertTrue(stmts.get(0) instanceof ClassDefinition);
+        NewInstanceWithJson aNew = (NewInstanceWithJson) stmts.get(1);
+        ClassTypeInstance aNewType = (ClassTypeInstance) aNew.typeInstance();
+        assertEquals("A", aNewType.getCls().getName());
+    }
+
+    @Test
+    public void newWithJsonNested() {
+        List<Statement> stmts = ast("{\n" +
+            "class Good:{id: int, name: string, price: double} do: {}\n" +
+            "class Shop:{name: string, goods: Good[]} do: {}\n" +
+            "new Shop {\n" +
+            "  name: drf\n" +
+            "  goods: [\n" +
+            "    {\n" +
+            "      id: 1\n" +
+            "      name: water\n" +
+            "      price: 1.5\n" +
+            "    }\n" +
+            "    {\n" +
+            "      id: 2\n" +
+            "      name: juice\n" +
+            "      price: 3.0\n" +
+            "    }\n" +
+            "    {\n" +
+            "      id: 3\n" +
+            "      name: wine\n" +
+            "      price: 8.0\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}\n" +
+            "}");
+        assertEquals(3, stmts.size());
+        assertTrue(stmts.get(0) instanceof ClassDefinition);
+        assertTrue(stmts.get(1) instanceof ClassDefinition);
+        NewInstanceWithJson aNew = (NewInstanceWithJson) stmts.get(2);
+        ClassTypeInstance aNewType = (ClassTypeInstance) aNew.typeInstance();
+        assertEquals("Shop", aNewType.getCls().getName());
+    }
+
+    @Test
     public void pass() {
         //noinspection ConstantConditions
         ASTGen gen = new ASTGen(new ObjectParser(InterpreterBuilder.Companion.interpreterOptions())

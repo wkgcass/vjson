@@ -30,7 +30,7 @@ templates = []
 
 MAP_PUT_TEMPLATE = """
 val type = ctx.getFunctionDescriptorAsInstance(
-  listOf(ParamInstance({{KeyType}}, 0), ParamInstance({{ValueType}}, {{valueIndex}})), {{ValueType}},
+  listOf(ParamInstance("key", {{KeyType}}, 0), ParamInstance("value", {{ValueType}}, {{valueIndex}})), {{ValueType}},
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{memoryTotal}}))
 )
 object : ExecutableField(name, type) {
@@ -52,7 +52,7 @@ templates.append({
 
 MAP_GET_TEMPLATE = """
 val type = ctx.getFunctionDescriptorAsInstance(
-  listOf(ParamInstance({{KeyType}}, 0)), {{ValueType}},
+  listOf(ParamInstance("key", {{KeyType}}, 0)), {{ValueType}},
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{keyType}}Total = 1))
 )
 object : ExecutableField(name, type) {
@@ -74,7 +74,7 @@ templates.append({
 
 MAP_REMOVE_TEMPLATE = """
 val type = ctx.getFunctionDescriptorAsInstance(
-  listOf(ParamInstance({{KeyType}}, 0)), {{ValueType}},
+  listOf(ParamInstance("key", {{KeyType}}, 0)), {{ValueType}},
   FixedMemoryAllocatorProvider(RuntimeMemoryTotal({{keyType}}Total = 1))
 )
 object : ExecutableField(name, type) {

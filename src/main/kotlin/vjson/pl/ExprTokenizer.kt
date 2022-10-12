@@ -13,9 +13,11 @@
 package vjson.pl
 
 import vjson.CharStream
+import vjson.JSON
 import vjson.cs.LineCol
 import vjson.cs.LineColCharStream
 import vjson.ex.ParserException
+import vjson.parser.ObjectParser
 import vjson.parser.ParserOptions
 import vjson.parser.StringParser
 import vjson.pl.token.*
@@ -40,6 +42,8 @@ class ExprTokenizer(cs: CharStream, val offset: LineCol) {
     FullMatchTokenHandler(TokenType.RIGHT_PAR, ")"),
     FullMatchTokenHandler(TokenType.LEFT_BRACKET, "["),
     FullMatchTokenHandler(TokenType.RIGHT_BRACKET, "]"),
+    FullMatchTokenHandler(TokenType.LEFT_BRACE, "{"),
+    FullMatchTokenHandler(TokenType.RIGHT_BRACE, "}"),
     FullMatchTokenHandler(TokenType.PLUS, "+"),
     FullMatchTokenHandler(TokenType.MINUS, "-"),
     FullMatchTokenHandler(TokenType.MULTIPLY, "*"),
@@ -101,6 +105,25 @@ class ExprTokenizer(cs: CharStream, val offset: LineCol) {
         return tokenBuffer.removeFirst()
       }
     }
+  }
+
+  fun nextJsonObject(): JSON.Object {
+    var needBrace = false
+    if (!tokenBuffer.isEmpty()) {
+      if (tokenBuffer.size() != 1) {
+        throw IllegalStateException("cannot retrieve json object because current token buffer is neither empty nor containing only `{`")
+      }
+      if (tokenBuffer.get(0).type != TokenType.LEFT_BRACE) {
+        throw IllegalStateException("cannot retrieve json object because current token buffer is neither empty nor containing only `{`")
+      }
+      tokenBuffer.clear()
+      needBrace = true
+    }
+    val parser = ObjectParser(InterpreterBuilder.interpreterOptions().setEnd(false))
+    if (needBrace) {
+      parser.feed("{")
+    }
+    return parser.feed(cs) ?: throw IllegalStateException("cannot retrieve json object, expecting more input")
   }
 
   private fun readToken() {

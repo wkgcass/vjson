@@ -41,7 +41,7 @@ open class ListType(
     return when (name) {
       "removeAt" -> {
         val type = ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(IntType, 0)), VoidType, FixedMemoryAllocatorProvider(
+          listOf(ParamInstance("index", IntType, 0)), VoidType, FixedMemoryAllocatorProvider(
             RuntimeMemoryTotal(intTotal = 1)
           )
         )
@@ -59,7 +59,7 @@ open class ListType(
       }
       "get" -> {
         val type = ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(IntType, 0)), elementType, FixedMemoryAllocatorProvider(
+          listOf(ParamInstance("index", IntType, 0)), elementType, FixedMemoryAllocatorProvider(
             RuntimeMemoryTotal(intTotal = 1)
           )
         )
@@ -294,7 +294,7 @@ open class ListType(
       }
       "indexOf" -> {
         val type = ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(elementType, 0)), IntType,
+          listOf(ParamInstance("e", elementType, 0)), IntType,
           memoryAllocatorForSingleElementTypeFunction()
         )
         when (elementType) {
@@ -369,7 +369,7 @@ open class ListType(
       "subList" -> object : ExecutableField(
         name,
         ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(IntType, 0), ParamInstance(IntType, 1)), this,
+          listOf(ParamInstance("fromInclusive", IntType, 0), ParamInstance("toExclusive", IntType, 1)), this,
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 2))
         )
       ) {
@@ -392,7 +392,7 @@ open class ListType(
 
   private fun typeForInsertOrSet(ctx: TypeContext): FunctionDescriptorTypeInstance {
     return ctx.getFunctionDescriptorAsInstance(
-      listOf(ParamInstance(IntType, 0), ParamInstance(elementType, if (elementType is IntType) 1 else 0)),
+      listOf(ParamInstance("index", IntType, 0), ParamInstance("e", elementType, if (elementType is IntType) 1 else 0)),
       VoidType,
       when (elementType) {
         is IntType -> FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 2))

@@ -9,9 +9,7 @@ import vjson.simple.SimpleDouble;
 import vjson.simple.SimpleInteger;
 import vjson.simple.SimpleLong;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -234,6 +232,45 @@ public class TestASTGen {
             ),
             gen("{ new 'int[a + b][]' }")
         );
+    }
+
+    @Test
+    public void newJson() {
+        assertEquals(
+            Collections.singletonList(
+                new NewInstanceWithJson(new Type("A"), new LinkedHashMap<>())
+            ),
+            gen("{ new A {} }"));
+        assertEquals(
+            Collections.singletonList(
+                new NewInstanceWithJson(new Type("A"), new LinkedHashMap<String, Object>() {{
+                    put("x", new IntegerLiteral(new SimpleInteger(1)));
+                    put("y", new FloatLiteral(new SimpleDouble(2.0)));
+                    put("z", new StringLiteral("3"));
+                }})
+            ),
+            gen("{ new A {x: 1, y: 2.0, z: '3'} }"));
+        assertEquals(
+            Collections.singletonList(
+                new NewInstanceWithJson(new Type("A"), new LinkedHashMap<String, Object>() {{
+                    put("x", new LinkedHashMap<String, Object>() {{
+                        put("y", new IntegerLiteral(new SimpleInteger(1)));
+                        put("z", new ArrayList<Object>() {{
+                            add(new LinkedHashMap<String, Object>() {{
+                                put("m", new FloatLiteral(new SimpleDouble(2.0)));
+                                put("n", new ArrayList<Object>() {{
+                                    add(new StringLiteral("3"));
+                                    add(new Access("a"));
+                                }});
+                            }});
+                        }});
+                    }});
+                }})
+            ),
+            gen("{ new A {x: {y: 1, z: [ {m: 2.0, n: ['3', ${a}]} ]}} }"));
+        assertEquals(
+            gen("{ new A: {x: {y: 1, z: [ {m: 2.0, n: ['3', ${a}]} ]}} }"),
+            gen("{ new A {x: {y: 1, z: [ {m: 2.0, n: ['3', ${a}]} ]}} }"));
     }
 
     @Test

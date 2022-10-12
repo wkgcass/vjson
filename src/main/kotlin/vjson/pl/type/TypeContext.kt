@@ -16,6 +16,7 @@ import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.ast.*
 import vjson.pl.inst.StackInfo
+import vjson.util.collection.LongPtr
 
 class TypeContext {
   private val contextType: TypeInstance?
@@ -27,12 +28,15 @@ class TypeContext {
   private val variableMap: MutableMap<String, Variable> = HashMap()
   private val memoryDepth: Int
 
+  private var counter: LongPtr
+
   constructor(parent: TypeContext, contextType: TypeInstance? = null, ast: AST? = null) {
     this.contextType = contextType ?: parent.contextType
     this.ast = ast
     this.parent = parent
     this.memoryAllocator = if (ast is MemoryAllocatorProvider) ast.memoryAllocator() else parent.memoryAllocator
     this.memoryDepth = parent.memoryDepth + (if (ast is MemoryAllocatorProvider) 1 else 0)
+    this.counter = parent.counter
   }
 
   constructor(globalMemory: MemoryAllocator) {
@@ -41,6 +45,7 @@ class TypeContext {
     this.parent = rootContext
     this.memoryAllocator = globalMemory
     this.memoryDepth = 0
+    this.counter = LongPtr(0L)
   }
 
   @Suppress("UNUSED_PARAMETER")
@@ -50,6 +55,7 @@ class TypeContext {
     this.parent = null
     this.memoryAllocator = MemoryAllocator() // will never be used
     this.memoryDepth = -1
+    this.counter = LongPtr(0L)
   }
 
   fun getContextType(): TypeInstance? {
@@ -58,6 +64,12 @@ class TypeContext {
 
   fun hasType(type: Type): Boolean {
     return if (hasTypeInThisContext(type)) true else parent?.hasType(type) ?: false
+  }
+
+  fun hasTypeConsiderArray(type: Type): Boolean {
+    if (hasType(type)) return true
+    if (!type.isArray) return false
+    return hasTypeConsiderArray(type.elementType)
   }
 
   fun hasTypeInThisContext(type: Type): Boolean {
@@ -106,7 +118,7 @@ class TypeContext {
   }
 
   fun getVariable(name: String): Variable {
-    return variableMap[name] ?: (parent?.getVariable(name) ?: throw NoSuchElementException())
+    return variableMap[name] ?: (parent?.getVariable(name) ?: throw NoSuchElementException(name))
   }
 
   fun addVariable(variable: Variable) {
@@ -180,6 +192,10 @@ class TypeContext {
     }
   }
 
+  fun nextCounter(): Long {
+    return ++counter.value
+  }
+
   private constructor(
     contextType: TypeInstance?,
     ast: AST?,
@@ -188,7 +204,8 @@ class TypeContext {
     typeNameMap: Map<Type, TypeInstance>,
     functionDescriptorSet: Set<FunctionDescriptor>,
     variableMap: Map<String, Variable>,
-    memoryDepth: Int
+    memoryDepth: Int,
+    counter: LongPtr,
   ) {
     this.contextType = contextType
     this.ast = ast
@@ -198,10 +215,11 @@ class TypeContext {
     this.functionDescriptorSet.addAll(functionDescriptorSet)
     this.variableMap.putAll(variableMap)
     this.memoryDepth = memoryDepth
+    this.counter = counter
   }
 
   fun copy(): TypeContext {
-    return TypeContext(contextType, ast, parent, memoryAllocator, typeNameMap, functionDescriptorSet, variableMap, memoryDepth)
+    return TypeContext(contextType, ast, parent, memoryAllocator, typeNameMap, functionDescriptorSet, variableMap, memoryDepth, counter)
   }
 
   companion object {

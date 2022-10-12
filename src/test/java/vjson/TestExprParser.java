@@ -5,13 +5,12 @@ import vjson.cs.LineCol;
 import vjson.pl.ExprParser;
 import vjson.pl.ExprTokenizer;
 import vjson.pl.ast.*;
-import vjson.simple.SimpleDouble;
-import vjson.simple.SimpleExp;
-import vjson.simple.SimpleInteger;
-import vjson.simple.SimpleLong;
+import vjson.simple.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -300,5 +299,45 @@ public class TestExprParser {
                 ))),
                 Collections.emptyList()),
             parse("new A:[1, 2].toString:[]"));
+    }
+
+    @Test
+    public void newJsonExpr() {
+        assertEquals(
+            new NewInstanceWithJson(new Type("A"), new LinkedHashMap<String, Object>() {{
+                put("x", new IntegerLiteral(new SimpleInteger(1)));
+                put("y", new FloatLiteral(new SimpleDouble(2.0)));
+                put("z", new StringLiteral("3"));
+            }}),
+            parse("new A {x: 1, y: 2.0, z: '3'}")
+        );
+    }
+
+    @Test
+    public void newJsonExprNested() {
+        assertEquals(
+            new NewInstanceWithJson(new Type("A"), new LinkedHashMap<String, Object>() {{
+                put("x", new LinkedHashMap<String, Object>() {{
+                    put("y", new IntegerLiteral(new SimpleInteger(1)));
+                    put("z", new ArrayList<Object>() {{
+                        add(new LinkedHashMap<String, Object>() {{
+                            put("m", new FloatLiteral(new SimpleDouble(2.0)));
+                            put("n", new ArrayList<Object>() {{
+                                add(new StringLiteral("3"));
+                                add(new Access("a"));
+                            }});
+                        }});
+                    }});
+                }});
+            }}),
+            parse("new A {x: {y: 1, z: [ {m: 2.0, n: ['3', ${a}]} ]}}"));
+    }
+
+    @Test
+    public void newJsonExprColon() {
+        assertEquals(
+            parse("new A {x: 1, y: 2.0, z: '3'}"),
+            parse("new A: {x: 1, y: 2.0, z: '3'}")
+        );
     }
 }

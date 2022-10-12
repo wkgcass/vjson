@@ -275,7 +275,7 @@ object StringType : BuiltInTypeInstance {
       "indexOf" -> object : ExecutableField(
         name,
         ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(StringType, 0)), IntType,
+          listOf(ParamInstance("sub", StringType, 0)), IntType,
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
         )
       ) {
@@ -291,7 +291,7 @@ object StringType : BuiltInTypeInstance {
       "substring" -> object : ExecutableField(
         name,
         ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(IntType, 0), ParamInstance(IntType, 1)),
+          listOf(ParamInstance("fromInclusive", IntType, 0), ParamInstance("toExclusive", IntType, 1)),
           StringType,
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 2))
         )
@@ -321,7 +321,7 @@ object StringType : BuiltInTypeInstance {
       "startsWith" -> object : ExecutableField(
         name,
         ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(StringType, 0)), BoolType,
+          listOf(ParamInstance("prefix", StringType, 0)), BoolType,
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
         )
       ) {
@@ -337,7 +337,7 @@ object StringType : BuiltInTypeInstance {
       "endsWith" -> object : ExecutableField(
         name,
         ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(StringType, 0)), BoolType,
+          listOf(ParamInstance("suffix", StringType, 0)), BoolType,
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
         )
       ) {
@@ -353,7 +353,7 @@ object StringType : BuiltInTypeInstance {
       "contains" -> object : ExecutableField(
         name,
         ctx.getFunctionDescriptorAsInstance(
-          listOf(ParamInstance(StringType, 0)), BoolType,
+          listOf(ParamInstance("sub", StringType, 0)), BoolType,
           FixedMemoryAllocatorProvider(RuntimeMemoryTotal(refTotal = 1))
         )
       ) {
