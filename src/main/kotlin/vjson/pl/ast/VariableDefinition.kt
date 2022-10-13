@@ -28,7 +28,8 @@ data class VariableDefinition(
   }
 
   private var ctx: TypeContext? = null
-  private var variableIndex: Int = -1
+  var variableIndex: Int = -1
+    private set
 
   override fun checkAST(ctx: TypeContext) {
     this.ctx = ctx

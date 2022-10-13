@@ -22,6 +22,7 @@ class Interpreter(private val types: List<Types>, private val ast: List<Statemen
   private val typesOffset = ArrayList<RuntimeMemoryTotal>()
   private val typeContext = TypeContext(MemoryAllocator())
   private val valueForTypes = HashMap<Types, RuntimeMemory>()
+  private val explorer: RuntimeMemoryExplorer
 
   init {
     var offset = RuntimeMemoryTotal()
@@ -31,6 +32,10 @@ class Interpreter(private val types: List<Types>, private val ast: List<Statemen
     }
 
     typeContext.checkStatements(ast)
+
+    val explorerBuilder = RuntimeMemoryExplorer.Builder()
+    explorerBuilder.feed(ast)
+    explorer = explorerBuilder.build()
   }
 
   fun putValues(t: Types, values: RuntimeMemory) {
@@ -40,6 +45,8 @@ class Interpreter(private val types: List<Types>, private val ast: List<Statemen
   fun removeValues(t: Types) {
     valueForTypes.remove(t)
   }
+
+  fun getExplorer(): RuntimeMemoryExplorer = explorer
 
   fun execute(): RuntimeMemory {
     val actionContext = ActionContext(typeContext.getMemoryAllocator().getTotal(), null)

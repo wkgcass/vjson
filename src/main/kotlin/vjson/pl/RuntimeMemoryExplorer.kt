@@ -1,0 +1,160 @@
+package vjson.pl
+
+import vjson.JSON
+import vjson.ex.ParserException
+import vjson.pl.ast.ClassDefinition
+import vjson.pl.ast.Modifiers
+import vjson.pl.ast.Statement
+import vjson.pl.ast.VariableDefinition
+import vjson.pl.inst.ActionContext
+import vjson.pl.inst.RuntimeMemory
+import vjson.pl.type.*
+import vjson.simple.*
+import vjson.util.ArrayBuilder
+import vjson.util.ObjectBuilder
+
+class RuntimeMemoryExplorer(private val builder: Builder) {
+  fun getExplorerByType(name: String): RuntimeMemoryExplorer {
+    return builder.getExplorerByType(name)
+      ?: throw NoSuchElementException()
+  }
+
+  fun getVariable(name: String, mem: RuntimeMemory): Any? {
+    val type = builder.variableTypes[name]
+      ?: throw NoSuchElementException(name)
+    val index = builder.variableIndexes[name]!!
+    return when (type) {
+      is IntType -> mem.getInt(index)
+      is LongType -> mem.getLong(index)
+      is FloatType -> mem.getFloat(index)
+      is DoubleType -> mem.getDouble(index)
+      is BoolType -> mem.getBool(index)
+      else -> {
+        val ret = mem.getRef(index)
+        if (ret is ActionContext) ret.getCurrentMem()
+        else ret
+      }
+    }
+  }
+
+  fun toJson(mem: RuntimeMemory): JSON.Object {
+    val o = ObjectBuilder()
+    for (f in builder.variableOrder) {
+      if (builder.variableModifiers[f]!!.isPublic()) {
+        val v = getVariable(f, mem)
+        val type = builder.variableTypes[f]!!
+        o.putInst(f, toJsonInstance(type, v))
+      }
+    }
+    return o.build()
+  }
+
+  private fun toJsonInstance(type: TypeInstance, v: Any?): JSON.Instance<*> {
+    return when (v) {
+      null -> SimpleNull.Null
+      is Int -> SimpleInteger(v)
+      is Long -> SimpleLong(v)
+      is Float -> SimpleDouble(v.toDouble())
+      is Double -> SimpleDouble(v)
+      is Boolean -> SimpleBool(v)
+      is String -> SimpleString(v)
+      else -> refToJsonInstance(type, v)
+    }
+  }
+
+  private fun refToJsonInstance(type: TypeInstance, v: Any): JSON.Instance<*> {
+    return when (type) {
+      is ClassTypeInstance -> {
+        val explorer = builder.getExplorerByType(type.cls.name)
+          ?: throw ParserException("unable to convert the instance to json, class definition ${type.cls.name} is not found")
+        explorer.toJson(v as RuntimeMemory)
+      }
+      is ArrayTypeInstance -> {
+        val array = ArrayBuilder()
+        when (val elementType = type.elementType(TypeContext(MemoryAllocator()))) {
+          is IntType -> {
+            v as IntArray
+            for (n in v) array.add(n)
+          }
+          is LongType -> {
+            v as LongArray
+            for (n in v) array.add(n)
+          }
+          is FloatType -> {
+            v as IntArray
+            for (n in v) array.add(n)
+          }
+          is DoubleType -> {
+            v as IntArray
+            for (n in v) array.add(n)
+          }
+          is BoolType -> {
+            v as IntArray
+            for (n in v) array.add(n)
+          }
+          else -> {
+            v as Array<*>
+            for (n in v) {
+              val e = if (n is ActionContext) n.getCurrentMem() else n
+              array.addInst(toJsonInstance(elementType, e))
+            }
+          }
+        }
+        array.build()
+      }
+      else -> throw ParserException("unable to convert the instance to json, $type does not support conversion")
+    }
+  }
+
+  fun getPublicVariable(name: String, mem: RuntimeMemory): Any? {
+    val modifiers = builder.variableModifiers[name]
+      ?: throw NoSuchElementException(name)
+    if (!modifiers.isPublic()) {
+      throw NoSuchElementException(name)
+    }
+    return getVariable(name, mem)
+  }
+
+  class Builder(val parent: Builder? = null) {
+    val classes = HashMap<String, RuntimeMemoryExplorer>()
+    val variableTypes = HashMap<String, TypeInstance>()
+    val variableIndexes = HashMap<String, Int>()
+    val variableModifiers = HashMap<String, Modifiers>()
+    val variableOrder = ArrayList<String>()
+
+    fun build(): RuntimeMemoryExplorer {
+      return RuntimeMemoryExplorer(this)
+    }
+
+    fun feed(ast: List<Statement>) {
+      for (stmt in ast) {
+        if (stmt is ClassDefinition) {
+          feedClassDef(stmt)
+        } else if (stmt is VariableDefinition) {
+          feedVariableDef(stmt)
+        }
+      }
+    }
+
+    private fun feedClassDef(clsDef: ClassDefinition) {
+      val builder = Builder(this)
+      builder.feed(clsDef.code)
+      val explorer = builder.build()
+      classes[clsDef.name] = explorer
+    }
+
+    private fun feedVariableDef(varDef: VariableDefinition) {
+      variableTypes[varDef.name] = varDef.typeInstance()
+      variableIndexes[varDef.name] = varDef.variableIndex
+      variableModifiers[varDef.name] = varDef.modifiers
+      variableOrder.add(varDef.name)
+    }
+
+    internal fun getExplorerByType(name: String): RuntimeMemoryExplorer? {
+      val ret = classes[name]
+      if (ret != null) return ret
+      if (parent != null) return parent.getExplorerByType(name)
+      return null
+    }
+  }
+}

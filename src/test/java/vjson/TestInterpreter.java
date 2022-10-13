@@ -4,11 +4,13 @@ import kotlin.Pair;
 import org.junit.Test;
 import vjson.pl.Interpreter;
 import vjson.pl.InterpreterBuilder;
+import vjson.pl.RuntimeMemoryExplorer;
 import vjson.pl.inst.ActionContext;
 import vjson.pl.inst.RuntimeMemory;
 import vjson.pl.type.lang.ExtFunctions;
 import vjson.pl.type.lang.ExtTypes;
 import vjson.pl.type.lang.StdTypes;
+import vjson.util.ObjectBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -282,9 +284,10 @@ public class TestInterpreter {
         assertEquals(2, mem.intLen());
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void newWithJson() {
-        RuntimeMemory mem = new InterpreterBuilder()
+        Interpreter interpreter = new InterpreterBuilder()
             .compile("{\n" +
                 "var basePrice = 0.8\n" +
                 "class Good:{_id: int, _name: string, _price: double} do: {\n" +
@@ -326,19 +329,51 @@ public class TestInterpreter {
                 "var shopGoods2Id = shop.goods[2].id\n" +
                 "var shopGoods2Name = shop.goods[2].name\n" +
                 "var shopGoods2Price = shop.goods[2].price\n" +
-                "}")
-            .execute();
+                "}");
+        RuntimeMemory mem = interpreter.execute();
+        RuntimeMemoryExplorer explorer = interpreter.getExplorer();
+
         assertEquals(0.8, mem.getDouble(0), 0);
+        assertEquals(0.8, (Double) explorer.getVariable("basePrice", mem), 0);
         assertEquals("drf", mem.getRef(5));
+        assertEquals("drf", explorer.getVariable("shopName", mem));
         assertEquals(1, mem.getInt(0));
+        assertEquals(1, explorer.getVariable("shopGoods0Id", mem));
         assertEquals("water", mem.getRef(6));
+        assertEquals("water", explorer.getVariable("shopGoods0Name", mem));
         assertEquals(1.6, mem.getDouble(1), 0);
+        assertEquals(1.6, (Double) explorer.getVariable("shopGoods0Price", mem), 0);
         assertEquals(2, mem.getInt(1));
+        assertEquals(2, explorer.getVariable("shopGoods1Id", mem));
         assertEquals("juice", mem.getRef(7));
+        assertEquals("juice", explorer.getVariable("shopGoods1Name", mem));
         assertEquals(3.2, mem.getDouble(2), 0);
+        assertEquals(3.2, (Double) explorer.getVariable("shopGoods1Price", mem), 0);
         assertEquals(3, mem.getInt(2));
+        assertEquals(3, explorer.getVariable("shopGoods2Id", mem));
         assertEquals("wine", mem.getRef(8));
+        assertEquals("wine", explorer.getVariable("shopGoods2Name", mem));
         assertEquals(6.4, mem.getDouble(3), 0);
+        assertEquals(6.4, (Double) explorer.getVariable("shopGoods2Price", mem), 0);
+
+        assertEquals(new ObjectBuilder()
+                .put("name", "drf")
+                .putArray("goods", a -> a
+                    .addObject(o -> o
+                        .put("id", 1)
+                        .put("name", "water")
+                        .put("price", 1.6))
+                    .addObject(o -> o
+                        .put("id", 2)
+                        .put("name", "juice")
+                        .put("price", 3.2))
+                    .addObject(o -> o
+                        .put("id", 3)
+                        .put("name", "wine")
+                        .put("price", 6.4))
+                ).build(),
+            explorer.getExplorerByType("Shop")
+                .toJson((RuntimeMemory) explorer.getVariable("shop", mem)));
     }
 
     @Test
