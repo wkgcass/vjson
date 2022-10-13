@@ -20,6 +20,7 @@ class ClassTypeInstance(val cls: ClassDefinition) : TypeInstance {
   private val fields: MutableMap<String, VariableDefinition> = HashMap()
   private val functions: MutableMap<String, FunctionDefinition> = HashMap()
   var _templateType: TemplateClassTypeInstance? = null
+  var _concreteTypeName: String? = null
   var _templateTypeParams: List<TypeInstance>? = null
 
   init {

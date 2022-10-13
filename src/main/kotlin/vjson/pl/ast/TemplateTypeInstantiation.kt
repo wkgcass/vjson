@@ -16,6 +16,7 @@ import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
 import vjson.pl.inst.NoOp
 import vjson.pl.type.TypeContext
+import vjson.pl.type.TypeInstance
 
 data class TemplateTypeInstantiation(val typeName: String, val templateType: Type, val typeParams: List<Type>) : Statement() {
   override fun copy(): TemplateTypeInstantiation {
@@ -27,6 +28,9 @@ data class TemplateTypeInstantiation(val typeName: String, val templateType: Typ
   override fun functionTerminationCheck(): Boolean {
     return false
   }
+
+  var instantiatedTypeInstance: TypeInstance? = null
+    private set
 
   override fun checkAST(ctx: TypeContext) {
     if (ctx.hasTypeInThisContext(Type(typeName))) {
@@ -45,11 +49,12 @@ data class TemplateTypeInstantiation(val typeName: String, val templateType: Typ
     }
 
     val typeInstance = try {
-      templateType.concrete(ctx, typeParams)
+      templateType.concrete(ctx, typeName, typeParams)
     } catch (e: ParserException) {
       throw ParserException("constructing concrete type $typeName failed: ${e.message}", e, this.lineCol)
     }
 
+    instantiatedTypeInstance = typeInstance
     ctx.addType(Type(typeName), typeInstance)
   }
 

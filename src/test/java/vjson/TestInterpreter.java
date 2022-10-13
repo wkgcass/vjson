@@ -377,6 +377,74 @@ public class TestInterpreter {
     }
 
     @Test
+    public void newWithJsonTemplateType() {
+        Interpreter interpreter = new InterpreterBuilder()
+            .compile("{\n" +
+                "template { T, U } class TT: {_t: T, _u: U} do {\n" +
+                "  public var t = _t\n" +
+                "  public var u = _u\n" +
+                "}\n" +
+                "let IntString = { TT: [int, string] }\n" +
+                "var result = new IntString {\n" +
+                "  t: 123\n" +
+                "  u: '456'\n" +
+                "}\n" +
+                "}");
+        RuntimeMemoryExplorer explorer = interpreter.getExplorer();
+        RuntimeMemory mem = interpreter.execute();
+
+        //noinspection ConstantConditions
+        assertEquals(new ObjectBuilder()
+                .put("t", 123)
+                .put("u", "456")
+                .build(),
+            explorer.getExplorerByType("IntString").toJson((RuntimeMemory) explorer.getVariable("result", mem))
+        );
+    }
+
+    @Test
+    public void newWithJsonTemplateTypeNested() {
+        Interpreter interpreter = new InterpreterBuilder()
+            .compile("{\n" +
+                "class A: {_a: int} do {\n" +
+                "  public var a = _a\n" +
+                "}\n" +
+                "template { T, U } class TT: {_t: T, _u: U} do {\n" +
+                "  public var t = _t\n" +
+                "  public var u = _u\n" +
+                "}\n" +
+                "let IntString = { TT: [int, A] }\n" +
+                "class B: {_b: IntString[]} do {\n" +
+                "  public var b = _b\n" +
+                "}\n" +
+                "var result = new B {\n" +
+                "  b: [\n" +
+                "    {\n" +
+                "      t: 1\n" +
+                "      u: {\n" +
+                "        a: 2\n" +
+                "      }\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}\n" +
+                "}");
+        RuntimeMemoryExplorer explorer = interpreter.getExplorer();
+        RuntimeMemory mem = interpreter.execute();
+
+        //noinspection ConstantConditions
+        assertEquals(new ObjectBuilder()
+            .putArray("b", a -> a
+                .addObject(o -> o
+                    .put("t", 1)
+                    .putObject("u", oo -> oo
+                        .put("a", 2))
+                ))
+                .build(),
+            explorer.getExplorerByType("B").toJson((RuntimeMemory) explorer.getVariable("result", mem))
+        );
+    }
+
+    @Test
     public void functionCall() {
         RuntimeMemory mem = new InterpreterBuilder()
             .compile("{\n" +

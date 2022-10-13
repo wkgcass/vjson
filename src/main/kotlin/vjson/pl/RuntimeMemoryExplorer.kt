@@ -13,10 +13,7 @@ package vjson.pl
 
 import vjson.JSON
 import vjson.ex.ParserException
-import vjson.pl.ast.ClassDefinition
-import vjson.pl.ast.Modifiers
-import vjson.pl.ast.Statement
-import vjson.pl.ast.VariableDefinition
+import vjson.pl.ast.*
 import vjson.pl.inst.ActionContext
 import vjson.pl.inst.RuntimeMemory
 import vjson.pl.type.*
@@ -76,7 +73,7 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
   private fun refToJsonInstance(type: TypeInstance, v: Any): JSON.Instance<*> {
     return when (type) {
       is ClassTypeInstance -> {
-        val explorer = builder.getExplorerByType(type.cls.name)
+        val explorer = builder.getExplorerByType(type._concreteTypeName ?: type.cls.name)
           ?: throw ParserException("unable to convert the instance to json, class definition ${type.cls.name} is not found")
         explorer.toJson(v as RuntimeMemory)
       }
@@ -117,15 +114,6 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
     }
   }
 
-  fun getPublicVariable(name: String, mem: RuntimeMemory): Any? {
-    val modifiers = builder.variableModifiers[name]
-      ?: throw NoSuchElementException(name)
-    if (!modifiers.isPublic()) {
-      throw NoSuchElementException(name)
-    }
-    return getVariable(name, mem)
-  }
-
   class Builder(val parent: Builder? = null) {
     val classes = HashMap<String, RuntimeMemoryExplorer>()
     val variableTypes = HashMap<String, TypeInstance>()
@@ -139,12 +127,22 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
 
     fun feed(ast: List<Statement>) {
       for (stmt in ast) {
-        if (stmt is ClassDefinition) {
-          feedClassDef(stmt)
-        } else if (stmt is VariableDefinition) {
-          feedVariableDef(stmt)
+        when (stmt) {
+          is ClassDefinition -> feedClassDef(stmt)
+          is TemplateTypeInstantiation -> feedTemplateTypeInstantiation(stmt)
+          is VariableDefinition -> feedVariableDef(stmt)
         }
       }
+    }
+
+    private fun feedTemplateTypeInstantiation(let: TemplateTypeInstantiation) {
+      val builder = Builder(this)
+      val instantiated = let.instantiatedTypeInstance!!
+      if (instantiated !is ClassTypeInstance) {
+        return
+      }
+      builder.feed(instantiated.cls.code)
+      classes[let.typeName] = builder.build()
     }
 
     private fun feedClassDef(clsDef: ClassDefinition) {
