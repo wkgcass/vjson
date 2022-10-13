@@ -376,6 +376,41 @@ public class TestInterpreter {
                 .toJson((RuntimeMemory) explorer.getVariable("shop", mem)));
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void newWithJsonDefaultValue() {
+        Interpreter interpreter = new InterpreterBuilder()
+            .compile("{\n" +
+                "class TMP: {} do {}" +
+                "class X:{_i: int = 3, _l: long = 4, _f: float = 1.2, _d: double = 2.4, _s: string = 'abc', _b: bool = true, _arr: int[] = null, _o: TMP = null} do: {\n" +
+                "  public var i = _i\n" +
+                "  public var l = _l\n" +
+                "  public var f = _f\n" +
+                "  public var d = _d\n" +
+                "  public var s = _s\n" +
+                "  public var b = _b\n" +
+                "  public var arr = _arr\n" +
+                "  public var o = _o\n" +
+                "}\n" +
+                "var x = new X {}\n" +
+                "}");
+        RuntimeMemory mem = interpreter.execute();
+        RuntimeMemoryExplorer explorer = interpreter.getExplorer();
+
+        assertEquals(new ObjectBuilder()
+                .put("i", 3)
+                .put("l", 4L)
+                .put("f", 1.2f)
+                .put("d", 2.4)
+                .put("s", "abc")
+                .put("b", true)
+                .put("arr", null)
+                .put("o", null)
+                .build(),
+            explorer.getExplorerByType("X")
+                .toJson((RuntimeMemory) explorer.getVariable("x", mem)));
+    }
+
     @Test
     public void newWithJsonTemplateType() {
         Interpreter interpreter = new InterpreterBuilder()

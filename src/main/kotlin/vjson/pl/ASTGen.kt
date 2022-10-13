@@ -81,8 +81,25 @@ class ASTGen(_prog: JSON.Object) {
           e.value.lineCol()
         )
       }
-      val type = e.value.toJavaObject()
-      astParams.add(Param(e.key, Type(type)))
+      var type = e.value.toJavaObject()
+      var defaultValue: Expr? = null
+      if (type.contains("=")) {
+        val index = type.indexOf("=")
+        val defaultValueExprStr = type.substring(index + 1).trim()
+        type = type.substring(0, index).trim()
+        defaultValue = exprString(defaultValueExprStr, e.value.lineCol().addCol(index))
+      }
+      val typeObj = Type(type)
+      if (defaultValue != null) {
+        if (defaultValue is NullLiteral) {
+          defaultValue = NullLiteral(typeObj)
+        } else if (defaultValue is IntegerLiteral) {
+          defaultValue.typeHint = typeObj
+        } else if (defaultValue is FloatLiteral) {
+          defaultValue.typeHint = typeObj
+        }
+      }
+      astParams.add(Param(e.key, typeObj, defaultValue))
     }
 
     if (!prog.hasNext()) {

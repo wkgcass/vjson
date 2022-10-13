@@ -39,7 +39,7 @@ class ClassTypeInstance(val cls: ClassDefinition) : TypeInstance {
 
   override fun constructor(ctx: TypeContext): FunctionDescriptor {
     return ctx.getFunctionDescriptor(
-      constructorParams.map { ParamInstance(it.name, it.typeInstance(), it.memIndex) },
+      constructorParams.map { ParamInstance(it.name, it.typeInstance(), it.memIndex, it.defaultValue) },
       ctx.getType(Type("void")),
       cls
     )

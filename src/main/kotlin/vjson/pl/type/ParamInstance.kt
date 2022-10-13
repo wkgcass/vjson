@@ -12,9 +12,12 @@
 
 package vjson.pl.type
 
+import vjson.pl.ast.Expr
+
 data class ParamInstance(
   val name: String,
   val type: TypeInstance,
   val memIndex: Int,
+  val defaultValue: Expr? = null,
 ) {
 }

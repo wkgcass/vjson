@@ -22,26 +22,31 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class IntegerLiteral(val n: JSON.Number<*>) : Expr() {
+  var typeHint: Type? = null
+
   override fun copy(): IntegerLiteral {
     val ret = IntegerLiteral(n)
+    ret.typeHint = typeHint?.copy()
     ret.lineCol = lineCol
     return ret
   }
 
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
+    if (typeHint != null && typeHint!!.check(ctx) is LongType) return LongType
     return if (n is JSON.Long) LongType else IntType
   }
 
   override fun typeInstance(): TypeInstance {
+    if (typeHint != null && typeHint!!.typeInstance() is LongType) return LongType
     return if (n is JSON.Long) LongType else IntType
   }
 
   override fun generateInstruction(): Instruction {
-    return if (n is JSON.Long) {
-      LiteralLong(n.toJavaObject(), ctx.stackInfo(lineCol))
+    return if (typeInstance() == LongType) {
+      LiteralLong(n.toJavaObject().toLong(), ctx.stackInfo(lineCol))
     } else {
-      LiteralInt((n as JSON.Integer).toJavaObject(), ctx.stackInfo(lineCol))
+      LiteralInt(n.toJavaObject().toInt(), ctx.stackInfo(lineCol))
     }
   }
 

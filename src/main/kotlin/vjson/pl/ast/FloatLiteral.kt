@@ -15,27 +15,36 @@ package vjson.pl.ast
 import vjson.JSON
 import vjson.pl.inst.Instruction
 import vjson.pl.inst.LiteralDouble
+import vjson.pl.inst.LiteralFloat
 import vjson.pl.type.DoubleType
+import vjson.pl.type.FloatType
 import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class FloatLiteral(val n: JSON.Double) : Expr() {
+  var typeHint: Type? = null
+
   override fun copy(): FloatLiteral {
     val ret = FloatLiteral(n)
+    ret.typeHint = typeHint?.copy()
     ret.lineCol = lineCol
     return ret
   }
 
   override fun check(ctx: TypeContext): TypeInstance {
     this.ctx = ctx
+    if (typeHint != null && typeHint!!.check(ctx) is FloatType) return FloatType
     return DoubleType
   }
 
   override fun typeInstance(): TypeInstance {
+    if (typeHint != null && typeHint!!.check(ctx) is FloatType) return FloatType
     return DoubleType
   }
 
   override fun generateInstruction(): Instruction {
+    if (typeHint != null && typeHint!!.check(ctx) is FloatType)
+      return LiteralFloat(n.doubleValue().toFloat(), ctx.stackInfo(lineCol))
     return LiteralDouble(n.doubleValue(), ctx.stackInfo(lineCol))
   }
 

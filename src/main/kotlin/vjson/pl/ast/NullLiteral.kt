@@ -12,9 +12,11 @@
 
 package vjson.pl.ast
 
+import vjson.ex.ParserException
 import vjson.pl.inst.Instruction
 import vjson.pl.inst.LiteralNull
 import vjson.pl.type.NullType
+import vjson.pl.type.PrimitiveTypeInstance
 import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
@@ -30,7 +32,11 @@ data class NullLiteral(val type: Type? = null) : Expr() {
     if (type == null) {
       return NullType
     }
-    return type.check(ctx)
+    val tInst = type.check(ctx)
+    if (tInst is PrimitiveTypeInstance) {
+      throw ParserException("cannot assign null to $tInst", lineCol)
+    }
+    return tInst
   }
 
   override fun typeInstance(): TypeInstance {

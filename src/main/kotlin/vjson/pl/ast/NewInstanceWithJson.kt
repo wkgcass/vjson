@@ -15,6 +15,7 @@ import vjson.ex.ParserException
 import vjson.pl.inst.CompositeInstruction
 import vjson.pl.inst.Instruction
 import vjson.pl.type.ArrayTypeInstance
+import vjson.pl.type.ParamInstance
 import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 import vjson.simple.SimpleInteger
@@ -59,17 +60,21 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
 
   private fun checkObject(path: String, type: TypeInstance, obj: Map<String, Any>) {
     val cons = type.constructor(ctx) ?: throw ParserException("no constructor found for type $type at $path", lineCol)
-    val paramsMap = HashMap<String, TypeInstance>()
+    val paramsMap = HashMap<String, ParamInstance>()
     for (p in cons.params) {
       val pname = if (p.name.startsWith("_")) p.name.substring(1) else p.name
-      paramsMap[pname] = p.type
+      paramsMap[pname] = p
     }
-    if (obj.keys != paramsMap.keys) {
-      throw ParserException("keys in json doesn't match parameters in constructor at $path", lineCol)
-    }
-    for ((p, t) in paramsMap) {
-      val inst = obj[p]!!
-      checkInstance("$path.$p", t, inst)
+    for ((p, pt) in paramsMap) {
+      var inst = obj[p]
+      if (inst == null) {
+        if (pt.defaultValue != null) {
+          inst = pt.defaultValue
+        } else {
+          throw ParserException("missing argument for parameter $p at $path", lineCol)
+        }
+      }
+      checkInstance("$path.$p", pt.type, inst)
     }
   }
 
@@ -100,7 +105,9 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
     for (p in type.constructor(ctx)!!.params) {
       val pname = if (p.name.startsWith("_")) p.name.substring(1) else p.name
       val v = json[pname]
-      if (v is Expr) {
+      if (v == null) {
+        args.add(p.defaultValue!!)
+      } else if (v is Expr) {
         args.add(v)
       } else {
         val varname = "$syntheticVariablePrefix${ctx.nextCounter()}"
