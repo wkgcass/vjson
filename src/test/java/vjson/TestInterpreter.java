@@ -1437,6 +1437,8 @@ public class TestInterpreter {
             "  if: err != null; then: {\n" +
             "    std.console.log:[err.message]\n" +
             "    n = 1234\n" +
+            "  } else {\n" +
+            "    n = n + 10000\n" +
             "  }\n" +
             "  return: n\n" +
             "}\n" +
@@ -1446,7 +1448,7 @@ public class TestInterpreter {
         Pair<RuntimeMemory, String> pair = executeWithStdTypes(prog);
         RuntimeMemory mem = pair.getFirst();
         assertEquals(2, mem.intLen());
-        assertEquals(10, mem.getInt(0));
+        assertEquals(10010, mem.getInt(0));
         assertEquals(1234, mem.getInt(1));
 
         String output = pair.getSecond();

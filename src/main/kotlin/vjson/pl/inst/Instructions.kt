@@ -208,6 +208,7 @@ data class ErrorHandlingInstruction(
           return
         }
       }
+      return
     }
     for (stmt in elseCodeInst) {
       stmt.execute(ctx, exec)
