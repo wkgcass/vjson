@@ -468,12 +468,12 @@ public class TestInterpreter {
 
         //noinspection ConstantConditions
         assertEquals(new ObjectBuilder()
-            .putArray("b", a -> a
-                .addObject(o -> o
-                    .put("t", 1)
-                    .putObject("u", oo -> oo
-                        .put("a", 2))
-                ))
+                .putArray("b", a -> a
+                    .addObject(o -> o
+                        .put("t", 1)
+                        .putObject("u", oo -> oo
+                            .put("a", 2))
+                    ))
                 .build(),
             explorer.getExplorerByType("B").toJson((RuntimeMemory) explorer.getVariable("result", mem))
         );
@@ -1522,6 +1522,32 @@ public class TestInterpreter {
                 "  stack1 at test.vjson(15:3)\n" +
                 "  <no info> at test.vjson(17:1)", e.getMessage());
         }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void include() {
+        Interpreter interpreter = new InterpreterBuilder().compile(name -> {
+            if (name.equals("main")) return () -> "{" +
+                "class A: {_a: int, _b: string} do {\n" +
+                "  public var a = _a\n" +
+                "  public var b = _b\n" +
+                "}\n" +
+                "var a = {new A: #include \"sub1\"}\n" +
+                "}";
+            if (name.equals("sub1")) return () -> "{\n" +
+                "  a: 1\n" +
+                "  b: abc\n" +
+                "}";
+            return null;
+        }, "main");
+        RuntimeMemoryExplorer explorer = interpreter.getExplorer();
+        RuntimeMemory mem = interpreter.execute();
+
+        RuntimeMemoryExplorer explorerA = explorer.getExplorerByType("A");
+        RuntimeMemory obj = (RuntimeMemory) explorer.getVariable("a", mem);
+        assertEquals(1, explorerA.getVariable("a", obj));
+        assertEquals("abc", explorerA.getVariable("b", obj));
     }
 
     @Test

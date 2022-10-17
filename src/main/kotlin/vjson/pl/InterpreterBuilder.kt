@@ -14,11 +14,13 @@ package vjson.pl
 
 import vjson.CharStream
 import vjson.JSON
+import vjson.cs.IncludeCharStream
 import vjson.cs.LineColCharStream
 import vjson.parser.ObjectParser
 import vjson.parser.ParserOptions
 import vjson.pl.ast.Statement
 import vjson.pl.type.lang.Types
+import vjson.util.Manager
 
 class InterpreterBuilder {
   private val types: MutableList<Types> = ArrayList()
@@ -51,6 +53,12 @@ class InterpreterBuilder {
   fun compile(json: JSON.Object): Interpreter {
     val astGen = ASTGen(json)
     return interpreter(astGen.parse())
+  }
+
+  fun compile(prog: Manager<String>, mainName: String): Interpreter {
+    val jsonParser = ObjectParser(interpreterOptions())
+    val json = jsonParser.last(IncludeCharStream(prog, mainName))!!
+    return compile(json)
   }
 
   fun interpreter(ast: List<Statement>): Interpreter {

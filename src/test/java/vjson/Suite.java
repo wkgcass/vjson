@@ -8,6 +8,7 @@ import vpreprocessor.*;
     TestParserCacheHolder.class, // must be the first
 
     TestCharArrayCharStream.class,
+    TestIncludeCharStream.class,
     TestConvenience.class,
     TestCorner.class,
     TestFeature.class,

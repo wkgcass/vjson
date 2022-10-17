@@ -47,7 +47,7 @@ public class TestFeatureFail {
             () -> new StringParser(new ParserOptions().setStringValueNoQuotes(true)).last(new LineColCharStream(CharStream.from("a{b]c"), "file")));
         parseFail("expecting more characters to build string",
             () -> new StringParser(new ParserOptions().setStringValueNoQuotes(true)).last("abc'def"));
-        parseFail("expecting more characters to build string, reading noQuotesString starting from file(1:1) at file(1:8)",
+        parseFail("expecting more characters to build string at file(1:8), reading noQuotesString starting from file(1:1) at file(1:8)",
             () -> new StringParser(new ParserOptions().setStringValueNoQuotes(true)).last(new LineColCharStream(CharStream.from("abc'def"), "file")));
         parseFail("unexpected eof, expecting symbols: [}]",
             () -> new StringParser(new ParserOptions().setStringValueNoQuotes(true)).last("abc{"));

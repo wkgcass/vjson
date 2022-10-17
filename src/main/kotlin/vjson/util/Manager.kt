@@ -9,56 +9,8 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package vjson.util
 
-package vjson.cs
-
-import vjson.CharStream
-
-class PeekCharStream(private val cs: CharStream, private var cursor: Int = 0) : CharStream {
-  override fun hasNext(i: Int): Boolean {
-    return cs.hasNext(cursor + i)
-  }
-
-  override fun moveNextAndGet(): Char {
-    cursor += 1
-    return cs.peekNext(cursor)
-  }
-
-  override fun peekNext(i: Int): Char {
-    return cs.peekNext(cursor + i)
-  }
-
-  fun getCursor(): Int {
-    return cursor
-  }
-
-  fun setCursor(cursor: Int) {
-    this.cursor = cursor
-  }
-
-  override fun lineCol(): LineCol {
-    val lineCol = cs.lineCol()
-    if (lineCol.isEmpty()) return lineCol
-
-    var line = lineCol.line
-    var col = lineCol.col
-    for (i in 1 .. cursor) {
-      val c = cs.peekNext(i)
-      if (c == '\n') {
-        line += 1
-        col = 1
-      } else if (c == '\r') {
-        if (cs.hasNext(i + 1)) {
-          val cc = cs.peekNext(i + 1)
-          if (cc != '\n') {
-            line += 1
-            col = 1
-          }
-        }
-      } else {
-        col += 1
-      }
-    }
-    return LineCol(lineCol.filename, line, col)
-  }
+interface Manager<OUTPUT> {
+  fun provide(name: String): (() -> OUTPUT)?
 }
