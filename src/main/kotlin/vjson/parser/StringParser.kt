@@ -21,7 +21,7 @@ import vjson.simple.SimpleString
 import vjson.util.StringDictionary
 import vjson.util.TextBuilder
 
-class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary?) : Parser<JSON.String> {
+class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary?, val isKeyParser: Boolean) : Parser<JSON.String> {
   private val opts: ParserOptions = ParserOptions.ensureNotModifiedByOutside(opts)
   private var state = 0
   // 0->start`"`,
@@ -45,7 +45,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
   private var stringLineCol = LineCol.EMPTY
 
   /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
-  constructor(opts: ParserOptions = ParserOptions.DEFAULT) : this(opts, null)
+  constructor(opts: ParserOptions = ParserOptions.DEFAULT) : this(opts, null, false)
 
   override fun reset() {
     state = 0
@@ -88,7 +88,7 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           cs.moveNextAndGet()
           beginning = '\''
         } else if (opts.isStringValueNoQuotes) {
-          val (str, cursor) = ParserUtils.extractNoQuotesString(cs, opts)
+          val (str, cursor) = ParserUtils.extractNoQuotesString(cs, opts, isKeyParser)
           cs.skip(cursor)
           for (ch in str.trim().toCharArray()) {
             append(ch)

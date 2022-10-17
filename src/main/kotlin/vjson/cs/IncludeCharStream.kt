@@ -37,7 +37,7 @@ class IncludeCharStream(private val csMap: Manager<String>, mainCSName: String) 
   ) {
 
     fun hasNext(i: Int = 1): Boolean = cs.hasNext(i)
-    fun peekNext(i: Int = 1): Char = cs.peekNext(i)
+    fun peekNext(i: Int): Char = cs.peekNext(i)
     fun lineCol(): LineCol = cs.lineCol()
 
     fun moveNextAndGet(): Char = cs.moveNextAndGet()
@@ -47,7 +47,7 @@ class IncludeCharStream(private val csMap: Manager<String>, mainCSName: String) 
       return c
     }
 
-    fun skipBlank(skipComments: Boolean = true) {
+    fun skipBlank(skipComments: Boolean) {
       cs.skipBlank(skipComments)
       lastRetrievedOffset = cs.getCursor()
     }
@@ -87,11 +87,11 @@ class IncludeCharStream(private val csMap: Manager<String>, mainCSName: String) 
     }
   }
 
-  private fun checkRecursiveInclude(name: String) {
+  private fun checkRecursiveInclude(name: String, lineCol: LineCol) {
     var cs: StackedCS? = current
     while (cs != null) {
       if (cs.name == name)
-        throw ParserException("recursive include: $name", current.lineCol())
+        throw ParserException("recursive include: $name", lineCol)
       cs = cs.parent
     }
   }
@@ -102,6 +102,7 @@ class IncludeCharStream(private val csMap: Manager<String>, mainCSName: String) 
       checkStackAndSkipBlank()
       return
     }
+    val includeLineCol: LineCol = current.lineCol()
     for (i in 1..includeStr.size) {
       if (!current.hasNext(i)) {
         return checkCurrentAndSkipBlank()
@@ -112,21 +113,21 @@ class IncludeCharStream(private val csMap: Manager<String>, mainCSName: String) 
       }
     }
     if (!current.hasNext(includeStr.size + 1)) {
-      throw ParserException("invalid #include statement: reaches eof", current.lineCol())
+      throw ParserException("invalid #include statement: reaches eof", includeLineCol)
     }
     val parser = StringParser(ParserOptions().setEnd(false))
     val pcs = PeekCharStream(current.cs, includeStr.size)
     val includeNameObj = try {
       parser.feed(pcs)
     } catch (e: ParserException) {
-      throw ParserException("invalid #include statement", e)
-    } ?: throw ParserException("invalid #include statement: missing ", current.lineCol())
+      throw ParserException("invalid #include statement: " + e.message, includeLineCol)
+    } ?: throw ParserException("invalid #include statement: missing char stream name to be included", includeLineCol)
     current.skip(pcs.getCursor())
 
     val includeName = includeNameObj.toJavaObject()
     csMap.provide(includeName)
-      ?: throw ParserException("unable to #include ${includeNameObj.stringify()}: char stream not found", current.lineCol())
-    checkRecursiveInclude(includeName)
+      ?: throw ParserException("unable to #include ${includeNameObj.stringify()}: char stream not found", includeLineCol)
+    checkRecursiveInclude(includeName, includeLineCol)
 
     current = formatCS(includeName, current)
     currentSkipBlank()
@@ -142,8 +143,11 @@ class IncludeCharStream(private val csMap: Manager<String>, mainCSName: String) 
     } else {
       while (true) {
         current.skipBlank(false)
-        if (current.parent == null) break
-        current = current.parent!!
+        if (current.hasNext()) break
+        else {
+          if (current.parent == null) break
+          current = current.parent!!
+        }
       }
     }
     actualCurrent = current
@@ -188,13 +192,6 @@ class IncludeCharStream(private val csMap: Manager<String>, mainCSName: String) 
   override fun peekNext(i: Int): Char {
     if (peekChars.size() >= i) return peekChars.get(i - 1).c
     while (peekChars.size() < i) {
-      if (!current.hasNext()) {
-        if (current.parent == null) throw IndexOutOfBoundsException()
-        else {
-          current = current.parent!!
-          continue
-        }
-      }
       val c = currentMoveNextAndGet(true)
       peekChars.add(PeekChar(c, current))
     }

@@ -54,4 +54,16 @@ public class TestFeatureFail {
         parseFail("unexpected eof, expecting symbols: [}], reading noQuotesString starting from file(1:1)",
             () -> new StringParser(new ParserOptions().setStringValueNoQuotes(true)).last(new LineColCharStream(CharStream.from("abc{"), "file")));
     }
+
+    @Test
+    public void omittingColonBeforeBraces() throws Exception {
+        parseFail("invalid key-value separator for json object, expecting `:`, but got b",
+            () -> new ObjectParser(new ParserOptions().setAllowOmittingColonBeforeBraces(true)).last("{ \"a\" b }"));
+        parseFail("invalid key-value separator for json object, expecting `:`, but got b at file(1:7)",
+            () -> new ObjectParser(new ParserOptions().setAllowOmittingColonBeforeBraces(true)).last(new LineColCharStream(CharStream.from("{ \"a\" b }"), "file")));
+        parseFail("invalid key-value separator for json object, expecting `:`, but got {",
+            () -> new ObjectParser(new ParserOptions()).last("{ \"a\" { \"b\": \"c\" } }"));
+        parseFail("invalid key-value separator for json object, expecting `:`, but got { at file(1:7)",
+            () -> new ObjectParser(new ParserOptions()).last(new LineColCharStream(CharStream.from("{ \"a\" { \"b\": \"c\" } }"), "file")));
+    }
 }

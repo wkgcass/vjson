@@ -99,6 +99,14 @@ public class TestFeature {
                     .setKeyNoQuotes(true)
                     .setKeyNoQuotesAnyChar(true)));
         }
+        {
+            assertEquals(new ObjectBuilder()
+                    .put("(a:b)", "c")
+                    .build(),
+                ParserUtils.buildFrom(CharStream.from("{(a:b): \"c\"}"), new ParserOptions()
+                    .setKeyNoQuotes(true)
+                    .setKeyNoQuotesAnyChar(true)));
+        }
     }
 
     @Test

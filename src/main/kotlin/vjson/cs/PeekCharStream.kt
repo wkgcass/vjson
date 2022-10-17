@@ -42,22 +42,27 @@ class PeekCharStream(private val cs: CharStream, private var cursor: Int = 0) : 
 
     var line = lineCol.line
     var col = lineCol.col
-    for (i in 1 .. cursor) {
+    for (i in 1..cursor) {
       val c = cs.peekNext(i)
       if (c == '\n') {
         line += 1
         col = 1
+        continue
       } else if (c == '\r') {
         if (cs.hasNext(i + 1)) {
           val cc = cs.peekNext(i + 1)
           if (cc != '\n') {
             line += 1
             col = 1
+            continue
           }
+        } else {
+          line += 1
+          col = 1
+          continue
         }
-      } else {
-        col += 1
       }
+      col += 1
     }
     return LineCol(lineCol.filename, line, col)
   }

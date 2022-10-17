@@ -4,6 +4,7 @@ import kotlin.jvm.internal.Reflection;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import vjson.cs.LineCol;
+import vjson.cs.LineColCharStream;
 import vjson.deserializer.DeserializeParserListener;
 import vjson.deserializer.rule.*;
 import vjson.listener.EmptyParserListener;
@@ -409,5 +410,15 @@ public class TestCorner {
         assertTrue(cs.hasNext());
         cs.skipBlank();
         assertFalse(cs.hasNext());
+    }
+
+    @Test
+    public void lineColReturnSymbol() throws Exception {
+        LineColCharStream cs = new LineColCharStream(CharStream.from("ab\r"), "file");
+        assertEquals('a', cs.moveNextAndGet());
+        assertEquals('b', cs.moveNextAndGet());
+        TestJsonLineCol.assertLineCol(new LineCol("file", 1, 3), cs.lineCol());
+        assertEquals('\r', cs.moveNextAndGet());
+        TestJsonLineCol.assertLineCol(new LineCol("file", 2, 1), cs.lineCol());
     }
 }

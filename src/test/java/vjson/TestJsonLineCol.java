@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class TestJsonLineCol {
-    private void assertLineCol(LineCol expected, LineCol actual) {
+    public static void assertLineCol(LineCol expected, LineCol actual) {
         assertEquals("filename", expected.getFilename(), actual.getFilename());
         assertEquals("line", expected.getLine(), actual.getLine());
         assertEquals("col", expected.getCol(), actual.getCol());

@@ -273,7 +273,7 @@ object ParserUtils {
     return parser(cs, opts).buildJavaObject(cs, true)
   }
 
-  fun extractNoQuotesString(cs: CharStream, opts: ParserOptions): Pair<String, Int> {
+  fun extractNoQuotesString(cs: CharStream, opts: ParserOptions, isObjectKey: Boolean): Pair<String, Int> {
     cs.skipBlank()
     val beginLineCol = cs.lineCol()
     val sb = StringBuilder()
@@ -282,7 +282,13 @@ object ParserUtils {
     loop@ while (cs.hasNext(cursor + 1)) {
       ++cursor
       when (val c = cs.peekNext(cursor)) {
-        ',', ';', '\n', '\r' -> {
+        ',', ';', '\n', '\r', ':' -> {
+          if (c == ':') {
+            if (!isObjectKey) {
+              sb.append(c)
+              continue@loop
+            }
+          }
           if (c == ';') {
             if (!opts.isSemicolonAsComma) {
               // parser will hang on `;` if without this check
@@ -359,7 +365,7 @@ object ParserUtils {
   }
 
   private fun parserForValueNoQuotes(cs: CharStream, opts: ParserOptions): Parser<*> {
-    val pair = extractNoQuotesString(cs, opts)
+    val pair = extractNoQuotesString(cs, opts, false)
     val str = pair.first
     // try number, bool and null
     try {
