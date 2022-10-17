@@ -1,5 +1,6 @@
 import kotlinx.datetime.Clock
 import okio.FileSystem
+import okio.Path
 import okio.Path.Companion.toPath
 import vjson.CharStream
 import vjson.JSON
@@ -12,6 +13,7 @@ import vjson.pl.InterpreterBuilder
 import vjson.pl.type.lang.ExtFunctions
 import vjson.pl.type.lang.ExtTypes
 import vjson.pl.type.lang.StdTypes
+import vjson.util.Manager
 import kotlin.random.Random
 
 private const val HELP_STR = """Usage:
@@ -105,14 +107,13 @@ fun main(args: Array<String>) {
     if (one == null) one = true
   }
 
-  val filecontent = if (filename == null) null else readAll(filename)
-
   if (prog!!) {
-    if (filecontent == null) {
+    if (filename == null) {
       throw IllegalArgumentException("missing script file to be executed")
     }
-    runProg(input = filecontent, RunProgOptions(filename = filename!!, ast = ast!!))
+    runProg(RunProgOptions(filename = filename, ast = ast!!))
   } else {
+    val filecontent = if (filename == null) null else readAll(filename)
     runJson(input = filecontent, RunJsonOptions(filename = filename, pretty = pretty!!, one = one!!, features = features))
   }
 }
@@ -150,7 +151,23 @@ private fun readAll(filename: String): String {
 
 data class RunProgOptions(val filename: String, val ast: Boolean)
 
-private fun runProg(input: String, options: RunProgOptions) {
+class FileContentManager(baseFile: String) : Manager<String> {
+  private val baseDir = baseFile.toPath().parent!!
+  override fun provide(name: String): (() -> String)? {
+    val file = baseDir / name
+    if (FileSystem.SYSTEM.exists(file)) {
+      val meta = FileSystem.SYSTEM.metadata(file)
+      if (meta.isRegularFile) {
+        return { readFile(file) }
+      }
+    }
+    return null
+  }
+
+  private fun readFile(file: Path): String = FileSystem.SYSTEM.read(file) { readUtf8() }
+}
+
+private fun runProg(options: RunProgOptions) {
   val stdTypes = StdTypes()
   stdTypes.setOutput { println(it) }
   val extTypes = ExtTypes(ExtFunctions()
@@ -159,7 +176,7 @@ private fun runProg(input: String, options: RunProgOptions) {
   val builder = InterpreterBuilder()
     .addTypes(stdTypes)
     .addTypes(extTypes)
-  val interpreter = builder.compile(input, options.filename)
+  val interpreter = builder.compile(FileContentManager(options.filename), options.filename.toPath().name)
 
   @Suppress("UNUSED_VARIABLE")
   val mem = interpreter.execute()
