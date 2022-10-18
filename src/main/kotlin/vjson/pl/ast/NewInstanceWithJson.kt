@@ -122,7 +122,7 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
       }
     }
     val expr = NewInstance(Type(""), args)
-    expr.typeInstance = type
+    expr._typeInstance = type
     if (tmpvarname == null) {
       expr.check(ctx)
       instList.add(expr.generateInstruction())
