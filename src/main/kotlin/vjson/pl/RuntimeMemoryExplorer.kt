@@ -27,6 +27,24 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
       ?: throw NoSuchElementException()
   }
 
+  fun getExplorerByVariable(name: String): RuntimeMemoryExplorer? {
+    val type = builder.variableTypes[name]
+      ?: throw NoSuchElementException(name)
+    return if (type is ClassTypeInstance) {
+      val clsName = type._concreteTypeName ?: type.cls.name
+      builder.getExplorerByType(clsName)
+    } else null
+  }
+
+  fun listVariables(): List<String> {
+    return ArrayList(builder.variableOrder)
+  }
+
+  fun getModifiersOfVariable(name: String): Modifiers {
+    return builder.variableModifiers[name]
+      ?: throw NoSuchElementException(name)
+  }
+
   fun getVariable(name: String, mem: RuntimeMemory): Any? {
     val type = builder.variableTypes[name]
       ?: throw NoSuchElementException(name)
@@ -43,6 +61,11 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
         else ret
       }
     }
+  }
+
+  fun getTypeByVariable(name: String): TypeInstance {
+    return builder.variableTypes[name]
+      ?: throw NoSuchElementException(name)
   }
 
   fun toJson(mem: RuntimeMemory): JSON.Object {
