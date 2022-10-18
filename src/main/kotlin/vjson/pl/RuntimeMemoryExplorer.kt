@@ -131,6 +131,7 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
           is ClassDefinition -> feedClassDef(stmt)
           is TemplateTypeInstantiation -> feedTemplateTypeInstantiation(stmt)
           is VariableDefinition -> feedVariableDef(stmt)
+          is ErrorHandlingStatement -> feed(stmt.tryCode)
         }
       }
     }
