@@ -3,13 +3,17 @@ package vjson;
 import org.junit.Test;
 import vjson.pl.Interpreter;
 import vjson.pl.InterpreterBuilder;
+import vjson.pl.RuntimeMemoryExplorer;
+import vjson.pl.inst.RuntimeMemory;
 import vjson.pl.type.lang.StdTypes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class TestInterpreterSamplePrograms {
     @Test
@@ -68,6 +72,15 @@ public class TestInterpreterSamplePrograms {
             "var alice = new Person:[('alice'), 24]\n" +
             "var bob = new Person:[('bob'), 25]\n" +
             "alice.talkTo:[bob]\n" +
+            "\n" +
+            "// you may also create an object using json syntax\n" +
+            "// see sample program `Configuration` for more info about this syntax\n" +
+            "var eve = new Person {\n" +
+            "  name = eve\n" +
+            "  age = 26\n" +
+            "}\n" +
+            "bob.talkTo:[eve]\n" +
+            "\n" +
             "\n" +
             "// template class definition\n" +
             "template { T, U } class PlusToInt { t: T, u: U } do {\n" +
@@ -162,15 +175,16 @@ public class TestInterpreterSamplePrograms {
         interpreter.execute();
         assertEquals(Arrays.asList(
             "Hi bob, I'm alice",
+            "Hi eve, I'm bob",
             "plusObj.plus result is 3",
             "sum of 1 to 10 is 55",
             "sum of 1 until 10 is 45",
             "cnt1 = 1, cnt2 = 2, cnt3 = 3",
             "caught exception: bad function call",
             "bad function call\n" +
-                "  badFunction at (113:3)\n" +
-                "  catchFunction at (116:3)\n" +
-                "  <no info> at (135:1)",
+                "  badFunction at (122:3)\n" +
+                "  catchFunction at (125:3)\n" +
+                "  <no info> at (144:1)",
             "caught second exception: the second bad function call"
         ), output);
     }
@@ -342,6 +356,147 @@ public class TestInterpreterSamplePrograms {
             "map = {alice=1, bob=2, eve=3}",
             "hello", "world",
             "alice", "bob", "eve"
+        ), output);
+    }
+
+    @Test
+    public void configuration() {
+        String prog = "{\n" +
+            "\n" +
+            "class MysqlConfig { _host: string, _port: int, _user: string, _pass: string, _db: string } do {\n" +
+            "  public var host = _host\n" +
+            "  public var port = _port\n" +
+            "  public var user = _user\n" +
+            "  public var pass = _pass\n" +
+            "  public var db = _db\n" +
+            "\n" +
+            "  function check {} void {\n" +
+            "    if: port < 1 || port > 65535; then {\n" +
+            "      throw: ('invalid port number for mysql')\n" +
+            "    }\n" +
+            "  }\n" +
+            "}\n" +
+            "\n" +
+            "class SentinelAddress { _host: string, _port: int } do {\n" +
+            "  public var host = _host\n" +
+            "  public var port = _port\n" +
+            "\n" +
+            "  function check {index: int} void {\n" +
+            "    if: port < 1 || port > 65535; then {\n" +
+            "      throw: ('invalid port number for sentinel[' + index + ']')\n" +
+            "    }\n" +
+            "  }\n" +
+            "}\n" +
+            "\n" +
+            "class SentinelConfig { _name: string, _sentinels: SentinelAddress[] } do {\n" +
+            "  public var name = _name\n" +
+            "  public var sentinels = _sentinels\n" +
+            "\n" +
+            "  function check {} void {\n" +
+            "    for: [ {var i = 0}; i < sentinels.length; i += 1 ] do {\n" +
+            "      sentinels[i].check:[i]\n" +
+            "    }\n" +
+            "  }\n" +
+            "}\n" +
+            "\n" +
+            "class RedisConfig { _host: string = '', _port: int = 0, _pass: string, _sentinel: SentinelConfig = null } do {\n" +
+            "  public var host = _host\n" +
+            "  public var port = _port\n" +
+            "  public var pass = _pass\n" +
+            "  public var sentinel = _sentinel\n" +
+            "\n" +
+            "  function check {} void {\n" +
+            "    if: port < 0 || port > 65535; then {\n" +
+            "      throw: ('invalid port number for redis')\n" +
+            "    }\n" +
+            "    if: (host != '' && port == 0) || (host == '' && port != 0); then {\n" +
+            "      throw: ('you must set or unset host and port at the same time')\n" +
+            "    }\n" +
+            "    if: sentinel != null; then {\n" +
+            "      sentinel.check:[]\n" +
+            "    }\n" +
+            "    if: sentinel != null; then {\n" +
+            "      if: host != '' || port != 0; then {\n" +
+            "        throw: ('cannot specify host|port and sentinel at the same time')\n" +
+            "      }\n" +
+            "    } else {\n" +
+            "      if: host == '' || port == 0; then {\n" +
+            "        throw: ('you must specify one of host|port or sentinel')\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
+            "}\n" +
+            "\n" +
+            "class Config { _mysql: MysqlConfig, _redis: RedisConfig } do {\n" +
+            "  public var mysql = _mysql\n" +
+            "  public var redis = _redis\n" +
+            "\n" +
+            "  function check {} void {\n" +
+            "    mysql.check:[]\n" +
+            "    redis.check:[]\n" +
+            "  }\n" +
+            "}\n" +
+            "\n" +
+            "var config = {\n" +
+            "  new Config: /* you can use #include to separate checking program and config file */ {\n" +
+            "    mysql {\n" +
+            "      host = '10.1.0.1'\n" +
+            "      port = 3306\n" +
+            "      user = root\n" +
+            "      pass = '123456'\n" +
+            "      db = test\n" +
+            "    }\n" +
+            "    redis {\n" +
+            "      sentinel {\n" +
+            "        name = 'mymaster'\n" +
+            "        sentinels = [\n" +
+            "          {\n" +
+            "            host = '10.2.0.1'\n" +
+            "            port = 26379\n" +
+            "          }\n" +
+            "          {\n" +
+            "            host = '10.2.0.2'\n" +
+            "            port = 26379\n" +
+            "          }\n" +
+            "          {\n" +
+            "            host = '10.2.0.3'\n" +
+            "            port = 26379\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "      pass = '123456'\n" +
+            "    }\n" +
+            "  }\n" +
+            "}\n" +
+            "config.check:[]\n" +
+            "if: err != null; then {\n" +
+            "  std.console.log: [ ('bad config: ' + err.formatException) ]\n" +
+            "} else {\n" +
+            "  std.console.log: [ ('config is ok') ]\n" +
+            "}\n" +
+            "\n" +
+            "}\n";
+        StdTypes std = new StdTypes();
+        List<String> output = new ArrayList<>();
+        std.setOutput(s -> {
+            output.add(s);
+            return null;
+        });
+        Interpreter interpreter = new InterpreterBuilder()
+            .addTypes(std)
+            .compile(prog);
+        RuntimeMemoryExplorer explorer = interpreter.getExplorer();
+        RuntimeMemory mem = interpreter.execute();
+
+        RuntimeMemoryExplorer configExplorer = explorer.getExplorerByType("Config");
+        RuntimeMemory configMem = (RuntimeMemory) explorer.getVariable("config", mem);
+        assertNotNull(configMem);
+
+        assertEquals("{\"mysql\":{\"host\":\"10.1.0.1\",\"port\":3306,\"user\":\"root\",\"pass\":\"123456\",\"db\":\"test\"},\"redis\":{\"host\":\"\",\"port\":0,\"pass\":\"123456\",\"sentinel\":{\"name\":\"mymaster\",\"sentinels\":[{\"host\":\"10.2.0.1\",\"port\":26379},{\"host\":\"10.2.0.2\",\"port\":26379},{\"host\":\"10.2.0.3\",\"port\":26379}]}}}",
+            configExplorer.toJson(configMem).stringify());
+
+        assertEquals(Collections.singletonList(
+            "config is ok"
         ), output);
     }
 }
