@@ -137,6 +137,84 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
     }
   }
 
+  /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
+  fun inspect(mem: RuntimeMemory, sb: StringBuilder = StringBuilder()): StringBuilder {
+    inspect(mem, sb, 0)
+    sb.deleteAt(sb.length - 1)
+    return sb
+  }
+
+  /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/
+  fun inspectVariable(name: String, mem: RuntimeMemory, sb: StringBuilder = StringBuilder()): StringBuilder {
+    val v = getVariable(name, mem)
+    val type = builder.variableTypes[name]!!
+    inspectValue(v, type, sb, 0)
+    sb.deleteAt(sb.length - 1)
+    return sb
+  }
+
+  private fun inspect(mem: RuntimeMemory, sb: StringBuilder, indent: Int) {
+    for (name in builder.variableOrder) {
+      sb.append(" ".repeat(indent))
+      val modifiers = builder.variableModifiers[name]!!.toStringWithSpace()
+      sb.append(modifiers).append(name).append(" = ")
+      val v = getVariable(name, mem)
+      val type = builder.variableTypes[name]!!
+      inspectValue(v, type, sb, indent)
+    }
+  }
+
+  private fun inspectValue(v: Any?, type: TypeInstance, sb: StringBuilder, indent: Int, addPreIndent: Boolean = false) {
+    if (addPreIndent) {
+      sb.append(" ".repeat(indent))
+    }
+    when (v) {
+      null, is Int, Long, is Long, is Float, is Double, is Boolean ->
+        sb.append(v).append("\n")
+      is String -> sb.append(SimpleString(v).stringify()).append("\n")
+      else -> inspectComplexValue(v, type, sb, indent)
+    }
+  }
+
+  private fun inspectComplexValue(v: Any, type: TypeInstance, sb: StringBuilder, indent: Int) {
+    when (type) {
+      is ClassTypeInstance -> {
+        val tName = type._concreteTypeName ?: type.cls.name
+        val explorer = builder.getExplorerByType(tName)
+        if (explorer == null) {
+          sb.append("<no info: $tName $v>\n")
+        } else {
+          sb.append("{\n")
+          explorer.inspect(v as RuntimeMemory, sb, indent + 2)
+          sb.append(" ".repeat(indent)).append("}\n")
+        }
+      }
+      is ArrayTypeInstance -> {
+        val array = ArrayBuilder()
+        sb.append("[\n")
+        val elementType = type.elementType(TypeContext(MemoryAllocator()))
+        if (v is IntArray) {
+          for (e in v) inspectValue(e, elementType, sb, indent + 2, true)
+        } else if (v is LongArray) {
+          for (e in v) inspectValue(e, elementType, sb, indent + 2, true)
+        } else if (v is FloatArray) {
+          for (e in v) inspectValue(e, elementType, sb, indent + 2, true)
+        } else if (v is DoubleArray) {
+          for (e in v) inspectValue(e, elementType, sb, indent + 2, true)
+        } else {
+          v as Array<*>
+          for (n in v) {
+            val e = if (n is ActionContext) n.getCurrentMem() else n
+            inspectValue(e, elementType, sb, indent + 2, true)
+          }
+        }
+        sb.append(" ".repeat(indent)).append("]\n")
+        array.build()
+      }
+      else -> sb.append("<no info: $type $v>")
+    }
+  }
+
   class Builder(val parent: Builder? = null) {
     val classes = HashMap<String, RuntimeMemoryExplorer>()
     val variableTypes = HashMap<String, TypeInstance>()

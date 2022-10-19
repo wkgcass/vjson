@@ -480,6 +480,67 @@ public class TestInterpreter {
     }
 
     @Test
+    public void newWithJsonNestedArray() {
+        Interpreter interpreter = new InterpreterBuilder().compile("{" +
+            "class A {_i: int[][]} do {\n" +
+            "  public var i = _i\n" +
+            "}\n" +
+            "class B {_a: A[][]} do {\n" +
+            "  public var a = _a\n" +
+            "}\n" +
+            "class C {_b: B[][]} do {\n" +
+            "  public var b = _b\n" +
+            "}\n" +
+            "var c = new C {\n" +
+            "  b = [\n" +
+            "    [\n" +
+            "      {\n" +
+            "        a = [\n" +
+            "          [\n" +
+            "            {\n" +
+            "              i = [\n" +
+            "                [1, 2, 3]\n" +
+            "                [4, 5, 6]\n" +
+            "              ]\n" +
+            "            }\n" +
+            "          ]\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  ]\n" +
+            "}\n" +
+            "}");
+        RuntimeMemoryExplorer explorer = interpreter.getExplorer();
+        RuntimeMemory mem = interpreter.execute();
+        assertEquals("c = {\n" +
+            "  public b = [\n" +
+            "    [\n" +
+            "      {\n" +
+            "        public a = [\n" +
+            "          [\n" +
+            "            {\n" +
+            "              public i = [\n" +
+            "                [\n" +
+            "                  1\n" +
+            "                  2\n" +
+            "                  3\n" +
+            "                ]\n" +
+            "                [\n" +
+            "                  4\n" +
+            "                  5\n" +
+            "                  6\n" +
+            "                ]\n" +
+            "              ]\n" +
+            "            }\n" +
+            "          ]\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  ]\n" +
+            "}", explorer.inspect(mem).toString());
+    }
+
+    @Test
     public void functionCall() {
         RuntimeMemory mem = new InterpreterBuilder()
             .compile("{\n" +
@@ -1550,6 +1611,46 @@ public class TestInterpreter {
         RuntimeMemory obj = (RuntimeMemory) explorer.getVariable("a", mem);
         assertEquals(1, explorerA.getVariable("a", obj));
         assertEquals("abc", explorerA.getVariable("b", obj));
+    }
+
+    @Test
+    public void typeHintPass() {
+        new InterpreterBuilder()
+            .compile("{\n" +
+                "function longFunc {i: long} void {}\n" +
+                "class LongClass {l: long} do {}\n" +
+                "longFunc:[1]\n" +
+                "var a = 1.toLong\n" +
+                "a = 2\n" +
+                "new LongClass:[3]\n" +
+                "var arr = new long[1]\n" +
+                "arr[0] = 4\n" +
+                "}").execute();
+        new InterpreterBuilder()
+            .compile("{\n" +
+                "function floatFunc {f: float} void {}\n" +
+                "class FloatClass {f: float} do {}\n" +
+                "floatFunc:[1]\n" +
+                "floatFunc:[1.1]\n" +
+                "var a = 2.4.toFloat\n" +
+                "a = 2\n" +
+                "a = 3.6\n" +
+                "new FloatClass:[4]\n" +
+                "new FloatClass:[4.8]\n" +
+                "var arr = new float[1]\n" +
+                "arr[0] = 5\n" +
+                "}").execute();
+        new InterpreterBuilder()
+            .compile("{\n" +
+                "function doubleFunc {d: double} void {}\n" +
+                "class DoubleClass {d: double} do {}\n" +
+                "doubleFunc:[1]\n" +
+                "var a = 1.6\n" +
+                "a = 2\n" +
+                "new DoubleClass:[3]\n" +
+                "var arr = new double[1]\n" +
+                "arr[0] = 4\n" +
+                "}").execute();
     }
 
     @Test

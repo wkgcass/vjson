@@ -13,13 +13,8 @@
 package vjson.pl.ast
 
 import vjson.JSON
-import vjson.pl.inst.Instruction
-import vjson.pl.inst.LiteralInt
-import vjson.pl.inst.LiteralLong
-import vjson.pl.type.IntType
-import vjson.pl.type.LongType
-import vjson.pl.type.TypeContext
-import vjson.pl.type.TypeInstance
+import vjson.pl.inst.*
+import vjson.pl.type.*
 
 data class IntegerLiteral(val n: JSON.Number<*>) : Expr() {
   override fun copy(): IntegerLiteral {
@@ -32,17 +27,26 @@ data class IntegerLiteral(val n: JSON.Number<*>) : Expr() {
     this.ctx = ctx
     this.typeHint = typeHint
     if (typeHint is LongType) return LongType
+    if (typeHint is FloatType) return FloatType
+    if (typeHint is DoubleType) return DoubleType
     return if (n is JSON.Long) LongType else IntType
   }
 
   override fun typeInstance(): TypeInstance {
     if (typeHint is LongType) return LongType
+    if (typeHint is FloatType) return FloatType
+    if (typeHint is DoubleType) return DoubleType
     return if (n is JSON.Long) LongType else IntType
   }
 
   override fun generateInstruction(): Instruction {
-    return if (typeInstance() is LongType) {
+    val t = typeInstance()
+    return if (t is LongType) {
       LiteralLong(n.toJavaObject().toLong(), ctx.stackInfo(lineCol))
+    } else if (t is FloatType) {
+      LiteralFloat(n.toJavaObject().toFloat(), ctx.stackInfo(lineCol))
+    } else if (t is DoubleType) {
+      LiteralDouble(n.toJavaObject().toDouble(), ctx.stackInfo(lineCol))
     } else {
       LiteralInt(n.toJavaObject().toInt(), ctx.stackInfo(lineCol))
     }

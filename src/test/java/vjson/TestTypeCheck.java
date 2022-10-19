@@ -9,8 +9,11 @@ import vjson.pl.ast.*;
 import vjson.pl.inst.RuntimeMemoryTotal;
 import vjson.pl.type.*;
 import vjson.pl.type.lang.StdTypes;
+import vjson.simple.SimpleDouble;
+import vjson.simple.SimpleInteger;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -335,6 +338,73 @@ public class TestTypeCheck {
         NewInstanceWithJson aNew = (NewInstanceWithJson) stmts.get(2);
         ClassTypeInstance aNewType = (ClassTypeInstance) aNew.typeInstance();
         assertEquals("Shop", aNewType.getCls().getName());
+    }
+
+    @Test
+    public void typeHint() {
+        assertEquals(Arrays.asList(
+            new FunctionDefinition("longFunc", Collections.singletonList(new Param("i", new Type("long"))), new Type("void"), Collections.emptyList(), new Modifiers(0)),
+            new ClassDefinition("LongClass", Collections.singletonList(new Param("l", new Type("long"))), Collections.emptyList()),
+            new FunctionInvocation(new Access("longFunc"), Collections.singletonList(new IntegerLiteral(new SimpleInteger(1)))),
+            new VariableDefinition("a", new Access("toLong", new IntegerLiteral(new SimpleInteger(1))), new Modifiers(0)),
+            new Assignment(new Access("a"), new IntegerLiteral(new SimpleInteger(2))),
+            new NewInstance(new Type("LongClass"), Collections.singletonList(new IntegerLiteral(new SimpleInteger(3)))),
+            new VariableDefinition("arr", new NewArray(new Type("long[]"), new IntegerLiteral(new SimpleInteger(1))), new Modifiers(0)),
+            new Assignment(new AccessIndex(new Access("arr"), new IntegerLiteral(new SimpleInteger(0))), new IntegerLiteral(new SimpleInteger(4)))
+        ), ast("{\n" +
+            "function longFunc {i: long} void {}\n" +
+            "class LongClass {l: long} do {}\n" +
+            "longFunc:[1]\n" +
+            "var a = 1.toLong\n" +
+            "a = 2\n" +
+            "new LongClass:[3]\n" +
+            "var arr = new long[1]\n" +
+            "arr[0] = 4\n" +
+            "}"));
+        assertEquals(Arrays.asList(
+            new FunctionDefinition("floatFunc", Collections.singletonList(new Param("f", new Type("float"))), new Type("void"), Collections.emptyList(), new Modifiers(0)),
+            new ClassDefinition("FloatClass", Collections.singletonList(new Param("f", new Type("float"))), Collections.emptyList()),
+            new FunctionInvocation(new Access("floatFunc"), Collections.singletonList(new IntegerLiteral(new SimpleInteger(1)))),
+            new FunctionInvocation(new Access("floatFunc"), Collections.singletonList(new FloatLiteral(new SimpleDouble(1.1)))),
+            new VariableDefinition("a", new Access("toFloat", new FloatLiteral(new SimpleDouble(2.4))), new Modifiers(0)),
+            new Assignment(new Access("a"), new IntegerLiteral(new SimpleInteger(2))),
+            new Assignment(new Access("a"), new FloatLiteral(new SimpleDouble(3.6))),
+            new NewInstance(new Type("FloatClass"), Collections.singletonList(new IntegerLiteral(new SimpleInteger(4)))),
+            new NewInstance(new Type("FloatClass"), Collections.singletonList(new FloatLiteral(new SimpleDouble(4.8)))),
+            new VariableDefinition("arr", new NewArray(new Type("float[]"), new IntegerLiteral(new SimpleInteger(1))), new Modifiers(0)),
+            new Assignment(new AccessIndex(new Access("arr"), new IntegerLiteral(new SimpleInteger(0))), new IntegerLiteral(new SimpleInteger(5)))
+        ), ast("{\n" +
+            "function floatFunc {f: float} void {}\n" +
+            "class FloatClass {f: float} do {}\n" +
+            "floatFunc:[1]\n" +
+            "floatFunc:[1.1]\n" +
+            "var a = 2.4.toFloat\n" +
+            "a = 2\n" +
+            "a = 3.6\n" +
+            "new FloatClass:[4]\n" +
+            "new FloatClass:[4.8]\n" +
+            "var arr = new float[1]\n" +
+            "arr[0] = 5\n" +
+            "}"));
+        assertEquals(Arrays.asList(
+            new FunctionDefinition("doubleFunc", Collections.singletonList(new Param("d", new Type("double"))), new Type("void"), Collections.emptyList(), new Modifiers(0)),
+            new ClassDefinition("DoubleClass", Collections.singletonList(new Param("d", new Type("double"))), Collections.emptyList()),
+            new FunctionInvocation(new Access("doubleFunc"), Collections.singletonList(new IntegerLiteral(new SimpleInteger(1)))),
+            new VariableDefinition("a", new FloatLiteral(new SimpleDouble(1.6)), new Modifiers(0)),
+            new Assignment(new Access("a"), new IntegerLiteral(new SimpleInteger(2))),
+            new NewInstance(new Type("DoubleClass"), Collections.singletonList(new IntegerLiteral(new SimpleInteger(3)))),
+            new VariableDefinition("arr", new NewArray(new Type("double[]"), new IntegerLiteral(new SimpleInteger(1))), new Modifiers(0)),
+            new Assignment(new AccessIndex(new Access("arr"), new IntegerLiteral(new SimpleInteger(0))), new IntegerLiteral(new SimpleInteger(4)))
+        ), ast("{\n" +
+            "function doubleFunc {d: double} void {}\n" +
+            "class DoubleClass {d: double} do {}\n" +
+            "doubleFunc:[1]\n" +
+            "var a = 1.6\n" +
+            "a = 2\n" +
+            "new DoubleClass:[3]\n" +
+            "var arr = new double[1]\n" +
+            "arr[0] = 4\n" +
+            "}"));
     }
 
     @Test

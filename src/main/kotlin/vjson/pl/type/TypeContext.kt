@@ -16,7 +16,6 @@ import vjson.cs.LineCol
 import vjson.ex.ParserException
 import vjson.pl.ast.*
 import vjson.pl.inst.StackInfo
-import vjson.util.collection.LongPtr
 
 class TypeContext {
   private val contextType: TypeInstance?
@@ -28,15 +27,12 @@ class TypeContext {
   private val variableMap: MutableMap<String, Variable> = HashMap()
   private val memoryDepth: Int
 
-  private var counter: LongPtr
-
   constructor(parent: TypeContext, contextType: TypeInstance? = null, ast: AST? = null) {
     this.contextType = contextType ?: parent.contextType
     this.ast = ast
     this.parent = parent
     this.memoryAllocator = if (ast is MemoryAllocatorProvider) ast.memoryAllocator() else parent.memoryAllocator
     this.memoryDepth = parent.memoryDepth + (if (ast is MemoryAllocatorProvider) 1 else 0)
-    this.counter = parent.counter
   }
 
   constructor(globalMemory: MemoryAllocator) {
@@ -45,7 +41,6 @@ class TypeContext {
     this.parent = rootContext
     this.memoryAllocator = globalMemory
     this.memoryDepth = 0
-    this.counter = LongPtr(0L)
   }
 
   @Suppress("UNUSED_PARAMETER")
@@ -55,7 +50,6 @@ class TypeContext {
     this.parent = null
     this.memoryAllocator = MemoryAllocator() // will never be used
     this.memoryDepth = -1
-    this.counter = LongPtr(0L)
   }
 
   fun getContextType(): TypeInstance? {
@@ -192,8 +186,16 @@ class TypeContext {
     }
   }
 
-  fun nextCounter(): Long {
-    return ++counter.value
+  fun tmpVar(prefix: String): String {
+    var n = 0
+    while (true) {
+      val name = prefix + n
+      if (hasVariable(name)) {
+        n += 1
+        continue
+      }
+      return name
+    }
   }
 
   private constructor(
@@ -205,7 +207,6 @@ class TypeContext {
     functionDescriptorSet: Set<FunctionDescriptor>,
     variableMap: Map<String, Variable>,
     memoryDepth: Int,
-    counter: LongPtr,
   ) {
     this.contextType = contextType
     this.ast = ast
@@ -215,11 +216,10 @@ class TypeContext {
     this.functionDescriptorSet.addAll(functionDescriptorSet)
     this.variableMap.putAll(variableMap)
     this.memoryDepth = memoryDepth
-    this.counter = counter
   }
 
   fun copy(): TypeContext {
-    return TypeContext(contextType, ast, parent, memoryAllocator, typeNameMap, functionDescriptorSet, variableMap, memoryDepth, counter)
+    return TypeContext(contextType, ast, parent, memoryAllocator, typeNameMap, functionDescriptorSet, variableMap, memoryDepth)
   }
 
   companion object {

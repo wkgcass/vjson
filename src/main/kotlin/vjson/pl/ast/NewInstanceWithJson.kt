@@ -96,12 +96,17 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
 
   private fun _generateInstruction(): CompositeInstruction {
     val instList = ArrayList<Instruction>()
-    generateInstruction(type.typeInstance(), instList, null, json)
+    generateInstruction(type.typeInstance(), instList, false, json)
     return CompositeInstruction(instList)
   }
 
   @Suppress("UNCHECKED_CAST")
-  private fun generateInstruction(type: TypeInstance, instList: ArrayList<Instruction>, tmpvarname: String?, json: Map<String, Any>) {
+  private fun generateInstruction(
+    type: TypeInstance,
+    instList: ArrayList<Instruction>,
+    needTmpVar: Boolean,
+    json: Map<String, Any>
+  ): String? {
     val args = ArrayList<Expr>()
     for (p in type.constructor(ctx)!!.params) {
       val pname = if (p.name.startsWith("_")) p.name.substring(1) else p.name
@@ -111,11 +116,10 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
       } else if (v is Expr) {
         args.add(v)
       } else {
-        val varname = "$syntheticVariablePrefix${ctx.nextCounter()}"
-        if (v is Map<*, *>) {
-          generateInstruction(p.type, instList, varname, v as Map<String, Any>)
+        val varname = if (v is Map<*, *>) {
+          generateInstruction(p.type, instList, true, v as Map<String, Any>)!!
         } else {
-          generateInstruction(p.type.elementType(ctx)!!, instList, p.type as ArrayTypeInstance, varname, v as List<Any>)
+          generateInstruction(p.type.elementType(ctx)!!, instList, p.type as ArrayTypeInstance, v as List<Any>)
         }
         val placeHolder = Access(varname)
         placeHolder.check(ctx, null)
@@ -124,13 +128,16 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
     }
     val expr = NewInstance(Type(""), args)
     expr._typeInstance = type
-    if (tmpvarname == null) {
+    if (!needTmpVar) {
       expr.check(ctx, type)
       instList.add(expr.generateInstruction())
+      return null
     } else {
+      val tmpvarname = ctx.tmpVar(syntheticVariablePrefix)
       val vardef = VariableDefinition(tmpvarname, expr)
       vardef.checkAST(ctx)
       instList.add(vardef.generateInstruction())
+      return tmpvarname
     }
   }
 
@@ -139,11 +146,11 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
     elementType: TypeInstance,
     instList: ArrayList<Instruction>,
     arrType: ArrayTypeInstance,
-    tmpvarname: String,
     json: List<Any>
-  ) {
+  ): String {
     val newarray = NewArray(Type(""), IntegerLiteral(SimpleInteger(json.size)))
     newarray.arrayTypeInstance = arrType
+    val tmpvarname = ctx.tmpVar(syntheticVariablePrefix)
     val vardef = VariableDefinition(tmpvarname, newarray)
     vardef.checkAST(ctx)
     instList.add(vardef.generateInstruction())
@@ -153,25 +160,24 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
       val expr = if (e is Expr) {
         e
       } else {
-        val varname = "$syntheticVariablePrefix${ctx.nextCounter()}"
-        val placeHolder = Access(varname)
-        if (e is Map<*, *>) {
-          generateInstruction(elementType, instList, varname, e as Map<String, Any>)
+        val varname = if (e is Map<*, *>) {
+          generateInstruction(elementType, instList, true, e as Map<String, Any>)!!
         } else {
           generateInstruction(
             elementType.elementType(ctx)!!,
             instList,
             arrType.elementType(ctx) as ArrayTypeInstance,
-            tmpvarname,
             e as List<Any>
           )
         }
+        val placeHolder = Access(varname)
         placeHolder
       }
       val assignment = Assignment(AccessIndex(Access(tmpvarname), IntegerLiteral(SimpleInteger(i))), expr)
       assignment.check(ctx, elementType)
       instList.add(assignment.generateInstruction())
     }
+    return tmpvarname
   }
 
   override fun toString(indent: Int): String {

@@ -50,6 +50,7 @@ import vpreprocessor.*;
     TestTypeCheck.class,
     TestInterpreter.class,
     TestInterpreterSamplePrograms.class,
+    TestRuntimeMemoryExplorer.class,
 
     TestIssues.class,
 })
