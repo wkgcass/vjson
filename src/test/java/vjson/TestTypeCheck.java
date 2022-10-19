@@ -25,11 +25,11 @@ public class TestTypeCheck {
         ctx.addVariable(new Variable("a", IntType.INSTANCE, true, null, new MemPos(0, 0)));
 
         Access access = new Access("a");
-        access.check(ctx);
+        access.check(ctx, null);
         assertEquals(IntType.INSTANCE, access.typeInstance());
 
         access = new Access("toString", new Access("a"));
-        access.check(ctx);
+        access.check(ctx, null);
         FunctionDescriptorTypeInstance type = (FunctionDescriptorTypeInstance) access.typeInstance();
         FunctionDescriptor desc = type.functionDescriptor(ctx);
         assertEquals(0, desc.getParams().size());

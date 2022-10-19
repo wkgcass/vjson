@@ -27,12 +27,16 @@ data class NullLiteral(val type: Type? = null) : Expr() {
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     this.ctx = ctx
+    this.typeHint = typeHint
     if (type == null) {
+      if (typeHint != null && typeHint !is PrimitiveTypeInstance) {
+        return typeHint
+      }
       return NullType
     }
-    val tInst = type.check(ctx)
+    val tInst = type.check(ctx, typeHint)
     if (tInst is PrimitiveTypeInstance) {
       throw ParserException("cannot assign null to $tInst", lineCol)
     }
@@ -41,6 +45,9 @@ data class NullLiteral(val type: Type? = null) : Expr() {
 
   override fun typeInstance(): TypeInstance {
     if (type == null) {
+      if (typeHint != null && typeHint !is PrimitiveTypeInstance) {
+        return typeHint!!
+      }
       return NullType
     }
     return type.typeInstance()

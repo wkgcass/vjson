@@ -27,13 +27,13 @@ data class OpAssignment(
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     this.ctx = ctx
     if (op != BinOpType.PLUS && op != BinOpType.MINUS && op != BinOpType.MULTIPLY && op != BinOpType.DIVIDE && op != BinOpType.MOD) {
       throw ParserException("invalid operator for assigning: $op", lineCol)
     }
-    val variableType = variable.check(ctx)
-    val valueType = value.check(ctx)
+    val variableType = variable.check(ctx, null)
+    val valueType = value.check(ctx, variableType)
     if (!TypeUtils.assignableFrom(variableType, valueType)) {
       throw ParserException("$this: cannot calculate and assign $valueType to $variableType, type mismatch", lineCol)
     }

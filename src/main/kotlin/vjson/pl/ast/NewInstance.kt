@@ -31,12 +31,12 @@ data class NewInstance(
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     if (_typeInstance != null) {
       return _typeInstance!!
     }
     this.ctx = ctx
-    val typeInstance = type.check(ctx)
+    val typeInstance = type.check(ctx, typeHint)
     val constructor = typeInstance.constructor(ctx) ?: throw ParserException("$this: cannot instantiate $typeInstance", lineCol)
     if (args.size != constructor.params.size) {
       throw ParserException(
@@ -45,7 +45,7 @@ data class NewInstance(
       )
     }
     for (idx in args.indices) {
-      val argType = args[idx].check(ctx)
+      val argType = args[idx].check(ctx, constructor.params[idx].type)
       val paramType = constructor.params[idx]
       if (argType != paramType.type) {
         throw ParserException(

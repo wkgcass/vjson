@@ -31,11 +31,11 @@ data class Param /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     if (!ctx.hasTypeConsiderArray(type)) {
       throw ParserException("type of parameter $name (${type}) is not defined", lineCol)
     }
-    val typeInstance = type.check(ctx)
+    val typeInstance = type.check(ctx, typeHint)
     if (defaultValue != null) {
       if (defaultValue !is IntegerLiteral &&
         defaultValue !is FloatLiteral &&
@@ -45,7 +45,7 @@ data class Param /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
       ) {
         throw ParserException("default value can only be literals or null", defaultValue.lineCol)
       }
-      val defaultValueType = defaultValue.check(ctx)
+      val defaultValueType = defaultValue.check(ctx, typeInstance)
       if (typeInstance != defaultValueType) {
         throw ParserException("default value $defaultValue ($defaultValueType) cannot be assigned to $typeInstance", defaultValue.lineCol)
       }

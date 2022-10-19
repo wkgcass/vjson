@@ -22,28 +22,26 @@ import vjson.pl.type.TypeContext
 import vjson.pl.type.TypeInstance
 
 data class FloatLiteral(val n: JSON.Double) : Expr() {
-  var typeHint: Type? = null
-
   override fun copy(): FloatLiteral {
     val ret = FloatLiteral(n)
-    ret.typeHint = typeHint?.copy()
     ret.lineCol = lineCol
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     this.ctx = ctx
-    if (typeHint != null && typeHint!!.check(ctx) is FloatType) return FloatType
+    this.typeHint = typeHint
+    if (typeHint is FloatType) return FloatType
     return DoubleType
   }
 
   override fun typeInstance(): TypeInstance {
-    if (typeHint != null && typeHint!!.check(ctx) is FloatType) return FloatType
+    if (typeHint is FloatType) return FloatType
     return DoubleType
   }
 
   override fun generateInstruction(): Instruction {
-    if (typeHint != null && typeHint!!.check(ctx) is FloatType)
+    if (typeInstance() is FloatType)
       return LiteralFloat(n.doubleValue().toFloat(), ctx.stackInfo(lineCol))
     return LiteralDouble(n.doubleValue(), ctx.stackInfo(lineCol))
   }

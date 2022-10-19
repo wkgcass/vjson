@@ -28,10 +28,10 @@ data class BinOp(
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     this.ctx = ctx
-    val leftType = left.check(ctx)
-    val rightType = right.check(ctx)
+    val leftType = left.check(ctx, null)
+    val rightType = right.check(ctx, null)
     return when (op) {
       PLUS, MINUS, MULTIPLY, DIVIDE, MOD, CMP_GT, CMP_GE, CMP_LT, CMP_LE -> {
         if (op == PLUS && (leftType is StringType || rightType is StringType)) {

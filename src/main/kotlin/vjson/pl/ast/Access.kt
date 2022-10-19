@@ -26,7 +26,7 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     this.ctx = ctx
     if (from == null) {
       if (!ctx.hasVariable(name)) {
@@ -34,7 +34,7 @@ constructor(val name: String, val from: Expr? = null) : AssignableExpr() {
       }
       return ctx.getVariable(name).type // ok
     }
-    val fromType = from.check(ctx)
+    val fromType = from.check(ctx, null)
     val fieldType = fromType.field(ctx, name, ctx.getContextType())
     if (fieldType != null) {
       return fieldType.type // ok

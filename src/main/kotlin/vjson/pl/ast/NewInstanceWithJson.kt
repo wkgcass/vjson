@@ -33,9 +33,10 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     this.ctx = ctx
-    val type = this.type.check(ctx)
+    this.typeHint = typeHint
+    val type = this.type.check(ctx, typeHint)
     checkObject("$", type, json)
 
     generatedInstruction = _generateInstruction()
@@ -52,7 +53,7 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
       checkArray(path, type, inst as List<Any>)
       return
     }
-    val t = (inst as Expr).check(ctx)
+    val t = (inst as Expr).check(ctx, type)
     if (type != t) {
       throw ParserException("$inst is not $type at $path", lineCol)
     }
@@ -86,7 +87,7 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
   }
 
   override fun typeInstance(): TypeInstance {
-    return type.check(ctx)
+    return type.check(ctx, typeHint)
   }
 
   override fun generateInstruction(): Instruction {
@@ -117,14 +118,14 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
           generateInstruction(p.type.elementType(ctx)!!, instList, p.type as ArrayTypeInstance, varname, v as List<Any>)
         }
         val placeHolder = Access(varname)
-        placeHolder.check(ctx)
+        placeHolder.check(ctx, null)
         args.add(placeHolder)
       }
     }
     val expr = NewInstance(Type(""), args)
     expr._typeInstance = type
     if (tmpvarname == null) {
-      expr.check(ctx)
+      expr.check(ctx, type)
       instList.add(expr.generateInstruction())
     } else {
       val vardef = VariableDefinition(tmpvarname, expr)
@@ -168,7 +169,7 @@ data class NewInstanceWithJson(val type: Type, val json: Map<String, Any>) : Exp
         placeHolder
       }
       val assignment = Assignment(AccessIndex(Access(tmpvarname), IntegerLiteral(SimpleInteger(i))), expr)
-      assignment.check(ctx)
+      assignment.check(ctx, elementType)
       instList.add(assignment.generateInstruction())
     }
   }

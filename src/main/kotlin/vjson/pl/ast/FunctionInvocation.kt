@@ -27,9 +27,9 @@ data class FunctionInvocation(
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     this.ctx = ctx
-    val targetType = target.check(ctx)
+    val targetType = target.check(ctx, null)
     val func = targetType.functionDescriptor(ctx)
       ?: throw ParserException("$this: unable to invoke $target, which is not a functional object", lineCol)
     if (func.params.size != args.size) {
@@ -39,7 +39,7 @@ data class FunctionInvocation(
       )
     }
     for (idx in args.indices) {
-      val argType = args[idx].check(ctx)
+      val argType = args[idx].check(ctx, func.params[idx].type)
       val paramType = func.params[idx]
       if (!TypeUtils.assignableFrom(paramType.type, argType)) {
         throw ParserException(

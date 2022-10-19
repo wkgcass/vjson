@@ -90,15 +90,6 @@ class ASTGen(_prog: JSON.Object) {
         defaultValue = exprString(defaultValueExprStr, e.value.lineCol().addCol(index))
       }
       val typeObj = Type(type)
-      if (defaultValue != null) {
-        if (defaultValue is NullLiteral) {
-          defaultValue = NullLiteral(typeObj)
-        } else if (defaultValue is IntegerLiteral) {
-          defaultValue.typeHint = typeObj
-        } else if (defaultValue is FloatLiteral) {
-          defaultValue.typeHint = typeObj
-        }
-      }
       astParams.add(Param(e.key, typeObj, defaultValue))
     }
 

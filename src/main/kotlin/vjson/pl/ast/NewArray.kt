@@ -28,17 +28,17 @@ data class NewArray(
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     this.ctx = ctx
     if (arrayTypeInstance == null) {
-      val arrayType = type.check(ctx)
+      val arrayType = type.check(ctx, typeHint)
       if (arrayType !is ArrayTypeInstance) {
         throw ParserException("$this: $arrayType is not array type", lineCol)
       }
       arrayTypeInstance = arrayType
     }
     val arrayType = arrayTypeInstance!!
-    val lenType = len.check(ctx)
+    val lenType = len.check(ctx, IntType)
     if (lenType !is IntType) {
       throw ParserException("$this: typeof $len ($lenType) is not int", lineCol)
     }

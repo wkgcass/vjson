@@ -49,13 +49,13 @@ data class Type(private val name: String) : TypedAST {
     return ret
   }
 
-  override fun check(ctx: TypeContext): TypeInstance {
+  override fun check(ctx: TypeContext, typeHint: TypeInstance?): TypeInstance {
     this.ctx = ctx
     if (ctx.hasType(this)) {
       return ctx.getType(this)
     }
     if (isArray) {
-      val arrayType = ArrayTypeInstance(elementType.check(ctx))
+      val arrayType = ArrayTypeInstance(elementType.check(ctx, typeHint?.elementType(ctx)))
       ctx.addType(this, arrayType)
       return arrayType
     } else {

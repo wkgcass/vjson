@@ -36,10 +36,10 @@ data class TemplateTypeInstantiation(val typeName: String, val templateType: Typ
     if (ctx.hasTypeInThisContext(Type(typeName))) {
       throw ParserException("type `$typeName` is already defined", lineCol)
     }
-    val templateType = this.templateType.check(ctx)
+    val templateType = this.templateType.check(ctx, null)
     val astTypeParams = templateType.typeParameters() ?: throw ParserException("type `$templateType` is not a template class", lineCol)
 
-    val typeParams = this.typeParams.map { it.check(ctx) }
+    val typeParams = this.typeParams.map { it.check(ctx, null) }
 
     if (astTypeParams.size != typeParams.size) {
       throw ParserException(
