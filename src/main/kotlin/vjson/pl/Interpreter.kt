@@ -18,11 +18,12 @@ import vjson.pl.type.MemoryAllocator
 import vjson.pl.type.TypeContext
 import vjson.pl.type.lang.Types
 
-class Interpreter(private val types: List<Types>, private val ast: List<Statement>) {
+class Interpreter(private val types: List<Types>, ast: List<Statement>) {
   private val typesOffset = ArrayList<RuntimeMemoryTotal>()
   private val typeContext = TypeContext(MemoryAllocator())
   private val valueForTypes = HashMap<Types, RuntimeMemory>()
   private val explorer: RuntimeMemoryExplorer
+  private val instructions: List<Instruction>
 
   init {
     var offset = RuntimeMemoryTotal()
@@ -36,6 +37,8 @@ class Interpreter(private val types: List<Types>, private val ast: List<Statemen
     val explorerBuilder = RuntimeMemoryExplorer.Builder()
     explorerBuilder.feed(ast)
     explorer = explorerBuilder.build()
+
+    instructions = ast.map { it.generateInstruction() }
   }
 
   fun putValues(t: Types, values: RuntimeMemory) {
@@ -56,8 +59,7 @@ class Interpreter(private val types: List<Types>, private val ast: List<Statemen
     }
 
     val exec = Execution()
-    for (stmt in ast) {
-      val inst = stmt.generateInstruction()
+    for (inst in instructions) {
       try {
         inst.execute(actionContext, exec)
       } catch (e: InstructionException) {
