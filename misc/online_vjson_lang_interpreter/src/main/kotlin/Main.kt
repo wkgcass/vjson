@@ -6,13 +6,9 @@ import vjson.ex.ParserException
 import vjson.parser.ObjectParser
 import vjson.pl.*
 import vjson.pl.ast.VariableDefinition
-import vjson.pl.inst.ActionContext
-import vjson.pl.inst.RuntimeMemory
-import vjson.pl.type.*
 import vjson.pl.type.lang.ExtFunctions
 import vjson.pl.type.lang.ExtTypes
 import vjson.pl.type.lang.StdTypes
-import vjson.simple.SimpleString
 import kotlin.js.Date
 import kotlin.random.Random
 
@@ -72,72 +68,7 @@ fun run(prog: String, printMem: Boolean) {
   outputFunc("### compile time: ${compileFinishTime - startTime}ms, execute time: ${executeFinishTime - compileFinishTime}ms ###")
 
   if (printMem) {
-    doPrintMem(interpreter.getExplorer(), mem, 0)
-  }
-}
-
-fun doPrintMem(explorer: RuntimeMemoryExplorer, mem: RuntimeMemory, indent: Int) {
-  val variables = explorer.listVariables()
-  for (name in variables) {
-    val modifiers = explorer.getModifiersOfVariable(name)
-    var modifiersStr = modifiers.toString()
-    if (modifiersStr.isNotEmpty()) {
-      modifiersStr += " "
-    }
-
-    val value = explorer.getVariable(name, mem)
-    if (value is RuntimeMemory) {
-      val typeExp = explorer.getExplorerByVariable(name)
-      if (typeExp == null) {
-        outputFunc("${" ".repeat(indent)}$modifiersStr$name = <no info: $value>")
-      } else {
-        outputFunc("${" ".repeat(indent)}$modifiersStr$name =")
-        doPrintMem(typeExp, value, indent + 2)
-      }
-    } else if (value is Array<*>) {
-      val arrType = explorer.getTypeByVariable(name)
-      val elementType = arrType.elementType(TypeContext(MemoryAllocator()))
-      doPrintArray(value, elementType, explorer, indent, "$modifiersStr$name = ")
-    } else if (value is String) {
-      outputFunc("${" ".repeat(indent)}$modifiersStr$name = ${SimpleString(value).stringify()}")
-    } else {
-      outputFunc("${" ".repeat(indent)}$modifiersStr$name = $value")
-    }
-  }
-}
-
-fun doPrintArray(array: Array<*>, elementType: TypeInstance?, explorer: RuntimeMemoryExplorer, indent: Int, printPrefix: String) {
-  outputFunc("${" ".repeat(indent)}$printPrefix[")
-  for (e in array) {
-    doPrintArrayElement(e, elementType, explorer, indent + 2)
-  }
-  outputFunc("${" ".repeat(indent)}]")
-}
-
-fun doPrintArrayElement(e: Any?, elementType: TypeInstance?, explorer: RuntimeMemoryExplorer, indent: Int) {
-  if (e is ActionContext) {
-    if (elementType == null || elementType !is ClassTypeInstance) {
-      outputFunc("${" ".repeat(indent)}<no info: $e>")
-    } else {
-      val clsName = elementType._concreteTypeName ?: elementType.cls.name
-      val typeExp = try {
-        explorer.getExplorerByType(clsName)
-      } catch (_: NoSuchElementException) {
-        null
-      }
-      if (typeExp == null) {
-        outputFunc("${" ".repeat(indent)}<no info: $e>")
-      } else {
-        outputFunc("${" ".repeat(indent)}{")
-        doPrintMem(typeExp, e.getCurrentMem(), indent + 2)
-        outputFunc("${" ".repeat(indent)}}")
-      }
-    }
-  } else if (e is Array<*>) {
-    val subElementType = elementType?.elementType(TypeContext(MemoryAllocator()))
-    doPrintArray(e, subElementType, explorer, indent, "")
-  } else {
-    outputFunc("${" ".repeat(indent)}$e")
+    outputFunc(interpreter.getExplorer().inspect(mem).toString())
   }
 }
 
@@ -232,32 +163,7 @@ fun eval(_prog: String) {
     outputFunc("### Last statement is not expression nor variable definition ###")
     return
   }
-  val index = lastVarDef.getMemPos().index
-  when (val type = lastVarDef.value.typeInstance()) {
-    IntType -> outputFunc(mem.getInt(index).toString())
-    LongType -> outputFunc(mem.getLong(index).toString())
-    FloatType -> outputFunc(mem.getFloat(index).toString())
-    DoubleType -> outputFunc(mem.getDouble(index).toString())
-    BoolType -> outputFunc(mem.getBool(index).toString())
-    StringType -> outputFunc(mem.getRef(index).toString())
-    else -> {
-      val explorer = interpreter.getExplorer()
-      val value = mem.getRef(index)
-      if (type is ClassTypeInstance && value is ActionContext) {
-        val typeExp = explorer.getExplorerByVariable(lastVarDef.name)
-        if (typeExp == null) {
-          outputFunc("<no info: $value>")
-        } else {
-          doPrintMem(typeExp, value.getCurrentMem(), 0)
-        }
-      } else if (value is Array<*>) {
-        val elementType = type.elementType(TypeContext(MemoryAllocator()))
-        doPrintArray(value, elementType, explorer, 0, "")
-      } else {
-        outputFunc("<no info: $value>")
-      }
-    }
-  }
+  outputFunc(interpreter.getExplorer().inspectVariable(lastVarDef.name, mem).toString())
 }
 
 fun printParsingFailedMessage(e: Throwable, msg: String = "Parsing failed") {
