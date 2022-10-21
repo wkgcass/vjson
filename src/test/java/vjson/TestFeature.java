@@ -214,7 +214,7 @@ public class TestFeature {
                 .put("g", "")
                 .put("h", "")
                 .build(),
-            parser.last("{\"a\":b,\"c\":d,\"e\":\"f\",\"g\": ,\"h\":}"));
+            parser.last("{\"a\":b,\"c\":d,\"e\":\"f\",\"g\": \"\",\"h\":\"\"}"));
         ArrayParser parser2 = new ArrayParser(new ParserOptions().setStringValueNoQuotes(true));
         assertEquals(new ArrayBuilder()
                 .add("a")
@@ -222,7 +222,7 @@ public class TestFeature {
                 .add("")
                 .add("c")
                 .build(),
-            parser2.last("[\"a\",\"b\", ,\"c\"]"));
+            parser2.last("[a,\"b\", \"\",c]"));
 
         assertEquals(new SimpleString("hello(\r\nworld)"), new StringParser(new ParserOptions().setStringValueNoQuotes(true))
             .last("hello(\r\nworld)"));

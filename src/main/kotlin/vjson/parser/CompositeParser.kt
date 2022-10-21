@@ -119,6 +119,8 @@ open class CompositeParser protected constructor(private val opts: ParserOptions
         opts = ParserOptions(this.opts).setEnd(false).setMode(ParserMode.JAVA_OBJECT).setListener(null)
         if (this.opts.isKeyNoQuotes) {
           opts.setStringValueNoQuotes(true)
+        } else {
+          opts.setStringValueNoQuotes(false)
         }
       }
       keyParser = StringParser(opts, ParserUtils.getThreadLocalKeyDictionary(), true)

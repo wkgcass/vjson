@@ -35,7 +35,8 @@ open class MapType(
     FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, refTotal = 1))
   ) {
     override fun execute(ctx: ActionContext, exec: Execution) {
-      ctx.getCurrentMem().setRef(0, newMap(exec.values.intValue))
+      val mem = ctx.getCurrentMem()
+      mem.setRef(0, newMap(mem.getInt(0)))
     }
   }
 

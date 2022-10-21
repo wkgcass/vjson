@@ -1116,6 +1116,57 @@ public class TestInterpreter {
         assertEquals(Arrays.asList(300, 400, 500), sub2);
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void listOrSetToArray() {
+        String prog = "{\n" +
+            "let IntList = { std.List:[ int ] }\n" +
+            "let LongList = { std.List:[ long ] }\n" +
+            "let FloatList = { std.List:[ float ] }\n" +
+            "let DoubleList = { std.List:[ double ] }\n" +
+            "let BoolList = { std.List:[ bool ] }\n" +
+            "class X { _i: int } do {\n" +
+            "  public var i = _i\n" +
+            "}\n" +
+            "let XList = { std.List:[ X ] }\n" +
+            "\n" +
+            "var i = new IntList:[16]\n" +
+            "var l = new LongList:[16]\n" +
+            "var f = new FloatList:[16]\n" +
+            "var d = new DoubleList:[16]\n" +
+            "var b = new BoolList:[16]\n" +
+            "var x = new XList:[16]\n" +
+            "\n" +
+            "i.add:[1];i.add:[2];i.add:[3];i.add:[4]\n" +
+            "l.add:[1];l.add:[2];l.add:[3];l.add:[4]\n" +
+            "f.add:[1];f.add:[2];f.add:[3];f.add:[4]\n" +
+            "d.add:[1];d.add:[2];d.add:[3];d.add:[4]\n" +
+            "b.add:[true];b.add:[false];b.add:[true];b.add:[false]\n" +
+            "x.add:[new X:[1]];x.add:[new X:[2]];x.add:[new X:[3]]\n" +
+            "\n" +
+            "var ai = i.toArray\n" +
+            "var al = l.toArray\n" +
+            "var af = f.toArray\n" +
+            "var ad = d.toArray\n" +
+            "var ab = b.toArray\n" +
+            "var ax = x.toArray\n" +
+            "}";
+        RuntimeMemory mem = executeWithStdTypes(prog).getFirst();
+        assertEquals(Arrays.asList(1, 2, 3, 4), ((ActionContext) mem.getRef(1)).getCurrentMem().getRef(0));
+        assertEquals(Arrays.asList(1L, 2L, 3L, 4L), ((ActionContext) mem.getRef(2)).getCurrentMem().getRef(0));
+        assertEquals(Arrays.asList(1f, 2f, 3f, 4f), ((ActionContext) mem.getRef(3)).getCurrentMem().getRef(0));
+        assertEquals(Arrays.asList(1d, 2d, 3d, 4d), ((ActionContext) mem.getRef(4)).getCurrentMem().getRef(0));
+        assertEquals(Arrays.asList(true, false, true, false), ((ActionContext) mem.getRef(5)).getCurrentMem().getRef(0));
+        assertEquals(3, ((List<?>) ((ActionContext) mem.getRef(6)).getCurrentMem().getRef(0)).size());
+
+        assertArrayEquals(new int[]{1, 2, 3, 4}, (int[]) mem.getRef(7));
+        assertArrayEquals(new long[]{1, 2, 3, 4}, (long[]) mem.getRef(8));
+        assertArrayEquals(new float[]{1, 2, 3, 4}, (float[]) mem.getRef(9), 0);
+        assertArrayEquals(new double[]{1, 2, 3, 4}, (double[]) mem.getRef(10), 0);
+        assertArrayEquals(new boolean[]{true, false, true, false}, (boolean[]) mem.getRef(11));
+        assertEquals(3, ((Object[]) mem.getRef(12)).length);
+    }
+
     private static class MapCaseData {
         final String Type;
         final String type;
@@ -1398,6 +1449,57 @@ public class TestInterpreter {
         assertTrue(mem.getBool(0));
         assertFalse(mem.getBool(1));
         assertEquals(2, mem.boolLen());
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void arrayWrapper() {
+        String prog = "{\n" +
+            "let IntArrayW = { std.ArrayWrapper: [ int ] }\n" +
+            "let LongArrayW = { std.ArrayWrapper: [ long ] }\n" +
+            "let FloatArrayW = { std.ArrayWrapper: [ float ] }\n" +
+            "let DoubleArrayW = { std.ArrayWrapper: [ double ] }\n" +
+            "let BoolArrayW = { std.ArrayWrapper: [ bool ] }\n" +
+            "let StringArrayW = { std.ArrayWrapper: [ string ] }\n" +
+            "var ai = new IntArrayW { array = [1, 2, 3] }\n" +
+            "var al = new LongArrayW { array = [1, 2, 3] }\n" +
+            "var af = new FloatArrayW { array = [1, 2, 3] }\n" +
+            "var ad = new DoubleArrayW { array = [1, 2, 3] }\n" +
+            "var ab = new BoolArrayW { array = [true, false, true] }\n" +
+            "var as = new StringArrayW { array = [a, b, c] }\n" +
+            "\n" +
+            "var aai = ai.array\n" +
+            "var aal = al.array\n" +
+            "var aaf = af.array\n" +
+            "var aad = ad.array\n" +
+            "var aab = ab.array\n" +
+            "var aas = as.array\n" +
+            "var si = ai.toString:[]\n" +
+            "var sl = al.toString:[]\n" +
+            "var sf = af.toString:[]\n" +
+            "var sd = ad.toString:[]\n" +
+            "var sb = ab.toString:[]\n" +
+            "var ss = as.toString:[]\n" +
+            "}";
+        RuntimeMemory mem = executeWithStdTypes(prog).getFirst();
+        assertArrayEquals(new int[]{1, 2, 3}, (int[]) ((ActionContext) mem.getRef(2)).getCurrentMem().getRef(0));
+        assertArrayEquals(new long[]{1, 2, 3}, (long[]) ((ActionContext) mem.getRef(4)).getCurrentMem().getRef(0));
+        assertArrayEquals(new float[]{1, 2, 3}, (float[]) ((ActionContext) mem.getRef(6)).getCurrentMem().getRef(0), 0);
+        assertArrayEquals(new double[]{1, 2, 3}, (double[]) ((ActionContext) mem.getRef(8)).getCurrentMem().getRef(0), 0);
+        assertArrayEquals(new boolean[]{true, false, true}, (boolean[]) ((ActionContext) mem.getRef(10)).getCurrentMem().getRef(0));
+        assertArrayEquals(new String[]{"a", "b", "c"}, (Object[]) ((ActionContext) mem.getRef(12)).getCurrentMem().getRef(0));
+        assertArrayEquals(new int[]{1, 2, 3}, (int[]) mem.getRef(13));
+        assertArrayEquals(new long[]{1, 2, 3}, (long[]) mem.getRef(14));
+        assertArrayEquals(new float[]{1, 2, 3}, (float[]) mem.getRef(15), 0);
+        assertArrayEquals(new double[]{1, 2, 3}, (double[]) mem.getRef(16), 0);
+        assertArrayEquals(new boolean[]{true, false, true}, (boolean[]) mem.getRef(17));
+        assertArrayEquals(new String[]{"a", "b", "c"}, (Object[]) mem.getRef(18));
+        assertEquals("[1, 2, 3]", mem.getRef(19));
+        assertEquals("[1, 2, 3]", mem.getRef(20));
+        assertEquals("[1.0, 2.0, 3.0]", mem.getRef(21));
+        assertEquals("[1.0, 2.0, 3.0]", mem.getRef(22));
+        assertEquals("[true, false, true]", mem.getRef(23));
+        assertEquals("[a, b, c]", mem.getRef(24));
     }
 
     @Test

@@ -17,6 +17,8 @@ import vjson.pl.ast.*
 import vjson.pl.inst.ActionContext
 import vjson.pl.inst.RuntimeMemory
 import vjson.pl.type.*
+import vjson.pl.type.lang.CollectionType
+import vjson.pl.type.lang.MapType
 import vjson.simple.*
 import vjson.util.ArrayBuilder
 import vjson.util.ObjectBuilder
@@ -190,7 +192,6 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
         }
       }
       is ArrayTypeInstance -> {
-        val array = ArrayBuilder()
         sb.append("[\n")
         val elementType = type.elementType(TypeContext(MemoryAllocator()))
         if (v is IntArray) {
@@ -201,6 +202,8 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
           for (e in v) inspectValue(e, elementType, sb, indent + 2, true)
         } else if (v is DoubleArray) {
           for (e in v) inspectValue(e, elementType, sb, indent + 2, true)
+        } else if (v is BooleanArray) {
+          for (e in v) inspectValue(e, elementType, sb, indent + 2, true)
         } else {
           v as Array<*>
           for (n in v) {
@@ -209,7 +212,33 @@ class RuntimeMemoryExplorer(private val builder: Builder) {
           }
         }
         sb.append(" ".repeat(indent)).append("]\n")
-        array.build()
+      }
+      is CollectionType -> {
+        val coll = (v as RuntimeMemory).getRef(0) as Collection<*>
+        val elementType = type.templateTypeParams()!![0]
+        sb.append("[\n")
+        for (n in coll) {
+          val e = if (n is ActionContext) n.getCurrentMem() else n
+          inspectValue(e, elementType, sb, indent + 2, true)
+        }
+        sb.append(" ".repeat(indent)).append("]\n")
+      }
+      is MapType -> {
+        val map = (v as RuntimeMemory).getRef(0) as Map<*, *>
+        val keyType = type.templateTypeParams()!![0]
+        val valueType = type.templateTypeParams()!![1]
+
+        sb.append("{\n")
+        for ((key, value) in map) {
+          sb.append(" ".repeat(indent + 2))
+          val k = if (key is ActionContext) key.getCurrentMem() else key
+          inspectValue(k, keyType, sb, indent + 2)
+          sb.deleteAt(sb.length - 1)
+          sb.append(" = ")
+          val vv = if (value is ActionContext) value.getCurrentMem() else value
+          inspectValue(vv, valueType, sb, indent + 2)
+        }
+        sb.append(" ".repeat(indent)).append("}\n")
       }
       else -> sb.append("<no info: $type $v>")
     }

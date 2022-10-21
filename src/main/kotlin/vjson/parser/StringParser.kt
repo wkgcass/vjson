@@ -16,6 +16,7 @@ import vjson.JSON
 import vjson.Parser
 import vjson.cs.LineCol
 import vjson.ex.JsonParseException
+import vjson.ex.ParserException
 import vjson.ex.ParserFinishedException
 import vjson.simple.SimpleString
 import vjson.util.StringDictionary
@@ -89,6 +90,9 @@ class StringParser constructor(opts: ParserOptions, dictionary: StringDictionary
           beginning = '\''
         } else if (opts.isStringValueNoQuotes) {
           val (str, cursor) = ParserUtils.extractNoQuotesString(cs, opts, isKeyParser)
+          if (cursor == 0 && c == ']' || c == '}' || c == ')' /* special tokens, see  */) {
+            throw ParserException("unexpected token $c when trying to read string no quotes", cs.lineCol())
+          }
           cs.skip(cursor)
           for (ch in str.trim().toCharArray()) {
             append(ch)

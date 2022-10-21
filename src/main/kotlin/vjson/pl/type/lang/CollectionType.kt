@@ -35,7 +35,8 @@ abstract class CollectionType(
     FixedMemoryAllocatorProvider(RuntimeMemoryTotal(intTotal = 1, refTotal = 1))
   ) {
     override fun execute(ctx: ActionContext, exec: Execution) {
-      ctx.getCurrentMem().setRef(0, newCollection(exec.values.intValue))
+      val mem = ctx.getCurrentMem()
+      mem.setRef(0, newCollection(mem.getInt(0)))
     }
   }
 
@@ -211,6 +212,53 @@ abstract class CollectionType(
                   exec.values.boolValue = coll.remove(ctx.getCurrentMem().getRef(0))
                 }
               }
+            }
+          }
+        }
+      }
+      "toArray" -> {
+        val type = ArrayTypeInstance(elementType)
+        when (elementType) {
+          IntType -> object : ExecutableField(name, type) {
+            override fun execute(ctx: ActionContext, exec: Execution) {
+              val obj = exec.values.refValue as ActionContext
+              @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Int>
+              exec.values.refValue = coll.toIntArray()
+            }
+          }
+          LongType -> object : ExecutableField(name, type) {
+            override fun execute(ctx: ActionContext, exec: Execution) {
+              val obj = exec.values.refValue as ActionContext
+              @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Long>
+              exec.values.refValue = coll.toLongArray()
+            }
+          }
+          FloatType -> object : ExecutableField(name, type) {
+            override fun execute(ctx: ActionContext, exec: Execution) {
+              val obj = exec.values.refValue as ActionContext
+              @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Float>
+              exec.values.refValue = coll.toFloatArray()
+            }
+          }
+          DoubleType -> object : ExecutableField(name, type) {
+            override fun execute(ctx: ActionContext, exec: Execution) {
+              val obj = exec.values.refValue as ActionContext
+              @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Double>
+              exec.values.refValue = coll.toDoubleArray()
+            }
+          }
+          BoolType -> object : ExecutableField(name, type) {
+            override fun execute(ctx: ActionContext, exec: Execution) {
+              val obj = exec.values.refValue as ActionContext
+              @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Boolean>
+              exec.values.refValue = coll.toBooleanArray()
+            }
+          }
+          else -> object : ExecutableField(name, type) {
+            override fun execute(ctx: ActionContext, exec: Execution) {
+              val obj = exec.values.refValue as ActionContext
+              @Suppress("UNCHECKED_CAST") val coll = obj.getCurrentMem().getRef(0) as MutableCollection<Any?>
+              exec.values.refValue = coll.toTypedArray()
             }
           }
         }

@@ -56,6 +56,7 @@ class StdTypes : Types {
     val linkedHashSetType = TemplateLinkedHashSetType(iteratorTemplateType = iteratorType)
     ctx.addType(Type("std.LinkedHashSet"), linkedHashSetType)
     ctx.addType(Type("std.Map"), TemplateMapType(templateKeySetType = setType, templateKeySetIteratorType = iteratorType))
+    ctx.addType(Type("std.ArrayWrapper"), TemplateArrayWrapperType())
     ctx.addType(
       Type("std.LinkedHashMap"),
       TemplateLinkedHashMapType(templateKeySetType = linkedHashSetType, templateKeySetIteratorType = iteratorType)
@@ -179,5 +180,13 @@ class TemplateLinkedHashMapType(private val templateKeySetType: TypeInstance, pr
         return LinkedHashMap<Any?, Any?>(cap)
       }
     }
+  }
+}
+
+class TemplateArrayWrapperType : TypeInstance {
+  private val typeParameters = listOf(ParamType("E"))
+  override fun typeParameters() = typeParameters
+  override fun concrete(ctx: TypeContext, concreteName: String, typeParams: List<TypeInstance>): TypeInstance {
+    return ArrayWrapperType(ctx, this@TemplateArrayWrapperType, typeParams[0])
   }
 }
