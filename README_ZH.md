@@ -79,11 +79,11 @@ Kotlin JS 的限制比 Kotlin Native 更多，所以额外提供了一个task用
 
 ```shell
 ./gradlew clean kotlinJs
-rm -r misc/online_vjson_lang_interpreter/src/main/kotlin/vjson/*
-cp -r src/main/kotlin/vjson/* misc/online_vjson_lang_interpreter/src/main/kotlin/vjson
+rm -r misc/online_vjson_script_interpreter/src/main/kotlin/vjson/*
+cp -r src/main/kotlin/vjson/* misc/online_vjson_script_interpreter/src/main/kotlin/vjson
 
 # 然后你可以运行这个web版本的解释器:
-cd misc/online_vjson_lang_interpreter/
+cd misc/online_vjson_script_interpreter/
 ./gradlew clean run
 ```
 

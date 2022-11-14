@@ -4,6 +4,6 @@ Run `./gradlew clean kotlinJs` in root dir, then copy-paste the whole vjson pack
 
 ```
 ./gradlew clean kotlinJs
-rm -r misc/online_vjson_lang_interpreter/src/main/kotlin/vjson/*
-cp -r src/main/kotlin/vjson/* misc/online_vjson_lang_interpreter/src/main/kotlin/vjson
+rm -r misc/online_vjson_script_interpreter/src/main/kotlin/vjson/*
+cp -r src/main/kotlin/vjson/* misc/online_vjson_script_interpreter/src/main/kotlin/vjson
 ```

@@ -1,3 +1,3 @@
 
-rootProject.name = "online_vjson_lang_interpreter"
+rootProject.name = "online_vjson_script_interpreter"
 

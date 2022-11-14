@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>vjson-lang interpreter</title>
+    <title>vjson-script interpreter</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body style="background-color: #5c5c5c">
@@ -16,6 +16,7 @@
                 <option>Syntax</option>
                 <option>BuiltInTypes</option>
                 <option>Collections</option>
+                <option>Configuration</option>
             </select>
         </div>
         <div style="float: right;">
@@ -41,7 +42,7 @@
          style="position:absolute; right: 0; top: 0; z-index: 1000;">
 </a>
 </body>
-<script src="online_vjson_lang_interpreter.js"></script>
+<script src="workerEntry.js"></script>
 <script src="ace.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="mode-javascript.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="custom-select.js"></script>
@@ -49,7 +50,7 @@
 <script src="pako.min.js"></script>
 <script>
     var PROG_HELLO = "{\n" +
-        "std.console.log: [('Hello vjson-lang')]\n" +
+        "std.console.log: [('Hello vjson-script')]\n" +
         "}\n";
     var PROG_FIB = "{\n" +
         "function fib { n: int } int {\n" +
@@ -67,7 +68,7 @@
         "var n = 10\n" +
         "std.console.log: [(n + 'th element of the Fibonacci sequence is ' + fib:[n])]\n" +
         "}\n";
-    var PROG_SYNTAX = "{ // vjson-lang starts with `{`\n" +
+    var PROG_SYNTAX = "{ // vjson-script starts with `{`\n" +
         "// variable definition\n" +
         "var variableName = 1\n" +
         "\n" +
@@ -121,6 +122,15 @@
         "var alice = new Person:[('alice'), 24]\n" +
         "var bob = new Person:[('bob'), 25]\n" +
         "alice.talkTo:[bob]\n" +
+        "\n" +
+        "// you may also create an object using json syntax\n" +
+        "// see sample program `Configuration` for more info about this syntax\n" +
+        "var eve = new Person {\n" +
+        "  name = eve\n" +
+        "  age = 26\n" +
+        "}\n" +
+        "bob.talkTo:[eve]\n" +
+        "\n" +
         "\n" +
         "// template class definition\n" +
         "template { T, U } class PlusToInt { t: T, u: U } do {\n" +
@@ -202,7 +212,7 @@
         "  }\n" +
         "}\n" +
         "catchFunction:[]\n" +
-        "} // vjson-lang program ends with `}`\n";
+        "} // vjson-script program ends with `}`\n";
     var PROG_BUILTIN = "{\n" +
         "var intVar = 1\n" +
         "var longVar = 10000000000\n" +
@@ -295,7 +305,123 @@
         "printIterator:[list.iterator]\n" +
         "printIterator:[map.keySet.iterator]\n" +
         "}\n";
+    var PROG_CONFIGURATION = "{\n" +
+        "\n" +
+        "class MysqlConfig { _host: string, _port: int, _user: string, _pass: string, _db: string } do {\n" +
+        "  public var host = _host\n" +
+        "  public var port = _port\n" +
+        "  public var user = _user\n" +
+        "  public var pass = _pass\n" +
+        "  public var db = _db\n" +
+        "\n" +
+        "  function check {} void {\n" +
+        "    if: port < 1 || port > 65535; then {\n" +
+        "      throw: ('invalid port number for mysql')\n" +
+        "    }\n" +
+        "  }\n" +
+        "}\n" +
+        "\n" +
+        "class SentinelAddress { _host: string, _port: int } do {\n" +
+        "  public var host = _host\n" +
+        "  public var port = _port\n" +
+        "\n" +
+        "  function check {index: int} void {\n" +
+        "    if: port < 1 || port > 65535; then {\n" +
+        "      throw: ('invalid port number for sentinel[' + index + ']')\n" +
+        "    }\n" +
+        "  }\n" +
+        "}\n" +
+        "\n" +
+        "class SentinelConfig { _name: string, _sentinels: SentinelAddress[] } do {\n" +
+        "  public var name = _name\n" +
+        "  public var sentinels = _sentinels\n" +
+        "\n" +
+        "  function check {} void {\n" +
+        "    for: [ {var i = 0}; i < sentinels.length; i += 1 ] do {\n" +
+        "      sentinels[i].check:[i]\n" +
+        "    }\n" +
+        "  }\n" +
+        "}\n" +
+        "\n" +
+        "class RedisConfig { _host: string = '', _port: int = 0, _pass: string, _sentinel: SentinelConfig = null } do {\n" +
+        "  public var host = _host\n" +
+        "  public var port = _port\n" +
+        "  public var pass = _pass\n" +
+        "  public var sentinel = _sentinel\n" +
+        "\n" +
+        "  function check {} void {\n" +
+        "    if: port < 0 || port > 65535; then {\n" +
+        "      throw: ('invalid port number for redis')\n" +
+        "    }\n" +
+        "    if: (host != '' && port == 0) || (host == '' && port != 0); then {\n" +
+        "      throw: ('you must set or unset host and port at the same time')\n" +
+        "    }\n" +
+        "    if: sentinel != null; then {\n" +
+        "      sentinel.check:[]\n" +
+        "    }\n" +
+        "    if: sentinel != null; then {\n" +
+        "      if: host != '' || port != 0; then {\n" +
+        "        throw: ('cannot specify host|port and sentinel at the same time')\n" +
+        "      }\n" +
+        "    } else {\n" +
+        "      if: host == '' || port == 0; then {\n" +
+        "        throw: ('you must specify one of host|port or sentinel')\n" +
+        "      }\n" +
+        "    }\n" +
+        "  }\n" +
+        "}\n" +
+        "\n" +
+        "class Config { _mysql: MysqlConfig, _redis: RedisConfig } do {\n" +
+        "  public var mysql = _mysql\n" +
+        "  public var redis = _redis\n" +
+        "\n" +
+        "  function check {} void {\n" +
+        "    mysql.check:[]\n" +
+        "    redis.check:[]\n" +
+        "  }\n" +
+        "}\n" +
+        "\n" +
+        "var config = {\n" +
+        "  new Config: /* you can use #include to separate checking program and config file */ {\n" +
+        "    mysql {\n" +
+        "      host = '10.1.0.1'\n" +
+        "      port = 3306\n" +
+        "      user = root\n" +
+        "      pass = '123456'\n" +
+        "      db = test\n" +
+        "    }\n" +
+        "    redis {\n" +
+        "      sentinel {\n" +
+        "        name = 'mymaster'\n" +
+        "        sentinels = [\n" +
+        "          {\n" +
+        "            host = '10.2.0.1'\n" +
+        "            port = 26379\n" +
+        "          }\n" +
+        "          {\n" +
+        "            host = '10.2.0.2'\n" +
+        "            port = 26379\n" +
+        "          }\n" +
+        "          {\n" +
+        "            host = '10.2.0.3'\n" +
+        "            port = 26379\n" +
+        "          }\n" +
+        "        ]\n" +
+        "      }\n" +
+        "      pass = '123456'\n" +
+        "    }\n" +
+        "  }\n" +
+        "}\n" +
+        "config.check:[]\n" +
+        "if: err != null; then {\n" +
+        "  std.console.log: [ ('bad config: ' + err.formatException) ]\n" +
+        "} else {\n" +
+    "  std.console.log: [ ('config is ok') ]\n" +
+    "}\n" +
+    "\n" +
+    "}\n";
     var progs = {
+        'Configuration': PROG_CONFIGURATION,
         'Fibonacci': PROG_FIB,
         'HelloWorld': PROG_HELLO,
         'Syntax': PROG_SYNTAX,
@@ -337,45 +463,36 @@
         aceConsole.renderer.scrollToLine(Number.POSITIVE_INFINITY);
     });
 
-    online_vjson_lang_interpreter.registerOutput(function (line) {
-        var newLines = aceConsole.getSession().getValue() + line + '\n';
-        aceConsole.getSession().setValue(newLines);
-    });
-    online_vjson_lang_interpreter.registerCursorJump(function (line, col) {
-        editor.gotoLine(line, col - 1, true);
-        editor.focus();
-    });
-
     document.getElementById("share-btn").addEventListener("click", function () {
         var code = editor.getSession().getValue();
         var base64 = base64EncArr(pako.gzip(code, {level: 9})).split('\r\n').join('');
         var newLine = '### you can share this link: ###\n' +
-            'https://vproxy.io/vjson-lang-interpreter/index.html?prog=' + encodeURIComponent(base64);
+            'https://vproxy.io/vjson-script-interpreter/index.html?prog=' + encodeURIComponent(base64);
         var oldLines = aceConsole.getSession().getValue() + '\n';
         aceConsole.getSession().setValue(oldLines + newLine);
     });
     document.getElementById("run-btn").addEventListener("click", function () {
         var code = editor.getSession().getValue();
-        online_vjson_lang_interpreter.run(code, false);
+        workerRun(code, false);
     });
     document.getElementById("clear-btn").addEventListener("click", function () {
         aceConsole.getSession().setValue("\n");
     });
     document.getElementById("eval-btn").addEventListener("click", function () {
         var code = editor.getSession().getValue();
-        online_vjson_lang_interpreter.eval(code);
+        workerEval(code);
     });
     document.getElementById("json-btn").addEventListener("click", function () {
         var code = editor.getSession().getValue();
-        online_vjson_lang_interpreter.json(code);
+        workerJson(code);
     });
     document.getElementById("ast-btn").addEventListener("click", function () {
         var code = editor.getSession().getValue();
-        online_vjson_lang_interpreter.ast(code);
+        workerAst(code);
     });
     document.getElementById("run-print-mem-btn").addEventListener("click", function () {
         var code = editor.getSession().getValue();
-        online_vjson_lang_interpreter.run(code, true);
+        workerRun(code, true);
     });
     applyCustomSelect(function (title) {
         var text = progs[title];
