@@ -49,7 +49,7 @@ private val allowedFeatures = mapOf<String, (ParserOptions) -> Unit>(
 
 fun main(args: Array<String>) {
   var filename: String? = null
-  var prog: Boolean? = null
+  var script: Boolean? = null
   //
   var pretty: Boolean? = null
   var one: Boolean? = null
@@ -73,7 +73,7 @@ fun main(args: Array<String>) {
     if (
       parseBoolArg(arg, "pretty") { pretty = it } ||
       parseBoolArg(arg, "one") { one = it } ||
-      parseBoolArg(arg, "prog") { prog = it } ||
+      parseBoolArg(arg, "script") { script = it } ||
       parseBoolArg(arg, "ast") { ast = it }
     ) {
       continue
@@ -99,19 +99,19 @@ fun main(args: Array<String>) {
     throw IllegalArgumentException("unknown argument: $arg")
   }
 
-  if (prog == null) prog = false
-  if (prog!!) {
+  if (script == null) script = false
+  if (script!!) {
     if (ast == null) ast = false
   } else {
     if (pretty == null) pretty = true
     if (one == null) one = true
   }
 
-  if (prog!!) {
+  if (script!!) {
     if (filename == null) {
       throw IllegalArgumentException("missing script file to be executed")
     }
-    runProg(RunProgOptions(filename = filename, ast = ast!!))
+    runScript(RunScriptOptions(filename = filename, ast = ast!!))
   } else {
     val filecontent = if (filename == null) null else readAll(filename)
     runJson(input = filecontent, RunJsonOptions(filename = filename, pretty = pretty!!, one = one!!, features = features))
@@ -149,7 +149,7 @@ private fun readAll(filename: String): String {
   return FileSystem.SYSTEM.read(filename.toPath()) { readUtf8() }
 }
 
-data class RunProgOptions(val filename: String, val ast: Boolean)
+data class RunScriptOptions(val filename: String, val ast: Boolean)
 
 class FileContentManager(baseFile: String) : Manager<String> {
   private val baseDir = baseFile.toPath().parent!!
@@ -167,7 +167,7 @@ class FileContentManager(baseFile: String) : Manager<String> {
   private fun readFile(file: Path): String = FileSystem.SYSTEM.read(file) { readUtf8() }
 }
 
-private fun runProg(options: RunProgOptions) {
+private fun runScript(options: RunScriptOptions) {
   val stdTypes = StdTypes()
   stdTypes.setOutput { println(it) }
   val extTypes = ExtTypes(ExtFunctions()
