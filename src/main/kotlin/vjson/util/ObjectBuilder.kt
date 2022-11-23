@@ -28,8 +28,9 @@ class ObjectBuilder {
   fun putInst(key: String, inst: JSON.Instance<*>): ObjectBuilder {
     if (key == "@type") { // always add @type to the most front
       map.add(0, SimpleObjectEntry(key, inst))
+    } else {
+      map.add(SimpleObjectEntry(key, inst))
     }
-    map.add(SimpleObjectEntry(key, inst))
     return this
   }
 
