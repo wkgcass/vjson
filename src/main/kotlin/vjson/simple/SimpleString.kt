@@ -33,12 +33,17 @@ class SimpleString /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
     return stringified!!
   }
 
+  fun stringify(stringOptions: Stringifier.StringOptions?): String {
+    if (stringOptions == null) return stringify()
+    return stringify(str, stringOptions)
+  }
+
   override fun pretty(): String {
     return stringify()
   }
 
   override fun stringify(builder: StringBuilder, sfr: Stringifier) {
-    builder.append(stringify())
+    builder.append(stringify(sfr.stringOptions()))
   }
 
   override fun lineCol(): LineCol {

@@ -1,9 +1,12 @@
 package vjson;
 
 import org.junit.Test;
+import vjson.simple.SimpleString;
+import vjson.stringifier.AbstractStringifier;
 import vjson.util.AbstractUnsupportedStringifier;
 import vjson.util.ArrayBuilder;
 import vjson.util.ObjectBuilder;
+import vjson.util.PrintableChars;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -244,5 +247,27 @@ public class TestStringifier {
         });
         assertEquals("{\"a\":1,\"b\":2,\"c\":3}", sb.toString());
         assertEquals(26, step);
+    }
+
+    @Test
+    public void nonAsciiChars() {
+        assertEquals("\"\\u4f60\\u597d\"", new SimpleString("你好").stringify());
+        assertEquals("\"\\u4f60\\u597d\"", new SimpleString("你好").stringify(new Stringifier.StringOptions(null)));
+        assertEquals("\"你好\"", new SimpleString("你好").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
+        assertEquals("\"¡\"", new SimpleString("¡").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
+        assertEquals("\"abc\"", new SimpleString("abc").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
+        assertEquals("\"\\u0001\"", new SimpleString("\u0001").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
+        assertEquals("\"\\u001f\"", new SimpleString("\u001f").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
+
+        StringBuilder sb = new StringBuilder();
+        new ObjectBuilder().put("你好", "世界").build().stringify(sb, new AbstractStringifier() {
+            private final StringOptions strOpts = new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable);
+
+            @Override
+            public StringOptions stringOptions() {
+                return strOpts;
+            }
+        });
+        assertEquals("{\"你好\":\"世界\"}", sb.toString());
     }
 }

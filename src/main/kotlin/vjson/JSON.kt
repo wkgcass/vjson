@@ -360,13 +360,15 @@ object JSON {
     companion object {
       /*#ifndef KOTLIN_NATIVE {{ */
       @Suppress("DEPRECATION")
+      @JvmOverloads
       @JvmStatic/*}}*/
-      fun stringify(s: kotlin.String): kotlin.String {
+      fun stringify(s: kotlin.String, stringOptions: Stringifier.StringOptions? = null): kotlin.String {
         val sb = StringBuilder()
         sb.append("\"")
         val chars = s.toCharArray()
         for (c in chars) {
-          if (c.toInt() in 32..126) { // printable characters
+          val printableChar = stringOptions?.printableChar
+          if ((printableChar == null && c.toInt() in 32..126) || (printableChar != null && printableChar(c))) {
             when (c) {
               '\"' -> sb.append("\\\"")
               '\\' -> sb.append("\\\\")

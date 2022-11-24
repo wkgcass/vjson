@@ -107,7 +107,7 @@ open class SimpleObject : AbstractSimpleInstance<LinkedHashMap<String, Any?>>, J
         sfr.afterObjectComma(builder, this)
       }
       sfr.beforeObjectKey(builder, this, entry.key)
-      builder.append(stringify(entry.key))
+      builder.append(stringify(entry.key, sfr.stringOptions()))
       sfr.afterObjectKey(builder, this, entry.key)
       sfr.beforeObjectColon(builder, this)
       builder.append(":")
