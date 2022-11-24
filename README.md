@@ -27,7 +27,7 @@ Run `./gradlew clean coverage` to get the coverage report.
 **gradle**
 
 ```groovy
-implementation 'io.vproxy:vjson:1.3.3'
+implementation 'io.vproxy:vjson:1.4.0'
 ```
 
 **maven**
@@ -36,7 +36,7 @@ implementation 'io.vproxy:vjson:1.3.3'
 <dependency>
   <groupId>io.vproxy</groupId>
   <artifactId>vjson</artifactId>
-  <version>1.3.3</version>
+  <version>1.4.0</version>
 </dependency>
 ```
 
