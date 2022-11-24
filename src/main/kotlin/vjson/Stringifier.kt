@@ -40,5 +40,14 @@ interface Stringifier {
   @JvmDefault/*}}*/
   fun stringOptions(): StringOptions? = null
 
-  data class StringOptions(val printableChar: PrintableCharFunc?)
+  data class StringOptions(
+    val printableChar: PrintableCharFunc?,
+  ) {
+    class Builder {
+      var printableChar: PrintableCharFunc? = null
+      fun build(): StringOptions = StringOptions(
+        printableChar
+      )
+    }
+  }
 }

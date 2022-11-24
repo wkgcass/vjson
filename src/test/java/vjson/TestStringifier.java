@@ -252,16 +252,21 @@ public class TestStringifier {
     @Test
     public void nonAsciiChars() {
         assertEquals("\"\\u4f60\\u597d\"", new SimpleString("你好").stringify());
-        assertEquals("\"\\u4f60\\u597d\"", new SimpleString("你好").stringify(new Stringifier.StringOptions(null)));
-        assertEquals("\"你好\"", new SimpleString("你好").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
-        assertEquals("\"¡\"", new SimpleString("¡").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
-        assertEquals("\"abc\"", new SimpleString("abc").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
-        assertEquals("\"\\u0001\"", new SimpleString("\u0001").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
-        assertEquals("\"\\u001f\"", new SimpleString("\u001f").stringify(new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable)));
+
+        Stringifier.StringOptions.Builder builder = new Stringifier.StringOptions.Builder();
+        assertEquals("\"\\u4f60\\u597d\"", new SimpleString("你好").stringify(builder.build()));
+
+        builder.setPrintableChar(PrintableChars.EveryCharExceptKnownUnprintable);
+
+        assertEquals("\"你好\"", new SimpleString("你好").stringify(builder.build()));
+        assertEquals("\"¡\"", new SimpleString("¡").stringify(builder.build()));
+        assertEquals("\"abc\"", new SimpleString("abc").stringify(builder.build()));
+        assertEquals("\"\\u0001\"", new SimpleString("\u0001").stringify(builder.build()));
+        assertEquals("\"\\u001f\"", new SimpleString("\u001f").stringify(builder.build()));
 
         StringBuilder sb = new StringBuilder();
         new ObjectBuilder().put("你好", "世界").build().stringify(sb, new AbstractStringifier() {
-            private final StringOptions strOpts = new Stringifier.StringOptions(PrintableChars.EveryCharExceptKnownUnprintable);
+            private final StringOptions strOpts = builder.build();
 
             @Override
             public StringOptions stringOptions() {
