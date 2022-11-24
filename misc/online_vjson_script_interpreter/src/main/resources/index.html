@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>vjson-lang interpreter</title>
+    <title>vjson-script interpreter</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body style="background-color: #5c5c5c">
@@ -50,7 +50,7 @@
 <script src="pako.min.js"></script>
 <script>
     var PROG_HELLO = "{\n" +
-        "std.console.log: [('Hello vjson-lang')]\n" +
+        "std.console.log: [('Hello vjson-script')]\n" +
         "}\n";
     var PROG_FIB = "{\n" +
         "function fib { n: int } int {\n" +
@@ -68,7 +68,7 @@
         "var n = 10\n" +
         "std.console.log: [(n + 'th element of the Fibonacci sequence is ' + fib:[n])]\n" +
         "}\n";
-    var PROG_SYNTAX = "{ // vjson-lang starts with `{`\n" +
+    var PROG_SYNTAX = "{ // vjson-script starts with `{`\n" +
         "// variable definition\n" +
         "var variableName = 1\n" +
         "\n" +
@@ -212,7 +212,7 @@
         "  }\n" +
         "}\n" +
         "catchFunction:[]\n" +
-        "} // vjson-lang program ends with `}`\n";
+        "} // vjson-script program ends with `}`\n";
     var PROG_BUILTIN = "{\n" +
         "var intVar = 1\n" +
         "var longVar = 10000000000\n" +
@@ -467,7 +467,7 @@
         var code = editor.getSession().getValue();
         var base64 = base64EncArr(pako.gzip(code, {level: 9})).split('\r\n').join('');
         var newLine = '### you can share this link: ###\n' +
-            'https://vproxy.io/vjson-lang-interpreter/index.html?prog=' + encodeURIComponent(base64) + '\n';
+            'https://vproxy.io/vjson-script-interpreter/index.html?prog=' + encodeURIComponent(base64) + '\n';
         var oldLines = aceConsole.getSession().getValue() + '\n';
         aceConsole.getSession().setValue(oldLines + newLine);
     });

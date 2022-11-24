@@ -1,6 +1,6 @@
 // run in worker space
-importScripts('online_vjson_lang_interpreter.js');
-var interpreter = online_vjson_lang_interpreter;
+importScripts('online_vjson_script_interpreter.js');
+var interpreter = online_vjson_script_interpreter;
 
 interpreter.registerOutput(function (line) {
   self.postMessage(['output', line]);
