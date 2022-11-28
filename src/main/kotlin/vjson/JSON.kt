@@ -48,9 +48,16 @@ object JSON {
   @Throws(RuntimeException::class)
   @JvmStatic/*}}*/
   fun <T> deserialize(cs: CharStream, rule: Rule<T>): T {
+    return deserialize(cs, rule, ParserOptions())
+  }
+
+  /*#ifndef KOTLIN_NATIVE {{ */
+  @Throws(RuntimeException::class)
+  @JvmStatic/*}}*/
+  fun <T> deserialize(cs: CharStream, rule: Rule<T>, opts: ParserOptions): T {
     val listener = DeserializeParserListener(rule)
     buildFrom(
-      cs, ParserOptions().setListener(listener)
+      cs, opts.setListener(listener)
         .setMode(ParserMode.JAVA_OBJECT)
         .setNullArraysAndObjects(true)
     )
