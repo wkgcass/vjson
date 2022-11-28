@@ -276,6 +276,61 @@ public class TestFeature {
     }
 
     @Test
+    public void stringValueNoQuotesWithComment() throws Exception {
+        ParserOptions opts = new ParserOptions()
+            .setStringValueNoQuotes(true)
+            .setAllowSkippingCommas(true);
+        assertEquals(new ObjectBuilder()
+            .put("a", "b")
+            .put("c", "d")
+            .build(), ParserUtils.buildFrom(CharStream.from("{\n" +
+            "  \"a\": b // hello\n" +
+            "  \"c\": d\n" +
+            "}"), opts));
+        assertEquals(new ObjectBuilder()
+            .put("a", "b")
+            .put("e", "f")
+            .build(), ParserUtils.buildFrom(CharStream.from("{\n" +
+            "  \"a\": b /* hello\n" +
+            "  \"c\": d\n" +
+            "*/\n\"e\": f\n" +
+            "}"), opts));
+        assertEquals(new ObjectBuilder()
+            .put("a", "b")
+            .put("c", "d")
+            .build(), ParserUtils.buildFrom(CharStream.from("{\n" +
+            "  \"a\": b # hello\n" +
+            "  \"c\": d\n" +
+            "}"), opts));
+    }
+
+    @Test
+    public void stringValueNoQuotesWithComment2() throws Exception {
+        ParserOptions opts = new ParserOptions()
+            .setStringValueNoQuotes(true)
+            .setAllowSkippingCommas(true);
+        assertEquals(new ObjectBuilder()
+            .put("a", "b /x hello")
+            .put("c", "d")
+            .build(), ParserUtils.buildFrom(CharStream.from("{\n" +
+            "  \"a\": b /x hello\n" +
+            "  \"c\": d\n" +
+            "}"), opts));
+        assertEquals(new ObjectBuilder()
+            .put("a", "b")
+            .put("g", "h")
+            .build(), ParserUtils.buildFrom(CharStream.from("{\n" +
+            "  \"a\": b /* hello\n" +
+            "  \"c\": d\n" +
+            "*x\n\"e\": f\n" +
+            "*/\n\"g\": h\n" +
+            "}"), opts));
+        assertEquals(new SimpleString("abc/"), ParserUtils.buildFrom(CharStream.from("abc/"), opts));
+        assertEquals(new SimpleString("abc"), ParserUtils.buildFrom(CharStream.from("abc/*"), opts));
+        assertEquals(new SimpleString("abc"), ParserUtils.buildFrom(CharStream.from("abc/**"), opts));
+    }
+
+    @Test
     public void all() throws Exception {
         ObjectParser parser = new ObjectParser(new ParserOptions()
             .setStringSingleQuotes(true)

@@ -279,9 +279,32 @@ object ParserUtils {
     val sb = StringBuilder()
     val symbolStack = Stack<Char>()
     var cursor = 0 // cursor is the character already read
+    var singleLineComment = false
+    var multiLineComments = false
     loop@ while (cs.hasNext(cursor + 1)) {
       ++cursor
-      when (val c = cs.peekNext(cursor)) {
+      val c = cs.peekNext(cursor)
+      if (singleLineComment) {
+        if (c == '\r' || c == '\n') {
+          singleLineComment = false
+          // fallthrough
+        } else {
+          continue@loop
+        }
+      } else if (multiLineComments) {
+        if (c == '*') {
+          if (cs.hasNext(cursor + 1)) {
+            val cc = cs.peekNext(cursor + 1)
+            if (cc == '/') {
+              ++cursor
+              multiLineComments = false
+              continue@loop
+            }
+          }
+        }
+        continue@loop
+      }
+      when (c) {
         ',', ';', '\n', '\r', ':' -> {
           if (c == ':') {
             if (!isObjectKey) {
@@ -302,6 +325,25 @@ object ParserUtils {
           } else {
             sb.append(c)
           }
+        }
+        // handle comments
+        '#' -> {
+          singleLineComment = true
+        }
+        '/' -> {
+          if (cs.hasNext(cursor + 1)) {
+            val cc = cs.peekNext(cursor + 1)
+            if (cc == '/') {
+              ++cursor
+              singleLineComment = true
+              continue@loop
+            } else if (cc == '*') {
+              ++cursor
+              multiLineComments = true
+              continue@loop
+            }
+          }
+          sb.append('/')
         }
         '(' -> {
           sb.append(c)
