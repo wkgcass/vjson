@@ -22,6 +22,7 @@ import vpreprocessor.*;
     TestSpec.class,
     TestStringifier.class,
     TestStringify.class,
+    TestScriptify.class,
     TestTextBuilder.class,
     TestToJavaObject.class,
     TestToString.class,

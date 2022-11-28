@@ -19,6 +19,7 @@ import vjson.parser.ParserMode
 import vjson.parser.ParserOptions
 import vjson.parser.ParserUtils.buildFrom
 import vjson.parser.ParserUtils.buildJavaObject
+import vjson.pl.ScriptifyContext
 import vjson.util.CastUtils.cast
 
 @Suppress("DuplicatedCode")
@@ -83,6 +84,7 @@ object JSON {
     fun stringify(): kotlin.String
     fun pretty(): kotlin.String
     fun stringify(builder: StringBuilder, sfr: Stringifier)
+    fun scriptify(builder: StringBuilder, ctx: ScriptifyContext)
 
     /*#ifndef KOTLIN_NATIVE {{ */
     @Suppress("DEPRECATION")

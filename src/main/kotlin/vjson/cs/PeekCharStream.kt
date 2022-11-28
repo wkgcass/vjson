@@ -66,4 +66,11 @@ class PeekCharStream(private val cs: CharStream, private var cursor: Int = 0) : 
     }
     return LineCol(lineCol.filename, line, col)
   }
+
+  fun rollback() {
+    if (cursor == 0) {
+      throw IllegalStateException()
+    }
+    --cursor
+  }
 }

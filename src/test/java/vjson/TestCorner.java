@@ -11,6 +11,7 @@ import vjson.listener.EmptyParserListener;
 import vjson.parser.ObjectParser;
 import vjson.parser.ParserOptions;
 import vjson.parser.ParserUtils;
+import vjson.pl.ScriptifyContext;
 import vjson.simple.*;
 import vjson.util.*;
 import vjson.util.typerule.TypeRuleA;
@@ -149,6 +150,11 @@ public class TestCorner {
             @Override
             public void stringify(StringBuilder builder, Stringifier sfr) {
                 builder.append(stringify());
+            }
+
+            @Override
+            public void scriptify(StringBuilder builder, ScriptifyContext ctx) {
+                builder.append("1");
             }
         };
         JSON.Object o = new ObjectBuilder().putInst("a", n).build();
@@ -385,6 +391,10 @@ public class TestCorner {
 
             public String stringify() {
                 return null;
+            }
+
+            public void scriptify(StringBuilder builder, ScriptifyContext ctx) {
+                builder.append("1");
             }
 
             public Object toJavaObject() {

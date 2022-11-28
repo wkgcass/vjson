@@ -15,6 +15,7 @@ import vjson.JSON
 import vjson.JSON.String.Companion.stringify
 import vjson.Stringifier
 import vjson.cs.LineCol
+import vjson.pl.ScriptifyContext
 
 class SimpleString /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   private val str: String,
@@ -44,6 +45,10 @@ class SimpleString /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor
 
   override fun stringify(builder: StringBuilder, sfr: Stringifier) {
     builder.append(stringify(sfr.stringOptions()))
+  }
+
+  override fun scriptify(builder: StringBuilder, ctx: ScriptifyContext) {
+    builder.append(ScriptifyContext.scriptifyString(str))
   }
 
   override fun lineCol(): LineCol {

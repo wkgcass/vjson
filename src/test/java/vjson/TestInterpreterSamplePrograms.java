@@ -16,153 +16,155 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class TestInterpreterSamplePrograms {
+    public static final String SYNTAX_PROG = "{ // vjson-script starts with `{`\n" +
+        "// variable definition\n" +
+        "var variableName = 1\n" +
+        "\n" +
+        "// function definition\n" +
+        "function max {a: int, b: int, c: int} int {\n" +
+        "  // if statement\n" +
+        "  if: a >= b && a >= c; then { return: a }\n" +
+        "  else if: b >= a && b >= c; then { return: b }\n" +
+        "  else { return: c }\n" +
+        "  // the `;` can be omitted if `then` is on a new line\n" +
+        "}\n" +
+        "\n" +
+        "// function invocation\n" +
+        "var result = max:[1, 2, 3]\n" +
+        "\n" +
+        "// number, bool literals can be directly used\n" +
+        "var intVar = 1\n" +
+        "var longVar = 1000000000 // exceeds Integer.MAX_VALUE\n" +
+        "var doubleVar = 1.2\n" +
+        "// use toFloat to convert other number types to float\n" +
+        "var floatVar = doubleVar.toFloat\n" +
+        "var boolVar = true\n" +
+        "// string literals or expressions starting with string literals\n" +
+        "// must be inside (...)\n" +
+        "var strVar = ('hello')\n" +
+        "// other expressions might also be inside (...)\n" +
+        "var calc = (1 + 2 * 3 - 4)\n" +
+        "// it's ok for most expressions without (...)\n" +
+        "var calc2 = 1 + 2 * 3 - 4\n" +
+        "\n" +
+        "// to define a variable with null, you must specify the type\n" +
+        "var nullVariable = {null: string}\n" +
+        "nullVariable = ('abc') // assign a string to it\n" +
+        "// assigning a variable with null does not require a type\n" +
+        "nullVariable = null\n" +
+        "\n" +
+        "// class definition\n" +
+        "class Person {name: string, age: int} do {\n" +
+        "  public var publicField = 1\n" +
+        "  private var privateField = 2\n" +
+        "  const var constField = 3\n" +
+        "  // variables directly inside class are considered private by default\n" +
+        "  var alsoPrivateField = 3\n" +
+        "  // functions directly inside class are considered public by default\n" +
+        "  function talkTo {person: Person} void {\n" +
+        "    std.console.log:[ (\"Hi \" + person.name + \", I\\'m \" + name) ]\n" +
+        "  }\n" +
+        "  private function privateFunc {} void { }\n" +
+        "}\n" +
+        "// objects\n" +
+        "var alice = new Person:[('alice'), 24]\n" +
+        "var bob = new Person:[('bob'), 25]\n" +
+        "alice.talkTo:[bob]\n" +
+        "\n" +
+        "// you may also create an object using json syntax\n" +
+        "// see sample program `Configuration` for more info about this syntax\n" +
+        "var eve = new Person {\n" +
+        "  name = eve\n" +
+        "  age = 26\n" +
+        "}\n" +
+        "bob.talkTo:[eve]\n" +
+        "\n" +
+        "\n" +
+        "// template class definition\n" +
+        "template { T, U } class PlusToInt { t: T, u: U } do {\n" +
+        "  function plus {} int {\n" +
+        "    return: t.toInt + u.toInt\n" +
+        "  }\n" +
+        "}\n" +
+        "// concrete types\n" +
+        "let IntLongPlusToInt = { PlusToInt:[ int, long ] }\n" +
+        "let IntLongPlusToInt2 = { PlusToInt:[ int, long ] }\n" +
+        "// IntLongPlusToInt and IntLongPlusToInt2 are the same type\n" +
+        "// variables of these types can be passed to each other\n" +
+        "\n" +
+        "var plusObj = new IntLongPlusToInt:[1, 2.toLong]\n" +
+        "std.console.log:[('plusObj.plus result is ' + plusObj.plus:[])]\n" +
+        "\n" +
+        "// loops\n" +
+        "// for loop\n" +
+        "var sum = 0\n" +
+        "for: [{ var i = 1 }; i <= 10; i += 1] do {\n" +
+        "  sum = sum + i\n" +
+        "}\n" +
+        "std.console.log:[ ('sum of 1 to 10 is ' + sum) ]\n" +
+        "// while loop\n" +
+        "sum = 0\n" +
+        "var n = 1\n" +
+        "while: true; do {\n" +
+        "  sum = sum + n\n" +
+        "  n = n + 1\n" +
+        "  if: n >= 10; then {\n" +
+        "    break\n" +
+        "  }\n" +
+        "}\n" +
+        "// the `;` can be omitted if `do` is on a new line\n" +
+        "std.console.log:[ ('sum of 1 until 10 is ' + sum) ]\n" +
+        "\n" +
+        "// executable variables/fields\n" +
+        "class Counter {} do {\n" +
+        "  var n = 0\n" +
+        "  private function incr {} int {\n" +
+        "    return: n += 1\n" +
+        "  }\n" +
+        "  // use `executable` modifier and a zero-param function\n" +
+        "  // to define an executable variable/field\n" +
+        "  executable public var next = incr\n" +
+        "}\n" +
+        "var counter = new Counter:[]\n" +
+        "var cnt1 = counter.next\n" +
+        "var cnt2 = counter.next\n" +
+        "var cnt3 = counter.next\n" +
+        "std.console.log:[(\n" +
+        "  'cnt1 = ' + cnt1 +\n" +
+        "  ', cnt2 = ' + cnt2 +\n" +
+        "  ', cnt3 = ' + cnt3\n" +
+        ")]\n" +
+        "\n" +
+        "// exception and error handling\n" +
+        "function badFunction {msg: string} void {\n" +
+        "  throw: msg // can also be null or error object\n" +
+        "}\n" +
+        "function catchFunction {} void {\n" +
+        "  badFunction:[('bad function call')]\n" +
+        "  // use if: err != null to catch errors\n" +
+        "  // the following statement will catch all errors in current\n" +
+        "  // code block before the error handler\n" +
+        "  if: err != null; then {\n" +
+        "    // a variable {err: error} is automatically defined\n" +
+        "    // and can be used in the error handling code\n" +
+        "    std.console.log:[('caught exception: ' + err.message)]\n" +
+        "    // also you can print stacktrace:\n" +
+        "    std.console.log:[err.formatException]\n" +
+        "  }\n" +
+        "\n" +
+        "  badFunction:[('the second bad function call')]\n" +
+        "  // the following statement will catch all errors after the last error handler\n" +
+        "  // and before this error handler\n" +
+        "  if: err != null; then {\n" +
+        "    std.console.log:[('caught second exception: ' + err.message)]\n" +
+        "  }\n" +
+        "}\n" +
+        "catchFunction:[]\n" +
+        "} // vjson-script program ends with `}`\n";
+
     @Test
     public void syntax() {
-        String prog = "{ // vjson-lang starts with `{`\n" +
-            "// variable definition\n" +
-            "var variableName = 1\n" +
-            "\n" +
-            "// function definition\n" +
-            "function max {a: int, b: int, c: int} int {\n" +
-            "  // if statement\n" +
-            "  if: a >= b && a >= c; then { return: a }\n" +
-            "  else if: b >= a && b >= c; then { return: b }\n" +
-            "  else { return: c }\n" +
-            "  // the `;` can be omitted if `then` is on a new line\n" +
-            "}\n" +
-            "\n" +
-            "// function invocation\n" +
-            "var result = max:[1, 2, 3]\n" +
-            "\n" +
-            "// number, bool literals can be directly used\n" +
-            "var intVar = 1\n" +
-            "var longVar = 1000000000 // exceeds Integer.MAX_VALUE\n" +
-            "var doubleVar = 1.2\n" +
-            "// use toFloat to convert other number types to float\n" +
-            "var floatVar = doubleVar.toFloat\n" +
-            "var boolVar = true\n" +
-            "// string literals or expressions starting with string literals\n" +
-            "// must be inside (...)\n" +
-            "var strVar = ('hello')\n" +
-            "// other expressions might also be inside (...)\n" +
-            "var calc = (1 + 2 * 3 - 4)\n" +
-            "// it's ok for most expressions without (...)\n" +
-            "var calc2 = 1 + 2 * 3 - 4\n" +
-            "\n" +
-            "// to define a variable with null, you must specify the type\n" +
-            "var nullVariable = {null: string}\n" +
-            "nullVariable = ('abc') // assign a string to it\n" +
-            "// assigning a variable with null does not require a type\n" +
-            "nullVariable = null\n" +
-            "\n" +
-            "// class definition\n" +
-            "class Person {name: string, age: int} do {\n" +
-            "  public var publicField = 1\n" +
-            "  private var privateField = 2\n" +
-            "  const var constField = 3\n" +
-            "  // variables directly inside class are considered private by default\n" +
-            "  var alsoPrivateField = 3\n" +
-            "  // functions directly inside class are considered public by default\n" +
-            "  function talkTo {person: Person} void {\n" +
-            "    std.console.log:[ (\"Hi \" + person.name + \", I\\'m \" + name) ]\n" +
-            "  }\n" +
-            "  private function privateFunc {} void { }\n" +
-            "}\n" +
-            "// objects\n" +
-            "var alice = new Person:[('alice'), 24]\n" +
-            "var bob = new Person:[('bob'), 25]\n" +
-            "alice.talkTo:[bob]\n" +
-            "\n" +
-            "// you may also create an object using json syntax\n" +
-            "// see sample program `Configuration` for more info about this syntax\n" +
-            "var eve = new Person {\n" +
-            "  name = eve\n" +
-            "  age = 26\n" +
-            "}\n" +
-            "bob.talkTo:[eve]\n" +
-            "\n" +
-            "\n" +
-            "// template class definition\n" +
-            "template { T, U } class PlusToInt { t: T, u: U } do {\n" +
-            "  function plus {} int {\n" +
-            "    return: t.toInt + u.toInt\n" +
-            "  }\n" +
-            "}\n" +
-            "// concrete types\n" +
-            "let IntLongPlusToInt = { PlusToInt:[ int, long ] }\n" +
-            "let IntLongPlusToInt2 = { PlusToInt:[ int, long ] }\n" +
-            "// IntLongPlusToInt and IntLongPlusToInt2 are the same type\n" +
-            "// variables of these types can be passed to each other\n" +
-            "\n" +
-            "var plusObj = new IntLongPlusToInt:[1, 2.toLong]\n" +
-            "std.console.log:[('plusObj.plus result is ' + plusObj.plus:[])]\n" +
-            "\n" +
-            "// loops\n" +
-            "// for loop\n" +
-            "var sum = 0\n" +
-            "for: [{ var i = 1 }; i <= 10; i += 1] do {\n" +
-            "  sum = sum + i\n" +
-            "}\n" +
-            "std.console.log:[ ('sum of 1 to 10 is ' + sum) ]\n" +
-            "// while loop\n" +
-            "sum = 0\n" +
-            "var n = 1\n" +
-            "while: true; do {\n" +
-            "  sum = sum + n\n" +
-            "  n = n + 1\n" +
-            "  if: n >= 10; then {\n" +
-            "    break\n" +
-            "  }\n" +
-            "}\n" +
-            "// the `;` can be omitted if `do` is on a new line\n" +
-            "std.console.log:[ ('sum of 1 until 10 is ' + sum) ]\n" +
-            "\n" +
-            "// executable variables/fields\n" +
-            "class Counter {} do {\n" +
-            "  var n = 0\n" +
-            "  private function incr {} int {\n" +
-            "    return: n += 1\n" +
-            "  }\n" +
-            "  // use `executable` modifier and a zero-param function\n" +
-            "  // to define an executable variable/field\n" +
-            "  executable public var next = incr\n" +
-            "}\n" +
-            "var counter = new Counter:[]\n" +
-            "var cnt1 = counter.next\n" +
-            "var cnt2 = counter.next\n" +
-            "var cnt3 = counter.next\n" +
-            "std.console.log:[(\n" +
-            "  'cnt1 = ' + cnt1 +\n" +
-            "  ', cnt2 = ' + cnt2 +\n" +
-            "  ', cnt3 = ' + cnt3\n" +
-            ")]\n" +
-            "\n" +
-            "// exception and error handling\n" +
-            "function badFunction {msg: string} void {\n" +
-            "  throw: msg // can also be null or error object\n" +
-            "}\n" +
-            "function catchFunction {} void {\n" +
-            "  badFunction:[('bad function call')]\n" +
-            "  // use if: err != null to catch errors\n" +
-            "  // the following statement will catch all errors in current\n" +
-            "  // code block before the error handler\n" +
-            "  if: err != null; then {\n" +
-            "    // a variable {err: error} is automatically defined\n" +
-            "    // and can be used in the error handling code\n" +
-            "    std.console.log:[('caught exception: ' + err.message)]\n" +
-            "    // also you can print stacktrace:\n" +
-            "    std.console.log:[err.formatException]\n" +
-            "  }\n" +
-            "\n" +
-            "  badFunction:[('the second bad function call')]\n" +
-            "  // the following statement will catch all errors after the last error handler\n" +
-            "  // and before this error handler\n" +
-            "  if: err != null; then {\n" +
-            "    std.console.log:[('caught second exception: ' + err.message)]\n" +
-            "  }\n" +
-            "}\n" +
-            "catchFunction:[]\n" +
-            "} // vjson-lang program ends with `}`\n";
+        String prog = SYNTAX_PROG;
         StdTypes std = new StdTypes();
         List<String> output = new ArrayList<>();
         std.setOutput(s -> {

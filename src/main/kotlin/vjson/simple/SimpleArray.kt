@@ -15,6 +15,7 @@ import vjson.JSON
 import vjson.Stringifier
 import vjson.cs.LineCol
 import vjson.parser.TrustedFlag
+import vjson.pl.ScriptifyContext
 
 open class SimpleArray : AbstractSimpleInstance<List<*>>, JSON.Array {
   private val list: List<JSON.Instance<*>>
@@ -82,6 +83,39 @@ open class SimpleArray : AbstractSimpleInstance<List<*>>, JSON.Array {
     sfr.beforeArrayEnd(builder, this)
     builder.append("]")
     sfr.afterArrayEnd(builder, this)
+  }
+
+  override fun scriptify(builder: StringBuilder, ctx: ScriptifyContext) {
+    if (list.size <= 5) {
+
+      builder.append("[")
+      var isFirst = true
+      for (e in list) {
+        if (isFirst) {
+          isFirst = false
+        } else {
+          builder.append(", ")
+        }
+        e.scriptify(builder, ctx)
+      }
+      builder.append("]")
+
+    } else {
+
+      builder.append("[\n")
+      ctx.increaseIndent()
+
+      for (e in list) {
+        ctx.appendIndent(builder)
+        e.scriptify(builder, ctx)
+        builder.append("\n")
+      }
+
+      ctx.decreaseIndent()
+      ctx.appendIndent(builder)
+      builder.append("]")
+
+    }
   }
 
   override fun _toString(): String {
