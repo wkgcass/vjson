@@ -271,4 +271,31 @@ public class TestDeserialize {
         //noinspection ConstantConditions
         assertNull(listener.get().ls);
     }
+
+    @Test
+    public void deserializeWithNotRegisteredFields3() {
+        class Test2 {
+            int id;
+        }
+        class Test1 {
+            Test2 user;
+            String body;
+        }
+        Rule<Test2> rule2 = new ObjectRule<>(Test2::new)
+            .put("id", (o, it) -> o.id = it, IntRule.get());
+        Rule<Test1> rule1 = new ObjectRule<>(Test1::new)
+            .put("user", (o, it) -> o.user = it, rule2)
+            .put("body", (o, it) -> o.body = it, StringRule.get());
+
+        String jsonStr = "[{\"url\":\"aaa\",\"user\":{\"login\":\"xx\",\"id\":123,\"node_id\":\"zzzz\"},\"created_at\":\"2022\",\"body\":\"bbbb\",\"reactions\":{\"url\":\"uuu\"},\"perform\": null}]";
+        Rule<List<Test1>> holderRule = new ArrayRule<>(
+            ArrayList::new, List::add, rule1
+        );
+        DeserializeParserListener<List<Test1>> listener = new DeserializeParserListener<>(holderRule);
+        ParserUtils.buildFrom(CharStream.from(jsonStr), new ParserOptions().setListener(listener));
+        List<Test1> o = listener.get();
+        assertNotNull(o);
+        assertEquals(123, o.get(0).user.id);
+        assertEquals("bbbb", o.get(0).body);
+    }
 }

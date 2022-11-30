@@ -38,12 +38,15 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
 
   override fun onObjectBegin(obj: ObjectParser) {
     if (skip != 0) {
+      ++skip
       return
     }
 
     val rule = nextRuleStack.peek().real()
     if (rule is TypeRule<*>) {
       parseStack.push(ParseContext(rule, null))
+    } else if (rule is NothingRule) {
+      skip = 1
     } else if (rule !is ObjectRule<*>) {
       throw JsonParseException("expect: array, actual: object")
     } else {
@@ -173,6 +176,7 @@ class DeserializeParserListener<T>(rule: Rule<T>) : AbstractParserListener() {
 
   override fun onObjectEnd(obj: ObjectParser) {
     if (skip != 0) {
+      --skip
       return
     }
 
