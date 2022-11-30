@@ -420,11 +420,13 @@ object JSON {
     override fun toJavaObject(): T
   }
 
-  interface Integer : Number<Int> {
+  interface IntegerNumber<T : kotlin.Number> : Number<T>
+
+  interface Integer : IntegerNumber<Int> {
     fun intValue(): Int
   }
 
-  interface Long : Number<kotlin.Long> {
+  interface Long : IntegerNumber<kotlin.Long> {
     fun longValue(): kotlin.Long
   }
 
