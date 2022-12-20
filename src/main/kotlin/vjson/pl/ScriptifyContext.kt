@@ -4,7 +4,7 @@ import vjson.CharStream
 import vjson.JSON
 import vjson.Stringifier
 import vjson.parser.ParserOptions
-import vjson.parser.StringParser
+import vjson.parser.ParserUtils
 import vjson.util.PrintableChars
 
 class ScriptifyContext(private val indent: Int) {
@@ -50,12 +50,13 @@ class ScriptifyContext(private val indent: Int) {
     }
 
     private fun checkStringNoQuotesWithParser(s: String): Boolean {
-      val jsonStr = try {
-        StringParser(ParserOptions.allFeatures()).last(CharStream.from(s))
+      val json = try {
+        ParserUtils.buildFrom(CharStream.from(s), ParserOptions.allFeatures())
       } catch (ignore: Throwable) {
         return false
       }
-      return jsonStr!!.toJavaObject() == s
+      if (json !is JSON.String) return false
+      return json.toJavaObject() == s
     }
   }
 }

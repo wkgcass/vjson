@@ -1,11 +1,13 @@
 package vjson;
 
 import org.junit.Test;
+import vjson.parser.ParserOptions;
 import vjson.parser.ParserUtils;
 import vjson.pl.InterpreterBuilder;
 import vjson.pl.ScriptifyContext;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestScriptify {
     @Test
@@ -93,5 +95,22 @@ public class TestScriptify {
         assertEquals(inst, ParserUtils.buildFrom(
             CharStream.from(sb.toString()),
             InterpreterBuilder.Companion.interpreterOptions()));
+    }
+
+    private static void check(String exp) {
+        JSON.Instance<?> inst = ParserUtils.buildFrom(CharStream.from(exp), ParserOptions.allFeatures());
+        StringBuilder sb = new StringBuilder();
+        inst.scriptify(sb, new ScriptifyContext(2));
+        String str = sb.toString();
+        assertTrue(str.endsWith("\n"));
+        str = str.substring(0, str.length() - 1);
+        assertEquals(exp, str);
+        JSON.Instance<?> inst2 = ParserUtils.buildFrom(CharStream.from(str), ParserOptions.allFeatures());
+        assertEquals(inst, inst2);
+    }
+
+    @Test
+    public void numberInStringValue() {
+        check("{ a = \"123\" }");
     }
 }
