@@ -112,6 +112,16 @@ public class TestInterpreter {
                 "var k = 'h && i'\n" +
                 "var l = 'h || i'\n" +
                 "var m = '100 % 7'\n" +
+                "var n = ('a' + 1)\n" +
+                "var o = ('a' + 2.toLong)\n" +
+                "var p = ('a' + 3.toFloat)\n" +
+                "var q = ('a' + 4.toDouble)\n" +
+                "var r = (5 + 'a')\n" +
+                "var s = (6.toLong + 'a')\n" +
+                "var t = (7.toFloat + 'a')\n" +
+                "var u = (8.toDouble + 'a')\n" +
+                "var v = ('a' + true)\n" +
+                "var w = (false + 'a')\n" +
                 "}");
         RuntimeMemory mem = interpreter.execute();
         assertEquals(4, mem.getInt(0));
@@ -129,6 +139,17 @@ public class TestInterpreter {
         assertFalse(mem.getBool(6));
         assertTrue(mem.getBool(7));
         assertEquals(8, mem.boolLen());
+        assertEquals("a1", mem.getRef(0));
+        assertEquals("a2", mem.getRef(1));
+        assertEquals("a3.0", mem.getRef(2));
+        assertEquals("a4.0", mem.getRef(3));
+        assertEquals("5a", mem.getRef(4));
+        assertEquals("6a", mem.getRef(5));
+        assertEquals("7.0a", mem.getRef(6));
+        assertEquals("8.0a", mem.getRef(7));
+        assertEquals("atrue", mem.getRef(8));
+        assertEquals("falsea", mem.getRef(9));
+        assertEquals(10, mem.refLen());
     }
 
     @Test
@@ -150,6 +171,23 @@ public class TestInterpreter {
         assertTrue(mem.getBool(4));
         assertFalse(mem.getBool(5));
         assertEquals(6, mem.boolLen());
+    }
+
+    @Test
+    public void strPlusAssignment() {
+        Interpreter interpreter = new InterpreterBuilder()
+            .compile("{\n" +
+                "var msg = ('a')\n" +
+                "msg += ('b')\n" +
+                "msg += 1\n" +
+                "msg += 2.toLong\n" +
+                "msg += 3.toFloat\n" +
+                "msg += 4.toDouble\n" +
+                "msg += true\n" +
+                "}");
+        RuntimeMemory mem = interpreter.execute();
+        assertEquals("ab123.04.0true", mem.getRef(0));
+        assertEquals(1, mem.refLen());
     }
 
     @Test
@@ -1408,6 +1446,7 @@ public class TestInterpreter {
             "var startsWithFalse = raw.startsWith:[(\"xxx\")]\n" +
             "var endsWithFalse = raw.endsWith:[(\"xxx\")]\n" +
             "var containsFalse = raw.contains:[(\"xxx\")]\n" +
+            "var length = raw.length\n" +
             "}";
         Interpreter interpreter = new InterpreterBuilder().compile(prog);
         RuntimeMemory mem = interpreter.execute();
@@ -1416,7 +1455,8 @@ public class TestInterpreter {
         assertEquals("hello world", mem.getRef(2));
         assertEquals(3, mem.refLen());
         assertEquals(2, mem.getInt(0));
-        assertEquals(1, mem.intLen());
+        assertEquals(14, mem.getInt(1));
+        assertEquals(2, mem.intLen());
         assertTrue(mem.getBool(0));
         assertTrue(mem.getBool(1));
         assertTrue(mem.getBool(2));

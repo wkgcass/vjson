@@ -366,6 +366,12 @@ object StringType : BuiltInTypeInstance {
           }
         }
       }
+      "length" -> object : ExecutableField(name, IntType) {
+        override fun execute(ctx: ActionContext, exec: Execution) {
+          val str = exec.values.refValue as String
+          exec.values.intValue = str.length
+        }
+      }
       else -> null
     }
   }
