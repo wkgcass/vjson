@@ -2,7 +2,9 @@ package vjson
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import vjson.JSONObject.Companion.toJson
 import vjson.deserializer.rule.*
+import vjson.util.ArrayBuilder
 import vjson.util.ObjectBuilder
 
 class TestKotlinDSL {
@@ -49,8 +51,8 @@ class TestKotlinDSL {
     }.build()
   }
 
-  class Mmm(var m: Int = 0, var n: String = "", var o: List<Aaa> = emptyList()) {
-    fun toJson(): JSON.Object = ObjectBuilder {
+  class Mmm(var m: Int = 0, var n: String = "", var o: List<Aaa> = emptyList()) : JSONObject {
+    override fun toJson(): JSON.Object = ObjectBuilder {
       put("m", m)
       put("n", n)
       putArray("o") {
@@ -150,5 +152,18 @@ class TestKotlinDSL {
     val mmm = Mmm(1, "2", listOf(Bbb(3, "4", 5), Bbb(7, "8", 9), Aaa(10, "11"), Aaa(12, "13")))
     val mmm2 = JSON.deserialize(mmm.toJson().stringify(), mmmBRule)
     assertEquals(mmm.toJson(), mmm2.toJson())
+  }
+
+  @Test
+  fun listToJson() {
+    val mmm1 = Mmm(1, "2", listOf(Bbb(3, "4", 5), Bbb(7, "8", 9), Aaa(10, "11"), Aaa(12, "13")))
+    val mmm2 = Mmm(20, "30", listOf(Bbb(40, "50", 60), Bbb(70, "80", 90), Aaa(100, "110"), Aaa(120, "130")))
+    val ls = listOf(mmm1, mmm2)
+    val arr = ls.toJson()
+
+    val ab = ArrayBuilder()
+    ab.addInst(mmm1.toJson())
+    ab.addInst(mmm2.toJson())
+    assertEquals(ab.build(), arr)
   }
 }

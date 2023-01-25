@@ -93,7 +93,7 @@ public class TestJavaDSL {
         }
     }
 
-    static class Aaa {
+    static class Aaa implements JSONObject {
         private int a = 0;
         private String b = "";
 
@@ -122,7 +122,8 @@ public class TestJavaDSL {
             return builder;
         }
 
-        JSON.Object toJson() {
+        @Override
+        public JSON.Object toJson() {
             return toJsonObject(x -> {
             }).build();
         }
@@ -143,7 +144,8 @@ public class TestJavaDSL {
             this.c = c;
         }
 
-        JSON.Object toJson() {
+        @Override
+        public JSON.Object toJson() {
             return toJsonObject(x -> x
                 .type(Reflection.getOrCreateKotlinClass(Bbb.class))
                 .put("c", c)).build();
@@ -180,11 +182,7 @@ public class TestJavaDSL {
             return new ObjectBuilder()
                 .put("m", m)
                 .put("n", n)
-                .putArray("o", arr -> {
-                    for (Aaa b : o) {
-                        arr.addInst(b.toJson());
-                    }
-                })
+                .putInst("o", JSONObject.listToJson(o))
                 .build();
         }
     }
@@ -224,7 +222,7 @@ public class TestJavaDSL {
         it -> it
             .put("a", YyyBuilder::setA, LongRule.get()));
 
-    private final ArrayRule<List<Aaa>, Aaa> lsRule = new ArrayRule<>(ArrayList::new, List::add, aaaTypeRule);
+    private final ArrayRule<List<Aaa>, Aaa> lsRule = JSONObject.buildArrayRule(aaaTypeRule);
 
     private final ArrayRule<List<Aaa>, Aaa> lsBRule = ArrayRule.<List<Aaa>, Ls<Aaa>, Aaa>builder(Ls::new, Ls::build, Ls::add, aaaTypeRule);
 
