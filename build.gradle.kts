@@ -91,6 +91,10 @@ val javadocJar = tasks.create("javadocJar", Jar::class) {
   dependsOn(buildJavaDoc)
 }
 
+tasks.withType<GenerateModuleMetadata> {
+  enabled = false
+}
+
 publishing {
   publications {
     create<MavenPublication>("maven") {
@@ -121,6 +125,25 @@ publishing {
           connection.set("scm:git:git://github.com/wkgcass/vjson")
           developerConnection.set("scm:git:ssh://github.com/wkgcass/vjson.git")
           url.set("https://github.com/wkgcass/vjson/")
+        }
+      }
+      pom.withXml {
+        val pomNode = asNode()
+        val dependencies = pomNode.get("dependencies") as groovy.util.NodeList
+        val toRemove = ArrayList<groovy.util.Node>()
+        for (dNode in dependencies.getAt("*")) {
+          dNode as groovy.util.Node
+          val gNode = dNode.get("groupId") as groovy.util.NodeList
+          for (g in gNode) {
+            g as groovy.util.Node
+            if (g.text() == "org.jetbrains.kotlin") {
+              toRemove.add(dNode)
+              break
+            }
+          }
+        }
+        for (node in toRemove) {
+          node.parent().remove(node)
         }
       }
     }
