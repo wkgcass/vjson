@@ -79,6 +79,12 @@ public class TestJavaDSL {
             return toJsonObject(o -> o.put("a", a))
                 .build();
         }
+
+        JSON.Object toJson2() {
+            return new ObjectBuilder(super.toJson())
+                .put("a", a)
+                .build();
+        }
     }
 
     static class YyyBuilder extends XxxBuilder {
@@ -263,6 +269,9 @@ public class TestJavaDSL {
         Yyy yyy = new Yyy(1, "2", new Aaa(3, "4"), 5);
         Yyy yyy2 = JSON.deserialize(yyy.toJson().stringify(), yyyRule);
         assertEquals(yyy.toJson(), yyy2.toJson());
+        assertEquals(yyy.toJson2(), yyy2.toJson2());
+        assertEquals(yyy.toJson(), yyy2.toJson2());
+        assertEquals(yyy.toJson2(), yyy2.toJson());
     }
 
     @Test

@@ -25,6 +25,12 @@ class ObjectBuilder {
     f(this)
   }
 
+  constructor(o: JSON.Object) {
+    for (entry in o.entryList()) {
+      putInst(entry.key, entry.value)
+    }
+  }
+
   fun putInst(key: String, inst: JSON.Instance<*>): ObjectBuilder {
     if (key == "@type") { // always add @type to the most front
       map.add(0, SimpleObjectEntry(key, inst))
