@@ -137,12 +137,18 @@ interface CharStream : MutableIterator<Char>, Iterable<Char> {
     }
   }
 
+  /*#ifndef KOTLIN_NATIVE {{ */
+  @Suppress("DEPRECATION")
+  @JvmDefault/*}}*/
   fun skip(n: Int) {
     for (i in 1..n) {
       moveNextAndGet()
     }
   }
 
+  /*#ifndef KOTLIN_NATIVE {{ */
+  @Suppress("DEPRECATION")
+  @JvmDefault/*}}*/
   fun lineCol(): LineCol {
     return LineCol.EMPTY
   }
