@@ -22,12 +22,12 @@ vjson致力于用java对象还原最原始的json结构。你可以通过简单�
 
 ## 用法
 
-### 通过Maven/Gradle引用
+### 如果你不使用kotlin
 
 **gradle**
 
 ```groovy
-implementation 'io.vproxy:vjson:1.4.7'
+implementation 'io.vproxy:vjson:1.5.0'
 ```
 
 **maven**
@@ -36,32 +36,39 @@ implementation 'io.vproxy:vjson:1.4.7'
 <dependency>
   <groupId>io.vproxy</groupId>
   <artifactId>vjson</artifactId>
-  <version>1.4.7</version>
+  <version>1.5.0</version>
 </dependency>
 ```
 
-### 直接使用源码
+### 如果你正在使用kotlin
 
-将`src/main/kotlin/vjson`复制粘贴到你的源码目录即可。
-
-如果你没有使用kotlin，你还需要将如下代码加入你的`build.gradle`配置。
+**gradle**
 
 ```groovy
-plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
-}
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = ['-Xjvm-default=enable']
-    }
+implementation('io.vproxy:vjson:1.5.0') {
+  exclude group: 'io.vproxy', module: 'kotlin-stdlib-lite'
 }
 ```
 
->如果你不想带kotlin使用vjson，你可以`checkout`到这个提交(`00577677156cd9394ea2a32028f684cbce178065`)，这是最后一个用java实现的版本。
+**maven**
+
+```xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.vproxy</groupId>
+      <artifactId>vjson</artifactId>
+      <version>1.5.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.vproxy</groupId>
+          <artifactId>kotlin-stdlib-lite</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+```
 
 ## kotlin native
 

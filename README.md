@@ -22,12 +22,12 @@ Run `./gradlew clean coverage` to get the coverage report.
 
 ## use
 
-### use with Maven/Gradle
+### if you do no use kotlin
 
 **gradle**
 
 ```groovy
-implementation 'io.vproxy:vjson:1.4.7'
+implementation 'io.vproxy:vjson:1.5.0'
 ```
 
 **maven**
@@ -36,32 +36,39 @@ implementation 'io.vproxy:vjson:1.4.7'
 <dependency>
   <groupId>io.vproxy</groupId>
   <artifactId>vjson</artifactId>
-  <version>1.4.7</version>
+  <version>1.5.0</version>
 </dependency>
 ```
 
-### directly use the source codes
+### if you are using kotlin
 
-Copy and paste `src/main/kotlin/vjson` to your source directory, and enjoy.
-
-If you are not using kotlin, you need to add the following code snippet to your `build.gradle` configuration.
+**gradle**
 
 ```groovy
-plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
-}
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = ['-Xjvm-default=enable']
-    }
+implementation('io.vproxy:vjson:1.5.0') {
+  exclude group: 'io.vproxy', module: 'kotlin-stdlib-lite'
 }
 ```
 
->If you want to use vjson without kotlin runtime, you may checkout to commit `00577677156cd9394ea2a32028f684cbce178065`, which is the last java version.
+**maven**
+
+```xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.vproxy</groupId>
+      <artifactId>vjson</artifactId>
+      <version>1.5.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.vproxy</groupId>
+          <artifactId>kotlin-stdlib-lite</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+```
 
 ## kotlin native
 
