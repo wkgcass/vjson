@@ -27,7 +27,7 @@ Run `./gradlew clean coverage` to get the coverage report.
 **gradle**
 
 ```groovy
-implementation 'io.vproxy:vjson:1.5.0'
+implementation 'io.vproxy:vjson:1.5.1'
 ```
 
 **maven**
@@ -36,7 +36,7 @@ implementation 'io.vproxy:vjson:1.5.0'
 <dependency>
   <groupId>io.vproxy</groupId>
   <artifactId>vjson</artifactId>
-  <version>1.5.0</version>
+  <version>1.5.1</version>
 </dependency>
 ```
 
@@ -45,7 +45,7 @@ implementation 'io.vproxy:vjson:1.5.0'
 **gradle**
 
 ```groovy
-implementation('io.vproxy:vjson:1.5.0') {
+implementation('io.vproxy:vjson:1.5.1') {
   exclude group: 'io.vproxy', module: 'kotlin-stdlib-lite'
 }
 ```
@@ -58,7 +58,7 @@ implementation('io.vproxy:vjson:1.5.0') {
     <dependency>
       <groupId>io.vproxy</groupId>
       <artifactId>vjson</artifactId>
-      <version>1.5.0</version>
+      <version>1.5.1</version>
       <exclusions>
         <exclusion>
           <groupId>io.vproxy</groupId>

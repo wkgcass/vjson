@@ -132,19 +132,37 @@ publishing {
         val pomNode = asNode()
         val dependencies = pomNode.get("dependencies") as groovy.util.NodeList
         val toRemove = ArrayList<groovy.util.Node>()
+        val toCompileScope = ArrayList<groovy.util.Node>()
         for (dNode in dependencies.getAt("*")) {
           dNode as groovy.util.Node
           val gNode = dNode.get("groupId") as groovy.util.NodeList
+          val aNode = dNode.get("artifactId") as groovy.util.NodeList
+          gNodeLoop@
           for (g in gNode) {
             g as groovy.util.Node
             if (g.text() == "org.jetbrains.kotlin") {
               toRemove.add(dNode)
               break
+            } else if (g.text() == "io.vproxy") {
+              for (a in aNode) {
+                a as groovy.util.Node
+                if (a.text() == "kotlin-stdlib-lite") {
+                  toCompileScope.add(dNode)
+                  break@gNodeLoop
+                }
+              }
             }
           }
         }
         for (node in toRemove) {
           node.parent().remove(node)
+        }
+        for (node in toCompileScope) {
+          val sNode = node.get("scope") as groovy.util.NodeList
+          for (s in sNode) {
+            s as groovy.util.Node
+            s.setValue("compile")
+          }
         }
       }
     }
