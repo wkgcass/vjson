@@ -162,19 +162,19 @@ public class TestCaseUtils {
     public static JSON.Instance getTypeRuleBaseJSON(TypeRuleBase o) {
         ObjectBuilder ob = new ObjectBuilder();
         if (o instanceof TypeRuleA) {
-            ob.type(Reflection.createKotlinClass(TypeRuleA.class));
+            ob.type(Reflection.getOrCreateKotlinClass(TypeRuleA.class));
             ob.put("a", ((TypeRuleA) o).a);
         } else if (o instanceof TypeRuleB) {
-            ob.type(Reflection.createKotlinClass(TypeRuleB.class));
+            ob.type(Reflection.getOrCreateKotlinClass(TypeRuleB.class));
             ob.put("b", ((TypeRuleB) o).b);
         } else if (o instanceof TypeRuleC) {
-            ob.type(Reflection.createKotlinClass(TypeRuleC.class));
+            ob.type(Reflection.getOrCreateKotlinClass(TypeRuleC.class));
             ob.putInst("c", getSimpleObjectCaseJSON(((TypeRuleC) o).c));
         } else if (o instanceof TypeRuleD) {
-            ob.type(Reflection.createKotlinClass(TypeRuleD.class));
+            ob.type(Reflection.getOrCreateKotlinClass(TypeRuleD.class));
             ob.putInst("d", getTypeRuleBaseJSON(((TypeRuleD) o).d));
         } else if (o instanceof TypeRuleMap) {
-            ob.type(Reflection.createKotlinClass(TypeRuleMap.class));
+            ob.type(Reflection.getOrCreateKotlinClass(TypeRuleMap.class));
             ob.putObject("map", oo -> {
                 Map<String, String> map = ((TypeRuleMap) o).map;
                 for (Map.Entry<String, String> entry : map.entrySet()) {
@@ -182,7 +182,7 @@ public class TestCaseUtils {
                 }
             });
         } else {
-            ob.type(Reflection.createKotlinClass(TypeRuleBase.class));
+            ob.type(Reflection.getOrCreateKotlinClass(TypeRuleBase.class));
         }
         ob.put("x", o.x);
         ob.put("y", o.y);

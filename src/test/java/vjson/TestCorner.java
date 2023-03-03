@@ -1,5 +1,6 @@
 package vjson;
 
+import kotlin.KotlinVersion;
 import kotlin.jvm.internal.Reflection;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -73,6 +74,7 @@ public class TestCorner {
     @Test
     public void version() throws Exception {
         System.out.println("Current version is: " + VERSION.VERSION);
+        System.out.println("Current kotlin version is: " + KotlinVersion.CURRENT);
     }
 
     @Test

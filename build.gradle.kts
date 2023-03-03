@@ -61,7 +61,8 @@ repositories {
 }
 
 dependencies {
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31")
+  runtimeOnly("io.vproxy:kotlin-stdlib-lite:1.0.1")
 
   testImplementation(group = "junit", name = "junit", version = "4.12")
   testImplementation(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.9.9.3")
@@ -173,6 +174,21 @@ signing {
 
 tasks.test {
   include("**/Suite.class")
+
+  doFirst {
+    val sourceSets = listOf(sourceSets.main, sourceSets.test)
+    for (set in sourceSets) {
+      set {
+        runtimeClasspath = runtimeClasspath.filter { file ->
+          val path = file.getAbsolutePath()
+          if (path.contains("kotlin") && !path.contains("kotlin-stdlib-lite") && path.endsWith(".jar")) {
+            logger.debug("removing runtime classpath: " + file)
+            false
+          } else true
+        }
+      }
+    }
+  }
 }
 
 tasks.jacocoTestReport {
