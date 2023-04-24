@@ -133,6 +133,7 @@ publishing {
         val dependencies = pomNode.get("dependencies") as groovy.util.NodeList
         val toRemove = ArrayList<groovy.util.Node>()
         val toCompileScope = ArrayList<groovy.util.Node>()
+        val toAddVersionJDK9 = ArrayList<groovy.util.Node>()
         for (dNode in dependencies.getAt("*")) {
           dNode as groovy.util.Node
           val gNode = dNode.get("groupId") as groovy.util.NodeList
@@ -148,6 +149,7 @@ publishing {
                 a as groovy.util.Node
                 if (a.text() == "kotlin-stdlib-lite") {
                   toCompileScope.add(dNode)
+                  toAddVersionJDK9.add(dNode)
                   break@gNodeLoop
                 }
               }
@@ -162,6 +164,13 @@ publishing {
           for (s in sNode) {
             s as groovy.util.Node
             s.setValue("compile")
+          }
+        }
+        for (node in toAddVersionJDK9) {
+          val sNode = node.get("version") as groovy.util.NodeList
+          for (s in sNode) {
+            s as groovy.util.Node
+            s.setValue(s.value().toString() + "-jdk9")
           }
         }
       }

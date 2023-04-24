@@ -27,7 +27,7 @@ Run `./gradlew clean coverage` to get the coverage report.
 **gradle**
 
 ```groovy
-implementation 'io.vproxy:vjson:1.5.1'
+implementation 'io.vproxy:vjson:1.5.2'
 ```
 
 **maven**
@@ -36,16 +36,16 @@ implementation 'io.vproxy:vjson:1.5.1'
 <dependency>
   <groupId>io.vproxy</groupId>
   <artifactId>vjson</artifactId>
-  <version>1.5.1</version>
+  <version>1.5.2</version>
 </dependency>
 ```
 
-### if you are using kotlin
+### if you are using kotlin or jdk < 9
 
 **gradle**
 
 ```groovy
-implementation('io.vproxy:vjson:1.5.1') {
+implementation('io.vproxy:vjson:1.5.2') {
   exclude group: 'io.vproxy', module: 'kotlin-stdlib-lite'
 }
 ```
@@ -58,7 +58,7 @@ implementation('io.vproxy:vjson:1.5.1') {
     <dependency>
       <groupId>io.vproxy</groupId>
       <artifactId>vjson</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.2</version>
       <exclusions>
         <exclusion>
           <groupId>io.vproxy</groupId>
@@ -68,6 +68,26 @@ implementation('io.vproxy:vjson:1.5.1') {
     </dependency>
   </dependencies>
 </dependencyManagement>
+```
+
+### additional dependency for jdk < 9
+
+If you are not using kotlin but using jdk < 9, then after applying above `exclusion`, you will also need to add an additional dependency:
+
+**gradle**
+
+```groovy
+implementation 'io.vproxy:kotlin-stdlib-lite:1.0.1'
+```
+
+**maven**
+
+```xml
+<dependency>
+  <groupId>io.vproxy</groupId>
+  <artifactId>kotlin-stdlib-lite</artifactId>
+  <version>1.0.1</version>
+</dependency>
 ```
 
 ## kotlin native
