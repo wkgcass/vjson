@@ -96,6 +96,24 @@ implementation 'io.vproxy:kotlin-stdlib-lite:1.0.1'
 
 执行`./gradlew clean kotlinNative`，将源代码编译到kotlin native的版本。
 
+你可以按照如下命令编译native可执行文件：
+
+```shell
+./gradlew clean kotlinNative
+rm -r misc/vjson_executable/src/nativeMain/kotlin/vjson/*
+cp -r src/main/kotlin/vjson/* misc/vjson_executable/src/nativeMain/kotlin/vjson
+
+# Then you can build kotlin native executable
+cd misc/vjson_executable/
+./gradlew clean nativeBinaries
+```
+
+执行如下命令运行：
+
+```shell
+./build/bin/native/releaseExecutable/vjson_executable.kexe --help
+```
+
 ## kotlin js
 
 Kotlin JS 的限制比 Kotlin Native 更多，所以额外提供了一个task用于Kotlin JS：

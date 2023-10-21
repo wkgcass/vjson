@@ -96,6 +96,24 @@ implementation 'io.vproxy:kotlin-stdlib-lite:1.0.1'
 
 Run `./gradlew clean kotlinNative` to compile the source code to kotlin native version.
 
+Also you can run the following commands to build a native executable:
+
+```shell
+./gradlew clean kotlinNative
+rm -r misc/vjson_executable/src/nativeMain/kotlin/vjson/*
+cp -r src/main/kotlin/vjson/* misc/vjson_executable/src/nativeMain/kotlin/vjson
+
+# Then you can build kotlin native executable
+cd misc/vjson_executable/
+./gradlew clean nativeBinaries
+```
+
+Run with:
+
+```shell
+./build/bin/native/releaseExecutable/vjson_executable.kexe --help
+```
+
 ## kotlin js
 
 Kotlin JS has more restrictions than kotlin native, a standalone task is provided for kotlin js:
