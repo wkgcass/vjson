@@ -16,36 +16,36 @@ self.onmessage = function(e) {
   var action = data[0];
   var workerVersion = data[1];
   if (action === 'run') {
-    run(data[2], data[3]);
+    _run(data[2], data[3]);
   } else if (action === 'eval') {
-    eval(data[2]);
+    _eval(data[2]);
   } else if (action === 'json') {
-    json(data[2]);
+    _json(data[2]);
   } else if (action === 'ast') {
-    ast(data[2]);
+    _ast(data[2]);
   } else {
     console.error('unknown action %j in worker scope (msg comes from main scope)', action);
   }
 
-  done(workerVersion);
+  _done(workerVersion);
 };
 
-function run(code, printMem) {
+function _run(code, printMem) {
   interpreter.run(code, printMem);
 }
 
-function eval(code) {
+function _eval(code) {
   interpreter.eval(code)
 }
 
-function json(code) {
+function _json(code) {
   interpreter.json(code)
 }
 
-function ast(code) {
+function _ast(code) {
   interpreter.ast(code)
 }
 
-function done(ver) {
+function _done(ver) {
   postMessage(['done', ver]);
 }
