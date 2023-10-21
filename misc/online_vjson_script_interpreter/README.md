@@ -1,5 +1,0 @@
-compile:
-
-```
-./gradlew clean browserProductionWebpack
-```
