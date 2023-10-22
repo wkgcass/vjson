@@ -25,8 +25,8 @@ group = "io.vproxy"
 version = loadVersion()
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_1_9
+  targetCompatibility = JavaVersion.VERSION_1_9
 
   withSourcesJar()
 }
@@ -37,6 +37,9 @@ jacoco {
 
 tasks {
   compileJava {
+    doFirst {
+      options.compilerArgs.addAll(listOf("--module-path", classpath.asPath))
+    }
     options.encoding = "UTF-8"
   }
   compileTestJava {
@@ -47,6 +50,7 @@ tasks {
       jvmTarget = "1.8"
       freeCompilerArgs = listOf("-Xjvm-default=enable")
     }
+    destinationDirectory.set(compileJava.get().destinationDir)
   }
   compileTestKotlin {
     kotlinOptions {
@@ -170,7 +174,7 @@ publishing {
           val sNode = node.get("version") as groovy.util.NodeList
           for (s in sNode) {
             s as groovy.util.Node
-            s.setValue(s.value().toString())
+            s.setValue(s.value().toString() + "-jdk9")
           }
         }
       }
