@@ -27,7 +27,11 @@ vjson致力于用java对象还原最原始的json结构。你可以通过简单�
 **gradle**
 
 ```groovy
-implementation 'io.vproxy:vjson:1.5.2'
+// 附带module-info (jdk8也可以使用)
+implementation 'io.vproxy:vjson:1.5.4-jdk9'
+/* 不附带module-info (如果你的工具链不支持，那么则改用下面的版本)
+implementation 'io.vproxy:vjson:1.5.3'
+*/
 ```
 
 **maven**
@@ -36,7 +40,11 @@ implementation 'io.vproxy:vjson:1.5.2'
 <dependency>
   <groupId>io.vproxy</groupId>
   <artifactId>vjson</artifactId>
-  <version>1.5.2</version>
+<!-- 附带module-info (jdk8也可以使用) -->
+  <version>1.5.4-jdk9</version>
+<!-- 不附带module-info (如果你的工具链不支持，那么则改用下面的版本)
+  <version>1.5.3</version>
+-->
 </dependency>
 ```
 
@@ -45,7 +53,7 @@ implementation 'io.vproxy:vjson:1.5.2'
 **gradle**
 
 ```groovy
-implementation('io.vproxy:vjson:1.5.2') {
+implementation('io.vproxy:vjson:${vjsonVersion}') {
   exclude group: 'io.vproxy', module: 'kotlin-stdlib-lite'
 }
 ```
@@ -58,7 +66,7 @@ implementation('io.vproxy:vjson:1.5.2') {
     <dependency>
       <groupId>io.vproxy</groupId>
       <artifactId>vjson</artifactId>
-      <version>1.5.2</version>
+      <version>${vjson.version}</version>
       <exclusions>
         <exclusion>
           <groupId>io.vproxy</groupId>
@@ -68,26 +76,6 @@ implementation('io.vproxy:vjson:1.5.2') {
     </dependency>
   </dependencies>
 </dependencyManagement>
-```
-
-### 对于 jdk < 9 额外的依赖
-
-如果你不使用kotlin，但是正在使用 jdk < 9，那么除了上述的`exclusion`之外，你还需要添加如下依赖：
-
-**gradle**
-
-```groovy
-implementation 'io.vproxy:kotlin-stdlib-lite:1.0.1'
-```
-
-**maven**
-
-```xml
-<dependency>
-  <groupId>io.vproxy</groupId>
-  <artifactId>kotlin-stdlib-lite</artifactId>
-  <version>1.0.1</version>
-</dependency>
 ```
 
 ## kotlin native
