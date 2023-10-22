@@ -170,7 +170,7 @@ publishing {
           val sNode = node.get("version") as groovy.util.NodeList
           for (s in sNode) {
             s as groovy.util.Node
-            s.setValue(s.value().toString() + "-jdk9")
+            s.setValue(s.value().toString())
           }
         }
       }
