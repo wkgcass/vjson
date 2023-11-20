@@ -309,7 +309,7 @@ public class TestInterpreterSamplePrograms {
             "// List, Set and Map\n" +
             "let StringList = { std.List:[ string ] }\n" +
             "let IntSet = { std.LinkedHashSet:[ int ] }\n" +
-            "// std.LinkedHashSet is also available\n" +
+            "// std.Set is also available\n" +
             "let StringIntMap = { std.LinkedHashMap:[ string, int ] }\n" +
             "// std.Map is also available\n" +
             "\n" +
