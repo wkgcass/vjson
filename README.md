@@ -28,9 +28,9 @@ Run `./gradlew clean coverage` to get the coverage report.
 
 ```groovy
 // with module-info (also works for jdk8)
-implementation 'io.vproxy:vjson:1.5.4-jdk9'
+implementation 'io.vproxy:vjson:1.5.5-jdk9'
 /* without module-info (if your toolchain doesn't work, use this version instead)
-implementation 'io.vproxy:vjson:1.5.3'
+implementation 'io.vproxy:vjson:1.5.5'
 */
 ```
 
@@ -41,9 +41,9 @@ implementation 'io.vproxy:vjson:1.5.3'
   <groupId>io.vproxy</groupId>
   <artifactId>vjson</artifactId>
 <!-- with module-info (also works for jdk8) -->
-  <version>1.5.4-jdk9</version>
+  <version>1.5.5-jdk9</version>
 <!-- without module-info (if your toolchain doesn't work, use this version instead)
-  <version>1.5.3</version>
+  <version>1.5.5</version>
 -->
 </dependency>
 ```

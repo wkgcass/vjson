@@ -28,9 +28,9 @@ vjson致力于用java对象还原最原始的json结构。你可以通过简单�
 
 ```groovy
 // 附带module-info (jdk8也可以使用)
-implementation 'io.vproxy:vjson:1.5.4-jdk9'
+implementation 'io.vproxy:vjson:1.5.5-jdk9'
 /* 不附带module-info (如果你的工具链不支持，那么则改用下面的版本)
-implementation 'io.vproxy:vjson:1.5.3'
+implementation 'io.vproxy:vjson:1.5.5'
 */
 ```
 
@@ -41,9 +41,9 @@ implementation 'io.vproxy:vjson:1.5.3'
   <groupId>io.vproxy</groupId>
   <artifactId>vjson</artifactId>
 <!-- 附带module-info (jdk8也可以使用) -->
-  <version>1.5.4-jdk9</version>
+  <version>1.5.5-jdk9</version>
 <!-- 不附带module-info (如果你的工具链不支持，那么则改用下面的版本)
-  <version>1.5.3</version>
+  <version>1.5.5</version>
 -->
 </dependency>
 ```
