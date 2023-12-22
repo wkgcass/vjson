@@ -20,7 +20,7 @@ import vjson.pl.ScriptifyContext
 class SimpleString /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   private val str: String,
   private val lineCol: LineCol = LineCol.EMPTY
-) : JSON.String {
+) : JSON.Instance<String>, JSON.String {
   private var stringified: String? = null
 
   override fun toJavaObject(): String {
