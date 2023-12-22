@@ -18,7 +18,7 @@ import vjson.pl.ScriptifyContext
 
 class SimpleNull /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
   private val lineCol: LineCol = LineCol.EMPTY
-) : JSON.Null {
+) : JSON.Instance<Any?>, JSON.Null {
   override fun stringify(): String {
     return "null"
   }
@@ -53,6 +53,6 @@ class SimpleNull /*#ifndef KOTLIN_NATIVE {{ */ @JvmOverloads/*}}*/ constructor(
 
   companion object {
     /*#ifndef KOTLIN_NATIVE {{ */@JvmField/*}}*/
-    val Null = SimpleNull()
+    val Null: SimpleNull = SimpleNull()
   }
 }
